@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.15)
 project(MyMod CXX)
 
 # Find latest version at https://github.com/OrfeasZ/ZHMModSDK/releases
+# Set ZHMMODSDK_DIR variable to a local directory to use a local copy of the ZHMModSDK.
 set(ZHMMODSDK_VER "v2.0.0-rc.1")
 include(cmake/setup-zhmmodsdk.cmake)
 
