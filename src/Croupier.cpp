@@ -852,7 +852,7 @@ auto generatorForMission(eMission mission) -> RouletteSpinGenerator
 		}
 	case eMission::BERLIN_APEXPREDATOR:
 		{
-			auto constexpr image = "load_menu_tile.jpg";
+			auto constexpr image = "fox_pickup_earpiece.jpg";
 			auto& a1 = generator.addTarget("ICA Agent #1", image);
 			auto& a2 = generator.addTarget("ICA Agent #2", image);
 			auto& a3 = generator.addTarget("ICA Agent #3", image);
