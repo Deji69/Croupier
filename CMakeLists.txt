@@ -12,16 +12,23 @@ set(CMAKE_CXX_STANDARD 23)
 
 # Create the Croupier mod library.
 add_library(Croupier SHARED
-    src/Croupier.cpp
-    src/Croupier.h
-)
+	src/Croupier.cpp
+	src/Croupier.h
+	src/CroupierWindow.cpp
+	src/CroupierWindow.h
+	src/json.hpp
+	src/DeclareDPIAware.manifest
+ "src/Roulette.cpp" "src/util.h" "src/EventSystem.h" "src/Events.h" "src/Enums.h")
 
 target_link_libraries(Croupier
-    ZHMModSDK
+	ZHMModSDK
+	D2D1
+	DWrite
+	WindowsCodecs
 )
 
 install(TARGETS Croupier
-    RUNTIME DESTINATION bin
+	RUNTIME DESTINATION bin
 )
 
 # Install the mod to the game folder when the `GAME_INSTALL_PATH` variable is set.
