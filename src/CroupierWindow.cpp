@@ -104,11 +104,11 @@ auto CroupierWindow::getWindowHeight() const -> int
 	auto const rows = wide ? (n + 1) / 2 : n;
 	if (!wide) return rows * 200.0f + 28;
 	switch (n) {
-	case 1: return 240;
+	case 1: return 250;
 	case 2: return 185;
 	case 3:
-	case 4: return 330;
-	case 5: return 460;
+	case 4: return 336;
+	case 5: return 475;
 	}
 	return 420;
 }
