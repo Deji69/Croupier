@@ -923,12 +923,9 @@ auto Croupier::OnEngineInitialized() -> void {
 	Globals::GameLoopManager->RegisterFrameUpdate(s_Delegate, 1, EUpdateMode::eUpdatePlayMode);
 
 	// Install a hook to print the name of the scene every time the game loads a new one.
-	Hooks::ZEntitySceneContext_LoadScene->AddDetour(this, &Croupier::OnLoadScene);
 	Hooks::ZAchievementManagerSimple_OnEventReceived->AddDetour(this, &Croupier::OnEventReceived);
 	Hooks::ZAchievementManagerSimple_OnEventSent->AddDetour(this, &Croupier::OnEventSent);
-	Hooks::ZGameUIManagerEntity_TryOpenMenu->AddDetour(this, &Croupier::OnTryOpenMenu);
 	Hooks::Http_WinHttpCallback->AddDetour(this, &Croupier::OnWinHttpCallback);
-	Hooks::SignalOutputPin->AddDetour(this, &Croupier::OnOutputPin);
 }
 
 Croupier::Croupier() : sharedSpin(spin), window(sharedSpin) {
@@ -1080,18 +1077,6 @@ DEFINE_PLUGIN_DETOUR(Croupier, void, OnEventSent, ZAchievementManagerSimple* th,
 	return HookResult<void>(HookAction::Continue());
 }
 
-DEFINE_PLUGIN_DETOUR(Croupier, void, OnLoadScene, ZEntitySceneContext* th, ZSceneData& sceneData) {
-	//Logger::Debug("Scene: {}", sceneData.m_sceneName);
-	//Logger::Debug("Codename: {}", sceneData.m_codeNameHint);
-	//Logger::Debug("Type: {}", sceneData.m_type);
-	return HookResult<void>(HookAction::Continue());
-}
-
-DEFINE_PLUGIN_DETOUR(Croupier, bool, OnTryOpenMenu, ZGameUIManagerEntity* th, EGameUIMenu menu, bool force) {
-	//Logger::Info("Opening menu: {}", static_cast<int>(menu));
-	return HookResult<bool>(HookAction::Continue());
-}
-
 DEFINE_PLUGIN_DETOUR(Croupier, void, OnWinHttpCallback, void* dwContext, void* hInternet, void* param_3, int dwInternetStatus, void* param_5, int param_6) {
 	auto path = std::string_view(*reinterpret_cast<const char**>(static_cast<uint8_t*>(dwContext) + 0x78));
 	auto host = *reinterpret_cast<const char**>(static_cast<uint8_t*>(dwContext) + 0x60);
@@ -1125,43 +1110,6 @@ DEFINE_PLUGIN_DETOUR(Croupier, void, OnWinHttpCallback, void* dwContext, void* h
 		this->OnMissionSelect(mission);
 
 	return HookResult<void>(HookAction::Continue());
-}
-
-DEFINE_PLUGIN_DETOUR(Croupier, bool, OnOutputPin, ZEntityRef entity, uint32_t pinId, const ZObjectRef& data) {
-	//Logger::Info("Opening menu: {}", static_cast<int>(menu));
-
-	/*if (pinId == 2095079335 || pinId == 152974071 || pinId == -30151098) {
-		auto pEntity = entity.m_pEntity ? *entity.m_pEntity : nullptr;
-		if (pEntity && pEntity->m_pProperties01) {
-			if (pEntity->m_pInterfaces) {
-				for (auto& pinterface : *pEntity->m_pInterfaces) {
-					if (!pinterface.m_pTypeId) continue;
-					Logger::Info("{}", pinterface.m_pTypeId->typeInfo()->m_pTypeName);
-				}
-			}
-			for (auto& prop : *pEntity->m_pProperties01) {
-				if (!prop.m_pType) continue;
-				auto mkay = entity.HasInterface("ZOpenMenuPageEntity");
-				auto propInfo = prop.m_pType->getPropertyInfo();
-
-				if (!propInfo) continue;
-				const auto& name = std::string_view{propInfo->m_pName};
-				std::string val;
-				if (name.starts_with("m_s")) {
-					val = entity.GetProperty<ZString>(name).Get();
-				} else {
-					val = std::format("{:p}", entity.GetProperty<void*>(name).Get());
-				}
-				if (name == "m_pPageContent") {
-					//auto ptr = entity.GetProperty<TArray<TEntityRef<ZUIControlEntity>>>(name).Get();
-					//Logger::Info("{}", ptr);
-				}
-				//Logger::Info("{} -> {}: {}", pinId, name, val);
-			}
-		}
-	}*/
-
-	return HookResult<bool>(HookAction::Continue());
 }
 
 DECLARE_ZHM_PLUGIN(Croupier);
