@@ -57,7 +57,7 @@ enum class eMission {
 enum class eMethodType {
 	Map,
 	Weapon,
-	Generic,
+	Standard,
 };
 
 enum class eKillMethod {
@@ -448,7 +448,12 @@ public:
 	}
 
 	auto spin() {
-		static auto gunKillMethods = std::vector<eKillMethod> {
+		static auto methodTypes = std::vector<eMethodType>{
+			eMethodType::Standard,
+			eMethodType::Map,
+			eMethodType::Weapon,
+		};
+		static auto gunKillMethods = std::vector<eKillMethod>{
 			eKillMethod::AssaultRifle,
 			eKillMethod::Elimination,
 			eKillMethod::Pistol,
@@ -499,7 +504,11 @@ public:
 			for (auto attempts = 0; ; ++attempts) {
 				if (attempts > 30) throw RouletteGeneratorException("Failed to generate spin.");
 
-				auto useSpecificMethod = this->mapKillMethods.size() && randomBool();
+				auto methodType = randomVectorElement(methodTypes);
+				while (!this->mapKillMethods.size() && methodType == eMethodType::Map)
+					methodType = randomVectorElement(methodTypes);
+
+				auto useSpecificMethod = methodType == eMethodType::Map;
 				auto disguise = &randomVectorElement(this->disguises);
 				if (spin.hasDisguise(*disguise) && !this->duplicateDisguiseAllowed) continue;
 
@@ -524,7 +533,7 @@ public:
 					auto mapMethodInfo = useSpecificMethod ? randomVectorElement(this->mapKillMethods) : eMapKillMethod::NONE;
 					auto killMethod = useSpecificMethod
 						? eKillMethod::NONE
-						: (randomBool()
+						: (methodType == eMethodType::Standard
 							? randomVectorElement(standardKillMethods)
 							: randomVectorElement(gunKillMethods));
 					auto alreadySpanMethod = useSpecificMethod
