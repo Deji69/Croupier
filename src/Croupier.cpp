@@ -929,8 +929,6 @@ auto Croupier::OnEngineInitialized() -> void {
 	Hooks::ZGameUIManagerEntity_TryOpenMenu->AddDetour(this, &Croupier::OnTryOpenMenu);
 	Hooks::Http_WinHttpCallback->AddDetour(this, &Croupier::OnWinHttpCallback);
 	Hooks::SignalOutputPin->AddDetour(this, &Croupier::OnOutputPin);
-
-	this->OnMissionSelect(eMission::PARIS_SHOWSTOPPER);
 }
 
 Croupier::Croupier() : sharedSpin(spin), window(sharedSpin) {
