@@ -918,10 +918,6 @@ auto Croupier::OnEngineInitialized() -> void {
 
 	this->window.create();
 
-	// Register a function to be called on every game frame while the game is in play mode.
-	const ZMemberDelegate<Croupier, void(const SGameUpdateEvent&)> s_Delegate(this, &Croupier::OnFrameUpdate);
-	Globals::GameLoopManager->RegisterFrameUpdate(s_Delegate, 1, EUpdateMode::eUpdatePlayMode);
-
 	// Install a hook to print the name of the scene every time the game loads a new one.
 	Hooks::ZAchievementManagerSimple_OnEventReceived->AddDetour(this, &Croupier::OnEventReceived);
 	Hooks::ZAchievementManagerSimple_OnEventSent->AddDetour(this, &Croupier::OnEventSent);
@@ -933,9 +929,6 @@ Croupier::Croupier() : sharedSpin(spin), window(sharedSpin) {
 }
 
 Croupier::~Croupier() {
-	// Unregister our frame update function when the mod unloads.
-	const ZMemberDelegate<Croupier, void(const SGameUpdateEvent&)> s_Delegate(this, &Croupier::OnFrameUpdate);
-	Globals::GameLoopManager->UnregisterFrameUpdate(s_Delegate, 1, EUpdateMode::eUpdatePlayMode);
 }
 
 auto Croupier::OnDrawMenu() -> void {
@@ -998,10 +991,6 @@ auto Croupier::OnDrawUI(bool p_HasFocus) -> void {
 
 	ImGui::End();
 	ImGui::PopFont();
-}
-
-auto Croupier::OnFrameUpdate(const SGameUpdateEvent &p_UpdateEvent) -> void {
-	// This function is called every frame while the game is in play mode.
 }
 
 auto Croupier::OnMissionSelect(eMission mission) -> void {
