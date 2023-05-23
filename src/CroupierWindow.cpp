@@ -1,3 +1,21 @@
+//#ifndef WINVER                  // Allow use of features specific to Windows XP or later.
+//#define WINVER 0x0501           // Change this to the appropriate value to target other versions of Windows.
+//#endif
+//
+//#ifndef _WIN32_WINNT            // Allow use of features specific to Windows XP or later.
+//#define _WIN32_WINNT 0x0501     // Change this to the appropriate value to target other versions of Windows.
+//#endif
+//
+//#ifndef _WIN32_WINDOWS          // Allow use of features specific to Windows 98 or later.
+//#define _WIN32_WINDOWS 0x0410   // Change this to the appropriate value to target Windows Me or later.
+//#endif
+//
+//#ifndef _WIN32_IE               // Allow use of features specific to IE 6.0 or later.
+//#define _WIN32_IE 0x0600        // Change this to the appropriate value to target other versions of IE.
+//#endif
+
+//#define WIN32_LEAN_AND_MEAN     // Exclude rarely-used stuff from Windows headers
+
 #include <Windows.h>
 #include <wincodec.h>
 #include <commdlg.h>
@@ -84,7 +102,7 @@ auto CroupierWindow::getWindowHeight() const -> int
 	if (!n) return 420;
 	auto const wide = this->layout == eCroupierWindowLayout::WIDE || (this->layout == eCroupierWindowLayout::ADAPTIVE && n > 2);
 	auto const rows = wide ? (n + 1) / 2 : n;
-	if (!wide) return rows * 200.0f + 28;
+	if (!wide) return rows * 195.0f + 45;
 	switch (n) {
 	case 1: return 250;
 	case 2: return 185;
