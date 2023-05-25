@@ -47,6 +47,7 @@ private:
 	bool showUI = false;
 	bool externalWindowEnabled = true;
 	bool externalWindowOnTop = true;
+	bool externalWindowTextOnly = false;
 	bool spinCompleted = false;
 };
 

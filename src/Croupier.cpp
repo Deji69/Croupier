@@ -958,6 +958,9 @@ auto Croupier::OnDrawUI(bool p_HasFocus) -> void {
 		if (ImGui::Checkbox("Always On Top", &this->externalWindowOnTop))
 			this->window.setAlwaysOnTop(this->externalWindowOnTop);
 
+		if (ImGui::Checkbox("Text-Only Mode", &this->externalWindowTextOnly))
+			this->window.setTextMode(this->externalWindowTextOnly);
+
 		auto missionInfoIt = std::find_if(missionInfos.begin(), missionInfos.end(), [this](const MissionInfo& info) {
 			return info.mission == this->spin.getMission();
 		});

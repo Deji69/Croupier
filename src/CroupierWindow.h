@@ -60,6 +60,7 @@ public:
 
 	auto setDarkMode(bool enable) -> void;
 	auto setAlwaysOnTop(bool enable) -> void;
+	auto setTextMode(bool enable) -> void;
 
 	auto paint(HWND wnd) -> void;
 
@@ -86,6 +87,7 @@ private:
 	bool onTop = true;
 	bool wasOnTop = false;
 	bool alignRight = false;
+	bool textMode = false;
 	eCroupierWindowLayout layout = eCroupierWindowLayout::ADAPTIVE;
 
 	std::thread windowThread;

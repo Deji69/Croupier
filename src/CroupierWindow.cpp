@@ -23,6 +23,7 @@ using namespace std::string_literals;
 
 HINSTANCE hInstance = nullptr;
 const FLOAT DEFAULT_DPI = 96.f;
+const FLOAT TEXT_ROW_HEIGHT = 40.0f;
 
 template<typename T>
 inline auto SafeRelease(T*& p) {
@@ -73,7 +74,7 @@ CroupierWindow::~CroupierWindow()
 auto CroupierWindow::getWindowWidth() const -> int
 {
 	auto const n = this->spin.spin.getConditions().size();
-	if (n < 2) return 640;
+	if (this->textMode || n < 2) return 640;
 	auto const wide = this->layout == eCroupierWindowLayout::WIDE || (this->layout == eCroupierWindowLayout::ADAPTIVE && n > 2);
 	return wide ? 940 : 640;
 }
@@ -81,9 +82,10 @@ auto CroupierWindow::getWindowWidth() const -> int
 auto CroupierWindow::getWindowHeight() const -> int
 {
 	auto const n = this->spin.spin.getConditions().size();
-	if (!n) return 420;
-	auto const wide = this->layout == eCroupierWindowLayout::WIDE || (this->layout == eCroupierWindowLayout::ADAPTIVE && n > 2);
+	if (!n && !this->textMode) return 420;
+	auto const wide = !this->textMode && (this->layout == eCroupierWindowLayout::WIDE || (this->layout == eCroupierWindowLayout::ADAPTIVE && n > 2));
 	auto const rows = wide ? (n + 1) / 2 : n;
+	if (this->textMode) return rows * TEXT_ROW_HEIGHT + 45;
 	if (!wide) return rows * 195.0f + 45;
 	switch (n) {
 	case 1: return 250;
@@ -309,50 +311,72 @@ auto CroupierWindow::OnPaint(HWND wnd) -> LRESULT
 				std::shared_lock guard(this->spin.mutex);
 				auto const& conds = this->spin.spin.getConditions();
 				auto const wide = (this->layout == eCroupierWindowLayout::WIDE || (this->layout == eCroupierWindowLayout::ADAPTIVE && conds.size() > 2)) && conds.size() >= 2;
-				auto scale = rtSize.width / (wide ? 1280.0f : 640.0f);
-				auto getRect = [scale](FLOAT x, FLOAT y, FLOAT w, FLOAT h){ // grb
+				auto scale = rtSize.width / (wide && !this->textMode ? 1280.0f : 640.0f);
+				auto getRect = [scale, rtSize](FLOAT x, FLOAT y, FLOAT w, FLOAT h){ // grb
+					if (x < 0) x = rtSize.width + x;
+					if (y < 0) y = rtSize.height + y;
+					if (w < 0) w = rtSize.width + w;
+					if (h < 0) h = rtSize.height + h;
 					return D2D1::RectF(x * scale, y * scale, (x + w) * scale, (y + h) * scale);
 				};
 				auto n = 0;
 
 				for (auto const& cond : conds) {
-					auto killMethodTextWide = widen(cond.methodName);
-					auto disguiseTextWide = widen(cond.disguise.name);
-					auto wname = widen(cond.target.getName());
-					auto killMethodPath = std::filesystem::path{cond.killMethod.image};
-					auto targetImage = this->loadImage(std::filesystem::path("actors"s) / cond.target.getImage());
-					auto killMethodImageFolder = std::filesystem::path(cond.killMethod.method == eKillMethod::NONE ? "weapons"s : ""s);
-					auto killMethodImage = this->loadImage(killMethodImageFolder / killMethodPath);
-					auto disguiseImage = this->loadImage(std::filesystem::path("outfits"s) / cond.disguise.image);
-					 
-					auto const row = wide ? n / 2 : n;
-					auto const col = wide ? n % 2 : 0;
-					auto const top = 200 * row;
-					auto const left = 640 * col + (wide && n == conds.size() - 1 && conds.size() % 2 == 1 ? 640 : 0);
-					auto targetImageRect = getRect(left + 0, top, 260, 200);
-					auto methodImageRect = getRect(left + 260, top, 134, 100);
-					auto disguiseImageRect = getRect(left + 260, top + 100, 134, 100);
-					auto methodTextRect = getRect(left + 260 + 134 + 6, top + 5, 220, 90);
-					auto disguiseTextRect = getRect(left + 260 + 134 + 6, top + 100 + 5, 220, 90);
+					auto const row = !this->textMode && wide ? n / 2 : n;
 
-					if (targetImage) this->RT->DrawBitmap(targetImage, targetImageRect);
-					if (killMethodImage) this->RT->DrawBitmap(killMethodImage, methodImageRect);
-					if (disguiseImage) this->RT->DrawBitmap(disguiseImage, disguiseImageRect);
+					if (this->textMode) {
+						auto const top = TEXT_ROW_HEIGHT * row;
+						auto condTextWide = widen(std::format("{}: {} / {}", cond.target.getName(), cond.methodName, cond.disguise.name));
+						auto textRect = getRect(6, top + 5, 640 - 6, TEXT_ROW_HEIGHT);
+						this->RT->DrawTextA(
+							condTextWide.c_str(),
+							condTextWide.size(),
+							this->DWriteTextFormat,
+							textRect,
+							this->Brush
+						);
+					} else {
+						auto const col = wide ? n % 2 : 0;
+						auto const top = 200 * row;
+						auto const left = 640 * col + (wide && n == conds.size() - 1 && conds.size() % 2 == 1 ? 640 : 0);
 
-					this->RT->DrawTextA(
-						killMethodTextWide.c_str(),
-						killMethodTextWide.size(),
-						this->DWriteTextFormat,
-						methodTextRect,
-						this->Brush
-					);
-					this->RT->DrawTextA(
-						disguiseTextWide.c_str(),
-						disguiseTextWide.size(),
-						this->DWriteTextFormat,
-						disguiseTextRect,
-						this->Brush
-					);
+						auto killMethodPath = std::filesystem::path{cond.killMethod.image};
+						auto targetImage = this->loadImage(std::filesystem::path("actors"s) / cond.target.getImage());
+						auto killMethodImageFolder = std::filesystem::path(cond.killMethod.method == eKillMethod::NONE ? "weapons"s : ""s);
+						auto killMethodImage = this->loadImage(killMethodImageFolder / killMethodPath);
+						auto disguiseImage = this->loadImage(std::filesystem::path("outfits"s) / cond.disguise.image);
+
+						auto targetImageRect = getRect(left + 0, top, 260, 200);
+						auto methodImageRect = getRect(left + 260, top, 134, 100);
+						auto disguiseImageRect = getRect(left + 260, top + 100, 134, 100);
+
+						if (targetImage) this->RT->DrawBitmap(targetImage, targetImageRect);
+						if (killMethodImage) this->RT->DrawBitmap(killMethodImage, methodImageRect);
+						if (disguiseImage) this->RT->DrawBitmap(disguiseImage, disguiseImageRect);
+
+						auto killMethodTextWide = widen(cond.methodName);
+						auto disguiseTextWide = widen(cond.disguise.name);
+						auto wname = widen(cond.target.getName());
+						auto const imagesWidth = this->textMode ? 0 : 260 + 134;
+						auto methodTextRect = getRect(left + imagesWidth + 6, top + 5, 220, 90);
+						auto disguiseTextRect = getRect(left + imagesWidth + 6, top + 100 + 5, 220, 90);
+
+						this->RT->DrawTextA(
+							killMethodTextWide.c_str(),
+							killMethodTextWide.size(),
+							this->DWriteTextFormat,
+							methodTextRect,
+							this->Brush
+						);
+						this->RT->DrawTextA(
+							disguiseTextWide.c_str(),
+							disguiseTextWide.size(),
+							this->DWriteTextFormat,
+							disguiseTextRect,
+							this->Brush
+						);
+					}
+
 
 					++n;
 				}
@@ -473,5 +497,11 @@ auto CroupierWindow::setDarkMode(bool enable) -> void
 auto CroupierWindow::setAlwaysOnTop(bool enable) -> void
 {
 	this->onTop = enable;
+	this->update();
+}
+
+auto CroupierWindow::setTextMode(bool enable) -> void
+{
+	this->textMode = enable;
 	this->update();
 }
