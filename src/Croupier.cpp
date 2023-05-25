@@ -653,11 +653,11 @@ auto generatorForMission(eMission mission) -> RouletteSpinGenerator
 		}
 	case eMission::PARIS_SHOWSTOPPER:
 		{
-			auto& dm = generator.addTarget("Dalia Margolis", "showstopper_dahlia_margolis.jpg");
-			dm.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Extreme, eMethodTag::DuplicateOnlySameDisguise });
-
 			auto& vn = generator.addTarget("Viktor Novikov", "showstopper_viktor_novikov.jpg");
 			vn.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Extreme, eMethodTag::DuplicateOnlySameDisguise });
+
+			auto& dm = generator.addTarget("Dalia Margolis", "showstopper_dahlia_margolis.jpg");
+			dm.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Extreme, eMethodTag::DuplicateOnlySameDisguise });
 			break;
 		}
 	case eMission::SAPIENZA_WORLDOFTOMORROW:
@@ -672,6 +672,10 @@ auto generatorForMission(eMission mission) -> RouletteSpinGenerator
 		}
 	case eMission::MARRAKESH_GILDEDCAGE:
 		{
+			auto& rz = generator.addTarget("Reza Zaydan", "tobigforjail_general_zaydan.jpg");
+			rz.defineMethod(eKillMethod::Drowning, { eMethodTag::BannedInRR, eMethodTag::Extreme });
+			rz.defineMethod(eKillMethod::Electrocution, { eMethodTag::BannedInRR, eMethodTag::Extreme });
+
 			auto& chs = generator.addTarget("Claus Hugo Strandberg", "tobigforjail_claus_hugo_stranberg.jpg");
 			chs.defineMethod(eKillMethod::FallingObject, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 			auto& prisoner = generator.getDisguiseByNameAssert("Prisoner");
@@ -680,10 +684,6 @@ auto generatorForMission(eMission mission) -> RouletteSpinGenerator
 				if (&cond.disguise != &prisoner) return false;
 				return !cond.killMethod.isRemote;
 			}, { eMethodTag::BannedInRR, eMethodTag::Hard });
-
-			auto& rz = generator.addTarget("Reza Zaydan", "tobigforjail_general_zaydan.jpg");
-			rz.defineMethod(eKillMethod::Drowning, { eMethodTag::BannedInRR, eMethodTag::Extreme });
-			rz.defineMethod(eKillMethod::Electrocution, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 			break;
 		}
 	case eMission::BANGKOK_CLUB27:
@@ -822,9 +822,11 @@ auto generatorForMission(eMission mission) -> RouletteSpinGenerator
 			auto& tw = generator.addTarget("Tyson Williams", "stingray_tyson_williams.jpg");
 			tw.defineMethod(eKillMethod::ConsumedPoison, { eMethodTag::BannedInRR, eMethodTag::Impossible });
 			tw.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Impossible });
+
 			auto& sb = generator.addTarget("Steven Bradley", "stingray_steven_bradley.jpg");
 			sb.defineMethod(eKillMethod::ConsumedPoison, { eMethodTag::BannedInRR, eMethodTag::Impossible });
 			sb.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Impossible });
+
 			auto& lv = generator.addTarget("Ljudmila Vetrova", "stingray_ljudmila_vetrova.jpg");
 			lv.defineMethod(eKillMethod::FallingObject, { eMethodTag::BannedInRR, eMethodTag::Impossible });
 			lv.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Impossible });
@@ -835,6 +837,7 @@ auto generatorForMission(eMission mission) -> RouletteSpinGenerator
 			auto& ci = generator.addTarget("Carl Ingram", "golden_carl_ingram.jpg");
 			ci.defineMethod(eKillMethod::ConsumedPoison, { eMethodTag::BannedInRR, eMethodTag::Buggy });
 			ci.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Extreme });
+
 			auto& ms = generator.addTarget("Marcus Stuyvesant", "golden_marcus_stuyvesant.jpg");
 			ms.defineMethod(eKillMethod::ConsumedPoison, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 			ms.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Extreme });
@@ -878,6 +881,7 @@ auto generatorForMission(eMission mission) -> RouletteSpinGenerator
 			auto& day = generator.addTarget("Don Archibald Yates", "elegant_yates.jpg");
 			day.defineMethod(eKillMethod::ConsumedPoison, { eMethodTag::BannedInRR, eMethodTag::Hard });
 			day.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Extreme });
+
 			auto& tv = generator.addTarget("Tamara Vidal", "elegant_vidal.jpg");
 			tv.defineMethod(eKillMethod::ConsumedPoison, { eMethodTag::BannedInRR, eMethodTag::Hard });
 			tv.defineMethod(eKillMethod::FallingObject, { eMethodTag::BannedInRR, eMethodTag::Hard });
