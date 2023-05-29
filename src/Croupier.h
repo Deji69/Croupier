@@ -29,7 +29,6 @@ private:
 
 	auto LogSpin() -> void;
 	auto SetupEvents() -> void;
-	void OnFrameUpdate(const SGameUpdateEvent& p_UpdateEvent);
 
 	DECLARE_PLUGIN_DETOUR(Croupier, void, OnEventReceived, ZAchievementManagerSimple* th, const SOnlineEvent& event);
 	DECLARE_PLUGIN_DETOUR(Croupier, void, OnEventSent, ZAchievementManagerSimple* th, uint32_t eventIndex, const ZDynamicObject& event);

@@ -344,13 +344,21 @@ struct RouletteSpinCondition
 		if (killMethod.name.empty()) killMethod.name = specificKillMethod.name;
 		methodName = killType != eKillType::Any ? std::format("{} {}", std::string(getKillTypeName(killType)), killMethod.name) : killMethod.name;
 	}
+
+	RouletteSpinCondition(RouletteSpinCondition&&) noexcept = default;
+
+	auto operator=(RouletteSpinCondition&&) noexcept -> RouletteSpinCondition& = default;
 };
 
 class RouletteSpin
 {
 public:
 	RouletteSpin() = default;
+	RouletteSpin(RouletteSpin&&) noexcept = default;
+	RouletteSpin(const RouletteSpin&) = default;
 	RouletteSpin(eMission mission) : mission(mission) {}
+
+	auto operator=(RouletteSpin&&) noexcept -> RouletteSpin& = default;
 
 	auto& add(RouletteSpinCondition&& cond) {
 		this->conditions.emplace_back(std::forward<RouletteSpinCondition>(cond));
