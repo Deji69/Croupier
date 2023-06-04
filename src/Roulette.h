@@ -400,6 +400,14 @@ private:
 class RouletteSpinGenerator
 {
 public:
+	static const std::vector<eKillMethod> standardKillMethods;
+	static const std::vector<eKillMethod> firearmKillMethods;
+	static const std::vector<eKillType> gunKillTypes;
+	static const std::vector<eKillType> explosiveKillTypes;
+	static const std::vector<eKillType> meleeKillTypes;
+	static const std::vector<eMapKillMethod> sodersKills;
+
+public:
 	RouletteSpinGenerator() noexcept = default;
 	RouletteSpinGenerator(eMission mission) : mission(mission)
 	{ }
@@ -464,47 +472,6 @@ public:
 			eMethodType::Map,
 			eMethodType::Weapon,
 		};
-		static auto gunKillMethods = std::vector<eKillMethod>{
-			eKillMethod::AssaultRifle,
-			eKillMethod::Elimination,
-			eKillMethod::Pistol,
-			//eKillMethod::PistolElimination,
-			eKillMethod::Shotgun,
-			eKillMethod::SMG,
-			//eKillMethod::SMGElimination,
-			eKillMethod::Sniper,
-		};
-		static auto standardKillMethods = std::vector<eKillMethod>{
-			eKillMethod::ConsumedPoison,
-			eKillMethod::Drowning,
-			eKillMethod::Electrocution,
-			eKillMethod::Explosion,
-			eKillMethod::Explosive,
-			eKillMethod::Fall,
-			eKillMethod::FallingObject,
-			eKillMethod::FiberWire,
-			eKillMethod::Fire,
-			eKillMethod::InjectedPoison,
-			eKillMethod::NeckSnap,
-		};
-		static auto gunKillTypes = std::vector<eKillType>{
-			eKillType::Any,
-			eKillType::Loud,
-			eKillType::Silenced,
-		};
-		static auto meleeKillTypes = std::vector<eKillType>{
-			eKillType::Any,
-			eKillType::Melee,
-			eKillType::Thrown,
-		};
-		static auto sodersKills = std::vector<eMapKillMethod>{
-			eMapKillMethod::Soders_Electrocution,
-			eMapKillMethod::Soders_Explosion,
-			eMapKillMethod::Soders_PoisonStemCells,
-			eMapKillMethod::Soders_RobotArms,
-			eMapKillMethod::Soders_ShootHeart,
-			eMapKillMethod::Soders_TrashHeart,
-		};
 
 		RouletteSpin spin(this->mission);
 		std::set<eKillMethod> usedMethods;
@@ -526,12 +493,14 @@ public:
 				auto cond = std::optional<RouletteSpinCondition>();
 
 				if (target.getType() == eTargetType::Soders) {
-					auto killMethod = !useSpecificMethod ? randomVectorElement(gunKillMethods) : eKillMethod::NONE;
+					auto killMethod = !useSpecificMethod ? randomVectorElement(firearmKillMethods) : eKillMethod::NONE;
 					auto specificMethod = useSpecificMethod ? randomVectorElement(sodersKills) : eMapKillMethod::NONE;
 					auto killInfo = KillMethod{killMethod};
 					auto mapMethodInfo = MapKillMethod{specificMethod};
 					if (killInfo.isElimination) continue;
-					auto killType = killInfo.isGun ? randomVectorElement(gunKillTypes) : eKillType::Any;
+					auto killType = killInfo.isGun
+						? randomVectorElement(gunKillTypes)
+						: eKillType::Any;
 					auto alreadySpanMethod = useSpecificMethod
 						? false
 						: usedMethods.contains(killMethod);
@@ -546,7 +515,7 @@ public:
 						? eKillMethod::NONE
 						: (methodType == eMethodType::Standard
 							? randomVectorElement(standardKillMethods)
-							: randomVectorElement(gunKillMethods));
+							: randomVectorElement(firearmKillMethods));
 					auto alreadySpanMethod = useSpecificMethod
 						? usedMapMethods.contains(mapMethodInfo.method)
 						: usedMethods.contains(killMethod);
@@ -558,14 +527,19 @@ public:
 
 					if (this->doTagsViolateRules(tags)) continue;
 
-					auto killType = killInfo.isGun
-						? randomVectorElement(gunKillTypes)
-						: (useSpecificMethod && mapMethodInfo.isMelee ? randomVectorElement(meleeKillTypes) : eKillType::Any);
+					auto killType = eKillType::Any;
+					if (killInfo.isGun) killType = randomVectorElement(this->gunKillTypes);
+					else if (killMethod == eKillMethod::Explosive) killType = randomVectorElement(this->explosiveKillTypes);
+					else if (useSpecificMethod && mapMethodInfo.isMelee) killType = randomVectorElement(this->meleeKillTypes);
+
 					cond.emplace(target, *disguise, std::move(killInfo), std::move(mapMethodInfo), killType);
 				}
 
 				if (cond) {
 					if (spin.getNumLargeFirearms() > 0 && cond->killMethod.isGun && cond->killMethod.isLarge) continue;
+					if (cond->killMethod.method == eKillMethod::Explosive && cond->killType == eKillType::Loud)
+						cond->killMethod.isRemote = false;
+
 					auto tags = target.testRules(*cond);
 
 					if (this->doTagsViolateRules(tags)) continue;

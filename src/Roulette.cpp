@@ -8,6 +8,57 @@ std::random_device RouletteSpinGenerator::rd;
 std::mt19937 RouletteSpinGenerator::gen(rd());
 std::set<eMethodTag> RouletteTarget::emptyMethodTags;
 
+const std::vector<eKillMethod> RouletteSpinGenerator::standardKillMethods = {
+	eKillMethod::ConsumedPoison,
+	eKillMethod::Drowning,
+	eKillMethod::Electrocution,
+	eKillMethod::Explosion,
+	eKillMethod::Explosive,
+	eKillMethod::Fall,
+	eKillMethod::FallingObject,
+	eKillMethod::FiberWire,
+	eKillMethod::Fire,
+	eKillMethod::InjectedPoison,
+	eKillMethod::NeckSnap,
+};
+
+const std::vector<eKillMethod> RouletteSpinGenerator::firearmKillMethods {
+	eKillMethod::AssaultRifle,
+	eKillMethod::Elimination,
+	eKillMethod::Pistol,
+	//eKillMethod::PistolElimination,
+	eKillMethod::Shotgun,
+	eKillMethod::SMG,
+	//eKillMethod::SMGElimination,
+	eKillMethod::Sniper,
+};
+
+const std::vector<eKillType> RouletteSpinGenerator::gunKillTypes {
+	eKillType::Any,
+	eKillType::Loud,
+	eKillType::Silenced,
+};
+
+const std::vector<eKillType> RouletteSpinGenerator::explosiveKillTypes {
+	eKillType::Any,
+	eKillType::Loud,
+};
+
+const std::vector<eKillType> RouletteSpinGenerator::meleeKillTypes {
+	eKillType::Any,
+	eKillType::Melee,
+	eKillType::Thrown,
+};
+
+const std::vector<eMapKillMethod> RouletteSpinGenerator::sodersKills {
+	eMapKillMethod::Soders_Electrocution,
+	eMapKillMethod::Soders_Explosion,
+	eMapKillMethod::Soders_PoisonStemCells,
+	eMapKillMethod::Soders_RobotArms,
+	eMapKillMethod::Soders_ShootHeart,
+	eMapKillMethod::Soders_TrashHeart,
+};
+
 KillMethod::KillMethod(eKillMethod method) : method(method),
 	name(getKillMethodName(method)),
 	image(getKillMethodImage(method)),
