@@ -218,6 +218,10 @@ auto generatorAddMissionDisguises(RouletteSpinGenerator& generator, eMission mis
 			generator.addDisguise("CICADA Bodyguard", "outfit_d2c76544-3a12-43a8-abc3-c7ce51830c1e_0.jpg");
 			generator.addDisguise("Helmut Kruger", "outfit_642c20f9-bf41-41b4-b0bb-2491b5be938a_0.jpg");
 			generator.addDisguise("Palace Staff", "outfit_2018db77-aa8a-4bf9-9afb-56bdaa161156_0.jpg");
+
+			if (mission == eMission::PARIS_HOLIDAYHOARDERS)
+				generator.addDisguise("Santa", "outfit_315400cd-90d8-43cc-8c22-62c0cb8969a5_0.jpg");
+				
 			generator.addDisguise("Security Guard", "outfit_992cc7b6-4ccf-4ae8-a467-e9b2aabaeeb5_0.jpg");
 			generator.addDisguise("Sheikh Salman Al-Ghazali", "outfit_a8ecd823-6e08-4cfe-a04d-816d387fcf0c_0.jpg");
 			generator.addDisguise("Stylist", "outfit_96e32a7a-129a-4dd6-9b5b-3000a58f2a0f_0.jpg");
@@ -225,25 +229,51 @@ auto generatorAddMissionDisguises(RouletteSpinGenerator& generator, eMission mis
 			generator.addDisguise("Vampire Magician", "outfit_1fdc259e-b96a-47f2-bbd8-e86e78d6df70_0.jpg");
 			break;
 		case eMission::SAPIENZA_WORLDOFTOMORROW:
+			generator.addDisguise("Suit", "outfit_75759271-e236-4b33-8dd5-7e502c958d05_0.jpg", true);
 			generator.addDisguise("Biolab Security", "outfit_91b37d1f-21ba-42b5-81fa-f4b6ce2ba691_0.jpg");
+			generator.addDisguise("Bodyguard", "outfit_bf9629e0-f25c-4e71-9561-4a99a93a43e8_0.jpg");
+			generator.addDisguise("Bohemian", "outfit_61b8f96e-4986-4f0a-ab95-dcdc69f51580_0.jpg");
 			generator.addDisguise("Butler", "outfit_81eed11b-eaa3-4fd3-97ba-e1e89dcca57e_0.jpg");
+			generator.addDisguise("Chef", "outfit_4c6816d8-4ae7-4161-a971-970055e64b34_0.jpg");
+			generator.addDisguise("Church Staff", "outfit_5440b347-026f-402c-9cd4-3b4e142804ce_0.jpg");
 			generator.addDisguise("Cyclist", "outfit_b58672d6-c235-4c08-a856-ef7caee777dd_0.jpg");
 			generator.addDisguise("Delivery Man", "outfit_0d35cd13-e2ca-4375-9a67-763d1b776b48_0.jpg");
 			generator.addDisguise("Dr. Oscar Lafayette", "outfit_fbf69e85-da3c-423b-bef9-da1b64f35f6b_0.jpg");
+			generator.addDisguise("Gardener", "outfit_d788ff58-8a7a-4a85-acdd-c0e5693525f0_0.jpg");
+			generator.addDisguise("Green Plumber", "outfit_844680e8-ae40-4fec-92b7-69c7619feb82_0.jpg");
 			generator.addDisguise("Hazmat Suit", "outfit_98e839aa-7bee-46d7-9963-6190cd310a37_0.jpg");
+			generator.addDisguise("Housekeeper", "outfit_a6c81663-684d-4506-abc0-65b35c4d8b63_0.jpg");
+			generator.addDisguise("Kitchen Assistant", "outfit_10601c6b-1f65-44ed-92a1-bf843f023d3f_0.jpg");
 			generator.addDisguise("Lab Technician", "outfit_2894c92d-b780-412f-a48f-5c5ddf0dafc8_0.jpg");
 			generator.addDisguise("Mansion Security", "outfit_fd56a934-f402-4b52-bdca-8bbc737400ff_0.jpg");
 			generator.addDisguise("Mansion Staff", "outfit_5edcef70-c4bb-4856-9124-de3d39fa814a_0.jpg");
 			generator.addDisguise("Plague Doctor", "outfit_2bbc0c72-fc99-465d-9dec-c276f68ab982_0.jpg");
+			generator.addDisguise("Priest", "outfit_98888ced-60f9-4f83-a93b-bf0ef2963341_0.jpg");
 			generator.addDisguise("Private Detective", "outfit_02a9f8e4-3ed1-4c29-9f73-88e0cf2d7b5e_0.jpg");
 			generator.addDisguise("Roberto Vargas", "outfit_691311a2-c215-4250-a318-fb25fd08e265_0.jpg");
+			generator.addDisguise("Red Plumber", "outfit_37352a6b-eb58-4458-a5d6-522dd0508baa_0.jpg");
 			generator.addDisguise("Store Clerk", "outfit_063fa6ef-9d58-4c3e-a4fd-70ce51a2f862_0.jpg");
 			generator.addDisguise("Street Performer", "outfit_40bc08b2-1d39-4321-ab14-76f300e4ea3a_0.jpg");
-			[[fallthrough]];
+			generator.addDisguise("Waiter", "outfit_430e8743-df1a-4e88-955f-793bff2e3a6a_0.jpg");
+			break;
 		case eMission::SAPIENZA_THEAUTHOR:
+			generator.addDisguise("Suit", "outfit_75759271-e236-4b33-8dd5-7e502c958d05_0.jpg", true);
+			generator.addDisguise("Bodyguard", "outfit_bf9629e0-f25c-4e71-9561-4a99a93a43e8_0.jpg");
+			generator.addDisguise("Bohemian", "outfit_61b8f96e-4986-4f0a-ab95-dcdc69f51580_0.jpg");
+			generator.addDisguise("Brother Akram", "outfit_a6034d86-0fa4-46ce-8deb-90acf2d1e485_0.jpg");
 			generator.addDisguise("Chef", "outfit_4c6816d8-4ae7-4161-a971-970055e64b34_0.jpg");
+			generator.addDisguise("Church Staff", "outfit_5440b347-026f-402c-9cd4-3b4e142804ce_0.jpg");
+			generator.addDisguise("Craig Black", "outfit_e710b6a4-b6f1-40a3-9389-cf297fff8d86_0.jpg");
+			generator.addDisguise("Gardener", "outfit_d788ff58-8a7a-4a85-acdd-c0e5693525f0_0.jpg");
+			generator.addDisguise("Green Plumber", "outfit_844680e8-ae40-4fec-92b7-69c7619feb82_0.jpg");
 			generator.addDisguise("Housekeeper", "outfit_a6c81663-684d-4506-abc0-65b35c4d8b63_0.jpg");
-			[[fallthrough]];
+			generator.addDisguise("Kitchen Assistant", "outfit_10601c6b-1f65-44ed-92a1-bf843f023d3f_0.jpg");
+			generator.addDisguise("Red Plumber", "outfit_37352a6b-eb58-4458-a5d6-522dd0508baa_0.jpg");
+			generator.addDisguise("Salvatore Bravuomo", "outfit_7766b295-35f3-45a8-b73d-10b222ed18ef_0.jpg");
+			generator.addDisguise("SFX Crew", "outfit_2fd2437d-a5eb-4bfd-bd2d-a4f240a8f0ce_0.jpg");
+			generator.addDisguise("Super Fan", "outfit_95c7f899-e20c-4182-a228-28bd3d8a4ff4_0.jpg");
+			generator.addDisguise("Waiter", "outfit_430e8743-df1a-4e88-955f-793bff2e3a6a_0.jpg");
+			break;
 		case eMission::SAPIENZA_LANDSLIDE:
 			generator.addDisguise("Suit", "outfit_75759271-e236-4b33-8dd5-7e502c958d05_0.jpg", true);
 			generator.addDisguise("Bodyguard", "outfit_bf9629e0-f25c-4e71-9561-4a99a93a43e8_0.jpg");
@@ -252,24 +282,13 @@ auto generatorAddMissionDisguises(RouletteSpinGenerator& generator, eMission mis
 			generator.addDisguise("Gardener", "outfit_d788ff58-8a7a-4a85-acdd-c0e5693525f0_0.jpg");
 			generator.addDisguise("Green Plumber", "outfit_844680e8-ae40-4fec-92b7-69c7619feb82_0.jpg");
 			generator.addDisguise("Kitchen Assistant", "outfit_10601c6b-1f65-44ed-92a1-bf843f023d3f_0.jpg");
+			generator.addDisguise("Photographer", "outfit_b110cb05-0a38-4d77-b199-16e15a98b111_0.jpg");
 			generator.addDisguise("Priest", "outfit_98888ced-60f9-4f83-a93b-bf0ef2963341_0.jpg");
 			generator.addDisguise("Red Plumber", "outfit_37352a6b-eb58-4458-a5d6-522dd0508baa_0.jpg");
-			generator.addDisguise("Waiter", "outfit_430e8743-df1a-4e88-955f-793bff2e3a6a_0.jpg");
-
-			if (mission == eMission::SAPIENZA_THEAUTHOR) {
-				generator.addDisguise("Brother Akram", "outfit_a6034d86-0fa4-46ce-8deb-90acf2d1e485_0.jpg");
-				generator.addDisguise("Craig Black", "outfit_e710b6a4-b6f1-40a3-9389-cf297fff8d86_0.jpg");
-				generator.addDisguise("SFX Crew", "outfit_2fd2437d-a5eb-4bfd-bd2d-a4f240a8f0ce_0.jpg");
-				generator.addDisguise("Super Fan", "outfit_95c7f899-e20c-4182-a228-28bd3d8a4ff4_0.jpg");
-			}
-			if (mission == eMission::SAPIENZA_THEAUTHOR || mission == eMission::SAPIENZA_LANDSLIDE) {
 				generator.addDisguise("Salvatore Bravuomo", "outfit_7766b295-35f3-45a8-b73d-10b222ed18ef_0.jpg");
-			}
-			if (mission == eMission::SAPIENZA_LANDSLIDE) {
-				generator.addDisguise("Photographer", "outfit_b110cb05-0a38-4d77-b199-16e15a98b111_0.jpg");
 				generator.addDisguise("Security", "outfit_94a0d283-bea4-468d-ad8f-ec2735008511_0.jpg");
 				generator.addDisguise("Stage Crew", "outfit_6f9f7786-2044-4394-98b4-f79da0341e7f_0.jpg");
-			}
+			generator.addDisguise("Waiter", "outfit_430e8743-df1a-4e88-955f-793bff2e3a6a_0.jpg");
 			break;
 		case eMission::SAPIENZA_THEICON:
 			generator.addDisguise("Suit", "outfit_cad53cde-4d4a-41cb-9259-87b544f718ad_0.jpg", true);
@@ -279,16 +298,24 @@ auto generatorAddMissionDisguises(RouletteSpinGenerator& generator, eMission mis
 			generator.addDisguise("SFX Crew", "outfit_2fd2437d-a5eb-4bfd-bd2d-a4f240a8f0ce_0.jpg");
 			break;
 		case eMission::MARRAKESH_GILDEDCAGE:
+			generator.addDisguise("Suit", "outfit_cb105877-743d-4a3b-bdad-28a022630306_0.jpg", true);
+			generator.addDisguise("Bodyguard", "outfit_97536da8-64a5-4675-a108-08ff7be41c1f_0.jpg");
 			generator.addDisguise("Cameraman", "outfit_e0fc86fb-a852-4652-bb5c-b591f7bfeb29_0.jpg");
 			generator.addDisguise("Consulate Intern", "outfit_65f23b45-f5ab-4ede-82ec-46e4de38c0e9_0.jpg");
 			generator.addDisguise("Consulate Janitor", "outfit_1b87edd3-fb1e-4adf-9463-efcb380cbd6b_0.jpg");
 			generator.addDisguise("Elite Soldier", "outfit_e5bb3c6b-2fcd-4e36-a30d-03955cb05088_0.jpg");
+			generator.addDisguise("Food Vendor", "outfit_98b1c1f6-2634-4c29-b9e6-fa8d7633100a_0.jpg");
+			generator.addDisguise("Fortune Teller", "outfit_dc4762e0-e58e-4336-a3c1-40646087267a_0.jpg");
+			generator.addDisguise("Handyman", "outfit_eb48ed16-195a-4de1-bae6-d7e7ec92046c_0.jpg");
 			generator.addDisguise("Headmaster", "outfit_6136fa6a-3f1f-4606-9b87-fde9538966dc_0.jpg");
 			generator.addDisguise("Local Printing Crew", "outfit_ff6668af-dde5-48c3-ac9a-f47b860122d0_0.jpg");
 			generator.addDisguise("Masseur", "outfit_138eda40-501a-48b8-affc-928321566a4e_0.jpg");
 			generator.addDisguise("Military Officer", "outfit_65d860f4-998e-4f92-a1d7-9f40c04a2474_0.jpg");
+			generator.addDisguise("Military Soldier", "outfit_955bca9e-bc91-46da-a4df-3dfc787c8aff_0.jpg");
 			generator.addDisguise("Prisoner", "outfit_fdb4aade-4d5f-47e2-896f-fc1addf64d52_0.jpg");
-			[[fallthrough]];
+			generator.addDisguise("Shopkeeper", "outfit_ecf1b752-0cd6-4283-a1a5-743fc0249525_0.jpg");
+			generator.addDisguise("Waiter", "outfit_6348cc33-665f-4470-80b4-a0ad836df702_0.jpg");
+			break;
 		case eMission::MARRAKESH_HOUSEBUILTONSAND:
 			generator.addDisguise("Suit", "outfit_cb105877-743d-4a3b-bdad-28a022630306_0.jpg", true);
 			generator.addDisguise("Bodyguard", "outfit_97536da8-64a5-4675-a108-08ff7be41c1f_0.jpg");
@@ -300,18 +327,30 @@ auto generatorAddMissionDisguises(RouletteSpinGenerator& generator, eMission mis
 			generator.addDisguise("Waiter", "outfit_6348cc33-665f-4470-80b4-a0ad836df702_0.jpg");
 			break;
 		case eMission::BANGKOK_CLUB27:
-			generator.addDisguise("Abel de Silva", "outfit_f17c737e-9947-4fff-a443-65b381839d00_0.jpg");
-			generator.addDisguise("Morgan's Bodyguard", "outfit_4c8941af-541c-4bb9-a8e3-8b8e61b0a789_0.jpg");
-			generator.addDisguise("Stalker", "outfit_c5bf909f-66a5-4f19-9aee-aeb953172e45_0.jpg");
-			[[fallthrough]];
-		case eMission::BANGKOK_THESOURCE:
 			generator.addDisguise("Suit", "outfit_c85c6e9c-0aee-43b8-b6e3-d70e76f1890e_0.jpg", true);
+			generator.addDisguise("Abel de Silva", "outfit_f17c737e-9947-4fff-a443-65b381839d00_0.jpg");
 			generator.addDisguise("Exterminator", "outfit_bf0bcc10-a335-4714-9dd2-69e7e96704b2_0.jpg");
 			generator.addDisguise("Groundskeeper", "outfit_7f6da010-1a96-4783-83e0-48c55a3e7103_0.jpg");
 			generator.addDisguise("Hotel Security", "outfit_07f3479a-29fc-45e0-bb80-e49a41c0c410_0.jpg");
 			generator.addDisguise("Hotel Staff", "outfit_c96f9796-0194-47c6-836c-102473cc6c3c_0.jpg");
 			generator.addDisguise("Jordan Cross' Bodyguard", "outfit_d01c8adc-735c-44f0-9105-b28d85062def_0.jpg");
 			generator.addDisguise("Kitchen Staff", "outfit_85971c2e-34ae-423f-9653-bc32c5f3e4f7_0.jpg");
+			generator.addDisguise("Morgan's Bodyguard", "outfit_4c8941af-541c-4bb9-a8e3-8b8e61b0a789_0.jpg");
+			generator.addDisguise("Recording Crew", "outfit_ef704a8e-88b7-430a-a217-09bbeea7074f_0.jpg");
+			generator.addDisguise("Stalker", "outfit_c5bf909f-66a5-4f19-9aee-aeb953172e45_0.jpg");
+			generator.addDisguise("Waiter", "outfit_57669117-fbf3-4630-80e3-53e5420a8f30_0.jpg");
+			break;
+		case eMission::BANGKOK_THESOURCE:
+			generator.addDisguise("Suit", "outfit_c85c6e9c-0aee-43b8-b6e3-d70e76f1890e_0.jpg", true);
+			generator.addDisguise("Cult Bodyguard", "outfit_78fcc1c0-5612-4284-924f-c20d9e322c96_0.jpg");
+			generator.addDisguise("Cult Initiate", "outfit_54c5dce7-cfe4-43f9-8cee-8204e38c608d_0.jpg");
+			generator.addDisguise("Exterminator", "outfit_bf0bcc10-a335-4714-9dd2-69e7e96704b2_0.jpg");
+			generator.addDisguise("Groundskeeper", "outfit_7f6da010-1a96-4783-83e0-48c55a3e7103_0.jpg");
+			generator.addDisguise("Hotel Security", "outfit_07f3479a-29fc-45e0-bb80-e49a41c0c410_0.jpg");
+			generator.addDisguise("Hotel Staff", "outfit_c96f9796-0194-47c6-836c-102473cc6c3c_0.jpg");
+			generator.addDisguise("Jordan Cross' Bodyguard", "outfit_d01c8adc-735c-44f0-9105-b28d85062def_0.jpg");
+			generator.addDisguise("Kitchen Staff", "outfit_85971c2e-34ae-423f-9653-bc32c5f3e4f7_0.jpg");
+			generator.addDisguise("Militia Soldier", "outfit_3dd1467a-72d2-4590-93d8-10807c9f1645_0.jpg");
 			generator.addDisguise("Recording Crew", "outfit_ef704a8e-88b7-430a-a217-09bbeea7074f_0.jpg");
 			generator.addDisguise("Waiter", "outfit_57669117-fbf3-4630-80e3-53e5420a8f30_0.jpg");
 			if (mission == eMission::BANGKOK_THESOURCE) {
@@ -334,28 +373,39 @@ auto generatorAddMissionDisguises(RouletteSpinGenerator& generator, eMission mis
 			break;
 		case eMission::HOKKAIDO_SITUSINVERSUS:
 		case eMission::HOKKAIDO_SNOWFESTIVAL:
+			generator.addDisguise("Suit", "outfit_1c3964e1-75c6-4adb-8cbb-ebd0a830b839_0.jpg", true);
 			generator.addDisguise("Baseball Player", "outfit_5946924c-958d-48f4-ada3-86beb58aa778_0.jpg");
-			generator.addDisguise("Chief Surgeon", "outfit_b8deb948-a0a9-4dcb-9df4-1c2ecd29765f_0.jpg");
-			generator.addDisguise("Ninja", "outfit_06456d4d-da36-4008-bea5-c0b985a565f5_0.jpg");
-			generator.addDisguise("VIP Patient (Jason Portman)", "outfit_b00380d9-3f84-4484-8bd6-39c0872da414_0.jpg");
-			[[fallthrough]];
-		case eMission::HOKKAIDO_PATIENTZERO:
-			if (mission == eMission::HOKKAIDO_PATIENTZERO) {
-				generator.addDisguise("Suit", "outfit_250112ba-e39d-473c-99cd-5fc429c5fff5_0.jpg", true);
-				generator.addDisguise("Bio Suit", "outfit_e8ef431d-62b2-4d0a-a766-750c0bc6e39e_0.jpg");
-				generator.addDisguise("Head Researcher", "outfit_ff534fe6-065e-4062-a32c-8bdf223efd98_0.jpg");
-			}
-			else
-				generator.addDisguise("Suit", "outfit_1c3964e1-75c6-4adb-8cbb-ebd0a830b839_0.jpg", true);
-
 			generator.addDisguise("Bodyguard", "outfit_5270225d-797a-43f8-8435-078ae0d92249_0.jpg");
 			generator.addDisguise("Chef", "outfit_d6bbbe57-8cc8-45ed-b1cb-d1f9477c4b61_0.jpg");
+			generator.addDisguise("Chief Surgeon", "outfit_b8deb948-a0a9-4dcb-9df4-1c2ecd29765f_0.jpg");
+			generator.addDisguise("Doctor", "outfit_a8191fb6-9a6d-4145-8baf-d786e6f392b7_0.jpg");
 			generator.addDisguise("Handyman", "outfit_d9e0fbe7-ff74-4030-bed6-5a33a01acead_0.jpg");
 			generator.addDisguise("Helicopter Pilot", "outfit_b8dbb7b6-fef9-4782-923f-ddebc573625e_0.jpg");
 			generator.addDisguise("Hospital Director", "outfit_f6f53c39-17f9-48cf-9594-7a696b036d61_0.jpg");
 			generator.addDisguise("Morgue Doctor", "outfit_3d4424a3-23f9-4cfe-b225-2e06c17d780b_0.jpg");
 			generator.addDisguise("Motorcyclist", "outfit_8e01f48f-ef06-448c-9d22-5d58c4414968_0.jpg");
 			generator.addDisguise("Ninja", "outfit_06456d4d-da36-4008-bea5-c0b985a565f5_0.jpg");
+			generator.addDisguise("Patient", "outfit_c98a6467-5dd9-4041-8bff-119445750d4d_0.jpg");
+			generator.addDisguise("Resort Security", "outfit_25406dac-d206-48c7-a6df-dffb887c9227_0.jpg");
+			generator.addDisguise("Resort Staff", "outfit_52992428-8884-48db-9764-e486d17d4804_0.jpg");
+			generator.addDisguise("Surgeon", "outfit_6a25f81d-cf2e-4e47-9b15-0f712a3f71d9_0.jpg");
+			generator.addDisguise("VIP Patient (Amos Dexter)", "outfit_427bac46-50b4-4470-9b0e-478efcd37793_0.jpg");
+			generator.addDisguise("VIP Patient (Jason Portman)", "outfit_b00380d9-3f84-4484-8bd6-39c0872da414_0.jpg");
+			generator.addDisguise("Yoga Instructor", "outfit_f4ea7065-d32b-4a97-baf9-98072a9c8128_0.jpg");
+			break;
+		case eMission::HOKKAIDO_PATIENTZERO:
+			if (mission == eMission::HOKKAIDO_PATIENTZERO) {
+				generator.addDisguise("Suit", "outfit_250112ba-e39d-473c-99cd-5fc429c5fff5_0.jpg", true);
+				generator.addDisguise("Bio Suit", "outfit_e8ef431d-62b2-4d0a-a766-750c0bc6e39e_0.jpg");
+			generator.addDisguise("Bodyguard", "outfit_5270225d-797a-43f8-8435-078ae0d92249_0.jpg");
+			generator.addDisguise("Chef", "outfit_d6bbbe57-8cc8-45ed-b1cb-d1f9477c4b61_0.jpg");
+			generator.addDisguise("Doctor", "outfit_a8191fb6-9a6d-4145-8baf-d786e6f392b7_0.jpg");
+			generator.addDisguise("Handyman", "outfit_d9e0fbe7-ff74-4030-bed6-5a33a01acead_0.jpg");
+			generator.addDisguise("Head Researcher", "outfit_ff534fe6-065e-4062-a32c-8bdf223efd98_0.jpg");
+			generator.addDisguise("Helicopter Pilot", "outfit_b8dbb7b6-fef9-4782-923f-ddebc573625e_0.jpg");
+			generator.addDisguise("Hospital Director", "outfit_f6f53c39-17f9-48cf-9594-7a696b036d61_0.jpg");
+			generator.addDisguise("Morgue Doctor", "outfit_3d4424a3-23f9-4cfe-b225-2e06c17d780b_0.jpg");
+			generator.addDisguise("Motorcyclist", "outfit_8e01f48f-ef06-448c-9d22-5d58c4414968_0.jpg");
 			generator.addDisguise("Patient", "outfit_c98a6467-5dd9-4041-8bff-119445750d4d_0.jpg");
 			generator.addDisguise("Resort Security", "outfit_25406dac-d206-48c7-a6df-dffb887c9227_0.jpg");
 			generator.addDisguise("Resort Staff", "outfit_52992428-8884-48db-9764-e486d17d4804_0.jpg");
