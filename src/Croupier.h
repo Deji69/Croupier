@@ -20,6 +20,8 @@ public:
 	auto OnDrawMenu() -> void override;
 	auto OnDrawUI(bool p_HasFocus) -> void override;
 	auto OnMissionSelect(eMission) -> void;
+	auto DrawEditSpinUI(bool focused) -> void;
+	auto DrawSpinUI(bool focused) -> void;
 	auto Respin() -> void;
 
 private:
@@ -44,7 +46,9 @@ private:
 	EventSystem events;
 	int uiMissionSelectIndex = 0;
 	bool showUI = false;
+	bool showManualModeUI = false;
 	bool externalWindowEnabled = true;
+	bool inGameWindowEnabled = false;
 	bool externalWindowOnTop = true;
 	bool externalWindowTextOnly = false;
 	bool spinCompleted = false;

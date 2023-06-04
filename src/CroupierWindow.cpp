@@ -326,7 +326,7 @@ auto CroupierWindow::OnPaint(HWND wnd) -> LRESULT
 
 					if (this->textMode) {
 						auto const top = TEXT_ROW_HEIGHT * row;
-						auto condTextWide = widen(std::format("{}: {} / {}", cond.target.getName(), cond.methodName, cond.disguise.name));
+						auto condTextWide = widen(std::format("{}: {} / {}", cond.target.get().getName(), cond.methodName, cond.disguise.get().name));
 						auto textRect = getRect(6, top + 5, 640 - 6, TEXT_ROW_HEIGHT);
 						this->RT->DrawTextA(
 							condTextWide.c_str(),
@@ -341,10 +341,10 @@ auto CroupierWindow::OnPaint(HWND wnd) -> LRESULT
 						auto const left = 640 * col + (wide && n == conds.size() - 1 && conds.size() % 2 == 1 ? 640 : 0);
 
 						auto killMethodPath = std::filesystem::path{cond.killMethod.image};
-						auto targetImage = this->loadImage(std::filesystem::path("actors"s) / cond.target.getImage());
+						auto targetImage = this->loadImage(std::filesystem::path("actors"s) / cond.target.get().getImage());
 						auto killMethodImageFolder = std::filesystem::path(cond.killMethod.method == eKillMethod::NONE ? "weapons"s : ""s);
 						auto killMethodImage = this->loadImage(killMethodImageFolder / killMethodPath);
-						auto disguiseImage = this->loadImage(std::filesystem::path("outfits"s) / cond.disguise.image);
+						auto disguiseImage = this->loadImage(std::filesystem::path("outfits"s) / cond.disguise.get().image);
 
 						auto targetImageRect = getRect(left + 0, top, 260, 200);
 						auto methodImageRect = getRect(left + 260, top, 134, 100);
@@ -355,8 +355,8 @@ auto CroupierWindow::OnPaint(HWND wnd) -> LRESULT
 						if (disguiseImage) this->RT->DrawBitmap(disguiseImage, disguiseImageRect);
 
 						auto killMethodTextWide = widen(cond.methodName);
-						auto disguiseTextWide = widen(cond.disguise.name);
-						auto wname = widen(cond.target.getName());
+						auto disguiseTextWide = widen(cond.disguise.get().name);
+						auto wname = widen(cond.target.get().getName());
 						auto const imagesWidth = this->textMode ? 0 : 260 + 134;
 						auto methodTextRect = getRect(left + imagesWidth + 6, top + 5, 220, 90);
 						auto disguiseTextRect = getRect(left + imagesWidth + 6, top + 100 + 5, 220, 90);

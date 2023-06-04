@@ -12,6 +12,7 @@
 #include "util.h"
 
 using namespace std::string_literals;
+using namespace std::string_view_literals;
 
 enum class eMissionGroup {
 	Main,
@@ -209,8 +210,6 @@ auto generatorAddMissionDisguises(RouletteSpinGenerator& generator, eMission mis
 			generator.addDisguise("Soviet Soldier", "outfit_5c419edc-203d-4736-8cd9-bed24e34171c_0.jpg");
 			break;
 		case eMission::PARIS_HOLIDAYHOARDERS:
-			generator.addDisguise("Santa", "outfit_315400cd-90d8-43cc-8c22-62c0cb8969a5_0.jpg");
-			[[fallthrough]];
 		case eMission::PARIS_SHOWSTOPPER:
 			generator.addDisguise("Suit", "outfit_4ea5c203-b7c4-489d-85a1-bf91272d6190_0.jpg", true);
 			generator.addDisguise("Auction Staff", "outfit_b5664bed-462a-417c-bc07-6d9d3f666e2d_0.jpg");
@@ -285,9 +284,9 @@ auto generatorAddMissionDisguises(RouletteSpinGenerator& generator, eMission mis
 			generator.addDisguise("Photographer", "outfit_b110cb05-0a38-4d77-b199-16e15a98b111_0.jpg");
 			generator.addDisguise("Priest", "outfit_98888ced-60f9-4f83-a93b-bf0ef2963341_0.jpg");
 			generator.addDisguise("Red Plumber", "outfit_37352a6b-eb58-4458-a5d6-522dd0508baa_0.jpg");
-				generator.addDisguise("Salvatore Bravuomo", "outfit_7766b295-35f3-45a8-b73d-10b222ed18ef_0.jpg");
-				generator.addDisguise("Security", "outfit_94a0d283-bea4-468d-ad8f-ec2735008511_0.jpg");
-				generator.addDisguise("Stage Crew", "outfit_6f9f7786-2044-4394-98b4-f79da0341e7f_0.jpg");
+			generator.addDisguise("Salvatore Bravuomo", "outfit_7766b295-35f3-45a8-b73d-10b222ed18ef_0.jpg");
+			generator.addDisguise("Security", "outfit_94a0d283-bea4-468d-ad8f-ec2735008511_0.jpg");
+			generator.addDisguise("Stage Crew", "outfit_6f9f7786-2044-4394-98b4-f79da0341e7f_0.jpg");
 			generator.addDisguise("Waiter", "outfit_430e8743-df1a-4e88-955f-793bff2e3a6a_0.jpg");
 			break;
 		case eMission::SAPIENZA_THEICON:
@@ -353,11 +352,6 @@ auto generatorAddMissionDisguises(RouletteSpinGenerator& generator, eMission mis
 			generator.addDisguise("Militia Soldier", "outfit_3dd1467a-72d2-4590-93d8-10807c9f1645_0.jpg");
 			generator.addDisguise("Recording Crew", "outfit_ef704a8e-88b7-430a-a217-09bbeea7074f_0.jpg");
 			generator.addDisguise("Waiter", "outfit_57669117-fbf3-4630-80e3-53e5420a8f30_0.jpg");
-			if (mission == eMission::BANGKOK_THESOURCE) {
-				generator.addDisguise("Cult Bodyguard", "outfit_78fcc1c0-5612-4284-924f-c20d9e322c96_0.jpg");
-				generator.addDisguise("Cult Initiate", "outfit_54c5dce7-cfe4-43f9-8cee-8204e38c608d_0.jpg");
-				generator.addDisguise("Militia Soldier", "outfit_3dd1467a-72d2-4590-93d8-10807c9f1645_0.jpg");
-			}
 			break;
 		case eMission::COLORADO_FREEDOMFIGHTERS:
 			generator.addDisguise("Suit", "outfit_dd9792ec-4a1d-4c29-a928-a556fc0b6692_0.jpg", true);
@@ -394,9 +388,8 @@ auto generatorAddMissionDisguises(RouletteSpinGenerator& generator, eMission mis
 			generator.addDisguise("Yoga Instructor", "outfit_f4ea7065-d32b-4a97-baf9-98072a9c8128_0.jpg");
 			break;
 		case eMission::HOKKAIDO_PATIENTZERO:
-			if (mission == eMission::HOKKAIDO_PATIENTZERO) {
-				generator.addDisguise("Suit", "outfit_250112ba-e39d-473c-99cd-5fc429c5fff5_0.jpg", true);
-				generator.addDisguise("Bio Suit", "outfit_e8ef431d-62b2-4d0a-a766-750c0bc6e39e_0.jpg");
+			generator.addDisguise("Suit", "outfit_250112ba-e39d-473c-99cd-5fc429c5fff5_0.jpg", true);
+			generator.addDisguise("Bio Suit", "outfit_e8ef431d-62b2-4d0a-a766-750c0bc6e39e_0.jpg");
 			generator.addDisguise("Bodyguard", "outfit_5270225d-797a-43f8-8435-078ae0d92249_0.jpg");
 			generator.addDisguise("Chef", "outfit_d6bbbe57-8cc8-45ed-b1cb-d1f9477c4b61_0.jpg");
 			generator.addDisguise("Doctor", "outfit_a8191fb6-9a6d-4145-8baf-d786e6f392b7_0.jpg");
@@ -731,7 +724,7 @@ auto generatorForMission(eMission mission) -> RouletteSpinGenerator
 			auto& prisoner = generator.getDisguiseByNameAssert("Prisoner");
 
 			chs.addRule([&prisoner](const RouletteSpinCondition& cond) {
-				if (&cond.disguise != &prisoner) return false;
+				if (&cond.disguise.get() != &prisoner) return false;
 				return !cond.killMethod.isRemote;
 			}, { eMethodTag::BannedInRR, eMethodTag::Hard });
 			break;
@@ -740,7 +733,7 @@ auto generatorForMission(eMission mission) -> RouletteSpinGenerator
 		{
 			auto& stalker = generator.getDisguiseByNameAssert("Stalker");
 			auto stalkerRemoteTest = [&stalker](const RouletteSpinCondition& cond) {
-				if (&cond.disguise != &stalker) return false;
+				if (&cond.disguise.get() != &stalker) return false;
 				return !cond.killMethod.isRemote;
 			};
 
@@ -846,7 +839,7 @@ auto generatorForMission(eMission mission) -> RouletteSpinGenerator
 		{
 			auto& knightsArmor = generator.getDisguiseByNameAssert("Knight's Armor");
 			auto knightsArmorTrapTest = [&knightsArmor](const RouletteSpinCondition& cond){
-				return &cond.disguise == &knightsArmor && !cond.killMethod.isRemote;
+				return &cond.disguise.get() == &knightsArmor && !cond.killMethod.isRemote;
 			};
 
 			auto& zw = generator.addTarget("Zoe Washington", "magpie_zoe_washington.jpg");
@@ -893,7 +886,7 @@ auto generatorForMission(eMission mission) -> RouletteSpinGenerator
 			ms.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 			auto& skydivingSuit = generator.getDisguiseByNameAssert("Skydiving Suit");
 			ms.addRule([&skydivingSuit](const RouletteSpinCondition& cond) {
-				return &cond.disguise == &skydivingSuit && cond.killMethod.method == eKillMethod::Drowning;
+				return &cond.disguise.get() == &skydivingSuit && cond.killMethod.method == eKillMethod::Drowning;
 			}, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 			break;
 		}
@@ -987,36 +980,41 @@ Croupier::~Croupier() {
 
 auto Croupier::OnDrawMenu() -> void {
 	// Toggle our message when the user presses our button.
-	if (ImGui::Button(ICON_MD_CASINO " CROUPIER")) {
+	if (ImGui::Button(ICON_MD_CASINO " CROUPIER"))
 		this->showUI = !this->showUI;
-	}
 }
 
-auto Croupier::OnDrawUI(bool p_HasFocus) -> void {
+auto Croupier::OnDrawUI(bool focused) -> void {
+	this->DrawSpinUI(focused);
+	this->DrawEditSpinUI(focused);
+
 	if (!this->showUI) return;
+
 	ImGui::PushFont(SDK()->GetImGuiBlackFont());
 	ImGui::SetNextWindowContentSize(ImVec2(400, 0));
 
 	if (ImGui::Begin(ICON_MD_SETTINGS " CROUPIER", &this->showUI)) {
 		ImGui::PushFont(SDK()->GetImGuiRegularFont());
 
+		ImGui::Checkbox("In-Game Window", &this->inGameWindowEnabled);
+
 		if (ImGui::Checkbox("External Window", &this->externalWindowEnabled)) {
 			if (this->externalWindowEnabled) this->window.create();
 			else this->window.destroy();
 		}
-
-		if (ImGui::Checkbox("Always On Top", &this->externalWindowOnTop))
+		
+		if (ImGui::Checkbox("External Window On Top", &this->externalWindowOnTop))
 			this->window.setAlwaysOnTop(this->externalWindowOnTop);
 
-		if (ImGui::Checkbox("Text-Only Mode", &this->externalWindowTextOnly))
+		if (ImGui::Checkbox("External Window Text-Only", &this->externalWindowTextOnly))
 			this->window.setTextMode(this->externalWindowTextOnly);
 
 		auto missionInfoIt = std::find_if(missionInfos.begin(), missionInfos.end(), [this](const MissionInfo& info) {
 			return info.mission == this->spin.getMission();
 		});
-		auto currentIdx = missionInfoIt != missionInfos.end() ? std::distance(missionInfos.begin(), missionInfoIt) : 0;
-		auto& currentMissionInfo = missionInfos[currentIdx];
-		if (ImGui::BeginCombo("Mission", currentMissionInfo.name.data(), ImGuiComboFlags_HeightLarge)) {
+		auto const currentIdx = missionInfoIt != missionInfos.end() ? std::distance(missionInfos.begin(), missionInfoIt) : 0;
+		auto const& currentMissionInfo = missionInfos[currentIdx];
+		if (ImGui::BeginCombo("##Mission", currentMissionInfo.name.data(), ImGuiComboFlags_HeightLarge)) {
 			for (auto& missionInfo : missionInfos) {
 				auto const selected = missionInfo.mission != eMission::NONE && this->spin.getMission() == missionInfo.mission;
 				auto imGuiFlags = missionInfo.mission == eMission::NONE ? ImGuiSelectableFlags_Disabled : 0;
@@ -1028,10 +1026,20 @@ auto Croupier::OnDrawUI(bool p_HasFocus) -> void {
 			}
 			ImGui::EndCombo();
 		}
+
 		if (ImGui::Button("Respin"))
 			this->Respin();
-		if (this->spinHistory.size()) {
+
+		if (!this->spin.getConditions().empty()) {
 			ImGui::SameLine();
+
+			if (ImGui::Button("Manual"))
+				this->showManualModeUI = !this->showManualModeUI;
+		}
+
+		if (!this->spinHistory.empty()) {
+			ImGui::SameLine();
+			auto update = false;
 
 			if (ImGui::Button("Previous")) {
 				auto guard = std::unique_lock(this->sharedSpin.mutex);
@@ -1039,7 +1047,181 @@ auto Croupier::OnDrawUI(bool p_HasFocus) -> void {
 				this->spinHistory.pop();
 				this->spinCompleted = false;
 				this->LogSpin();
-				this->window.update();
+				update = true;
+			}
+
+			if (update) this->window.update();
+		}
+		ImGui::PopFont();
+	}
+
+	ImGui::End();
+	ImGui::PopFont();
+}
+
+auto Croupier::DrawSpinUI(bool focused) -> void {
+	if (!this->inGameWindowEnabled) return;
+
+	ImGui::PushFont(SDK()->GetImGuiBlackFont());
+
+	if (ImGui::Begin(ICON_MD_CASINO " CROUPIER - SPIN", &this->inGameWindowEnabled, ImGuiWindowFlags_AlwaysAutoResize)) {
+		ImGui::PushFont(SDK()->GetImGuiBoldFont());
+
+		auto const& conds = this->spin.getConditions();
+		for (auto& cond : conds) {
+			auto str = std::format("{}: {} / {}", cond.target.get().getName(), cond.methodName, cond.disguise.get().name);
+			ImGui::Text(str.c_str());
+		}
+	}
+
+	ImGui::End();
+	ImGui::PopFont();
+}
+
+auto Croupier::DrawEditSpinUI(bool focused) -> void {
+	if (!this->showManualModeUI) return;
+
+	ImGui::PushFont(SDK()->GetImGuiBlackFont());
+
+	if (ImGui::Begin(ICON_MD_EDIT " CROUPIER - EDIT SPIN", &this->showManualModeUI, ImGuiWindowFlags_AlwaysAutoResize)) {
+		ImGui::PushFont(SDK()->GetImGuiRegularFont());
+
+		auto& targets = this->generator.getTargets();
+		for (auto& target : targets) {
+			auto currentMethod = eKillMethod::NONE;
+			auto currentMapMethod = eMapKillMethod::NONE;
+			auto currentKillType = eKillType::Any;
+			auto currentKillMethodIsGun = false;
+			auto const isSoders = target.getType() == eTargetType::Soders;
+			const RouletteDisguise* currentDisguise = nullptr;
+
+			for (auto& cond : this->spin.getConditions()) {
+				if (cond.target.get().getName() != target.getName()) continue;
+				currentMethod = cond.killMethod.method;
+				currentMapMethod = cond.specificKillMethod.method;
+				currentKillType = cond.killType;
+				currentKillMethodIsGun = cond.killMethod.isGun;
+				currentDisguise = &cond.disguise.get();
+				break;
+			}
+
+			auto const methodType = currentMapMethod != eMapKillMethod::NONE
+				? eMethodType::Map
+				: (currentKillMethodIsGun ? eMethodType::Weapon : eMethodType::Standard);
+			auto const methodName = currentMethod != eKillMethod::NONE
+				? getKillMethodName(currentMethod)
+				: getSpecificKillMethodName(currentMapMethod);
+
+			ImGui::PushFont(SDK()->GetImGuiBoldFont());
+			ImGui::Text(target.getName().c_str());
+			ImGui::PopFont();
+
+			if (ImGui::BeginCombo(("Method##"s + target.getName()).c_str(), methodName.data(), ImGuiComboFlags_HeightLarge)) {
+				ImGui::Selectable("------ STANDARD ------", false, ImGuiSelectableFlags_Disabled);
+
+				if (isSoders) {
+					for (auto const method : this->generator.sodersKills) {
+						auto const name = getSpecificKillMethodName(method);
+						auto const selected = method == currentMapMethod;
+
+						if (ImGui::Selectable(name.data(), selected)) {
+							auto const guard = std::unique_lock(this->sharedSpin.mutex);
+							this->spin.setTargetMapMethod(target, method);
+							this->window.update();
+						}
+
+						if (selected) ImGui::SetItemDefaultFocus();
+					}
+				} else {
+					for (auto const method : this->generator.standardKillMethods) {
+						auto const name = getKillMethodName(method);
+						auto const selected = method == currentMethod;
+
+						if (ImGui::Selectable(name.data(), selected)) {
+							auto guard = std::unique_lock(this->sharedSpin.mutex);
+							this->spin.setTargetStandardMethod(target, method);
+							this->window.update();
+						}
+
+						if (selected) ImGui::SetItemDefaultFocus();
+					}
+				}
+
+				ImGui::Selectable("------ FIREARMS ------", false, ImGuiSelectableFlags_Disabled);
+
+				for (auto const method : this->generator.firearmKillMethods) {
+					auto name = getKillMethodName(method);
+					auto const selected = method == currentMethod;
+
+					if (isSoders && isKillMethodElimination(method)) continue;
+
+					if (ImGui::Selectable(name.data(), selected)) {
+						if (selected) ImGui::SetItemDefaultFocus();
+						auto guard = std::unique_lock(this->sharedSpin.mutex);
+						this->spin.setTargetStandardMethod(target, method);
+						this->window.update();
+					}
+
+					if (selected) ImGui::SetItemDefaultFocus();
+				}
+
+				if (!isSoders) {
+					ImGui::Selectable("------ MAP METHODS ------", false, ImGuiSelectableFlags_Disabled);
+
+					for (auto const& method : this->generator.getMapKillMethods()) {
+						auto const selected = method.method == currentMapMethod;
+
+						if (ImGui::Selectable(method.name.data(), selected)) {
+							auto guard = std::unique_lock(this->sharedSpin.mutex);
+							this->spin.setTargetMapMethod(target, method.method);
+							this->window.update();
+						}
+
+						if (selected) ImGui::SetItemDefaultFocus();
+					}
+				}
+
+				ImGui::EndCombo();
+			}
+
+			ImGui::SameLine();
+			auto const hasKillTypes = methodType != eMethodType::Standard || currentMethod == eKillMethod::Explosive;
+			auto const killTypeLabel = hasKillTypes ? getKillTypeName(currentKillType) : "-------"sv;
+			if (ImGui::BeginCombo(("Type##"s + target.getName()).c_str(), killTypeLabel.empty() ? "(Any)" : killTypeLabel.data(), ImGuiComboFlags_HeightLarge)) {
+				if (hasKillTypes) {
+					auto const& killTypes = methodType == eMethodType::Map
+						? this->generator.meleeKillTypes
+						: (methodType == eMethodType::Weapon ? this->generator.gunKillTypes : this->generator.explosiveKillTypes);
+
+					for (auto type : killTypes) {
+						auto const selected = currentKillType == type;
+						auto const name = getKillTypeName(type);
+						if (ImGui::Selectable(name.empty() ? "(Any)" : name.data(), selected)) {
+							auto guard = std::unique_lock(this->sharedSpin.mutex);
+							this->spin.setTargetMethodType(target, type);
+							this->window.update();
+						}
+
+						if (selected) ImGui::SetItemDefaultFocus();
+					}
+				}
+
+				ImGui::EndCombo();
+			}
+
+			if (ImGui::BeginCombo(("Disguise##"s + target.getName()).c_str(), currentDisguise ? currentDisguise->name.c_str() : nullptr, ImGuiComboFlags_HeightLarge)) {
+				for (auto const& disguise : this->generator.getDisguises()) {
+					auto const selected = currentDisguise == &disguise;
+					if (ImGui::Selectable(disguise.name.c_str(), selected)) {
+						auto guard = std::unique_lock(this->sharedSpin.mutex);
+						this->spin.setTargetDisguise(target, disguise);
+						this->window.update();
+					}
+
+					if (selected) ImGui::SetItemDefaultFocus();
+				}
+
+				ImGui::EndCombo();
 			}
 		}
 
@@ -1082,15 +1264,35 @@ auto Croupier::LogSpin() -> void {
 	{
 		if (!spinText.empty()) spinText += " || ";
 		if (cond.killMethod.name.empty()) spinText += "***";
-		spinText += std::format("{}: {} / {}", cond.target.getName(), cond.methodName, cond.disguise.name);
+		spinText += std::format("{}: {} / {}", cond.target.get().getName(), cond.methodName, cond.disguise.get().name);
 	}
 
 	Logger::Info("Croupier: {}", spinText);
 }
 
 auto Croupier::SetupEvents() -> void {
+	events.listen<Events::ContractStart>([this](auto& ev) {
+		auto guard = std::unique_lock(this->sharedSpin.mutex);
+		this->sharedSpin.kills.clear();
+	});
 	events.listen<Events::ContractEnd>([this](auto& ev){
 		this->spinCompleted = true;
+	});
+	events.listen<Events::Kill>([this](const ServerEvent<Events::Kill>& ev) {
+		if (!ev.Value.IsTarget) return;
+		if (this->spinCompleted) return;
+
+		auto guard = std::shared_lock(this->sharedSpin.mutex);
+
+		auto const& conditions = this->sharedSpin.spin.getConditions();
+		if (conditions.empty()) return;
+
+		auto const& name = ev.Value.ActorName;
+		
+		for (auto& cond : conditions) {
+			if (cond.target.get().getName() != name) continue;
+			Logger::Debug("Killed '{}'", name);
+		}
 	});
 }
 

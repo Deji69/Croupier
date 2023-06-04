@@ -39,9 +39,20 @@ struct LoadedImage {
 	}
 };
 
+struct RouletteSpinKill
+{
+	std::string targetName;
+	bool validMethod = true;
+	bool validDisguise = true;
+
+	RouletteSpinKill(std::string targetName) : targetName(targetName)
+	{ }
+};
+
 struct SharedRouletteSpin
 {
 	const RouletteSpin& spin;
+	std::vector<RouletteSpinKill> kills;
 	std::shared_mutex mutex;
 
 	SharedRouletteSpin(const RouletteSpin& spin) : spin(spin)

@@ -207,6 +207,7 @@ struct KillMethod
 	KillMethod(eKillMethod method);
 	KillMethod(KillMethod&&) noexcept = default;
 	KillMethod(const KillMethod&) = default;
+	auto operator=(KillMethod&&) noexcept -> KillMethod& = default;
 };
 
 struct MapKillMethod
@@ -220,6 +221,7 @@ struct MapKillMethod
 	MapKillMethod(eMapKillMethod method);
 	MapKillMethod(MapKillMethod&&) noexcept = default;
 	MapKillMethod(const MapKillMethod&) = default;
+	auto operator=(MapKillMethod&&) noexcept -> MapKillMethod& = default;
 };
 
 class RouletteSpinMethod
@@ -331,8 +333,8 @@ private:
 
 struct RouletteSpinCondition
 {
-	const RouletteTarget& target;
-	const RouletteDisguise& disguise;
+	std::reference_wrapper<const RouletteTarget> target;
+	std::reference_wrapper<const RouletteDisguise> disguise;
 	KillMethod killMethod;
 	MapKillMethod specificKillMethod;
 	eKillType killType = eKillType::Any;
@@ -368,6 +370,42 @@ public:
 		return this->conditions.back();
 	}
 
+	auto setTargetDisguise(const RouletteTarget& target, const RouletteDisguise& disguise) {
+		for (auto& cond : this->conditions) {
+			if (&cond.target.get() != &target) continue;
+
+			cond = RouletteSpinCondition{target, disguise, cond.killMethod, cond.specificKillMethod, cond.killType};
+			break;
+		}
+	}
+
+	auto setTargetStandardMethod(const RouletteTarget& target, eKillMethod method) {
+		for (auto& cond : this->conditions) {
+			if (&cond.target.get() != &target) continue;
+
+			cond = RouletteSpinCondition{target, cond.disguise, method, eMapKillMethod::NONE, eKillType::Any};
+			break;
+		}
+	}
+
+	auto setTargetMapMethod(const RouletteTarget& target, eMapKillMethod method) {
+		for (auto& cond : this->conditions) {
+			if (&cond.target.get() != &target) continue;
+
+			cond = RouletteSpinCondition{target, cond.disguise, eKillMethod::NONE, method, eKillType::Any};
+			break;
+		}
+	}
+
+	auto setTargetMethodType(const RouletteTarget& target, eKillType killType) {
+		for (auto& cond : this->conditions) {
+			if (&cond.target.get() != &target) continue;
+
+			cond = RouletteSpinCondition{target, cond.disguise, cond.killMethod, cond.specificKillMethod, killType};
+			break;
+		}
+	}
+
 	auto getMission() const {
 		return this->mission;
 	}
@@ -386,7 +424,7 @@ public:
 
 	auto hasDisguise(const RouletteDisguise& disguise) const {
 		return std::find_if(this->conditions.cbegin(), this->conditions.cend(), [&disguise](const RouletteSpinCondition& c) {
-			return &c.disguise == &disguise;
+			return &c.disguise.get() == &disguise;
 		}) != this->conditions.end();
 	}
 
@@ -452,6 +490,10 @@ public:
 	}
 
 	auto getObjectiveCount() const { return this->targets.size(); }
+
+	auto& getDisguises() const { return this->disguises; }
+	auto& getTargets() const { return this->targets; }
+	auto& getMapKillMethods() const { return this->mapKillMethods; }
 
 	auto getDisguiseByName(std::string_view name) const {
 		auto it = std::find_if(this->disguises.cbegin(), this->disguises.cend(), [name](const RouletteDisguise& disguise) {
@@ -551,7 +593,7 @@ public:
 					}
 					else if (target.getType() != eTargetType::Soders) usedMethods.emplace(cond->killMethod.method);
 
-					usedDisguises.emplace(&cond->disguise);
+					usedDisguises.emplace(&cond->disguise.get());
 					spin.add(std::move(*cond));
 					break;
 				}
