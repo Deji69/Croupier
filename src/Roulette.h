@@ -341,8 +341,11 @@ struct RouletteSpinCondition
 	RouletteSpinCondition(const RouletteTarget& target, const RouletteDisguise& disguise, KillMethod killMethod, MapKillMethod specificKillMethod, eKillType killType = eKillType::Any) :
 		target(target), disguise(disguise), killMethod(killMethod), specificKillMethod(specificKillMethod), killType(killType)
 	{
-		if (killMethod.name.empty()) killMethod.name = specificKillMethod.name;
-		methodName = killType != eKillType::Any ? std::format("{} {}", std::string(getKillTypeName(killType)), killMethod.name) : killMethod.name;
+		if (this->killMethod.name.empty()) this->killMethod.name = specificKillMethod.name;
+		if (this->killMethod.image.empty()) this->killMethod.image = specificKillMethod.image;
+		methodName = killType != eKillType::Any
+			? std::format("{} {}", std::string(getKillTypeName(killType)), this->killMethod.name)
+			: this->killMethod.name;
 	}
 
 	RouletteSpinCondition(RouletteSpinCondition&&) noexcept = default;
