@@ -230,12 +230,11 @@ auto CroupierWindow::destroy() -> void
 		this->windowThread.detach();
 	}
 
-	WNDCLASSA wcl;
-	if (GetClassInfo(this->hInst, "Croupier", &wcl))
-		UnregisterClass("Croupier", this->hInst);
-
 	this->loadedImages.clear();
 
+	SafeRelease(this->Brush);
+	SafeRelease(this->DWriteTextFormat);
+	SafeRelease(this->DWriteFactory);
 	SafeRelease(this->IWICFactory);
 	SafeRelease(this->D2DFactory);
 	SafeRelease(this->RT);
