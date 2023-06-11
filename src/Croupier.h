@@ -31,6 +31,8 @@ private:
 
 	auto LogSpin() -> void;
 	auto SetupEvents() -> void;
+	auto SetupMissions() -> void;
+	auto GetMission(eMission mission) -> const RouletteMission*;
 
 	DECLARE_PLUGIN_DETOUR(Croupier, void, OnEventReceived, ZAchievementManagerSimple* th, const SOnlineEvent& event);
 	DECLARE_PLUGIN_DETOUR(Croupier, void, OnEventSent, ZAchievementManagerSimple* th, uint32_t eventIndex, const ZDynamicObject& event);
@@ -38,6 +40,7 @@ private:
 
 private:
 	CroupierWindow window;
+	std::vector<RouletteMission> missions;
 	RouletteSpinGenerator generator;
 	RouletteSpin spin;
 	SharedRouletteSpin sharedSpin;

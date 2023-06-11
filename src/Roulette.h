@@ -168,6 +168,8 @@ enum class eTargetType {
 };
 struct KillMethod;
 struct MapKillMethod;
+class RouletteSpinCondition;
+class RouletteSpinGenerator;
 
 auto isKillMethodGun(eKillMethod method) -> bool;
 auto isKillMethodLarge(eKillMethod method) -> bool;
@@ -245,8 +247,6 @@ public:
 	std::string image;
 	bool suit = false;
 };
-
-class RouletteSpinCondition;
 
 class RouletteTarget
 {
@@ -331,6 +331,52 @@ private:
 	std::unordered_map<eMapKillMethod, std::set<eMethodTag>> specialMethodInfo;
 };
 
+class RouletteMission
+{
+public:
+	RouletteMission(eMission mission) : mission(mission) {}
+
+	auto getMission() const { return this->mission; }
+	auto& getDisguises() const { return this->disguises; }
+	auto& getTargets() const { return this->targets; }
+	auto& getMapKillMethods() const { return this->mapKillMethods; }
+	auto getObjectiveCount() const { return this->targets.size(); }
+
+	auto getDisguiseByName(std::string_view name) const {
+		auto it = std::find_if(this->disguises.cbegin(), this->disguises.cend(), [name](const RouletteDisguise& disguise) {
+			return disguise.name == name;
+		});
+		return it != this->disguises.end() ? &*it : nullptr;
+	}
+
+	auto& getDisguiseByNameAssert(std::string_view name) const {
+		auto disguise = this->getDisguiseByName(name);
+		if (!disguise) throw RouletteGeneratorException(std::format("Failed to find disguise \"{}\".", name));
+		return *disguise;
+	}
+
+	auto& addTarget(std::string name, std::string image, eTargetType type = eTargetType::Normal) {
+		this->targets.emplace_back(name, image, type);
+		return this->targets.back();
+	}
+
+	auto& addDisguise(std::string name, std::string image, bool suit = false) {
+		this->disguises.emplace_back(name, image, suit);
+		return this->disguises.back();
+	}
+
+	auto& addMapMethod(eMapKillMethod method) {
+		this->mapKillMethods.emplace_back(method);
+		return this->mapKillMethods.back();
+	}
+
+private:
+	eMission mission = eMission::NONE;
+	std::vector<RouletteTarget> targets;
+	std::vector<RouletteDisguise> disguises;
+	std::vector<MapKillMethod> mapKillMethods;
+};
+
 struct RouletteSpinCondition
 {
 	std::reference_wrapper<const RouletteTarget> target;
@@ -340,8 +386,13 @@ struct RouletteSpinCondition
 	eKillType killType = eKillType::Any;
 	std::string methodName;
 
-	RouletteSpinCondition(const RouletteTarget& target, const RouletteDisguise& disguise, KillMethod killMethod, MapKillMethod specificKillMethod, eKillType killType = eKillType::Any) :
-		target(target), disguise(disguise), killMethod(killMethod), specificKillMethod(specificKillMethod), killType(killType)
+	RouletteSpinCondition(
+		const RouletteTarget& target, const RouletteDisguise& disguise,
+		KillMethod killMethod, MapKillMethod specificKillMethod,
+		eKillType killType = eKillType::Any
+	) :
+		target(target), disguise(disguise),
+		killMethod(killMethod), specificKillMethod(specificKillMethod), killType(killType)
 	{
 		if (this->killMethod.name.empty()) this->killMethod.name = specificKillMethod.name;
 		if (this->killMethod.image.empty()) this->killMethod.image = specificKillMethod.image;
@@ -359,9 +410,9 @@ class RouletteSpin
 {
 public:
 	RouletteSpin() = default;
-	RouletteSpin(RouletteSpin&&) noexcept = default;
+	RouletteSpin(RouletteSpin&& o) noexcept = default;
 	RouletteSpin(const RouletteSpin&) = default;
-	RouletteSpin(eMission mission) : mission(mission) {}
+	RouletteSpin(const RouletteMission* mission) : mission(mission) {}
 
 	auto operator=(RouletteSpin&&) noexcept -> RouletteSpin& = default;
 
@@ -370,40 +421,33 @@ public:
 		return this->conditions.back();
 	}
 
-	auto setTargetDisguise(const RouletteTarget& target, const RouletteDisguise& disguise) {
-		for (auto& cond : this->conditions) {
-			if (&cond.target.get() != &target) continue;
+	auto& getForTarget(const RouletteTarget& target) {
+		auto it = std::find_if(this->conditions.begin(), this->conditions.end(), [&target](const RouletteSpinCondition& cond) {
+			return &cond.target.get() == &target;
+		});
+		if (it == this->conditions.end())
+			throw RouletteGeneratorException("Invalid target for current generator.");
+		return *it;
+	}
 
-			cond = RouletteSpinCondition{target, disguise, cond.killMethod, cond.specificKillMethod, cond.killType};
-			break;
-		}
+	auto setTargetDisguise(const RouletteTarget& target, const RouletteDisguise& disguise) {
+		auto& cond = this->getForTarget(target);
+		cond = RouletteSpinCondition{target, disguise, cond.killMethod, cond.specificKillMethod, cond.killType};
 	}
 
 	auto setTargetStandardMethod(const RouletteTarget& target, eKillMethod method) {
-		for (auto& cond : this->conditions) {
-			if (&cond.target.get() != &target) continue;
-
-			cond = RouletteSpinCondition{target, cond.disguise, method, eMapKillMethod::NONE, eKillType::Any};
-			break;
-		}
+		auto& cond = this->getForTarget(target);
+		cond = RouletteSpinCondition{target, cond.disguise, method, eMapKillMethod::NONE, eKillType::Any};
 	}
 
 	auto setTargetMapMethod(const RouletteTarget& target, eMapKillMethod method) {
-		for (auto& cond : this->conditions) {
-			if (&cond.target.get() != &target) continue;
-
-			cond = RouletteSpinCondition{target, cond.disguise, eKillMethod::NONE, method, eKillType::Any};
-			break;
-		}
+		auto& cond = this->getForTarget(target);
+		cond = RouletteSpinCondition{target, cond.disguise, eKillMethod::NONE, method, eKillType::Any};
 	}
 
 	auto setTargetMethodType(const RouletteTarget& target, eKillType killType) {
-		for (auto& cond : this->conditions) {
-			if (&cond.target.get() != &target) continue;
-
-			cond = RouletteSpinCondition{target, cond.disguise, cond.killMethod, cond.specificKillMethod, killType};
-			break;
-		}
+		auto& cond = this->getForTarget(target);
+		cond = RouletteSpinCondition{target, cond.disguise, cond.killMethod, cond.specificKillMethod, killType};
 	}
 
 	auto getMission() const {
@@ -431,7 +475,7 @@ public:
 	auto const& getConditions() const noexcept { return this->conditions; }
 
 private:
-	eMission mission = eMission::NONE;
+	const RouletteMission* mission = nullptr;
 	std::vector<RouletteSpinCondition> conditions;
 };
 
@@ -447,10 +491,12 @@ public:
 
 public:
 	RouletteSpinGenerator() noexcept = default;
-	RouletteSpinGenerator(eMission mission) : mission(mission)
+	RouletteSpinGenerator(const RouletteMission* mission) : mission(mission)
 	{ }
 
-	auto setMission(eMission mission) {
+	auto getMission() { return this->mission; }
+
+	auto setMission(const RouletteMission* mission) {
 		this->mission = mission;
 	}
 
@@ -474,40 +520,6 @@ public:
 		this->buggyConditionsAllowed = allow;
 	}
 
-	auto& addTarget(std::string name, std::string image, eTargetType type = eTargetType::Normal) {
-		this->targets.emplace_back(name, image, type);
-		return this->targets.back();
-	}
-
-	auto& addDisguise(std::string name, std::string image, bool suit = false) {
-		this->disguises.emplace_back(name, image, suit);
-		return this->disguises.back();
-	}
-
-	auto& addMapMethod(eMapKillMethod method) {
-		this->mapKillMethods.emplace_back(method);
-		return this->mapKillMethods.back();
-	}
-
-	auto getObjectiveCount() const { return this->targets.size(); }
-
-	auto& getDisguises() const { return this->disguises; }
-	auto& getTargets() const { return this->targets; }
-	auto& getMapKillMethods() const { return this->mapKillMethods; }
-
-	auto getDisguiseByName(std::string_view name) const {
-		auto it = std::find_if(this->disguises.cbegin(), this->disguises.cend(), [name](const RouletteDisguise& disguise) {
-			return disguise.name == name;
-		});
-		return it != this->disguises.end() ? &*it : nullptr;
-	}
-
-	auto& getDisguiseByNameAssert(std::string_view name) const {
-		auto disguise = this->getDisguiseByName(name);
-		if (!disguise) throw RouletteGeneratorException(std::format("Failed to find disguise \"{}\".", name));
-		return *disguise;
-	}
-
 	auto spin() {
 		static auto methodTypes = std::vector<eMethodType>{
 			eMethodType::Standard,
@@ -518,19 +530,22 @@ public:
 		RouletteSpin spin(this->mission);
 		std::set<eKillMethod> usedMethods;
 		std::set<eMapKillMethod> usedMapMethods;
-		std::set<const RouletteDisguise*> usedDisguises;
 
-		for (const auto& target : this->targets) {
+		auto& targets = this->mission->getTargets();
+		auto& disguises = this->mission->getDisguises();
+		auto& mapKillMethods = this->mission->getMapKillMethods();
+
+		for (const auto& target : targets) {
 			for (auto attempts = 0; ; ++attempts) {
 				if (attempts > 30) throw RouletteGeneratorException("Failed to generate spin.");
 
 				auto methodType = randomVectorElement(methodTypes);
-				while (!this->mapKillMethods.size() && methodType == eMethodType::Map)
+				while (!mapKillMethods.size() && methodType == eMethodType::Map)
 					methodType = randomVectorElement(methodTypes);
 
 				auto useSpecificMethod = methodType == eMethodType::Map;
-				auto disguise = &randomVectorElement(this->disguises);
-				if (spin.hasDisguise(*disguise) && !this->duplicateDisguiseAllowed) continue;
+				auto& disguise = randomVectorElement(disguises);
+				if (spin.hasDisguise(disguise) && !this->duplicateDisguiseAllowed) continue;
 
 				auto cond = std::optional<RouletteSpinCondition>();
 
@@ -549,10 +564,10 @@ public:
 
 					if (alreadySpanMethod && !this->duplicateKillMethodAllowed) continue;
 
-					cond.emplace(target, *disguise, std::move(killInfo), std::move(mapMethodInfo), killType);
+					cond.emplace(target, disguise, std::move(killInfo), std::move(mapMethodInfo), killType);
 				}
 				else if (target.getType() == eTargetType::Normal) {
-					auto mapMethodInfo = useSpecificMethod ? randomVectorElement(this->mapKillMethods) : eMapKillMethod::NONE;
+					auto mapMethodInfo = useSpecificMethod ? randomVectorElement(this->mission->getMapKillMethods()) : eMapKillMethod::NONE;
 					auto killMethod = useSpecificMethod
 						? eKillMethod::NONE
 						: (methodType == eMethodType::Standard
@@ -574,7 +589,7 @@ public:
 					else if (killMethod == eKillMethod::Explosive) killType = randomVectorElement(this->explosiveKillTypes);
 					else if (useSpecificMethod && mapMethodInfo.isMelee) killType = randomVectorElement(this->meleeKillTypes);
 
-					cond.emplace(target, *disguise, std::move(killInfo), std::move(mapMethodInfo), killType);
+					cond.emplace(target, disguise, std::move(killInfo), std::move(mapMethodInfo), killType);
 				}
 
 				if (cond) {
@@ -593,7 +608,6 @@ public:
 					}
 					else if (target.getType() != eTargetType::Soders) usedMethods.emplace(cond->killMethod.method);
 
-					usedDisguises.emplace(&cond->disguise.get());
 					spin.add(std::move(*cond));
 					break;
 				}
@@ -623,16 +637,19 @@ private:
 		return vec[dist(gen)];
 	}
 
+	template<typename T>
+	static auto randomVectorIndex(const std::vector<T>& vec) -> int {
+		std::uniform_int_distribution<> dist(0, vec.size() - 1);
+		return dist(gen);
+	}
+
 	static auto randomBool() -> bool {
 		std::uniform_int_distribution<> dist(0, 1);
 		return dist(gen) != 0;
 	}
 
 private:
-	eMission mission = eMission::NONE;
-	std::vector<RouletteTarget> targets;
-	std::vector<RouletteDisguise> disguises;
-	std::vector<MapKillMethod> mapKillMethods;
+	const RouletteMission* mission = nullptr;
 	bool buggyConditionsAllowed = false;
 	bool specificEliminationsAllowed = false;
 	bool bannedInRRConditionsAllowed = false;

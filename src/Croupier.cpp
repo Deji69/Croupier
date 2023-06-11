@@ -109,9 +109,9 @@ std::unordered_map<std::string, eMission> Croupier::MissionContractIds = {
 	{"2aac100-dfc7-4f85-b9cd-528114436f6c", eMission::AMBROSE_SHADOWSINTHEWATER},
 };
 
-auto generatorAddMissionMethods(RouletteSpinGenerator& generator, eMission mission)
+auto generatorAddMissionMethods(RouletteMission& mission)
 {
-	switch (mission) {
+	switch (mission.getMission()) {
 		case eMission::ICAFACILITY_GUIDED:
 		case eMission::ICAFACILITY_FREEFORM:
 			break;
@@ -121,72 +121,250 @@ auto generatorAddMissionMethods(RouletteSpinGenerator& generator, eMission missi
 			//generator.addMapMethod(eMapKillMethod::HolidayFireAxe);
 			[[fallthrough]];
 		case eMission::PARIS_SHOWSTOPPER:
-			generator.addMapMethod(eMapKillMethod::BattleAxe);
-			generator.addMapMethod(eMapKillMethod::Cleaver);
-			generator.addMapMethod(eMapKillMethod::FireAxe);
-			generator.addMapMethod(eMapKillMethod::Hatchet);
-			generator.addMapMethod(eMapKillMethod::KitchenKnife);
-			generator.addMapMethod(eMapKillMethod::LetterOpener);
-			generator.addMapMethod(eMapKillMethod::Saber);
-			generator.addMapMethod(eMapKillMethod::Scissors);
-			generator.addMapMethod(eMapKillMethod::Screwdriver);
+			mission.addMapMethod(eMapKillMethod::BattleAxe);
+			mission.addMapMethod(eMapKillMethod::Cleaver);
+			mission.addMapMethod(eMapKillMethod::FireAxe);
+			mission.addMapMethod(eMapKillMethod::Hatchet);
+			mission.addMapMethod(eMapKillMethod::KitchenKnife);
+			mission.addMapMethod(eMapKillMethod::LetterOpener);
+			mission.addMapMethod(eMapKillMethod::Saber);
+			mission.addMapMethod(eMapKillMethod::Scissors);
+			mission.addMapMethod(eMapKillMethod::Screwdriver);
 			break;
 		case eMission::SAPIENZA_WORLDOFTOMORROW:
-			generator.addMapMethod(eMapKillMethod::AmputationKnife);
-			generator.addMapMethod(eMapKillMethod::BattleAxe);
-			generator.addMapMethod(eMapKillMethod::CircumcisionKnife);
-			generator.addMapMethod(eMapKillMethod::Cleaver);
-			generator.addMapMethod(eMapKillMethod::CombatKnife);
-			generator.addMapMethod(eMapKillMethod::FireAxe);
-			generator.addMapMethod(eMapKillMethod::FoldingKnife);
-			generator.addMapMethod(eMapKillMethod::Hatchet);
-			generator.addMapMethod(eMapKillMethod::Katana);
-			generator.addMapMethod(eMapKillMethod::KitchenKnife);
-			generator.addMapMethod(eMapKillMethod::LetterOpener);
-			generator.addMapMethod(eMapKillMethod::OldAxe);
-			generator.addMapMethod(eMapKillMethod::Saber);
-			generator.addMapMethod(eMapKillMethod::Scissors);
-			generator.addMapMethod(eMapKillMethod::Screwdriver);
+			mission.addMapMethod(eMapKillMethod::AmputationKnife);
+			mission.addMapMethod(eMapKillMethod::BattleAxe);
+			mission.addMapMethod(eMapKillMethod::CircumcisionKnife);
+			mission.addMapMethod(eMapKillMethod::Cleaver);
+			mission.addMapMethod(eMapKillMethod::CombatKnife);
+			mission.addMapMethod(eMapKillMethod::FireAxe);
+			mission.addMapMethod(eMapKillMethod::FoldingKnife);
+			mission.addMapMethod(eMapKillMethod::Hatchet);
+			mission.addMapMethod(eMapKillMethod::Katana);
+			mission.addMapMethod(eMapKillMethod::KitchenKnife);
+			mission.addMapMethod(eMapKillMethod::LetterOpener);
+			mission.addMapMethod(eMapKillMethod::OldAxe);
+			mission.addMapMethod(eMapKillMethod::Saber);
+			mission.addMapMethod(eMapKillMethod::Scissors);
+			mission.addMapMethod(eMapKillMethod::Screwdriver);
 			break;
 		case eMission::MARRAKESH_GILDEDCAGE:
-			generator.addMapMethod(eMapKillMethod::BattleAxe);
-			generator.addMapMethod(eMapKillMethod::Cleaver);
-			generator.addMapMethod(eMapKillMethod::FireAxe);
-			generator.addMapMethod(eMapKillMethod::KitchenKnife);
-			generator.addMapMethod(eMapKillMethod::LetterOpener);
-			generator.addMapMethod(eMapKillMethod::Saber);
-			generator.addMapMethod(eMapKillMethod::Scissors);
-			generator.addMapMethod(eMapKillMethod::Screwdriver);
+			mission.addMapMethod(eMapKillMethod::BattleAxe);
+			mission.addMapMethod(eMapKillMethod::Cleaver);
+			mission.addMapMethod(eMapKillMethod::FireAxe);
+			mission.addMapMethod(eMapKillMethod::KitchenKnife);
+			mission.addMapMethod(eMapKillMethod::LetterOpener);
+			mission.addMapMethod(eMapKillMethod::Saber);
+			mission.addMapMethod(eMapKillMethod::Scissors);
+			mission.addMapMethod(eMapKillMethod::Screwdriver);
 			break;
 		case eMission::BANGKOK_CLUB27:
-			generator.addMapMethod(eMapKillMethod::Cleaver);
-			generator.addMapMethod(eMapKillMethod::FireAxe);
-			generator.addMapMethod(eMapKillMethod::Hatchet);
-			generator.addMapMethod(eMapKillMethod::Katana);
-			generator.addMapMethod(eMapKillMethod::KitchenKnife);
-			generator.addMapMethod(eMapKillMethod::LetterOpener);
-			generator.addMapMethod(eMapKillMethod::SappersAxe);
-			generator.addMapMethod(eMapKillMethod::Screwdriver);
+			mission.addMapMethod(eMapKillMethod::Cleaver);
+			mission.addMapMethod(eMapKillMethod::FireAxe);
+			mission.addMapMethod(eMapKillMethod::Hatchet);
+			mission.addMapMethod(eMapKillMethod::Katana);
+			mission.addMapMethod(eMapKillMethod::KitchenKnife);
+			mission.addMapMethod(eMapKillMethod::LetterOpener);
+			mission.addMapMethod(eMapKillMethod::SappersAxe);
+			mission.addMapMethod(eMapKillMethod::Screwdriver);
 			break;
 		case eMission::COLORADO_FREEDOMFIGHTERS:
-			generator.addMapMethod(eMapKillMethod::Cleaver);
-			generator.addMapMethod(eMapKillMethod::KitchenKnife);
-			generator.addMapMethod(eMapKillMethod::OldAxe);
-			generator.addMapMethod(eMapKillMethod::Screwdriver);
+			mission.addMapMethod(eMapKillMethod::Cleaver);
+			mission.addMapMethod(eMapKillMethod::KitchenKnife);
+			mission.addMapMethod(eMapKillMethod::OldAxe);
+			mission.addMapMethod(eMapKillMethod::Screwdriver);
 			break;
 		case eMission::HOKKAIDO_SITUSINVERSUS:
-			generator.addMapMethod(eMapKillMethod::Cleaver);
-			generator.addMapMethod(eMapKillMethod::FireAxe);
-			generator.addMapMethod(eMapKillMethod::Katana);
-			generator.addMapMethod(eMapKillMethod::Scalpel);
-			generator.addMapMethod(eMapKillMethod::Scissors);
-			generator.addMapMethod(eMapKillMethod::Screwdriver);
+			mission.addMapMethod(eMapKillMethod::Cleaver);
+			mission.addMapMethod(eMapKillMethod::FireAxe);
+			mission.addMapMethod(eMapKillMethod::Katana);
+			mission.addMapMethod(eMapKillMethod::Scalpel);
+			mission.addMapMethod(eMapKillMethod::Scissors);
+			mission.addMapMethod(eMapKillMethod::Screwdriver);
+			break;
+		case eMission::MIAMI_FINISHLINE:
+		case eMission::MIAMI_ASILVERTONGUE:
+			mission.addMapMethod(eMapKillMethod::AmputationKnife);
+			mission.addMapMethod(eMapKillMethod::BattleAxe);
+			mission.addMapMethod(eMapKillMethod::Cleaver);
+			mission.addMapMethod(eMapKillMethod::FireAxe);
+			mission.addMapMethod(eMapKillMethod::KitchenKnife);
+			mission.addMapMethod(eMapKillMethod::OldAxe);
+			mission.addMapMethod(eMapKillMethod::Scissors);
+			mission.addMapMethod(eMapKillMethod::Screwdriver);
+			mission.addMapMethod(eMapKillMethod::Starfish);
+			break;
+		case eMission::SANTAFORTUNA_THREEHEADEDSERPENT:
+		case eMission::SANTAFORTUNA_EMBRACEOFTHESERPENT:
+			mission.addMapMethod(eMapKillMethod::BarberRazor);
+			mission.addMapMethod(eMapKillMethod::Cleaver);
+			mission.addMapMethod(eMapKillMethod::FoldingKnife);
+			mission.addMapMethod(eMapKillMethod::KitchenKnife);
+			mission.addMapMethod(eMapKillMethod::LetterOpener);
+			mission.addMapMethod(eMapKillMethod::Machete);
+			mission.addMapMethod(eMapKillMethod::SacrificialKnife);
+			mission.addMapMethod(eMapKillMethod::Scissors);
+			mission.addMapMethod(eMapKillMethod::Screwdriver);
+			break;
+		case eMission::MUMBAI_CHASINGAGHOST:
+		case eMission::MUMBAI_ILLUSIONSOFGRANDEUR:
+			mission.addMapMethod(eMapKillMethod::AmputationKnife);
+			mission.addMapMethod(eMapKillMethod::BarberRazor);
+			mission.addMapMethod(eMapKillMethod::BeakStaff);
+			mission.addMapMethod(eMapKillMethod::Cleaver);
+			mission.addMapMethod(eMapKillMethod::FireAxe);
+			mission.addMapMethod(eMapKillMethod::FoldingKnife);
+			mission.addMapMethod(eMapKillMethod::KitchenKnife);
+			mission.addMapMethod(eMapKillMethod::LetterOpener);
+			mission.addMapMethod(eMapKillMethod::OldAxe);
+			mission.addMapMethod(eMapKillMethod::Saber);
+			mission.addMapMethod(eMapKillMethod::Scissors);
+			mission.addMapMethod(eMapKillMethod::Screwdriver);
+			break;
+		case eMission::WHITTLETON_ABITTERPILL:
+		case eMission::WHITTLETON_ANOTHERLIFE:
+			mission.addMapMethod(eMapKillMethod::BattleAxe);
+			mission.addMapMethod(eMapKillMethod::BeakStaff);
+			mission.addMapMethod(eMapKillMethod::FireAxe);
+			mission.addMapMethod(eMapKillMethod::Hatchet);
+			mission.addMapMethod(eMapKillMethod::KitchenKnife);
+			mission.addMapMethod(eMapKillMethod::LetterOpener);
+			mission.addMapMethod(eMapKillMethod::Scissors);
+			mission.addMapMethod(eMapKillMethod::Screwdriver);
+			break;
+		case eMission::ISLEOFSGAIL_THEARKSOCIETY:
+			mission.addMapMethod(eMapKillMethod::BattleAxe);
+			mission.addMapMethod(eMapKillMethod::Broadsword);
+			mission.addMapMethod(eMapKillMethod::CircumcisionKnife);
+			mission.addMapMethod(eMapKillMethod::Cleaver);
+			mission.addMapMethod(eMapKillMethod::FireAxe);
+			mission.addMapMethod(eMapKillMethod::Hatchet);
+			mission.addMapMethod(eMapKillMethod::Katana);
+			mission.addMapMethod(eMapKillMethod::KitchenKnife);
+			mission.addMapMethod(eMapKillMethod::LetterOpener);
+			mission.addMapMethod(eMapKillMethod::OldAxe);
+			mission.addMapMethod(eMapKillMethod::Saber);
+			mission.addMapMethod(eMapKillMethod::SacrificialKnife);
+			mission.addMapMethod(eMapKillMethod::SappersAxe);
+			mission.addMapMethod(eMapKillMethod::Scalpel);
+			mission.addMapMethod(eMapKillMethod::Scissors);
+			mission.addMapMethod(eMapKillMethod::Screwdriver);
+			mission.addMapMethod(eMapKillMethod::Starfish);
+			mission.addMapMethod(eMapKillMethod::VikingAxe);
+			break;
+		case eMission::HAVEN_THELASTRESORT:
+			mission.addMapMethod(eMapKillMethod::BarberRazor);
+			mission.addMapMethod(eMapKillMethod::Cleaver);
+			mission.addMapMethod(eMapKillMethod::FireAxe);
+			mission.addMapMethod(eMapKillMethod::FoldingKnife);
+			mission.addMapMethod(eMapKillMethod::Hatchet);
+			mission.addMapMethod(eMapKillMethod::JarlsPirateSaber);
+			mission.addMapMethod(eMapKillMethod::KitchenKnife);
+			mission.addMapMethod(eMapKillMethod::LetterOpener);
+			mission.addMapMethod(eMapKillMethod::Machete);
+			mission.addMapMethod(eMapKillMethod::Scalpel);
+			mission.addMapMethod(eMapKillMethod::Scissors);
+			mission.addMapMethod(eMapKillMethod::Screwdriver);
+			mission.addMapMethod(eMapKillMethod::Seashell);
+			mission.addMapMethod(eMapKillMethod::Starfish);
+			break;
+		case eMission::DUBAI_ONTOPOFTHEWORLD:
+			mission.addMapMethod(eMapKillMethod::Cleaver);
+			mission.addMapMethod(eMapKillMethod::FireAxe);
+			mission.addMapMethod(eMapKillMethod::FoldingKnife);
+			mission.addMapMethod(eMapKillMethod::KitchenKnife);
+			mission.addMapMethod(eMapKillMethod::LetterOpener);
+			mission.addMapMethod(eMapKillMethod::OrnateScimitar);
+			mission.addMapMethod(eMapKillMethod::Scissors);
+			mission.addMapMethod(eMapKillMethod::Screwdriver);
+			break;
+		case eMission::DARTMOOR_DEATHINTHEFAMILY:
+			mission.addMapMethod(eMapKillMethod::BarberRazor);
+			mission.addMapMethod(eMapKillMethod::Cleaver);
+			mission.addMapMethod(eMapKillMethod::FoldingKnife);
+			mission.addMapMethod(eMapKillMethod::GardenFork);
+			mission.addMapMethod(eMapKillMethod::Hatchet);
+			mission.addMapMethod(eMapKillMethod::KitchenKnife);
+			mission.addMapMethod(eMapKillMethod::LetterOpener);
+			mission.addMapMethod(eMapKillMethod::Saber);
+			mission.addMapMethod(eMapKillMethod::Scissors);
+			mission.addMapMethod(eMapKillMethod::Screwdriver);
+			mission.addMapMethod(eMapKillMethod::Shears);
+			mission.addMapMethod(eMapKillMethod::UnicornHorn);
+			break;
+		case eMission::BERLIN_APEXPREDATOR:
+			mission.addMapMethod(eMapKillMethod::BattleAxe);
+			mission.addMapMethod(eMapKillMethod::CombatKnife);
+			mission.addMapMethod(eMapKillMethod::ConcealableKnife);
+			mission.addMapMethod(eMapKillMethod::FireAxe);
+			mission.addMapMethod(eMapKillMethod::GardenFork);
+			mission.addMapMethod(eMapKillMethod::HobbyKnife);
+			mission.addMapMethod(eMapKillMethod::KitchenKnife);
+			mission.addMapMethod(eMapKillMethod::OldAxe);
+			mission.addMapMethod(eMapKillMethod::ScrapSword);
+			mission.addMapMethod(eMapKillMethod::Screwdriver);
+			break;
+		case eMission::CHONGQING_ENDOFANERA:
+			mission.addMapMethod(eMapKillMethod::Cleaver);
+			mission.addMapMethod(eMapKillMethod::FireAxe);
+			mission.addMapMethod(eMapKillMethod::GardenFork);
+			mission.addMapMethod(eMapKillMethod::HobbyKnife);
+			mission.addMapMethod(eMapKillMethod::KitchenKnife);
+			mission.addMapMethod(eMapKillMethod::LetterOpener);
+			mission.addMapMethod(eMapKillMethod::Scissors);
+			mission.addMapMethod(eMapKillMethod::ScrapSword);
+			mission.addMapMethod(eMapKillMethod::Screwdriver);
+			mission.addMapMethod(eMapKillMethod::Tanto);
+			break;
+		case eMission::MENDOZA_THEFAREWELL:
+			mission.addMapMethod(eMapKillMethod::Broadsword);
+			mission.addMapMethod(eMapKillMethod::CombatKnife);
+			mission.addMapMethod(eMapKillMethod::FireAxe);
+			mission.addMapMethod(eMapKillMethod::GardenFork);
+			mission.addMapMethod(eMapKillMethod::GrapeKnife);
+			mission.addMapMethod(eMapKillMethod::Hatchet);
+			mission.addMapMethod(eMapKillMethod::HobbyKnife);
+			mission.addMapMethod(eMapKillMethod::Icicle);
+			mission.addMapMethod(eMapKillMethod::JarlsPirateSaber);
+			mission.addMapMethod(eMapKillMethod::KitchenKnife);
+			mission.addMapMethod(eMapKillMethod::Machete);
+			mission.addMapMethod(eMapKillMethod::SappersAxe);
+			mission.addMapMethod(eMapKillMethod::Screwdriver);
+			mission.addMapMethod(eMapKillMethod::Shears);
+			mission.addMapMethod(eMapKillMethod::OldAxe);
+			break;
+		case eMission::CARPATHIAN_UNTOUCHABLE:
+			mission.addMapMethod(eMapKillMethod::BarberRazor);
+			mission.addMapMethod(eMapKillMethod::FireAxe);
+			mission.addMapMethod(eMapKillMethod::Icicle);
+			mission.addMapMethod(eMapKillMethod::RustyScrewdriver);
+			break;
+		case eMission::AMBROSE_SHADOWSINTHEWATER:
+			mission.addMapMethod(eMapKillMethod::BarberRazor);
+			mission.addMapMethod(eMapKillMethod::Cleaver);
+			mission.addMapMethod(eMapKillMethod::FoldingKnife);
+			mission.addMapMethod(eMapKillMethod::GardenFork);
+			mission.addMapMethod(eMapKillMethod::HobbyKnife);
+			mission.addMapMethod(eMapKillMethod::Hook);
+			mission.addMapMethod(eMapKillMethod::JarlsPirateSaber);
+			mission.addMapMethod(eMapKillMethod::KitchenKnife);
+			mission.addMapMethod(eMapKillMethod::KukriMachete);
+			mission.addMapMethod(eMapKillMethod::LetterOpener);
+			mission.addMapMethod(eMapKillMethod::MeatFork);
+			mission.addMapMethod(eMapKillMethod::OldAxe);
+			mission.addMapMethod(eMapKillMethod::Scissors);
+			mission.addMapMethod(eMapKillMethod::ScrapSword);
+			mission.addMapMethod(eMapKillMethod::Screwdriver);
+			mission.addMapMethod(eMapKillMethod::Seashell);
+			mission.addMapMethod(eMapKillMethod::Shears);
+			mission.addMapMethod(eMapKillMethod::Starfish);
 			break;
 	}
 }
 
-auto generatorAddMissionDisguises(RouletteSpinGenerator& generator, eMission mission)
+auto generatorAddMissionDisguises(RouletteMission& generator)
 {
+	auto mission = generator.getMission();
 	switch (mission) {
 		case eMission::ICAFACILITY_GUIDED:
 		case eMission::ICAFACILITY_FREEFORM:
@@ -652,20 +830,20 @@ auto generatorAddMissionDisguises(RouletteSpinGenerator& generator, eMission mis
 	}
 }
 
-auto generatorForMission(eMission mission) -> RouletteSpinGenerator
+auto generatorForMission(RouletteMission& mission)
 {
-	auto generator = RouletteSpinGenerator{mission};
-	generatorAddMissionDisguises(generator, mission);
-	generatorAddMissionMethods(generator, mission);
+	generatorAddMissionDisguises(mission);
+	generatorAddMissionMethods(mission);
+
 	auto loudElimTest = [](const RouletteSpinCondition& cond) {
 		return cond.killMethod.isElimination && cond.killType == eKillType::Loud;
 	};
 
-	switch (mission) {
+	switch (mission.getMission()) {
 	case eMission::ICAFACILITY_GUIDED:
 	case eMission::ICAFACILITY_FREEFORM:
 		{
-			auto& kr = generator.addTarget("Kalvin Ritter", "polarbear2_sparrow.jpg");
+			auto& kr = mission.addTarget("Kalvin Ritter", "polarbear2_sparrow.jpg");
 			kr.defineMethod(eKillMethod::Electrocution, { eMethodTag::Impossible });
 			kr.defineMethod(eKillMethod::Fire, { eMethodTag::Impossible });
 			kr.defineMethod(eKillMethod::InjectedPoison, { eMethodTag::Impossible });
@@ -678,7 +856,7 @@ auto generatorForMission(eMission mission) -> RouletteSpinGenerator
 		}
 	case eMission::ICAFACILITY_FINALTEST:
 		{
-			auto& jk = generator.addTarget("Jasper Knight", "polarbear5.jpg");
+			auto& jk = mission.addTarget("Jasper Knight", "polarbear5.jpg");
 			jk.defineMethod(eKillMethod::Electrocution, { eMethodTag::Impossible });
 			jk.defineMethod(eKillMethod::Fire, { eMethodTag::Impossible });
 			jk.defineMethod(eKillMethod::InjectedPoison, { eMethodTag::Impossible });
@@ -691,32 +869,32 @@ auto generatorForMission(eMission mission) -> RouletteSpinGenerator
 		}
 	case eMission::PARIS_SHOWSTOPPER:
 		{
-			auto& vn = generator.addTarget("Viktor Novikov", "showstopper_viktor_novikov.jpg");
+			auto& vn = mission.addTarget("Viktor Novikov", "showstopper_viktor_novikov.jpg");
 			vn.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Extreme, eMethodTag::DuplicateOnlySameDisguise });
 
-			auto& dm = generator.addTarget("Dalia Margolis", "showstopper_dahlia_margolis.jpg");
+			auto& dm = mission.addTarget("Dalia Margolis", "showstopper_dahlia_margolis.jpg");
 			dm.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Extreme, eMethodTag::DuplicateOnlySameDisguise });
 			break;
 		}
 	case eMission::SAPIENZA_WORLDOFTOMORROW:
 		{
-			auto& sc = generator.addTarget("Silvio Caruso", "world_of_tomorrow_silvio_caruso.jpg");
+			auto& sc = mission.addTarget("Silvio Caruso", "world_of_tomorrow_silvio_caruso.jpg");
 			sc.defineMethod(eKillMethod::ConsumedPoison, { eMethodTag::BannedInRR, eMethodTag::Buggy });
 			sc.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Impossible });
 
-			auto& fds = generator.addTarget("Francesca De Santis", "world_of_tomorrow_francesca_de_santis.jpg");
+			auto& fds = mission.addTarget("Francesca De Santis", "world_of_tomorrow_francesca_de_santis.jpg");
 			fds.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Impossible });
 			break;
 		}
 	case eMission::MARRAKESH_GILDEDCAGE:
 		{
-			auto& rz = generator.addTarget("Reza Zaydan", "tobigforjail_general_zaydan.jpg");
+			auto& rz = mission.addTarget("Reza Zaydan", "tobigforjail_general_zaydan.jpg");
 			rz.defineMethod(eKillMethod::Drowning, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 			rz.defineMethod(eKillMethod::Electrocution, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 
-			auto& chs = generator.addTarget("Claus Hugo Strandberg", "tobigforjail_claus_hugo_stranberg.jpg");
+			auto& chs = mission.addTarget("Claus Hugo Strandberg", "tobigforjail_claus_hugo_stranberg.jpg");
 			chs.defineMethod(eKillMethod::FallingObject, { eMethodTag::BannedInRR, eMethodTag::Extreme });
-			auto& prisoner = generator.getDisguiseByNameAssert("Prisoner");
+			auto& prisoner = mission.getDisguiseByNameAssert("Prisoner");
 
 			chs.addRule([&prisoner](const RouletteSpinCondition& cond) {
 				if (&cond.disguise.get() != &prisoner) return false;
@@ -726,91 +904,91 @@ auto generatorForMission(eMission mission) -> RouletteSpinGenerator
 		}
 	case eMission::BANGKOK_CLUB27:
 		{
-			auto& stalker = generator.getDisguiseByNameAssert("Stalker");
+			auto& stalker = mission.getDisguiseByNameAssert("Stalker");
 			auto stalkerRemoteTest = [&stalker](const RouletteSpinCondition& cond) {
 				if (&cond.disguise.get() != &stalker) return false;
 				return !cond.killMethod.isRemote;
 			};
 
-			auto& jc = generator.addTarget("Jordan Cross", "club27_jordan_cross.jpg");
+			auto& jc = mission.addTarget("Jordan Cross", "club27_jordan_cross.jpg");
 			jc.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 			jc.addRule(stalkerRemoteTest, { eMethodTag::BannedInRR, eMethodTag::Hard });
 
-			auto& km = generator.addTarget("Ken Morgan", "club27_ken_morgan.jpg");
+			auto& km = mission.addTarget("Ken Morgan", "club27_ken_morgan.jpg");
 			km.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 			km.addRule(stalkerRemoteTest, { eMethodTag::BannedInRR, eMethodTag::Hard });
 			break;
 		}
 	case eMission::COLORADO_FREEDOMFIGHTERS:
 		{
-			auto& sr = generator.addTarget("Sean Rose", "freedom_fighters_sean_rose.jpg");
+			auto& sr = mission.addTarget("Sean Rose", "freedom_fighters_sean_rose.jpg");
 			sr.defineMethod(eKillMethod::Drowning, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 			sr.defineMethod(eKillMethod::ConsumedPoison, { eMethodTag::BannedInRR, eMethodTag::Impossible });
 			sr.addRule(loudElimTest, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 
-			auto& pg = generator.addTarget("Penelope Graves", "freedom_fighters_penelope_graves.jpg");
+			auto& pg = mission.addTarget("Penelope Graves", "freedom_fighters_penelope_graves.jpg");
 			pg.defineMethod(eKillMethod::Drowning, { eMethodTag::BannedInRR, eMethodTag::Hard });
 			pg.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Hard });
 			pg.addRule(loudElimTest, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 
-			auto& eb = generator.addTarget("Ezra Berg", "freedom_fighters_ezra_berg.jpg");
+			auto& eb = mission.addTarget("Ezra Berg", "freedom_fighters_ezra_berg.jpg");
 			eb.defineMethod(eKillMethod::ConsumedPoison, { eMethodTag::BannedInRR, eMethodTag::Impossible });
 			eb.defineMethod(eKillMethod::Drowning, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 			eb.defineMethod(eKillMethod::Electrocution, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 
-			auto& mp = generator.addTarget("Maya Parvati", "freedom_fighters_maya_parvati.jpg");
+			auto& mp = mission.addTarget("Maya Parvati", "freedom_fighters_maya_parvati.jpg");
 			mp.defineMethod(eKillMethod::Drowning, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 			break;
 		}
 	case eMission::HOKKAIDO_SITUSINVERSUS:
 		{
-			auto& es = generator.addTarget("Erich Soders", "snowcrane_erich_soders_briefing.jpg", eTargetType::Soders);
+			auto& es = mission.addTarget("Erich Soders", "snowcrane_erich_soders_briefing.jpg", eTargetType::Soders);
 
-			auto& yy = generator.addTarget("Yuki Yamazaki", "snowcrane_yuki_yamazaki_briefing.jpg");
+			auto& yy = mission.addTarget("Yuki Yamazaki", "snowcrane_yuki_yamazaki_briefing.jpg");
 			yy.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR });
 			break;
 		}
 	case eMission::HAWKESBAY_NIGHTCALL:
 		{
-			auto& ar = generator.addTarget("Alma Reynard", "sheep_alma_reynard.jpg");
+			auto& ar = mission.addTarget("Alma Reynard", "sheep_alma_reynard.jpg");
 			ar.defineMethod(eKillMethod::Fire, { eMethodTag::Impossible });
 			ar.defineMethod(eKillMethod::FallingObject, { eMethodTag::Impossible });
 			break;
 		}
 	case eMission::MIAMI_FINISHLINE:
 		{
-			auto& sk = generator.addTarget("Sierra Knox", "flamingo_sierra_knox.jpg");
+			auto& sk = mission.addTarget("Sierra Knox", "flamingo_sierra_knox.jpg");
 
-			auto& rk = generator.addTarget("Robert Knox", "flamingo_robert_knox.jpg");
+			auto& rk = mission.addTarget("Robert Knox", "flamingo_robert_knox.jpg");
 			rk.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Impossible });
 			break;
 		}
 	case eMission::SANTAFORTUNA_THREEHEADEDSERPENT:
 		{
-			auto& rd = generator.addTarget("Rico Delgado", "hippo_rico_delgado.jpg");
+			auto& rd = mission.addTarget("Rico Delgado", "hippo_rico_delgado.jpg");
 			rd.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 			rd.defineMethod(eKillMethod::ConsumedPoison, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 
-			auto& jf = generator.addTarget("Jorge Franco", "hippo_jorge_franco.jpg");
+			auto& jf = mission.addTarget("Jorge Franco", "hippo_jorge_franco.jpg");
 			jf.defineMethod(eKillMethod::FallingObject, { eMethodTag::BannedInRR, eMethodTag::Impossible });
 
-			auto& am = generator.addTarget("Andrea Martinez", "hippo_andrea_martinez.jpg");
+			auto& am = mission.addTarget("Andrea Martinez", "hippo_andrea_martinez.jpg");
 			am.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 			break;
 		}
 	case eMission::MUMBAI_CHASINGAGHOST:
 		{
-			auto& wk = generator.addTarget("Wazir Kale", "mongoose_wazir_kale_identified.jpg");
+			auto& wk = mission.addTarget("Wazir Kale", "mongoose_wazir_kale_identified.jpg");
 			wk.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 			wk.defineMethod(eKillMethod::Drowning, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 			wk.addRule(loudElimTest, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 
-			auto& vs = generator.addTarget("Vanya Shah", "mongoose_vanya_shah.jpg");
+			auto& vs = mission.addTarget("Vanya Shah", "mongoose_vanya_shah.jpg");
 			vs.defineMethod(eKillMethod::Drowning, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 			vs.defineMethod(eKillMethod::ConsumedPoison, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 			vs.addRule(loudElimTest, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 
-			auto& dr = generator.addTarget("Dawood Rangan", "mongoose_dawood_rangan.jpg");
+			auto& dr = mission.addTarget("Dawood Rangan", "mongoose_dawood_rangan.jpg");
 			dr.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 			dr.defineMethod(eKillMethod::ConsumedPoison, { eMethodTag::BannedInRR, eMethodTag::Hard });
 			dr.addRule(loudElimTest, { eMethodTag::BannedInRR, eMethodTag::Hard });
@@ -818,13 +996,13 @@ auto generatorForMission(eMission mission) -> RouletteSpinGenerator
 		}
 	case eMission::WHITTLETON_ANOTHERLIFE:
 		{
-			auto& j = generator.addTarget("Janus", "skunk_janus.jpg");
+			auto& j = mission.addTarget("Janus", "skunk_janus.jpg");
 			j.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Impossible });
 			j.defineMethod(eKillMethod::FallingObject, { eMethodTag::BannedInRR, eMethodTag::Impossible });
 			j.defineMethod(eMapKillMethod::BattleAxe, { eMethodTag::BannedInRR, eMethodTag::Hard });
 			j.defineMethod(eMapKillMethod::BeakStaff, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 
-			auto& nc = generator.addTarget("Nolan Cassidy", "skunk_nolan_cassidy.jpg");
+			auto& nc = mission.addTarget("Nolan Cassidy", "skunk_nolan_cassidy.jpg");
 			nc.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Impossible });
 			nc.defineMethod(eMapKillMethod::BattleAxe, { eMethodTag::BannedInRR, eMethodTag::Hard });
 			nc.defineMethod(eMapKillMethod::BeakStaff, { eMethodTag::BannedInRR, eMethodTag::Extreme });
@@ -832,17 +1010,17 @@ auto generatorForMission(eMission mission) -> RouletteSpinGenerator
 		}
 	case eMission::ISLEOFSGAIL_THEARKSOCIETY:
 		{
-			auto& knightsArmor = generator.getDisguiseByNameAssert("Knight's Armor");
+			auto& knightsArmor = mission.getDisguiseByNameAssert("Knight's Armor");
 			auto knightsArmorTrapTest = [&knightsArmor](const RouletteSpinCondition& cond){
 				return &cond.disguise.get() == &knightsArmor && !cond.killMethod.isRemote;
 			};
 
-			auto& zw = generator.addTarget("Zoe Washington", "magpie_zoe_washington.jpg");
+			auto& zw = mission.addTarget("Zoe Washington", "magpie_zoe_washington.jpg");
 			zw.defineMethod(eKillMethod::Drowning, { eMethodTag::BannedInRR, eMethodTag::Hard });
 			zw.defineMethod(eKillMethod::ConsumedPoison, { eMethodTag::BannedInRR, eMethodTag::Impossible });
 			zw.addRule(knightsArmorTrapTest, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 
-			auto& sw = generator.addTarget("Sophia Washington", "magpie_serena_washington.jpg");
+			auto& sw = mission.addTarget("Sophia Washington", "magpie_serena_washington.jpg");
 			sw.defineMethod(eKillMethod::Drowning, { eMethodTag::BannedInRR, eMethodTag::Hard });
 			sw.defineMethod(eKillMethod::ConsumedPoison, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 			sw.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Hard });
@@ -851,35 +1029,35 @@ auto generatorForMission(eMission mission) -> RouletteSpinGenerator
 		}
 	case eMission::NEWYORK_GOLDENHANDSHAKE:
 		{
-			auto& as = generator.addTarget("Athena Savalas", "racoon_athena_savalas.jpg");
+			auto& as = mission.addTarget("Athena Savalas", "racoon_athena_savalas.jpg");
 			as.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Impossible });
 			break;
 		}
 	case eMission::HAVEN_THELASTRESORT:
 		{
-			auto& tw = generator.addTarget("Tyson Williams", "stingray_tyson_williams.jpg");
+			auto& tw = mission.addTarget("Tyson Williams", "stingray_tyson_williams.jpg");
 			tw.defineMethod(eKillMethod::ConsumedPoison, { eMethodTag::BannedInRR, eMethodTag::Impossible });
 			tw.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Impossible });
 
-			auto& sb = generator.addTarget("Steven Bradley", "stingray_steven_bradley.jpg");
+			auto& sb = mission.addTarget("Steven Bradley", "stingray_steven_bradley.jpg");
 			sb.defineMethod(eKillMethod::ConsumedPoison, { eMethodTag::BannedInRR, eMethodTag::Impossible });
 			sb.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Impossible });
 
-			auto& lv = generator.addTarget("Ljudmila Vetrova", "stingray_ljudmila_vetrova.jpg");
+			auto& lv = mission.addTarget("Ljudmila Vetrova", "stingray_ljudmila_vetrova.jpg");
 			lv.defineMethod(eKillMethod::FallingObject, { eMethodTag::BannedInRR, eMethodTag::Impossible });
 			lv.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Impossible });
 			break;
 		}
 	case eMission::DUBAI_ONTOPOFTHEWORLD:
 		{
-			auto& ci = generator.addTarget("Carl Ingram", "golden_carl_ingram.jpg");
+			auto& ci = mission.addTarget("Carl Ingram", "golden_carl_ingram.jpg");
 			ci.defineMethod(eKillMethod::ConsumedPoison, { eMethodTag::BannedInRR, eMethodTag::Buggy });
 			ci.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 
-			auto& ms = generator.addTarget("Marcus Stuyvesant", "golden_marcus_stuyvesant.jpg");
+			auto& ms = mission.addTarget("Marcus Stuyvesant", "golden_marcus_stuyvesant.jpg");
 			ms.defineMethod(eKillMethod::ConsumedPoison, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 			ms.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Extreme });
-			auto& skydivingSuit = generator.getDisguiseByNameAssert("Skydiving Suit");
+			auto& skydivingSuit = mission.getDisguiseByNameAssert("Skydiving Suit");
 			ms.addRule([&skydivingSuit](const RouletteSpinCondition& cond) {
 				return &cond.disguise.get() == &skydivingSuit && cond.killMethod.method == eKillMethod::Drowning;
 			}, { eMethodTag::BannedInRR, eMethodTag::Extreme });
@@ -887,28 +1065,28 @@ auto generatorForMission(eMission mission) -> RouletteSpinGenerator
 		}
 	case eMission::DARTMOOR_DEATHINTHEFAMILY:
 		{
-			auto& ac = generator.addTarget("Alexa Carlisle", "ancestral_alexa_carlisle.jpg");
+			auto& ac = mission.addTarget("Alexa Carlisle", "ancestral_alexa_carlisle.jpg");
 			ac.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Impossible });
 			break;
 		}
 	case eMission::BERLIN_APEXPREDATOR:
 		{
 			auto constexpr image = "fox_pickup_earpiece.jpg";
-			auto& a1 = generator.addTarget("ICA Agent #1", image);
-			auto& a2 = generator.addTarget("ICA Agent #2", image);
-			auto& a3 = generator.addTarget("ICA Agent #3", image);
-			auto& a4 = generator.addTarget("ICA Agent #4", image);
-			auto& a5 = generator.addTarget("ICA Agent #5", image);
+			auto& a1 = mission.addTarget("ICA Agent #1", image);
+			auto& a2 = mission.addTarget("ICA Agent #2", image);
+			auto& a3 = mission.addTarget("ICA Agent #3", image);
+			auto& a4 = mission.addTarget("ICA Agent #4", image);
+			auto& a5 = mission.addTarget("ICA Agent #5", image);
 			break;
 		}
 	case eMission::CHONGQING_ENDOFANERA:
 		{
-			auto& h = generator.addTarget("Hush", "wet_hush.jpg");
+			auto& h = mission.addTarget("Hush", "wet_hush.jpg");
 			h.defineMethod(eKillMethod::ConsumedPoison, { eMethodTag::BannedInRR, eMethodTag::Impossible });
 			h.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 			h.addRule(loudElimTest, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 
-			auto& ir = generator.addTarget("Imogen Royce", "wet_imogen_royce.jpg");
+			auto& ir = mission.addTarget("Imogen Royce", "wet_imogen_royce.jpg");
 			ir.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Hard });
 			ir.defineMethod(eKillMethod::ConsumedPoison, { eMethodTag::BannedInRR, eMethodTag::Hard });
 			ir.defineMethod(eKillMethod::FallingObject, { eMethodTag::BannedInRR, eMethodTag::Extreme });
@@ -916,11 +1094,11 @@ auto generatorForMission(eMission mission) -> RouletteSpinGenerator
 		}
 	case eMission::MENDOZA_THEFAREWELL:
 		{
-			auto& day = generator.addTarget("Don Archibald Yates", "elegant_yates.jpg");
+			auto& day = mission.addTarget("Don Archibald Yates", "elegant_yates.jpg");
 			day.defineMethod(eKillMethod::ConsumedPoison, { eMethodTag::BannedInRR, eMethodTag::Hard });
 			day.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 
-			auto& tv = generator.addTarget("Tamara Vidal", "elegant_vidal.jpg");
+			auto& tv = mission.addTarget("Tamara Vidal", "elegant_vidal.jpg");
 			tv.defineMethod(eKillMethod::ConsumedPoison, { eMethodTag::BannedInRR, eMethodTag::Hard });
 			tv.defineMethod(eKillMethod::FallingObject, { eMethodTag::BannedInRR, eMethodTag::Hard });
 			tv.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Extreme });
@@ -928,7 +1106,7 @@ auto generatorForMission(eMission mission) -> RouletteSpinGenerator
 		}
 	case eMission::CARPATHIAN_UNTOUCHABLE:
 		{
-			auto& ae = generator.addTarget("Arthur Edwards", "trapped_arthur_edwards.jpg");
+			auto& ae = mission.addTarget("Arthur Edwards", "trapped_arthur_edwards.jpg");
 			ae.defineMethod(eKillMethod::Drowning, { eMethodTag::Impossible });
 			ae.defineMethod(eKillMethod::ConsumedPoison, { eMethodTag::Impossible });
 			ae.defineMethod(eKillMethod::Electrocution, { eMethodTag::Impossible });
@@ -941,12 +1119,11 @@ auto generatorForMission(eMission mission) -> RouletteSpinGenerator
 		}
 	case eMission::AMBROSE_SHADOWSINTHEWATER:
 		{
-			auto& nc = generator.addTarget("Noel Crest", "rocky_noel_crest.jpg");
-			auto& sav = generator.addTarget("Sinhi \"Akka\" Venthan", "rocky_sinhi_akka_venthan.jpg");
+			auto& nc = mission.addTarget("Noel Crest", "rocky_noel_crest.jpg");
+			auto& sav = mission.addTarget("Sinhi \"Akka\" Venthan", "rocky_sinhi_akka_venthan.jpg");
 			break;
 		}
 	}
-	return generator;
 }
 
 auto Croupier::getMissionFromContractId(const std::string& str) -> eMission {
@@ -960,13 +1137,13 @@ auto Croupier::OnEngineInitialized() -> void {
 
 	this->window.create();
 
-	// Install a hook to print the name of the scene every time the game loads a new one.
 	Hooks::ZAchievementManagerSimple_OnEventReceived->AddDetour(this, &Croupier::OnEventReceived);
 	Hooks::ZAchievementManagerSimple_OnEventSent->AddDetour(this, &Croupier::OnEventSent);
 	Hooks::Http_WinHttpCallback->AddDetour(this, &Croupier::OnWinHttpCallback);
 }
 
 Croupier::Croupier() : sharedSpin(spin), window(sharedSpin) {
+	this->SetupMissions();
 	this->SetupEvents();
 }
 
@@ -1004,14 +1181,16 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 		if (ImGui::Checkbox("External Window Text-Only", &this->externalWindowTextOnly))
 			this->window.setTextMode(this->externalWindowTextOnly);
 
-		auto missionInfoIt = std::find_if(missionInfos.begin(), missionInfos.end(), [this](const MissionInfo& info) {
-			return info.mission == this->spin.getMission();
+		auto mission = this->spin.getMission();
+
+		auto missionInfoIt = !mission ? missionInfos.end() : std::find_if(missionInfos.begin(), missionInfos.end(), [this](const MissionInfo& info) {
+			return info.mission == this->spin.getMission()->getMission();
 		});
 		auto const currentIdx = missionInfoIt != missionInfos.end() ? std::distance(missionInfos.begin(), missionInfoIt) : 0;
 		auto const& currentMissionInfo = missionInfos[currentIdx];
 		if (ImGui::BeginCombo("##Mission", currentMissionInfo.name.data(), ImGuiComboFlags_HeightLarge)) {
 			for (auto& missionInfo : missionInfos) {
-				auto const selected = missionInfo.mission != eMission::NONE && this->spin.getMission() == missionInfo.mission;
+				auto const selected = missionInfo.mission != eMission::NONE && mission && mission->getMission() == missionInfo.mission;
 				auto imGuiFlags = missionInfo.mission == eMission::NONE ? ImGuiSelectableFlags_Disabled : 0;
 				if (ImGui::Selectable(missionInfo.name.data(), selected, imGuiFlags) && missionInfo.mission != eMission::NONE)
 					OnMissionSelect(missionInfo.mission);
@@ -1025,7 +1204,7 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 		if (ImGui::Button("Respin"))
 			this->Respin();
 
-		if (!this->spin.getConditions().empty()) {
+		if (this->spin.getMission()) {
 			ImGui::SameLine();
 
 			if (ImGui::Button("Manual"))
@@ -1081,7 +1260,10 @@ auto Croupier::DrawEditSpinUI(bool focused) -> void {
 	if (ImGui::Begin(ICON_MD_EDIT " CROUPIER - EDIT SPIN", &this->showManualModeUI, ImGuiWindowFlags_AlwaysAutoResize)) {
 		ImGui::PushFont(SDK()->GetImGuiRegularFont());
 
-		auto& targets = this->generator.getTargets();
+		auto& mission = *this->generator.getMission();
+		auto& targets = mission.getTargets();
+		auto& disguises = mission.getDisguises();
+
 		for (auto& target : targets) {
 			auto currentMethod = eKillMethod::NONE;
 			auto currentMapMethod = eMapKillMethod::NONE;
@@ -1163,7 +1345,7 @@ auto Croupier::DrawEditSpinUI(bool focused) -> void {
 				if (!isSoders) {
 					ImGui::Selectable("------ MAP METHODS ------", false, ImGuiSelectableFlags_Disabled);
 
-					for (auto const& method : this->generator.getMapKillMethods()) {
+					for (auto const& method : this->generator.getMission()->getMapKillMethods()) {
 						auto const selected = method.method == currentMapMethod;
 
 						if (ImGui::Selectable(method.name.data(), selected)) {
@@ -1205,7 +1387,7 @@ auto Croupier::DrawEditSpinUI(bool focused) -> void {
 			}
 
 			if (ImGui::BeginCombo(("Disguise##"s + target.getName()).c_str(), currentDisguise ? currentDisguise->name.c_str() : nullptr, ImGuiComboFlags_HeightLarge)) {
-				for (auto const& disguise : this->generator.getDisguises()) {
+				for (auto const& disguise : disguises) {
 					auto const selected = currentDisguise == &disguise;
 					if (ImGui::Selectable(disguise.name.c_str(), selected)) {
 						auto guard = std::unique_lock(this->sharedSpin.mutex);
@@ -1228,10 +1410,11 @@ auto Croupier::DrawEditSpinUI(bool focused) -> void {
 }
 
 auto Croupier::OnMissionSelect(eMission mission) -> void {
-	if (mission == this->spin.getMission() && !this->spinCompleted) return;
+	auto currentMission = this->spin.getMission();
+	if (currentMission && mission == currentMission->getMission() && !this->spinCompleted) return;
 
 	try {
-		this->generator = generatorForMission(mission);
+		this->generator.setMission(this->GetMission(mission));
 		this->Respin();
 	} catch (const RouletteGeneratorException& ex) {
 		Logger::Error("Croupier: {}", ex.what());
@@ -1241,8 +1424,10 @@ auto Croupier::OnMissionSelect(eMission mission) -> void {
 auto Croupier::Respin() -> void {
 	try {
 		auto guard = std::unique_lock(this->sharedSpin.mutex);
+
 		if (!this->spin.getConditions().empty())
 			this->spinHistory.emplace(std::move(this->spin));
+
 		this->spin = this->generator.spin();
 		this->spinCompleted = false;
 	} catch (const std::runtime_error& ex) {
@@ -1263,6 +1448,22 @@ auto Croupier::LogSpin() -> void {
 	}
 
 	Logger::Info("Croupier: {}", spinText);
+}
+
+auto Croupier::GetMission(eMission mission) -> const RouletteMission*
+{
+	auto it = std::find_if(this->missions.begin(), this->missions.end(), [mission](const RouletteMission& m) {
+		return m.getMission() == mission;
+	});
+	if (it == this->missions.end()) return nullptr;
+	return &*it;
+}
+
+auto Croupier::SetupMissions() -> void {
+	for (auto& miss : missionInfos) {
+		auto& mission = this->missions.emplace_back(miss.mission);
+		generatorForMission(mission);
+	}
 }
 
 auto Croupier::SetupEvents() -> void {
