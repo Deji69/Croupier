@@ -1187,16 +1187,23 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 
 		ImGui::Checkbox("In-Game Window", &this->inGameWindowEnabled);
 
-		if (ImGui::Checkbox("External Window", &this->externalWindowEnabled)) {
-			if (this->externalWindowEnabled) this->window.create();
-			else this->window.destroy();
-		}
-		
-		if (ImGui::Checkbox("External Window On Top", &this->externalWindowOnTop))
-			this->window.setAlwaysOnTop(this->externalWindowOnTop);
+		{
+			if (ImGui::Checkbox("External Window", &this->externalWindowEnabled)) {
+				if (this->externalWindowEnabled) this->window.create();
+				else this->window.destroy();
+			}
 
-		if (ImGui::Checkbox("External Window Text-Only", &this->externalWindowTextOnly))
-			this->window.setTextMode(this->externalWindowTextOnly);
+			ImGui::SameLine();
+		
+			if (ImGui::Checkbox("On Top", &this->externalWindowOnTop))
+				this->window.setAlwaysOnTop(this->externalWindowOnTop);
+
+			ImGui::SameLine();
+
+			if (ImGui::Checkbox("Text-Only", &this->externalWindowTextOnly))
+				this->window.setTextMode(this->externalWindowTextOnly);
+		}
+
 		{
 			// Ruleset select
 			auto rulesetInfoIt = std::find_if(rulesets.begin(), rulesets.end(), [this](const RulesetInfo& info) {
@@ -1461,7 +1468,7 @@ auto Croupier::DrawEditSpinUI(bool focused) -> void {
 
 	ImGui::End();
 	ImGui::PopFont();
-		}
+}
 
 auto Croupier::DrawCustomRulesetUI(bool focused) -> void {
 	if (!this->showCustomRulesetUI) return;
