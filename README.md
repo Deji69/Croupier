@@ -2,6 +2,8 @@
 
 Live generator for roulette spins in Hitman 3. Automatically generates kill condition and disguise combinations for mission targets on mission planning screen and tracks completion of the mission.
 
+Go on, take it for a spin.
+
 <img src="./images/croupier-ingame-sgail.jpg" title="Croupier in-game UI and external window." width="47%">
 
 ## Features
