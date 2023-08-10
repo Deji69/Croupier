@@ -20,7 +20,10 @@ public:
 	auto OnDrawMenu() -> void override;
 	auto OnDrawUI(bool p_HasFocus) -> void override;
 	auto OnMissionSelect(eMission) -> void;
+	auto OnRulesetSelect(eRouletteRuleset) -> void;
+	auto OnRulesetCustomised() -> void;
 	auto DrawEditSpinUI(bool focused) -> void;
+	auto DrawCustomRulesetUI(bool focused) -> void;
 	auto DrawSpinUI(bool focused) -> void;
 	auto Respin() -> void;
 
@@ -42,14 +45,17 @@ private:
 	CroupierWindow window;
 	std::vector<RouletteMission> missions;
 	RouletteSpinGenerator generator;
+	RouletteRuleset rules;
 	RouletteSpin spin;
 	SharedRouletteSpin sharedSpin;
 	std::stack<RouletteSpin> spinHistory;
 	eMission currentMission = eMission::NONE;
+	eRouletteRuleset ruleset = eRouletteRuleset::RR12;
 	EventSystem events;
 	int uiMissionSelectIndex = 0;
 	bool showUI = false;
 	bool showManualModeUI = false;
+	bool showCustomRulesetUI = false;
 	bool externalWindowEnabled = true;
 	bool inGameWindowEnabled = false;
 	bool externalWindowOnTop = true;

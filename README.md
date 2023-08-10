@@ -22,13 +22,13 @@ _Support for bonus missions and special assignments is WIP._
 
 ### Completion Detection
 
-Croupier can detect completion of the current mission. New spins will not be generated for mission replans/restarts until the current mission is completed.
+Croupier can detect completion of the current mission. Current spin will not be overwritten by a new one for mission replans/restarts until the current mission is completed.
 
 _Support for live validation of target kills is WIP._
 
 ### In-Game UI
 
-Allows manual selection of mission, full custom spins, respins, and going back through previous spins, as well as some customisation options. You can also display spins in-game in an unobtrusive semi-transparent window.
+Allows manual selection of mission, fully custom spins, respins, and going back through the spin history, as well as some customisation options. You can also display spins in-game in an unobtrusive, semi-transparent window.
 
 <img src="./images/croupier-berlin-ingame.jpg" title="Unintrusive in-game spin display." width="47%">
 
@@ -38,11 +38,13 @@ Spins can be specified with the entire range of conditions available in each mis
 
 <img src="./images/croupier-ingame-sapienza-editspin.jpg" title="The external window." width="47%">
 
-### Roulette Rivals Ruleset
+### Configurable Rulesets
 
-Spins are generated to comply with the current (as of RR11) standard ruleset of Roulette Rivals tournaments, preventing conditions that are known to be impossible, unbalanced or bugged.
+Built-in support for the following Roulette Rivals tournaments rulesets: **RR12**, **RR11**. Also supports **custom** rulesets.
 
-_Support for alternative rulesets is WIP._
+Spins are generated to comply with the chosen ruleset, preventing unwanted kill conditions or ones that are known to be impossible, unbalanced or bugged.
+
+_WIP feature, more options are being added._
 
 ### Stream Friendly
 

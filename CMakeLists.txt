@@ -18,7 +18,7 @@ add_library(Croupier SHARED
 	src/CroupierWindow.h
 	src/json.hpp
 	src/DeclareDPIAware.manifest
- "src/Roulette.cpp" "src/util.h" "src/EventSystem.h" "src/Events.h" "src/Enums.h")
+ "src/Roulette.cpp" "src/util.h" "src/EventSystem.h" "src/Events.h" "src/Enums.h" "src/RouletteRuleset.h")
 
 target_link_libraries(Croupier
 	ZHMModSDK

@@ -24,6 +24,21 @@ struct MissionInfo {
 	{ }
 };
 
+struct RulesetInfo {
+	eRouletteRuleset ruleset;
+	std::string_view name;
+
+	RulesetInfo(eRouletteRuleset ruleset, std::string_view name) :
+		ruleset(ruleset), name(name)
+	{ }
+};
+
+std::vector<RulesetInfo> rulesets = {
+	{eRouletteRuleset::RR12, "RR12"},
+	{eRouletteRuleset::RR11, "RR11"},
+	{eRouletteRuleset::Custom, "Custom"},
+};
+
 std::vector<MissionInfo> missionInfos = {
 	{eMission::NONE, "--------- PROLOGUE ---------", false},
 	{eMission::ICAFACILITY_FREEFORM, "Prologue: Freeform Training", false},
@@ -1145,6 +1160,7 @@ auto Croupier::OnEngineInitialized() -> void {
 Croupier::Croupier() : sharedSpin(spin), window(sharedSpin) {
 	this->SetupMissions();
 	this->SetupEvents();
+	this->rules = makeRouletteRuleset(this->ruleset);
 }
 
 Croupier::~Croupier() {
@@ -1159,6 +1175,7 @@ auto Croupier::OnDrawMenu() -> void {
 auto Croupier::OnDrawUI(bool focused) -> void {
 	this->DrawSpinUI(focused);
 	this->DrawEditSpinUI(focused);
+	this->DrawCustomRulesetUI(focused);
 
 	if (!this->showUI) return;
 
@@ -1180,6 +1197,32 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 
 		if (ImGui::Checkbox("External Window Text-Only", &this->externalWindowTextOnly))
 			this->window.setTextMode(this->externalWindowTextOnly);
+		{
+			// Ruleset select
+			auto rulesetInfoIt = std::find_if(rulesets.begin(), rulesets.end(), [this](const RulesetInfo& info) {
+				return info.ruleset == this->ruleset;
+			});
+			auto const currentIdx = rulesetInfoIt != rulesets.end() ? std::distance(rulesets.begin(), rulesetInfoIt) : 0;
+			auto const& currentMissionInfo = rulesets[currentIdx];
+			if (ImGui::BeginCombo("##Ruleset", currentMissionInfo.name.data(), ImGuiComboFlags_HeightLarge)) {
+				for (auto& info : rulesets) {
+					auto const selected = this->ruleset == info.ruleset;
+					auto flags = info.ruleset == eRouletteRuleset::Custom ? ImGuiSelectableFlags_Disabled : 0;
+
+					if (ImGui::Selectable(info.name.data(), selected, flags) && info.ruleset != eRouletteRuleset::Custom)
+						this->OnRulesetSelect(info.ruleset);
+
+					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+					if (selected) ImGui::SetItemDefaultFocus();
+				}
+				ImGui::EndCombo();
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("Customise"))
+				this->showCustomRulesetUI = !this->showCustomRulesetUI;
+		}
 
 		auto mission = this->spin.getMission();
 
@@ -1193,7 +1236,7 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 				auto const selected = missionInfo.mission != eMission::NONE && mission && mission->getMission() == missionInfo.mission;
 				auto imGuiFlags = missionInfo.mission == eMission::NONE ? ImGuiSelectableFlags_Disabled : 0;
 				if (ImGui::Selectable(missionInfo.name.data(), selected, imGuiFlags) && missionInfo.mission != eMission::NONE)
-					OnMissionSelect(missionInfo.mission);
+					this->OnMissionSelect(missionInfo.mission);
 
 				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
 				if (selected) ImGui::SetItemDefaultFocus();
@@ -1269,6 +1312,7 @@ auto Croupier::DrawEditSpinUI(bool focused) -> void {
 			auto currentMapMethod = eMapKillMethod::NONE;
 			auto currentKillType = eKillType::Any;
 			auto currentKillMethodIsGun = false;
+			auto currentKillComplication = eKillComplication::None;
 			auto const isSoders = target.getType() == eTargetType::Soders;
 			const RouletteDisguise* currentDisguise = nullptr;
 
@@ -1278,13 +1322,14 @@ auto Croupier::DrawEditSpinUI(bool focused) -> void {
 				currentMapMethod = cond.specificKillMethod.method;
 				currentKillType = cond.killType;
 				currentKillMethodIsGun = cond.killMethod.isGun;
+				currentKillComplication = cond.killComplication;
 				currentDisguise = &cond.disguise.get();
 				break;
 			}
 
 			auto const methodType = currentMapMethod != eMapKillMethod::NONE
 				? eMethodType::Map
-				: (currentKillMethodIsGun ? eMethodType::Weapon : eMethodType::Standard);
+				: (currentKillMethodIsGun ? eMethodType::Gun : eMethodType::Standard);
 			auto const methodName = currentMethod != eKillMethod::NONE
 				? getKillMethodName(currentMethod)
 				: getSpecificKillMethodName(currentMapMethod);
@@ -1368,7 +1413,7 @@ auto Croupier::DrawEditSpinUI(bool focused) -> void {
 				if (hasKillTypes) {
 					auto const& killTypes = methodType == eMethodType::Map
 						? this->generator.meleeKillTypes
-						: (methodType == eMethodType::Weapon ? this->generator.gunKillTypes : this->generator.explosiveKillTypes);
+						: (methodType == eMethodType::Gun ? this->generator.gunKillTypes : this->generator.explosiveKillTypes);
 
 					for (auto type : killTypes) {
 						auto const selected = currentKillType == type;
@@ -1400,7 +1445,48 @@ auto Croupier::DrawEditSpinUI(bool focused) -> void {
 
 				ImGui::EndCombo();
 			}
+
+			ImGui::SameLine();
+
+			bool liveKill = currentKillComplication == eKillComplication::Live;
+			if (ImGui::Checkbox(("Live (No KO)##"s + target.getName()).c_str(), &liveKill)) {
+				auto guard = std::unique_lock(this->sharedSpin.mutex);
+				this->spin.setTargetComplication(target, liveKill ? eKillComplication::Live : eKillComplication::None);
+				this->window.update();
+			}
 		}
+
+		ImGui::PopFont();
+	}
+
+	ImGui::End();
+	ImGui::PopFont();
+		}
+
+auto Croupier::DrawCustomRulesetUI(bool focused) -> void {
+	if (!this->showCustomRulesetUI) return;
+
+	ImGui::PushFont(SDK()->GetImGuiBlackFont());
+
+	if (ImGui::Begin(ICON_MD_EDIT " CROUPIER - CONFIGURE RULESET", &this->showCustomRulesetUI, ImGuiWindowFlags_AlwaysAutoResize)) {
+		ImGui::PushFont(SDK()->GetImGuiRegularFont());
+
+		ImGui::TextUnformatted("Enable/disable certain condition types from being in spins.");
+
+		if (ImGui::Checkbox("Generic eliminations", &this->rules.genericEliminations))
+			this->OnRulesetCustomised();
+
+		if (ImGui::Checkbox("Live complications", &this->rules.liveComplications))
+			this->OnRulesetCustomised();
+		ImGui::SameLine();
+		if (ImGui::Checkbox("Exclude 'Standard' kills", &this->rules.liveComplicationsExcludeStandard))
+			this->OnRulesetCustomised();
+
+		if (ImGui::Checkbox("'Melee' kill types", &this->rules.meleeKillTypes))
+			this->OnRulesetCustomised();
+		ImGui::SameLine();
+		if (ImGui::Checkbox("'Thrown' kill types", &this->rules.thrownKillTypes))
+			this->OnRulesetCustomised();
 
 		ImGui::PopFont();
 	}
@@ -1409,11 +1495,32 @@ auto Croupier::DrawEditSpinUI(bool focused) -> void {
 	ImGui::PopFont();
 }
 
+auto Croupier::OnRulesetCustomised() -> void {
+	if (RouletteRuleset::compare(this->rules, makeRouletteRuleset(eRouletteRuleset::RR12)))
+		this->OnRulesetSelect(eRouletteRuleset::RR12);
+	else if (RouletteRuleset::compare(this->rules, makeRouletteRuleset(eRouletteRuleset::RR11)))
+		this->OnRulesetSelect(eRouletteRuleset::RR11);
+	else
+		this->OnRulesetSelect(eRouletteRuleset::Custom);
+}
+
+auto Croupier::OnRulesetSelect(eRouletteRuleset ruleset) -> void {
+	this->ruleset = ruleset;
+	if (ruleset != eRouletteRuleset::Custom)
+		this->rules = makeRouletteRuleset(ruleset);
+	try {
+		this->generator.setRuleset(&this->rules);
+	} catch (const RouletteGeneratorException& ex) {
+		Logger::Error("Croupier: {}", ex.what());
+	}
+}
+
 auto Croupier::OnMissionSelect(eMission mission) -> void {
 	auto currentMission = this->spin.getMission();
 	if (currentMission && mission == currentMission->getMission() && !this->spinCompleted) return;
 
 	try {
+		this->generator.setRuleset(&this->rules);
 		this->generator.setMission(this->GetMission(mission));
 		this->Respin();
 	} catch (const RouletteGeneratorException& ex) {

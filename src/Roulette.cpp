@@ -22,17 +22,6 @@ const std::vector<eKillMethod> RouletteSpinGenerator::standardKillMethods = {
 	eKillMethod::NeckSnap,
 };
 
-const std::vector<eKillMethod> RouletteSpinGenerator::firearmKillMethods {
-	eKillMethod::AssaultRifle,
-	eKillMethod::Elimination,
-	eKillMethod::Pistol,
-	//eKillMethod::PistolElimination,
-	eKillMethod::Shotgun,
-	eKillMethod::SMG,
-	//eKillMethod::SMGElimination,
-	eKillMethod::Sniper,
-};
-
 const std::vector<eKillType> RouletteSpinGenerator::gunKillTypes {
 	eKillType::Any,
 	eKillType::Loud,
@@ -42,12 +31,6 @@ const std::vector<eKillType> RouletteSpinGenerator::gunKillTypes {
 const std::vector<eKillType> RouletteSpinGenerator::explosiveKillTypes {
 	eKillType::Any,
 	eKillType::Loud,
-};
-
-const std::vector<eKillType> RouletteSpinGenerator::meleeKillTypes {
-	eKillType::Any,
-	eKillType::Melee,
-	eKillType::Thrown,
 };
 
 const std::vector<eMapKillMethod> RouletteSpinGenerator::sodersKills {
@@ -135,12 +118,39 @@ auto isSpecificKillMethodMelee(eMapKillMethod method) -> bool {
 	return true;
 }
 
+auto isKillMethodLivePrefixable(eKillMethod method) -> bool {
+	switch (method) {
+	case eKillMethod::NONE:
+	// Exclude anything already live.
+	case eKillMethod::ConsumedPoison:
+	case eKillMethod::Drowning:
+	case eKillMethod::Elimination:
+	case eKillMethod::FiberWire:
+	case eKillMethod::InjectedPoison:
+	case eKillMethod::PistolElimination:
+	case eKillMethod::SMGElimination:
+		return false;
+	}
+	return true;
+}
+
+auto isSpecificKillMethodLivePrefixable(eMapKillMethod method) -> bool {
+	return isSpecificKillMethodMelee(method);
+}
+
 auto getKillTypeName(eKillType type) -> std::string_view {
 	switch (type) {
 	case eKillType::Loud: return "Loud";
 	case eKillType::Silenced: return "Silenced";
 	case eKillType::Melee: return "Melee";
 	case eKillType::Thrown: return "Thrown";
+	}
+	return "";
+}
+
+auto getKillComplicationName(eKillComplication complication) -> std::string_view {
+	switch (complication) {
+	case eKillComplication::Live: return "(Live)";
 	}
 	return "";
 }

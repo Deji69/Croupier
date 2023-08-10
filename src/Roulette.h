@@ -11,6 +11,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
+#include "RouletteRuleset.h"
 
 enum class eMission {
 	NONE,
@@ -56,7 +57,7 @@ enum class eMission {
 
 enum class eMethodType {
 	Map,
-	Weapon,
+	Gun,
 	Standard,
 };
 
@@ -143,7 +144,12 @@ enum class eKillType {
 	Silenced,
 	Loud,
 	Melee,
-	Thrown
+	Thrown,
+};
+
+enum class eKillComplication {
+	None,
+	Live,
 };
 
 enum class eMethodTag {
@@ -171,17 +177,19 @@ struct MapKillMethod;
 class RouletteSpinCondition;
 class RouletteSpinGenerator;
 
-auto isKillMethodGun(eKillMethod method) -> bool;
-auto isKillMethodLarge(eKillMethod method) -> bool;
-auto isKillMethodRemote(eKillMethod method) -> bool;
-auto isKillMethodElimination(eKillMethod method) -> bool;
-auto isSpecificKillMethodMelee(eMapKillMethod method) -> bool;
+auto isKillMethodGun(eKillMethod) -> bool;
+auto isKillMethodLarge(eKillMethod) -> bool;
+auto isKillMethodRemote(eKillMethod) -> bool;
+auto isKillMethodElimination(eKillMethod) -> bool;
+auto isKillMethodLivePrefixable(eKillMethod) -> bool;
+auto isSpecificKillMethodMelee(eMapKillMethod) -> bool;
 
-auto getKillTypeName(eKillType type) -> std::string_view;
-auto getKillMethodName(eKillMethod method) -> std::string_view;
-auto getKillMethodImage(eKillMethod method) -> std::string_view;
-auto getSpecificKillMethodName(eMapKillMethod method) -> std::string_view;
-auto getSpecificKillMethodImage(eMapKillMethod method) -> std::string_view;
+auto getKillTypeName(eKillType) -> std::string_view;
+auto getKillMethodName(eKillMethod) -> std::string_view;
+auto getKillMethodImage(eKillMethod) -> std::string_view;
+auto getSpecificKillMethodName(eMapKillMethod) -> std::string_view;
+auto getSpecificKillMethodImage(eMapKillMethod) -> std::string_view;
+auto getKillComplicationName(eKillComplication) -> std::string_view;
 
 class RouletteGeneratorException : public std::exception {
 public:
@@ -384,21 +392,27 @@ struct RouletteSpinCondition
 	KillMethod killMethod;
 	MapKillMethod specificKillMethod;
 	eKillType killType = eKillType::Any;
+	eKillComplication killComplication = eKillComplication::None;
 	std::string methodName;
 
 	RouletteSpinCondition(
 		const RouletteTarget& target, const RouletteDisguise& disguise,
 		KillMethod killMethod, MapKillMethod specificKillMethod,
-		eKillType killType = eKillType::Any
+		eKillType killType = eKillType::Any, eKillComplication killComplication = eKillComplication::None
 	) :
 		target(target), disguise(disguise),
-		killMethod(killMethod), specificKillMethod(specificKillMethod), killType(killType)
+		killMethod(killMethod), specificKillMethod(specificKillMethod), killType(killType),
+		killComplication(killComplication)
 	{
 		if (this->killMethod.name.empty()) this->killMethod.name = specificKillMethod.name;
 		if (this->killMethod.image.empty()) this->killMethod.image = specificKillMethod.image;
-		methodName = killType != eKillType::Any
-			? std::format("{} {}", std::string(getKillTypeName(killType)), this->killMethod.name)
-			: this->killMethod.name;
+
+		methodName = this->killMethod.name;
+
+		if (killType != eKillType::Any)
+			methodName = std::format("{} {}", getKillTypeName(killType), methodName);
+		if (killComplication != eKillComplication::None)
+			methodName = std::format("{} {}", getKillComplicationName(killComplication), methodName);
 	}
 
 	RouletteSpinCondition(RouletteSpinCondition&&) noexcept = default;
@@ -432,22 +446,27 @@ public:
 
 	auto setTargetDisguise(const RouletteTarget& target, const RouletteDisguise& disguise) {
 		auto& cond = this->getForTarget(target);
-		cond = RouletteSpinCondition{target, disguise, cond.killMethod, cond.specificKillMethod, cond.killType};
+		cond = RouletteSpinCondition{target, disguise, cond.killMethod, cond.specificKillMethod, cond.killType, cond.killComplication };
 	}
 
 	auto setTargetStandardMethod(const RouletteTarget& target, eKillMethod method) {
 		auto& cond = this->getForTarget(target);
-		cond = RouletteSpinCondition{target, cond.disguise, method, eMapKillMethod::NONE, eKillType::Any};
+		cond = RouletteSpinCondition{target, cond.disguise, method, eMapKillMethod::NONE, eKillType::Any, cond.killComplication };
 	}
 
 	auto setTargetMapMethod(const RouletteTarget& target, eMapKillMethod method) {
 		auto& cond = this->getForTarget(target);
-		cond = RouletteSpinCondition{target, cond.disguise, eKillMethod::NONE, method, eKillType::Any};
+		cond = RouletteSpinCondition{target, cond.disguise, eKillMethod::NONE, method, eKillType::Any, cond.killComplication };
 	}
 
 	auto setTargetMethodType(const RouletteTarget& target, eKillType killType) {
 		auto& cond = this->getForTarget(target);
-		cond = RouletteSpinCondition{target, cond.disguise, cond.killMethod, cond.specificKillMethod, killType};
+		cond = RouletteSpinCondition{target, cond.disguise, cond.killMethod, cond.specificKillMethod, killType, cond.killComplication};
+	}
+
+	auto setTargetComplication(const RouletteTarget& target, eKillComplication complication) {
+		auto& cond = this->getForTarget(target);
+		cond = RouletteSpinCondition{target, cond.disguise, cond.killMethod, cond.specificKillMethod, cond.killType, complication};
 	}
 
 	auto getMission() const {
@@ -483,21 +502,39 @@ class RouletteSpinGenerator
 {
 public:
 	static const std::vector<eKillMethod> standardKillMethods;
-	static const std::vector<eKillMethod> firearmKillMethods;
 	static const std::vector<eKillType> gunKillTypes;
 	static const std::vector<eKillType> explosiveKillTypes;
-	static const std::vector<eKillType> meleeKillTypes;
 	static const std::vector<eMapKillMethod> sodersKills;
+	std::vector<eKillType> meleeKillTypes;
+	std::vector<eKillMethod> firearmKillMethods;
+	std::vector<eKillComplication> killComplications;
 
 public:
 	RouletteSpinGenerator() noexcept = default;
-	RouletteSpinGenerator(const RouletteMission* mission) : mission(mission)
-	{ }
 
 	auto getMission() { return this->mission; }
 
 	auto setMission(const RouletteMission* mission) {
 		this->mission = mission;
+	}
+
+	auto setRuleset(const RouletteRuleset* ruleset) {
+		this->rules = ruleset;
+		this->meleeKillTypes = {eKillType::Any};
+		if (this->rules->meleeKillTypes) this->meleeKillTypes.emplace_back(eKillType::Melee);
+		if (this->rules->thrownKillTypes) this->meleeKillTypes.emplace_back(eKillType::Thrown);
+		this->killComplications = {eKillComplication::None};
+		if (this->rules->liveComplications) this->killComplications.emplace_back(eKillComplication::Live);
+		this->firearmKillMethods = {
+			eKillMethod::AssaultRifle,
+			eKillMethod::Pistol,
+			eKillMethod::Shotgun,
+			eKillMethod::SMG,
+			eKillMethod::Sniper,
+			//eKillMethod::PistolElimination,
+			//eKillMethod::SMGElimination,
+		};
+		if (this->rules->genericEliminations) this->firearmKillMethods.emplace_back(eKillMethod::Elimination);
 	}
 
 	auto allowDuplicateDisguise(bool allow) {
@@ -524,7 +561,7 @@ public:
 		static auto methodTypes = std::vector<eMethodType>{
 			eMethodType::Standard,
 			eMethodType::Map,
-			eMethodType::Weapon,
+			eMethodType::Gun,
 		};
 
 		RouletteSpin spin(this->mission);
@@ -587,9 +624,19 @@ public:
 					auto killType = eKillType::Any;
 					if (killInfo.isGun) killType = randomVectorElement(this->gunKillTypes);
 					else if (killMethod == eKillMethod::Explosive) killType = randomVectorElement(this->explosiveKillTypes);
-					else if (useSpecificMethod && mapMethodInfo.isMelee) killType = randomVectorElement(this->meleeKillTypes);
+					else if (useSpecificMethod && mapMethodInfo.isMelee) killType = randomVectorElement(meleeKillTypes);
 
-					cond.emplace(target, disguise, std::move(killInfo), std::move(mapMethodInfo), killType);
+					// 33% chance of 'Live' kill complication (equal to 'Melee' chance if Thrown and Melee are enabled)
+					auto killComplication = this->rules->liveComplications && randomBool(33) ? eKillComplication::Live : eKillComplication::None;
+
+					if (killComplication == eKillComplication::Live) {
+						if (!useSpecificMethod && !isKillMethodLivePrefixable(killMethod))
+							killComplication = eKillComplication::None;
+						else if (methodType == eMethodType::Standard && this->rules->liveComplicationsExcludeStandard)
+							killComplication = eKillComplication::None;
+					}
+
+					cond.emplace(target, disguise, std::move(killInfo), std::move(mapMethodInfo), killType, killComplication);
 				}
 
 				if (cond) {
@@ -624,7 +671,6 @@ public:
 			|| (tags.contains(eMethodTag::Hard) && !this->hardConditionsAllowed)
 			|| (tags.contains(eMethodTag::Extreme) && !this->extremeConditionsAllowed)
 			|| (tags.contains(eMethodTag::Impossible) && !this->impossibleConditionsAllowed);
-
 	}
 
 private:
@@ -648,9 +694,17 @@ private:
 		return dist(gen) != 0;
 	}
 
+	static auto randomBool(int percentage) -> bool {
+		std::uniform_int_distribution<> dist(0, 100);
+		return dist(gen) <= percentage;
+	}
+
 private:
+	const RouletteRuleset* rules = nullptr;
 	const RouletteMission* mission = nullptr;
 	bool buggyConditionsAllowed = false;
+	bool liveKillTypeAllowed = false;
+	bool eliminationsAllowed = false;
 	bool specificEliminationsAllowed = false;
 	bool bannedInRRConditionsAllowed = false;
 	bool hardConditionsAllowed = false;
