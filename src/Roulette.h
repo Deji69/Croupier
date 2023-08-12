@@ -626,15 +626,12 @@ public:
 					else if (killMethod == eKillMethod::Explosive) killType = randomVectorElement(this->explosiveKillTypes);
 					else if (useSpecificMethod && mapMethodInfo.isMelee) killType = randomVectorElement(meleeKillTypes);
 
-					// 33% chance of 'Live' kill complication (equal to 'Melee' chance if Thrown and Melee are enabled)
-					auto killComplication = this->rules->liveComplications && randomBool(33) ? eKillComplication::Live : eKillComplication::None;
-
-					if (killComplication == eKillComplication::Live) {
-						if (!useSpecificMethod && !isKillMethodLivePrefixable(killMethod))
-							killComplication = eKillComplication::None;
-						else if (methodType == eMethodType::Standard && this->rules->liveComplicationsExcludeStandard)
-							killComplication = eKillComplication::None;
-					}
+					// 20% chance of 'Live' kill complication
+					auto canHaveLiveKill = this->rules->liveComplications && (
+						(methodType == eMethodType::Standard && !this->rules->liveComplicationsExcludeStandard)
+						|| ((useSpecificMethod && mapMethodInfo.isMelee) || isKillMethodLivePrefixable(killMethod))
+					);
+					auto killComplication = canHaveLiveKill && randomBool(20) ? eKillComplication::Live : eKillComplication::None;
 
 					cond.emplace(target, disguise, std::move(killInfo), std::move(mapMethodInfo), killType, killComplication);
 				}
