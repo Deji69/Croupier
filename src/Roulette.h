@@ -638,7 +638,9 @@ public:
 						|| (useSpecificMethod && mapMethodInfo.isMelee)
 					);
 					// 20% chance of 'Live' kill complication
-					auto killComplication = canHaveLiveKill && randomBool(20) ? eKillComplication::Live : eKillComplication::None;
+					auto killComplication = canHaveLiveKill && randomBool(this->rules->liveComplicationChance)
+						? eKillComplication::Live
+						: eKillComplication::None;
 
 					cond.emplace(target, disguise, std::move(killInfo), std::move(mapMethodInfo), killType, killComplication);
 				}

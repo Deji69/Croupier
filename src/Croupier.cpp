@@ -1489,6 +1489,11 @@ auto Croupier::DrawCustomRulesetUI(bool focused) -> void {
 		if (ImGui::Checkbox("Exclude 'Standard' kills", &this->rules.liveComplicationsExcludeStandard))
 			this->OnRulesetCustomised();
 
+		if (this->rules.liveComplications) {
+			if (ImGui::SliderInt("Live complication chance", &this->rules.liveComplicationChance, 0, 100, "%d%%", ImGuiSliderFlags_AlwaysClamp))
+				this->OnRulesetCustomised();
+		}
+
 		if (ImGui::Checkbox("'Melee' kill types", &this->rules.meleeKillTypes))
 			this->OnRulesetCustomised();
 		ImGui::SameLine();
