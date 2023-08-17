@@ -626,11 +626,18 @@ public:
 					else if (killMethod == eKillMethod::Explosive) killType = randomVectorElement(this->explosiveKillTypes);
 					else if (useSpecificMethod && mapMethodInfo.isMelee) killType = randomVectorElement(meleeKillTypes);
 
-					// 20% chance of 'Live' kill complication
-					auto canHaveLiveKill = this->rules->liveComplications && (
+					// Check live complications are enabled, if we have a standard kill check it's prefixable, then check more stuff...
+					auto canHaveLiveKill = this->rules->liveComplications && (killMethod == eKillMethod::NONE || isKillMethodLivePrefixable(killMethod)) && (
+						// Allow 'standard' kills if the exclude option is not enabled
 						(methodType == eMethodType::Standard && !this->rules->liveComplicationsExcludeStandard)
-						|| ((useSpecificMethod && mapMethodInfo.isMelee) || isKillMethodLivePrefixable(killMethod))
+						// Neck snaps are the exception 'standard' kill allowed as it's also 'melee'
+						|| (methodType == eMethodType::Standard && killMethod == eKillMethod::NeckSnap)
+						// Allow all firearm kills
+						|| (methodType == eMethodType::Gun)
+						// Allow all specific/map melee kills
+						|| (useSpecificMethod && mapMethodInfo.isMelee)
 					);
+					// 20% chance of 'Live' kill complication
 					auto killComplication = canHaveLiveKill && randomBool(20) ? eKillComplication::Live : eKillComplication::None;
 
 					cond.emplace(target, disguise, std::move(killInfo), std::move(mapMethodInfo), killType, killComplication);
