@@ -1536,7 +1536,7 @@ auto Croupier::OnMissionSelect(eMission mission) -> void {
 }
 
 auto Croupier::Respin() -> void {
-	if (this->currentMission == eMission::NONE) return;
+	if (!this->generator.getMission()) return;
 
 	try {
 		auto guard = std::unique_lock(this->sharedSpin.mutex);
