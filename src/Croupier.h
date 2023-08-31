@@ -16,6 +16,7 @@ class Croupier : public IPluginInterface {
 public:
 	Croupier();
 	~Croupier() override;
+	auto Init() -> void override;
 	auto OnEngineInitialized() -> void override;
 	auto OnDrawMenu() -> void override;
 	auto OnDrawUI(bool p_HasFocus) -> void override;
@@ -23,8 +24,10 @@ public:
 	auto OnRulesetSelect(eRouletteRuleset) -> void;
 	auto OnRulesetCustomised() -> void;
 	auto DrawEditSpinUI(bool focused) -> void;
+	auto DrawEditMapPoolUI(bool focused) -> void;
 	auto DrawCustomRulesetUI(bool focused) -> void;
 	auto DrawSpinUI(bool focused) -> void;
+	auto PickRandomMission() -> eMission;
 	auto Respin() -> void;
 
 private:
@@ -48,6 +51,7 @@ private:
 	RouletteRuleset rules;
 	RouletteSpin spin;
 	SharedRouletteSpin sharedSpin;
+	std::vector<eMission> missionPool;
 	std::stack<RouletteSpin> spinHistory;
 	eMission currentMission = eMission::NONE;
 	eRouletteRuleset ruleset = eRouletteRuleset::RR12;
@@ -55,6 +59,7 @@ private:
 	int uiMissionSelectIndex = 0;
 	bool showUI = false;
 	bool showManualModeUI = false;
+	bool showEditMapPoolUI = false;
 	bool showCustomRulesetUI = false;
 	bool externalWindowEnabled = true;
 	bool inGameWindowEnabled = false;

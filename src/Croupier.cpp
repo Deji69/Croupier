@@ -2,12 +2,14 @@
 
 #include <Logging.h>
 #include <IconsMaterialDesign.h>
+#include <ISetting.h>
 #include <Globals.h>
 #include <Glacier/SOnlineEvent.h>
 #include <Glacier/ZGameLoopManager.h>
 #include <Glacier/ZScene.h>
 #include <Glacier/ZString.h>
 #include "Events.h"
+#include "Randomise.h"
 #include "json.hpp"
 #include "util.h"
 
@@ -1147,10 +1149,69 @@ auto Croupier::getMissionFromContractId(const std::string& str) -> eMission {
 	return it->second;
 }
 
+auto Croupier::Init() -> void {
+	auto sdk = SDK();
+
+	ZString rulesetName = "rr12";
+	auto spinOverlay = sdk->GetSetting(this, "spin_overlay");
+	auto externalWindow = sdk->GetSetting(this, "external_window");
+	auto externalWindowOnTop = sdk->GetSetting(this, "external_window_on_top");
+	auto externalWindowTextOnly = sdk->GetSetting(this, "external_window_text_only");
+	auto rulesetSetting = sdk->GetSetting(this, "ruleset");
+
+	if (spinOverlay) spinOverlay->ReadBool(this->inGameWindowEnabled);
+	if (externalWindow) externalWindow->ReadBool(this->externalWindowEnabled);
+	if (externalWindowOnTop) externalWindowOnTop->ReadBool(this->externalWindowOnTop);
+	if (externalWindowTextOnly) externalWindowTextOnly->ReadBool(this->externalWindowTextOnly);
+	if (rulesetSetting) rulesetSetting->Read(rulesetName);
+
+	sdk->SetSetting(this, "spin_overlay", this->inGameWindowEnabled ? "yes" : "no");
+	sdk->SetSetting(this, "external_window", this->externalWindowEnabled ? "yes" : "no");
+	sdk->SetSetting(this, "external_window_on_top", this->externalWindowOnTop ? "yes" : "no");
+	sdk->SetSetting(this, "external_window_text_only", this->externalWindowTextOnly ? "yes" : "no");
+	sdk->SetSetting(this, "ruleset", rulesetName);
+
+	this->window.setTextMode(this->externalWindowTextOnly);
+	this->window.setAlwaysOnTop(this->externalWindowOnTop);
+
+	//this->rulesets = {
+	//	{eRouletteRuleset::RR11, makeRouletteRuleset(eRouletteRuleset::RR11)},
+	//	{eRouletteRuleset::RR12, makeRouletteRuleset(eRouletteRuleset::RR12)},
+	//	{eRouletteRuleset::Default, makeRouletteRuleset(eRouletteRuleset::Default)},
+	//	{eRouletteRuleset::Custom, makeRouletteRuleset(eRouletteRuleset::Custom)}
+	//};
+
+	/*for (auto& ruleset : std::initializer_list<std::string_view> {"RR11", "RR12", "Default", "Custom",}) {
+		auto rulesetLC = Util::;
+		auto rulesetKeyPrefix = std::format("rulesets.{}.", ruleset.first);
+		auto genericEliminations = sdk->GetSetting(this, ZString(rulesetKeyPrefix + "generic_eliminations"));
+		auto liveComplications = sdk->GetSetting(this, ZString(rulesetKeyPrefix + "live_complications"));
+		auto liveComplicationsExcludeStandard = sdk->GetSetting(this, ZString(rulesetKeyPrefix + "live_complications_exclude_standard"));
+		auto liveComplicationChance = sdk->GetSetting(this, ZString(rulesetKeyPrefix + "live_complication_chance"));
+		auto meleeKillTypes = sdk->GetSetting(this, ZString(rulesetKeyPrefix + "melee_kill_types"));
+		auto thrownKillTypes = sdk->GetSetting(this, ZString(rulesetKeyPrefix + "thrown_kill_types"));
+
+		if (genericEliminations) genericEliminations->ReadBool(rules.genericEliminations);
+		if (liveComplications) liveComplications->ReadBool(rules.liveComplications);
+		if (liveComplicationsExcludeStandard) liveComplicationsExcludeStandard->ReadBool(rules.liveComplicationsExcludeStandard);
+		if (liveComplicationChance) liveComplicationChance->ReadUnsignedInt(rules.liveComplicationChance);
+		if (meleeKillTypes) meleeKillTypes->ReadBool(rules.meleeKillTypes);
+		if (thrownKillTypes) thrownKillTypes->ReadBool(rules.thrownKillTypes);
+
+		sdk->SetSetting(this, ZString(rulesetKeyPrefix + "generic_eliminations"), genericEliminations ? "yes" : "no");
+		sdk->SetSetting(this, ZString(rulesetKeyPrefix + "live_complications"), liveComplications ? "yes" : "no");
+		sdk->SetSetting(this, ZString(rulesetKeyPrefix + "live_complications_exclude_standard"), liveComplicationsExcludeStandard ? "yes" : "no");
+		sdk->SetSetting(this, ZString(rulesetKeyPrefix + "live_complication_chance"), ZString(std::format("{}", liveComplicationChance)));
+		sdk->SetSetting(this, ZString(rulesetKeyPrefix + "melee_kill_types"), meleeKillTypes ? "yes" : "no");
+		sdk->SetSetting(this, ZString(rulesetKeyPrefix + "thrown_kill_types"), thrownKillTypes ? "yes" : "no");
+	}*/
+}
+
 auto Croupier::OnEngineInitialized() -> void {
 	Logger::Info("Croupier has been initialized!");
 
-	this->window.create();
+	if (this->externalWindowEnabled)
+		this->window.create();
 
 	Hooks::ZAchievementManagerSimple_OnEventReceived->AddDetour(this, &Croupier::OnEventReceived);
 	Hooks::ZAchievementManagerSimple_OnEventSent->AddDetour(this, &Croupier::OnEventSent);
@@ -1175,6 +1236,7 @@ auto Croupier::OnDrawMenu() -> void {
 auto Croupier::OnDrawUI(bool focused) -> void {
 	this->DrawSpinUI(focused);
 	this->DrawEditSpinUI(focused);
+	this->DrawEditMapPoolUI(focused);
 	this->DrawCustomRulesetUI(focused);
 
 	if (!this->showUI) return;
@@ -1191,17 +1253,22 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 			if (ImGui::Checkbox("External Window", &this->externalWindowEnabled)) {
 				if (this->externalWindowEnabled) this->window.create();
 				else this->window.destroy();
+				SDK()->SetSetting(this, "external_window", this->externalWindowEnabled ? "yes" : "no");
 			}
 
 			ImGui::SameLine();
 		
-			if (ImGui::Checkbox("On Top", &this->externalWindowOnTop))
+			if (ImGui::Checkbox("On Top", &this->externalWindowOnTop)) {
 				this->window.setAlwaysOnTop(this->externalWindowOnTop);
+				SDK()->SetSetting(this, "external_window_on_top", this->externalWindowOnTop ? "yes" : "no");
+			}
 
 			ImGui::SameLine();
 
-			if (ImGui::Checkbox("Text-Only", &this->externalWindowTextOnly))
+			if (ImGui::Checkbox("Text-Only", &this->externalWindowTextOnly)) {
 				this->window.setTextMode(this->externalWindowTextOnly);
+				SDK()->SetSetting(this, "external_window_text_only", this->externalWindowTextOnly ? "yes" : "no");
+			}
 		}
 
 		{
@@ -1251,6 +1318,11 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 			ImGui::EndCombo();
 		}
 
+		ImGui::SameLine();
+
+		if (ImGui::Button("Edit Pool"))
+			this->showEditMapPoolUI = !this->showEditMapPoolUI;
+
 		if (ImGui::Button("Respin"))
 			this->Respin();
 
@@ -1295,6 +1367,43 @@ auto Croupier::DrawSpinUI(bool focused) -> void {
 		for (auto& cond : conds) {
 			auto str = std::format("{}: {} / {}", cond.target.get().getName(), cond.methodName, cond.disguise.get().name);
 			ImGui::Text(str.c_str());
+		}
+
+		ImGui::PopFont();
+	}
+
+	ImGui::End();
+	ImGui::PopFont();
+}
+
+auto Croupier::DrawEditMapPoolUI(bool focused) -> void {
+	if (!this->showEditMapPoolUI) return;
+
+	ImGui::PushFont(SDK()->GetImGuiBlackFont());
+
+	if (ImGui::Begin(ICON_MD_EDIT " CROUPIER - EDIT MISSION POOL", &this->showEditMapPoolUI, ImGuiWindowFlags_AlwaysAutoResize)) {
+		ImGui::PushFont(SDK()->GetImGuiRegularFont());
+
+		auto col = 0;
+
+		for (auto& info : missionInfos) {
+			if (info.mission == eMission::NONE) {
+				ImGui::TextUnformatted(info.name.data());
+				col = 0;
+				continue;
+			}
+
+			if (col && col < 4) ImGui::SameLine();
+
+			++col;
+
+			auto foundIt = find(begin(this->missionPool), end(this->missionPool), info.mission);
+			bool enabled = foundIt != this->missionPool.end();
+
+			if (ImGui::Checkbox(info.name.data(), &enabled)) {
+				if (enabled) this->missionPool.push_back(info.mission);
+				else this->missionPool.erase(foundIt);
+			}
 		}
 	}
 
@@ -1490,8 +1599,11 @@ auto Croupier::DrawCustomRulesetUI(bool focused) -> void {
 			this->OnRulesetCustomised();
 
 		if (this->rules.liveComplications) {
-			if (ImGui::SliderInt("Live complication chance", &this->rules.liveComplicationChance, 0, 100, "%d%%", ImGuiSliderFlags_AlwaysClamp))
+			int liveComplicationChance = this->rules.liveComplicationChance;
+			if (ImGui::SliderInt("Live complication chance", &liveComplicationChance, 0, 100, "%d%%", ImGuiSliderFlags_AlwaysClamp)) {
+				this->rules.liveComplicationChance = liveComplicationChance;
 				this->OnRulesetCustomised();
+			}
 		}
 
 		if (ImGui::Checkbox("'Melee' kill types", &this->rules.meleeKillTypes))
@@ -1540,8 +1652,16 @@ auto Croupier::OnMissionSelect(eMission mission) -> void {
 	}
 }
 
+auto Croupier::PickRandomMission() -> eMission {
+	return randomVectorElement(this->missionPool);
+}
+
 auto Croupier::Respin() -> void {
-	if (!this->generator.getMission()) return;
+	if (!this->generator.getMission()) {
+		auto mission = PickRandomMission();
+		if (mission == eMission::NONE) return;
+		this->generator.setMission(this->GetMission(mission));
+	}
 
 	try {
 		auto guard = std::unique_lock(this->sharedSpin.mutex);
