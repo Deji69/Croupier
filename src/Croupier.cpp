@@ -490,6 +490,7 @@ auto generatorAddMissionDisguises(RouletteMission& generator)
 			generator.addDisguise("Cameraman", "outfit_e0fc86fb-a852-4652-bb5c-b591f7bfeb29_0.jpg");
 			generator.addDisguise("Consulate Intern", "outfit_65f23b45-f5ab-4ede-82ec-46e4de38c0e9_0.jpg");
 			generator.addDisguise("Consulate Janitor", "outfit_1b87edd3-fb1e-4adf-9463-efcb380cbd6b_0.jpg");
+			generator.addDisguise("Consulate Security", "outfit_e0fc86fc-a852-4652-bb5c-b591f7bfeb29_0.jpg");
 			generator.addDisguise("Elite Soldier", "outfit_e5bb3c6b-2fcd-4e36-a30d-03955cb05088_0.jpg");
 			generator.addDisguise("Food Vendor", "outfit_98b1c1f6-2634-4c29-b9e6-fa8d7633100a_0.jpg");
 			generator.addDisguise("Fortune Teller", "outfit_dc4762e0-e58e-4336-a3c1-40646087267a_0.jpg");
