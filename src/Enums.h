@@ -41,6 +41,7 @@ enum class Events {
 	DisguiseBlown,
 	Door_Unlocked,
 	Drain_Pipe_Climbed,
+	ExitGate,
 	FirstMissedShot,
 	FirstNonHeadshot,
 	HoldingIllegalWeapon,

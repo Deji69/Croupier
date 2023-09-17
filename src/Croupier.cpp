@@ -7,6 +7,7 @@
 #include <Glacier/ZGameLoopManager.h>
 #include <Glacier/ZScene.h>
 #include <Glacier/ZString.h>
+#include <variant>
 #include "Events.h"
 #include "json.hpp"
 #include "util.h"
@@ -1148,10 +1149,188 @@ auto Croupier::getMissionFromContractId(const std::string& str) -> eMission {
 	return it->second;
 }
 
+auto Croupier::LoadConfiguration() -> void {
+	if (this->file.is_open()) return;
+
+	const auto filepath = this->modulePath / "mods" / "Croupier" / "croupier.txt";
+	this->file.open(filepath, std::ios::in);
+
+	std::string content;
+
+	if (this->file.is_open()) {
+		std::stringstream ss;
+		ss << this->file.rdbuf();
+		content = ss.str();
+		this->file.close();
+	}
+	else {
+		this->file.clear();
+		this->file.open(filepath, std::ios::out);
+		this->file.close();
+	}
+
+	auto parseInt = [](std::string_view sv, int64 defaultVal = 0) {
+		int64 v;
+		auto res = std::from_chars(sv.data(), sv.data() + sv.size(), v);
+		if (res.ec == std::errc())
+			return v;
+		return defaultVal;
+	};
+	auto parseBool = [parseInt](std::string_view sv, bool defaultVal = false) {
+		bool v = defaultVal;
+		if (sv == "true")
+			v = true;
+		else if (sv == "false")
+			v = false;
+		else
+			v = parseInt(sv, defaultVal ? 1 : 0) ? true : false;
+		return v;
+	};
+
+	bool inHistorySection = false;
+
+	auto parseMainSection = [this, parseBool, parseInt](std::string_view cmd, std::string_view val) {
+		if (cmd == "spin_overlay")
+			this->config.spinOverlay = parseBool(val, this->config.spinOverlay);
+		else if (cmd == "external_window")
+			this->config.externalWindow = parseBool(val, this->config.externalWindow);
+		else if (cmd == "external_window_on_top")
+			this->config.externalWindowOnTop = parseBool(val, this->config.externalWindowOnTop);
+		else if (cmd == "external_window_text_only")
+			this->config.externalWindowTextOnly = parseBool(val, this->config.externalWindowTextOnly);
+	};
+
+	auto parseHistorySection = [this](std::string_view line) {
+		auto targetsSeparated = split(line, ",");
+		auto lastTargetMission = eMission::NONE;
+		RouletteSpin spin;
+
+		for (const auto& targetCondText : targetsSeparated) {
+			auto condTextSeparatedTarget = split(targetCondText, ":");
+			if (condTextSeparatedTarget.size() < 2) return;
+
+			auto separatedConds = split(condTextSeparatedTarget[1], "/");
+			if (condTextSeparatedTarget.size() < 2) return;
+
+			auto targetName = std::string(Keyword::targetKeyToName(toUpperCase(trim(condTextSeparatedTarget[0]))));
+			if (targetName.empty()) return;
+
+			auto mission = getMissionForTarget(targetName);
+			if (mission == eMission::NONE) return;
+
+			auto missionGen = this->GetMission(mission);
+			if (!missionGen) return;
+
+			if (lastTargetMission == eMission::NONE) spin = RouletteSpin(missionGen);
+			else if (mission != lastTargetMission) return;
+
+			lastTargetMission = mission;
+
+			auto condsFirstToken = trim(separatedConds[0]);
+
+			auto complication = eKillComplication::None;
+			auto killType = eKillType::Any;
+			auto killMethod = eKillMethod::NONE;
+			auto mapKillMethod = eMapKillMethod::NONE;
+
+			if (condsFirstToken.starts_with("(")) {
+				auto idx = condsFirstToken.find(")");
+				if (idx == condsFirstToken.npos) return;
+				auto complicationText = std::string(condsFirstToken.substr(1, idx - 1));
+				auto it = Keyword::getMap().find(complicationText);
+				if (it != end(Keyword::getMap()) && std::holds_alternative<eKillComplication>(it->second))
+					complication = std::get<eKillComplication>(it->second);
+				condsFirstToken = trim(condsFirstToken.substr(idx));
+			}
+
+			if (condsFirstToken.empty()) return;
+
+			auto methodTokens = split(condsFirstToken, " ");
+			for (const auto& methodToken : methodTokens) {
+				auto it = Keyword::getMap().find(toLowerCase(methodToken));
+				if (it == end(Keyword::getMap())) continue;
+				if (!std::visit(overloaded{
+					[&killType](eKillType kt) { killType = kt; return true; },
+					[&killMethod](eKillMethod km) { killMethod = km; return true; },
+					[&mapKillMethod](eMapKillMethod mkm) { mapKillMethod = mkm; return true; },
+					[](eKillComplication kc) { return false; },
+				}, it->second)) continue;
+			}
+
+			if (killMethod == eKillMethod::NONE && mapKillMethod == eMapKillMethod::NONE)
+				continue;
+
+			auto disguiseName = trim(separatedConds[1]);
+
+			auto target = missionGen->getTargetByName(targetName);
+			if (!target) return;
+
+			auto disguise = missionGen->getDisguiseByName(disguiseName);
+			if (!disguise) return;
+
+			spin.add(RouletteSpinCondition(*target, *disguise, killMethod, mapKillMethod, killType, complication));
+		}
+
+		auto mission = this->GetMission(lastTargetMission);
+
+		if (spin.getConditions().size() < mission->getTargets().size()) return;
+
+		this->spinHistory.emplace(std::move(spin));
+	};
+
+	for (const auto& sv : split(content, "\n")) {
+		if (inHistorySection)
+			parseHistorySection(sv);
+		else if (trim(sv) == "[history]")
+			inHistorySection = true;
+		else {
+			auto tokens = split(sv, " ");
+			if (tokens.size() < 2) continue;
+
+			parseMainSection(tokens[0], tokens[1]);
+		}
+	}
+}
+
+auto Croupier::SaveConfiguration() -> void {
+	std::string content;
+	const auto filepath = this->modulePath / "mods" / "Croupier" / "croupier.txt";
+
+	this->file.open(filepath, std::ios::out | std::ios::trunc);
+
+	std::println(this->file, "spin_overlay {}", this->config.spinOverlay ? "true" : "false");
+	std::println(this->file, "external_window {}", this->config.externalWindow ? "true" : "false");
+	std::println(this->file, "external_window_on_top {}", this->config.externalWindowOnTop ? "true" : "false");
+	std::println(this->file, "external_window_text_only {}", this->config.externalWindowTextOnly ? "true" : "false");
+	std::println(this->file, "");
+	std::println(this->file, "[history]");
+
+	for (const auto& spin : this->config.spinHistory) {
+		auto n = 0;
+
+		for (const auto& cond : spin.conditions) {
+			if (n++) std::print(this->file, ", ");
+			std::print(this->file, "{}: {} / {}", cond.targetName, cond.killMethod, cond.disguise);
+		}
+
+		std::println(this->file, "");
+	}
+
+	this->file.flush();
+	this->file.close();
+}
+
 auto Croupier::OnEngineInitialized() -> void {
 	Logger::Info("Croupier has been initialized!");
 
-	this->window.create();
+	this->LoadConfiguration();
+	this->PreviousSpin();
+
+	if (this->config.externalWindow)
+		this->window.create();
+
+	this->window.setAlwaysOnTop(this->config.externalWindowOnTop);
+	this->window.setTextMode(this->config.externalWindowTextOnly);
 
 	Hooks::ZAchievementManagerSimple_OnEventReceived->AddDetour(this, &Croupier::OnEventReceived);
 	Hooks::ZAchievementManagerSimple_OnEventSent->AddDetour(this, &Croupier::OnEventSent);
@@ -1162,9 +1341,14 @@ Croupier::Croupier() : sharedSpin(spin), window(sharedSpin) {
 	this->SetupMissions();
 	this->SetupEvents();
 	this->rules = makeRouletteRuleset(this->ruleset);
+
+	CHAR filename[MAX_PATH] = {};
+	if (GetModuleFileName(NULL, filename, MAX_PATH) != 0)
+		this->modulePath = std::filesystem::path(filename).parent_path();
 }
 
 Croupier::~Croupier() {
+	this->SaveConfiguration();
 }
 
 auto Croupier::OnDrawMenu() -> void {
@@ -1186,23 +1370,23 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 	if (ImGui::Begin(ICON_MD_SETTINGS " CROUPIER", &this->showUI)) {
 		ImGui::PushFont(SDK()->GetImGuiRegularFont());
 
-		ImGui::Checkbox("In-Game Window", &this->inGameWindowEnabled);
+		ImGui::Checkbox("In-Game Window", &this->config.spinOverlay);
 
 		{
-			if (ImGui::Checkbox("External Window", &this->externalWindowEnabled)) {
-				if (this->externalWindowEnabled) this->window.create();
+			if (ImGui::Checkbox("External Window", &this->config.externalWindow)) {
+				if (this->config.externalWindow) this->window.create();
 				else this->window.destroy();
 			}
 
 			ImGui::SameLine();
 		
-			if (ImGui::Checkbox("On Top", &this->externalWindowOnTop))
-				this->window.setAlwaysOnTop(this->externalWindowOnTop);
+			if (ImGui::Checkbox("On Top", &this->config.externalWindowOnTop))
+				this->window.setAlwaysOnTop(this->config.externalWindowOnTop);
 
 			ImGui::SameLine();
 
-			if (ImGui::Checkbox("Text-Only", &this->externalWindowTextOnly))
-				this->window.setTextMode(this->externalWindowTextOnly);
+			if (ImGui::Checkbox("Text-Only", &this->config.externalWindowTextOnly))
+				this->window.setTextMode(this->config.externalWindowTextOnly);
 		}
 
 		{
@@ -1267,11 +1451,7 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 			auto update = false;
 
 			if (ImGui::Button("Previous")) {
-				auto guard = std::unique_lock(this->sharedSpin.mutex);
-				this->spin = std::move(this->spinHistory.top());
-				this->spinHistory.pop();
-				this->spinCompleted = false;
-				this->LogSpin();
+				this->PreviousSpin();
 				update = true;
 			}
 
@@ -1285,11 +1465,11 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 }
 
 auto Croupier::DrawSpinUI(bool focused) -> void {
-	if (!this->inGameWindowEnabled) return;
+	if (!this->config.spinOverlay) return;
 
 	ImGui::PushFont(SDK()->GetImGuiBlackFont());
 
-	if (ImGui::Begin(ICON_MD_CASINO " CROUPIER - SPIN", &this->inGameWindowEnabled, ImGuiWindowFlags_AlwaysAutoResize)) {
+	if (ImGui::Begin(ICON_MD_CASINO " CROUPIER - SPIN", &this->config.spinOverlay, ImGuiWindowFlags_AlwaysAutoResize)) {
 		ImGui::PushFont(SDK()->GetImGuiBoldFont());
 
 		auto const& conds = this->spin.getConditions();
@@ -1533,7 +1713,6 @@ auto Croupier::OnMissionSelect(eMission mission) -> void {
 	if (currentMission && mission == currentMission->getMission() && !this->spinCompleted) return;
 
 	try {
-		this->generator.setRuleset(&this->rules);
 		this->generator.setMission(this->GetMission(mission));
 		this->Respin();
 	} catch (const RouletteGeneratorException& ex) {
@@ -1541,22 +1720,67 @@ auto Croupier::OnMissionSelect(eMission mission) -> void {
 	}
 }
 
+auto Croupier::SaveSpinHistory() -> void {
+	if (!this->generator.getMission()) return;
+	if (this->spin.getConditions().empty()) return;
+
+	if (!this->currentSpinSaved) {
+		SerializedSpin spin;
+
+		for (const auto& cond : this->spin.getConditions()) {
+			SerializedSpin::Condition condition;	
+			condition.targetName = Keyword::getForTarget(cond.target.get().getName());
+			condition.disguise = cond.disguise.get().name;
+			condition.killMethod = cond.killComplication != eKillComplication::None ? std::format("({}) ", Keyword::get(cond.killComplication)) : "";
+			condition.killMethod += cond.killType != eKillType::Any ? std::format("{} ", Keyword::get(cond.killType)) : "";
+			condition.killMethod += cond.killMethod.method != eKillMethod::NONE ? Keyword::get(cond.killMethod.method) : Keyword::get(cond.specificKillMethod.method);
+			spin.conditions.push_back(std::move(condition));
+		}
+
+		this->config.spinHistory.push_back(std::move(spin));
+		this->currentSpinSaved = true;
+	}
+
+	this->SaveConfiguration();
+}
+
+auto Croupier::OnFinishMission() -> void {
+	if (!this->generator.getMission()) return;
+	if (this->spin.getConditions().empty()) return;
+}
+
+auto Croupier::PreviousSpin() -> void {
+	if (this->spinHistory.empty()) return;
+	auto guard = std::unique_lock(this->sharedSpin.mutex);
+	this->spin = std::move(this->spinHistory.top());
+	this->currentSpinSaved = true;
+	this->generator.setMission(this->spin.getMission());
+	this->spinHistory.pop();
+	this->spinCompleted = false;
+	this->LogSpin();
+}
+
 auto Croupier::Respin() -> void {
 	if (!this->generator.getMission()) return;
+
+	this->generator.setRuleset(&this->rules);
 
 	try {
 		auto guard = std::unique_lock(this->sharedSpin.mutex);
 
-		if (!this->spin.getConditions().empty())
+		if (!this->spin.getConditions().empty()) {
 			this->spinHistory.emplace(std::move(this->spin));
+		}
 
 		this->spin = this->generator.spin();
+		this->currentSpinSaved = false;
 		this->spinCompleted = false;
 	} catch (const std::runtime_error& ex) {
 		Logger::Error("Croupier: {}", ex.what());
 	}
 
 	this->LogSpin();
+	this->SaveSpinHistory();
 	this->window.update();
 }
 
@@ -1593,8 +1817,12 @@ auto Croupier::SetupEvents() -> void {
 		auto guard = std::unique_lock(this->sharedSpin.mutex);
 		this->sharedSpin.kills.clear();
 	});
-	events.listen<Events::ContractEnd>([this](auto& ev){
+	events.listen<Events::ExitGate>([this](const ServerEvent<Events::ExitGate>& ev) {
+		this->exitGateTime = ev.Timestamp;
+	});
+	events.listen<Events::ContractEnd>([this](const ServerEvent<Events::ContractEnd>& ev){
 		this->spinCompleted = true;
+		this->OnFinishMission();
 	});
 	events.listen<Events::Kill>([this](const ServerEvent<Events::Kill>& ev) {
 		if (!ev.Value.IsTarget) return;

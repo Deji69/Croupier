@@ -10,8 +10,10 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include <variant>
 #include <vector>
 #include "RouletteRuleset.h"
+#include "util.h"
 
 enum class eMission {
 	NONE,
@@ -94,8 +96,8 @@ enum class eMapKillMethod {
 	Broadsword,
 	BurialKnife,
 	CircumcisionKnife,
-	ConcealableKnife,
 	CombatKnife,
+	ConcealableKnife,
 	Cleaver,
 	FireAxe,
 	FoldingKnife,
@@ -190,6 +192,74 @@ auto getKillMethodImage(eKillMethod) -> std::string_view;
 auto getSpecificKillMethodName(eMapKillMethod) -> std::string_view;
 auto getSpecificKillMethodImage(eMapKillMethod) -> std::string_view;
 auto getKillComplicationName(eKillComplication) -> std::string_view;
+
+auto getMissionForTarget(const std::string& targetName) -> eMission;
+
+struct Keyword
+{
+public:
+	using Variant = std::variant<eKillType, eKillMethod, eKillComplication, eMapKillMethod>;
+	static std::vector<Keyword> keywords;
+
+private:
+	static std::unordered_map<std::string, Variant> keywordMap;
+	static std::unordered_map<std::string, std::string> targetKeyMap;
+
+public:
+	std::string keyword;
+	Variant value;
+	std::string alias = "";
+
+	Keyword(std::string keyword, eKillType value, std::string alias = "") : keyword(keyword), value(value), alias(alias)
+	{ }
+	Keyword(std::string keyword, eKillMethod value, std::string alias = "") : keyword(keyword), value(value), alias(alias)
+	{ }
+	Keyword(std::string keyword, eMapKillMethod value, std::string alias = "") : keyword(keyword), value(value), alias(alias)
+	{ }
+	Keyword(std::string keyword, Variant value, std::string alias = "") : keyword(keyword), value(value), alias(alias)
+	{ }
+
+	auto convertToSodersKill() {
+		if (auto killMethod = std::get_if<eKillMethod>(&this->value)) {
+			switch (*killMethod) {
+			case eKillMethod::Electrocution: return eMapKillMethod::Soders_Electrocution;
+			case eKillMethod::Explosion: return eMapKillMethod::Soders_Explosion;
+			case eKillMethod::ConsumedPoison: return eMapKillMethod::Soders_PoisonStemCells;
+			}
+		}
+		return eMapKillMethod::NONE;
+	}
+
+	static auto& getMap() {
+		if (keywordMap.empty()) {
+			for (auto& keyword : keywords)
+				keywordMap.emplace(toLowerCase(keyword.keyword), keyword.value);
+		}
+		return keywordMap;
+	}
+
+	static auto get(Variant method) -> std::string_view {
+		for (auto& keyword : keywords) {
+			if (!keyword.alias.empty()) continue;
+			if (keyword.value != method) continue;
+			return keyword.keyword;
+		}
+		return "";
+	}
+
+	static auto getForTarget(const std::string& name) -> std::string_view {
+		auto it = targetKeyMap.find(name);
+		if (it != end(targetKeyMap)) return it->second;
+		return "";
+	}
+
+	static auto targetKeyToName(std::string_view key) -> std::string_view {
+		for (auto& target : targetKeyMap) {
+			if (target.second == key) return target.first;
+		}
+		return "";
+	}
+};
 
 class RouletteGeneratorException : public std::exception {
 public:
@@ -351,16 +421,23 @@ public:
 	auto getObjectiveCount() const { return this->targets.size(); }
 
 	auto getDisguiseByName(std::string_view name) const {
-		auto it = std::find_if(this->disguises.cbegin(), this->disguises.cend(), [name](const RouletteDisguise& disguise) {
+		auto it = find_if(cbegin(this->disguises), cend(this->disguises), [name](const RouletteDisguise& disguise) {
 			return disguise.name == name;
 		});
-		return it != this->disguises.end() ? &*it : nullptr;
+		return it != cend(this->disguises) ? &*it : nullptr;
 	}
 
 	auto& getDisguiseByNameAssert(std::string_view name) const {
 		auto disguise = this->getDisguiseByName(name);
 		if (!disguise) throw RouletteGeneratorException(std::format("Failed to find disguise \"{}\".", name));
 		return *disguise;
+	}
+
+	auto getTargetByName(std::string_view name) const {
+		auto it = find_if(cbegin(this->targets), cend(this->targets), [name](const RouletteTarget& target) {
+			return target.getName() == name;
+		});
+		return it != cend(this->targets) ? &*it : nullptr;
 	}
 
 	auto& addTarget(std::string name, std::string image, eTargetType type = eTargetType::Normal) {

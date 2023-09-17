@@ -447,6 +447,12 @@ struct Event<Events::Drain_Pipe_Climbed> {
 };
 
 template<>
+struct Event<Events::ExitGate> {
+	static auto constexpr Name = "exit_gate";
+	using EventValue = VoidEventValue;
+};
+
+template<>
 struct Event<Events::AccidentBodyFound> {
 	static auto constexpr Name = "AccidentBodyFound";
 	struct EventValue {

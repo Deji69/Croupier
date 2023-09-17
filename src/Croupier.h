@@ -1,4 +1,5 @@
 #pragma once
+#include <filesystem>
 #include <stack>
 #include <unordered_map>
 #include <IPluginInterface.h>
@@ -12,6 +13,25 @@
 #include "EventSystem.h"
 #include "Roulette.h"
 
+struct SerializedSpin {
+	struct Condition {
+		std::string targetName;
+		std::string killMethod;
+		std::string disguise;
+	};
+
+	std::vector<Condition> conditions;
+};
+
+struct Configuration {
+	bool externalWindow = true;
+	bool externalWindowOnTop = true;
+	bool externalWindowTextOnly = false;
+	bool spinOverlay = false;
+
+	std::vector<SerializedSpin> spinHistory;
+};
+
 class Croupier : public IPluginInterface {
 public:
 	Croupier();
@@ -22,10 +42,15 @@ public:
 	auto OnMissionSelect(eMission) -> void;
 	auto OnRulesetSelect(eRouletteRuleset) -> void;
 	auto OnRulesetCustomised() -> void;
+	auto SaveSpinHistory() -> void;
+	auto OnFinishMission() -> void;
 	auto DrawEditSpinUI(bool focused) -> void;
 	auto DrawCustomRulesetUI(bool focused) -> void;
 	auto DrawSpinUI(bool focused) -> void;
 	auto Respin() -> void;
+	auto PreviousSpin() -> void;
+	auto LoadConfiguration() -> void;
+	auto SaveConfiguration() -> void;
 
 private:
 	static std::unordered_map<std::string, eMission> MissionContractIds;
@@ -52,15 +77,16 @@ private:
 	eMission currentMission = eMission::NONE;
 	eRouletteRuleset ruleset = eRouletteRuleset::RR12;
 	EventSystem events;
+	std::fstream file;
+	std::filesystem::path modulePath;
 	int uiMissionSelectIndex = 0;
+	bool currentSpinSaved = true;
 	bool showUI = false;
 	bool showManualModeUI = false;
 	bool showCustomRulesetUI = false;
-	bool externalWindowEnabled = true;
-	bool inGameWindowEnabled = false;
-	bool externalWindowOnTop = true;
-	bool externalWindowTextOnly = false;
 	bool spinCompleted = false;
+	Configuration config;
+	double exitGateTime = 0;
 };
 
 DEFINE_ZHM_PLUGIN(Croupier)
