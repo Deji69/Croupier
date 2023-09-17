@@ -57,7 +57,7 @@ std::unordered_map<std::string, std::string> Keyword::targetKeyMap = {
 	{"Don Archibald Yates", "DY"},
 	{"Tamara Vidal", "TV"},
 	{"Arthur Edwards", "AE"},
-	{"Noel Crest", "NC"},
+	{"Noel Crest", "NCR"},
 	{"Sinhi \"Akka\" Venthan", "SV"},
 };
 std::unordered_map<std::string, eMission> targetMissionMap = {
