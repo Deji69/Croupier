@@ -7,6 +7,7 @@
 #include <Glacier/ZGameLoopManager.h>
 #include <Glacier/ZScene.h>
 #include <Glacier/ZString.h>
+#include <chrono>
 #include <variant>
 #include "Events.h"
 #include "json.hpp"
@@ -1190,7 +1191,9 @@ auto Croupier::LoadConfiguration() -> void {
 	bool inHistorySection = false;
 
 	auto parseMainSection = [this, parseBool, parseInt](std::string_view cmd, std::string_view val) {
-		if (cmd == "spin_overlay")
+		if (cmd == "timer")
+			this->config.timer = parseBool(val, this->config.timer);
+		else if (cmd == "spin_overlay")
 			this->config.spinOverlay = parseBool(val, this->config.spinOverlay);
 		else if (cmd == "external_window")
 			this->config.externalWindow = parseBool(val, this->config.externalWindow);
@@ -1302,6 +1305,7 @@ auto Croupier::SaveConfiguration() -> void {
 	std::println(this->file, "external_window {}", this->config.externalWindow ? "true" : "false");
 	std::println(this->file, "external_window_on_top {}", this->config.externalWindowOnTop ? "true" : "false");
 	std::println(this->file, "external_window_text_only {}", this->config.externalWindowTextOnly ? "true" : "false");
+	std::println(this->file, "timer {}", this->config.timer ? "true" : "false");
 	std::println(this->file, "");
 	std::println(this->file, "[history]");
 
@@ -1331,6 +1335,7 @@ auto Croupier::OnEngineInitialized() -> void {
 
 	this->window.setAlwaysOnTop(this->config.externalWindowOnTop);
 	this->window.setTextMode(this->config.externalWindowTextOnly);
+	this->window.setTimerEnabled(this->config.timer);
 
 	Hooks::ZAchievementManagerSimple_OnEventReceived->AddDetour(this, &Croupier::OnEventReceived);
 	Hooks::ZAchievementManagerSimple_OnEventSent->AddDetour(this, &Croupier::OnEventSent);
@@ -1369,24 +1374,42 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 
 	if (ImGui::Begin(ICON_MD_SETTINGS " CROUPIER", &this->showUI)) {
 		ImGui::PushFont(SDK()->GetImGuiRegularFont());
+		
+		if (ImGui::Checkbox("Timer (BETA)", &this->config.timer)) {
+			this->window.setTimerEnabled(this->config.timer);
+			this->SaveConfiguration();
+		}
 
-		ImGui::Checkbox("In-Game Window", &this->config.spinOverlay);
+		ImGui::SameLine();
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 50.0);
+		if (ImGui::Button("Reset")) {
+			auto guard = std::unique_lock(this->sharedSpin.mutex);
+			this->sharedSpin.timeStarted = std::chrono::steady_clock::now();
+		}
+
+		if (ImGui::Checkbox("In-Game Window", &this->config.spinOverlay))
+			this->SaveConfiguration();
 
 		{
 			if (ImGui::Checkbox("External Window", &this->config.externalWindow)) {
 				if (this->config.externalWindow) this->window.create();
 				else this->window.destroy();
+				this->SaveConfiguration();
 			}
 
 			ImGui::SameLine();
 		
-			if (ImGui::Checkbox("On Top", &this->config.externalWindowOnTop))
+			if (ImGui::Checkbox("On Top", &this->config.externalWindowOnTop)) {
 				this->window.setAlwaysOnTop(this->config.externalWindowOnTop);
+				this->SaveConfiguration();
+			}
 
 			ImGui::SameLine();
 
-			if (ImGui::Checkbox("Text-Only", &this->config.externalWindowTextOnly))
+			if (ImGui::Checkbox("Text-Only", &this->config.externalWindowTextOnly)) {
 				this->window.setTextMode(this->config.externalWindowTextOnly);
+				this->SaveConfiguration();
+			}
 		}
 
 		{
@@ -1472,11 +1495,30 @@ auto Croupier::DrawSpinUI(bool focused) -> void {
 	if (ImGui::Begin(ICON_MD_CASINO " CROUPIER - SPIN", &this->config.spinOverlay, ImGuiWindowFlags_AlwaysAutoResize)) {
 		ImGui::PushFont(SDK()->GetImGuiBoldFont());
 
-		auto const& conds = this->spin.getConditions();
-		for (auto& cond : conds) {
-			auto str = std::format("{}: {} / {}", cond.target.get().getName(), cond.methodName, cond.disguise.get().name);
-			ImGui::Text(str.c_str());
+		auto elapsed = std::chrono::seconds::zero();
+
+		{
+			auto guard = std::shared_lock(this->sharedSpin.mutex);
+			auto const& conds = this->spin.getConditions();
+			elapsed = this->sharedSpin.getTimeElapsed();
+			for (auto& cond : conds) {
+				auto str = std::format("{}: {} / {}", cond.target.get().getName(), cond.methodName, cond.disguise.get().name);
+				ImGui::Text(str.c_str());
+			}
 		}
+
+		if (this->config.timer) {
+			auto timeFormat = std::string();
+			auto const includeHr = std::chrono::duration_cast<std::chrono::hours>(elapsed).count() >= 1;
+			auto const time = includeHr ? std::format("{:%H:%M:%S}", elapsed) : std::format("{:%M:%S}", elapsed);
+			auto windowWidth = ImGui::GetWindowSize().x;
+			auto textWidth = ImGui::CalcTextSize(time.c_str()).x;
+
+			ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
+			ImGui::Text(time.c_str());
+		}
+
+		ImGui::PopFont();
 	}
 
 	ImGui::End();
@@ -1535,7 +1577,7 @@ auto Croupier::DrawEditSpinUI(bool focused) -> void {
 						auto const selected = method == currentMapMethod;
 
 						if (ImGui::Selectable(name.data(), selected)) {
-							auto const guard = std::unique_lock(this->sharedSpin.mutex);
+							auto guard = std::unique_lock(this->sharedSpin.mutex);
 							this->spin.setTargetMapMethod(target, method);
 							this->window.update();
 						}
@@ -1709,6 +1751,8 @@ auto Croupier::OnRulesetSelect(eRouletteRuleset ruleset) -> void {
 }
 
 auto Croupier::OnMissionSelect(eMission mission) -> void {
+	this->sharedSpin.playerSelectMission();
+
 	auto currentMission = this->spin.getMission();
 	if (currentMission && mission == currentMission->getMission() && !this->spinCompleted) return;
 
@@ -1722,6 +1766,7 @@ auto Croupier::OnMissionSelect(eMission mission) -> void {
 
 auto Croupier::SaveSpinHistory() -> void {
 	if (!this->generator.getMission()) return;
+	auto guard = std::shared_lock(this->sharedSpin.mutex);
 	if (this->spin.getConditions().empty()) return;
 
 	if (!this->currentSpinSaved) {
@@ -1751,12 +1796,17 @@ auto Croupier::OnFinishMission() -> void {
 
 auto Croupier::PreviousSpin() -> void {
 	if (this->spinHistory.empty()) return;
-	auto guard = std::unique_lock(this->sharedSpin.mutex);
-	this->spin = std::move(this->spinHistory.top());
-	this->currentSpinSaved = true;
-	this->generator.setMission(this->spin.getMission());
-	this->spinHistory.pop();
-	this->spinCompleted = false;
+	{
+		auto guard = std::unique_lock(this->sharedSpin.mutex);
+		this->spin = std::move(this->spinHistory.top());
+		this->sharedSpin.isPlaying = false;
+		this->currentSpinSaved = true;
+		this->generator.setMission(this->spin.getMission());
+		this->spinHistory.pop();
+		this->spinCompleted = false;
+	}
+
+	this->sharedSpin.playerStart();
 	this->LogSpin();
 }
 
@@ -1773,6 +1823,7 @@ auto Croupier::Respin() -> void {
 		}
 
 		this->spin = this->generator.spin();
+		this->sharedSpin.timeStarted = std::chrono::steady_clock::now();
 		this->currentSpinSaved = false;
 		this->spinCompleted = false;
 	} catch (const std::runtime_error& ex) {
@@ -1785,6 +1836,8 @@ auto Croupier::Respin() -> void {
 }
 
 auto Croupier::LogSpin() -> void {
+	auto guard = std::shared_lock(this->sharedSpin.mutex);
+
 	std::string spinText;
 	for (auto& cond : this->spin.getConditions())
 	{
@@ -1814,11 +1867,12 @@ auto Croupier::SetupMissions() -> void {
 
 auto Croupier::SetupEvents() -> void {
 	events.listen<Events::ContractStart>([this](auto& ev) {
-		auto guard = std::unique_lock(this->sharedSpin.mutex);
-		this->sharedSpin.kills.clear();
+		if (!this->sharedSpin.isPlaying || this->sharedSpin.isFinished)
+			this->sharedSpin.playerStart();
 	});
 	events.listen<Events::ExitGate>([this](const ServerEvent<Events::ExitGate>& ev) {
 		this->exitGateTime = ev.Timestamp;
+		this->sharedSpin.playerExit();
 	});
 	events.listen<Events::ContractEnd>([this](const ServerEvent<Events::ContractEnd>& ev){
 		this->spinCompleted = true;
@@ -1900,8 +1954,10 @@ DEFINE_PLUGIN_DETOUR(Croupier, void, OnWinHttpCallback, void* dwContext, void* h
 
 	auto mission = Croupier::getMissionFromContractId(contractId);
 
-	if (mission != eMission::NONE)
+	if (mission != eMission::NONE) {
 		this->OnMissionSelect(mission);
+		this->sharedSpin.playerStart();
+	}
 
 	return HookResult<void>(HookAction::Continue());
 }

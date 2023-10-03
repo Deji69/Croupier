@@ -230,6 +230,15 @@ public:
 		return eMapKillMethod::NONE;
 	}
 
+	static auto convertFromSodersKill(eMapKillMethod killMethod) -> Variant {
+		switch (killMethod) {
+		case eMapKillMethod::Soders_Electrocution: return eKillMethod::Electrocution;
+		case eMapKillMethod::Soders_Explosion: return eKillMethod::Explosion;
+		case eMapKillMethod::Soders_PoisonStemCells: return eKillMethod::ConsumedPoison;
+		}
+		return killMethod;
+	}
+
 	static auto& getMap() {
 		if (keywordMap.empty()) {
 			for (auto& keyword : keywords)
@@ -239,6 +248,8 @@ public:
 	}
 
 	static auto get(Variant method) -> std::string_view {
+		if (std::holds_alternative<eMapKillMethod>(method))
+			method = convertFromSodersKill(std::get<eMapKillMethod>(method));
 		for (auto& keyword : keywords) {
 			if (!keyword.alias.empty()) continue;
 			if (keyword.value != method) continue;

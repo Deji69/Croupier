@@ -53,10 +53,74 @@ struct SharedRouletteSpin
 {
 	const RouletteSpin& spin;
 	std::vector<RouletteSpinKill> kills;
+	std::chrono::steady_clock::time_point timeStarted;
+	std::chrono::seconds timeElapsed = std::chrono::seconds(0);
+	bool isPlaying = false;
+	bool isFinished = false;
 	std::shared_mutex mutex;
 
-	SharedRouletteSpin(const RouletteSpin& spin) : spin(spin)
-	{ }
+	SharedRouletteSpin(const RouletteSpin& spin) : spin(spin), timeElapsed(0)
+	{
+		timeStarted = std::chrono::steady_clock().now();
+	}
+
+	auto getTimeElapsed() -> std::chrono::seconds {
+		if (!this->isFinished && this->isPlaying) {
+			return std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock().now() - timeStarted);
+		}
+		return this->isFinished ? this->timeElapsed : std::chrono::seconds::zero();
+	}
+
+	auto playerSelectMission() {
+		auto guard = std::unique_lock(this->mutex);
+		this->isPlaying = false;
+	}
+
+	auto playerStart() {
+		auto guard = std::unique_lock(this->mutex);
+		this->kills.clear();
+		if (!this->isPlaying)
+			this->timeStarted = std::chrono::steady_clock().now();
+		this->isPlaying = true;
+		this->isFinished = false;
+	}
+
+	auto playerExit() {
+		auto guard = std::unique_lock(this->mutex);
+		this->timeElapsed = this->getTimeElapsed();
+		this->isPlaying = false;
+		this->isFinished = true;
+	}
+};
+
+struct CroupierDrawInfo
+{
+	struct Condition
+	{
+		std::wstring condText;
+		std::wstring killMethodText;
+		std::wstring disguiseText;
+		std::filesystem::path targetImage;
+		std::filesystem::path killMethodImage;
+		std::filesystem::path disguiseImage;
+	};
+
+	CroupierDrawInfo() = default;
+	CroupierDrawInfo(const SharedRouletteSpin& spin);
+
+	auto getTimeElapsed() -> std::chrono::seconds {
+		if (!this->isFinished && this->isPlaying) {
+			return std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock().now() - timeStarted);
+		}
+		return this->isFinished ? this->timeElapsed : std::chrono::seconds::zero();
+	}
+
+	std::chrono::steady_clock::time_point timeStarted;
+	std::chrono::seconds timeElapsed = std::chrono::seconds(0);
+	bool isInitialised = false;
+	bool isPlaying = false;
+	bool isFinished = false;
+	std::vector<Condition> conds;
 };
 
 class CroupierWindow
@@ -71,13 +135,14 @@ public:
 
 	auto setDarkMode(bool enable) -> void;
 	auto setAlwaysOnTop(bool enable) -> void;
+	auto setTimerEnabled(bool enable) -> void;
 	auto setTextMode(bool enable) -> void;
 
 	auto paint(HWND wnd) -> void;
 
 protected:
-	auto getWindowWidth() const -> int;
-	auto getWindowHeight() const -> int;
+	auto getWindowWidth(int numConds) const -> int;
+	auto getWindowHeight(int numConds) const -> int;
 	auto createDeviceResources(HWND wnd) -> HRESULT;
 	auto loadImage(std::filesystem::path) -> ID2D1Bitmap*;
 	auto OnPaint(HWND wnd) -> LRESULT;
@@ -88,6 +153,7 @@ protected:
 private:
 	SharedRouletteSpin& spin;
 	std::unordered_map<std::string, LoadedImage> loadedImages;
+	CroupierDrawInfo latestDrawInfo;
 	HINSTANCE hInst = nullptr;
 	HWND hWnd = nullptr;
 	HRESULT initialization = S_OK;
@@ -99,6 +165,7 @@ private:
 	bool wasOnTop = false;
 	bool alignRight = false;
 	bool textMode = false;
+	bool timer = false;
 	eCroupierWindowLayout layout = eCroupierWindowLayout::ADAPTIVE;
 
 	std::thread windowThread;
@@ -108,6 +175,7 @@ private:
 	IWICImagingFactory* IWICFactory = nullptr;
 	IDWriteFactory* DWriteFactory = nullptr;
 	IDWriteTextFormat* DWriteTextFormat = nullptr;
+	IDWriteTextFormat* DWriteTextFormatTimer = nullptr;
 	ID2D1SolidColorBrush* Brush = nullptr;
 
 	volatile bool runningWindow = false;

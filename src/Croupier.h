@@ -28,6 +28,7 @@ struct Configuration {
 	bool externalWindowOnTop = true;
 	bool externalWindowTextOnly = false;
 	bool spinOverlay = false;
+	bool timer = false;
 
 	std::vector<SerializedSpin> spinHistory;
 };
