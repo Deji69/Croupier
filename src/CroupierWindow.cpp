@@ -169,7 +169,7 @@ auto CroupierWindow::create() -> HRESULT
 			UpdateWindow(this->hWnd);
 			PostMessage(this->hWnd, CROUPIER_UPDATE_WINDOW, 0, 0);
 
-			SetTimer(this->hWnd, IDT_TIMER1, 200, (TIMERPROC)NULL);
+			SetTimer(this->hWnd, IDT_TIMER1, 50, (TIMERPROC)NULL);
 
 			auto msg = MSG{};
 			auto ret = BOOL{};
@@ -189,7 +189,12 @@ auto CroupierWindow::create() -> HRESULT
 					}
 					else if (this->hWnd) {
 						if (msg.message == WM_TIMER) {
-							if (msg.wParam == IDT_TIMER1 && this->timer)
+							auto elapsed = std::chrono::seconds(0);
+							{
+								auto guard = std::shared_lock(this->spin.mutex);
+								elapsed = this->spin.getTimeElapsed();
+							}
+							if (msg.wParam == IDT_TIMER1 && this->timer && elapsed > this->latestDrawInfo.timeElapsed)
 								InvalidateRect(this->hWnd, NULL, true);
 						}
 						else if (msg.message == CROUPIER_UPDATE_WINDOW) {
@@ -430,7 +435,7 @@ auto CroupierWindow::OnPaint(HWND wnd) -> LRESULT
 					++n;
 
 					if (this->timer) {
-						auto const elapsed = this->spin.getTimeElapsed();
+						auto const elapsed = this->latestDrawInfo.getTimeElapsed();
 						auto timeFormat = std::string();
 						auto const includeHr = std::chrono::duration_cast<std::chrono::hours>(elapsed).count() >= 1;
 						auto const left = wide && conds.size() % 2;
@@ -450,7 +455,7 @@ auto CroupierWindow::OnPaint(HWND wnd) -> LRESULT
 								time.c_str(),
 								time.size(),
 								this->DWriteTextFormat,
-								getRect2(left ? 6.0 : -5.0, -5.0, includeHr ? 75 : 55, 22.0),
+								getRect2(left ? 6.0 : -5.0, -5.0, includeHr ? 80 : 55, 22.0),
 								this->Brush
 							);
 						}
