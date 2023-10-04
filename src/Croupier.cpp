@@ -52,15 +52,15 @@ std::vector<MissionInfo> missionInfos = {
 	{eMission::BANGKOK_CLUB27, "Bangkok: Club 27"},
 	{eMission::COLORADO_FREEDOMFIGHTERS, "Colorado: Freedom Fighters"},
 	{eMission::HOKKAIDO_SITUSINVERSUS, "Hokkaido: Situs Inversus"},
-	//{eMission::NONE, "--- SEASON 1 BONUS ---", false},
+	{eMission::NONE, "--- SEASON 1 BONUS ---", false},
 	//{eMission::BANGKOK_THESOURCE, "Bangkok: The Source", false},
-	//{eMission::SAPIENZA_THEAUTHOR, "Sapienza: The Author", false},
-	//{eMission::HOKKAIDO_PATIENTZERO, "Hokkaido: Patient Zero", false},
-	//{eMission::PARIS_HOLIDAYHOARDERS, "Paris: Holiday Hoarders", false},
-	//{eMission::SAPIENZA_THEICON, "Sapienza: The Icon", false},
-	//{eMission::SAPIENZA_LANDSLIDE, "Sapienza: Landslide", false},
-	//{eMission::MARRAKESH_HOUSEBUILTONSAND, "Marrakesh: A House Built On Sand", false},
-	//{eMission::HOKKAIDO_SNOWFESTIVAL, "Hokkaido: Snow Festival", false},
+	{eMission::SAPIENZA_THEAUTHOR, "Sapienza: The Author", false},
+	{eMission::HOKKAIDO_PATIENTZERO, "Hokkaido: Patient Zero", false},
+	{eMission::PARIS_HOLIDAYHOARDERS, "Paris: Holiday Hoarders", false},
+	{eMission::SAPIENZA_THEICON, "Sapienza: The Icon", false},
+	{eMission::SAPIENZA_LANDSLIDE, "Sapienza: Landslide", false},
+	{eMission::MARRAKESH_HOUSEBUILTONSAND, "Marrakesh: A House Built On Sand", false},
+	{eMission::HOKKAIDO_SNOWFESTIVAL, "Hokkaido: Snow Festival", false},
 	{eMission::NONE, "--------- SEASON 2 ---------"},
 	{eMission::HAWKESBAY_NIGHTCALL, "Hawke's Bay: Nightcall", false},
 	{eMission::MIAMI_FINISHLINE, "Miami: The Finish Line"},
@@ -96,15 +96,15 @@ std::unordered_map<std::string, eMission> Croupier::MissionContractIds = {
 	{"b341d9f-58a4-411d-be57-0bc4ed85646b", eMission::BANGKOK_CLUB27},
 	{"2bac555-bbb9-429d-a8ce-f1ffdf94211c", eMission::COLORADO_FREEDOMFIGHTERS},
 	{"e81a82e-b409-41e9-9e3b-5f82e57f7a12", eMission::HOKKAIDO_SITUSINVERSUS},
-	//{"e45e91a-94ca-4d89-89fc-1b250e608e73", eMission::PARIS_HOLIDAYHOARDERS},
-	//{"0000000-0000-0000-0001-000000000006", eMission::SAPIENZA_THEICON},
-	//{"0000000-0000-0000-0001-000000000005", eMission::SAPIENZA_LANDSLIDE},
-	//{"e3f758a-2435-42de-93bd-d8f0b72c63a4", eMission::SAPIENZA_THEAUTHOR},
-	//{"ed93d8f-9535-425a-beb9-ef219e781e81", eMission::MARRAKESH_HOUSEBUILTONSAND},
-	//{"24b6964-a3bb-4457-b085-08f9a7dc7fb7", eMission::BANGKOK_THESOURCE},
+	{"e45e91a-94ca-4d89-89fc-1b250e608e73", eMission::PARIS_HOLIDAYHOARDERS},
+	{"0000000-0000-0000-0001-000000000006", eMission::SAPIENZA_THEICON},
+	{"0000000-0000-0000-0001-000000000005", eMission::SAPIENZA_LANDSLIDE},
+	{"e3f758a-2435-42de-93bd-d8f0b72c63a4", eMission::SAPIENZA_THEAUTHOR},
+	{"ed93d8f-9535-425a-beb9-ef219e781e81", eMission::MARRAKESH_HOUSEBUILTONSAND},
+	{"24b6964-a3bb-4457-b085-08f9a7dc7fb7", eMission::BANGKOK_THESOURCE},
 	//{"da6205e-6ee8-4189-9cdb-4947cccd84f4", eMission::COLORADO_THEVECTOR},
-	//{"2befcec-7799-4987-9215-6a152cb6a320", eMission::HOKKAIDO_PATIENTZERO},
-	//{"414a084-a7b9-43ce-b6ca-590620acd87e", eMission::HOKKAIDO_SNOWFESTIVAL},
+	{"2befcec-7799-4987-9215-6a152cb6a320", eMission::HOKKAIDO_PATIENTZERO},
+	{"414a084-a7b9-43ce-b6ca-590620acd87e", eMission::HOKKAIDO_SNOWFESTIVAL},
 	{"65019e5-43a8-4a33-8a2a-84c750a5eeb3", eMission::HAWKESBAY_NIGHTCALL},
 	{"1d015b4-be08-4e44-808e-ada0f387656f", eMission::MIAMI_FINISHLINE},
 	{"22519be-ed2e-44df-9dac-18f739d44fd9", eMission::SANTAFORTUNA_THREEHEADEDSERPENT},
@@ -135,7 +135,11 @@ auto generatorAddMissionMethods(RouletteMission& mission)
 		case eMission::ICAFACILITY_FINALTEST:
 			break;
 		case eMission::PARIS_HOLIDAYHOARDERS:
-			//generator.addMapMethod(eMapKillMethod::HolidayFireAxe);
+			mission.addMapMethod(eMapKillMethod::CircumcisionKnife);
+			mission.addMapMethod(eMapKillMethod::HolidayFireAxe);
+			mission.addMapMethod(eMapKillMethod::Katana);
+			mission.addMapMethod(eMapKillMethod::Shuriken);
+			mission.addMapMethod(eMapKillMethod::XmasStar);
 			[[fallthrough]];
 		case eMission::PARIS_SHOWSTOPPER:
 			mission.addMapMethod(eMapKillMethod::BattleAxe);
@@ -165,6 +169,30 @@ auto generatorAddMissionMethods(RouletteMission& mission)
 			mission.addMapMethod(eMapKillMethod::Scissors);
 			mission.addMapMethod(eMapKillMethod::Screwdriver);
 			break;
+		case eMission::SAPIENZA_LANDSLIDE:
+			mission.addMapMethod(eMapKillMethod::Cleaver);
+			mission.addMapMethod(eMapKillMethod::FireAxe);
+			mission.addMapMethod(eMapKillMethod::FoldingKnife);
+			mission.addMapMethod(eMapKillMethod::KitchenKnife);
+			mission.addMapMethod(eMapKillMethod::LetterOpener);
+			mission.addMapMethod(eMapKillMethod::OldAxe);
+			mission.addMapMethod(eMapKillMethod::Saber);
+			mission.addMapMethod(eMapKillMethod::Scissors);
+			mission.addMapMethod(eMapKillMethod::Screwdriver);
+			break;
+		case eMission::SAPIENZA_THEICON:
+			mission.addMapMethod(eMapKillMethod::BattleAxe);
+			mission.addMapMethod(eMapKillMethod::Cleaver);
+			mission.addMapMethod(eMapKillMethod::FireAxe);
+			mission.addMapMethod(eMapKillMethod::KitchenKnife);
+			mission.addMapMethod(eMapKillMethod::Screwdriver);
+			break;
+		case eMission::SAPIENZA_THEAUTHOR:
+			mission.addMapMethod(eMapKillMethod::FireAxe);
+			mission.addMapMethod(eMapKillMethod::KitchenKnife);
+			mission.addMapMethod(eMapKillMethod::Scissors);
+			mission.addMapMethod(eMapKillMethod::Screwdriver);
+			break;
 		case eMission::MARRAKESH_GILDEDCAGE:
 			mission.addMapMethod(eMapKillMethod::BattleAxe);
 			mission.addMapMethod(eMapKillMethod::Cleaver);
@@ -175,6 +203,18 @@ auto generatorAddMissionMethods(RouletteMission& mission)
 			mission.addMapMethod(eMapKillMethod::Scissors);
 			mission.addMapMethod(eMapKillMethod::Screwdriver);
 			break;
+		case eMission::MARRAKESH_HOUSEBUILTONSAND:
+			mission.addMapMethod(eMapKillMethod::BattleAxe);
+			mission.addMapMethod(eMapKillMethod::Cleaver);
+			mission.addMapMethod(eMapKillMethod::FoldingKnife);
+			mission.addMapMethod(eMapKillMethod::KitchenKnife);
+			mission.addMapMethod(eMapKillMethod::Scissors);
+			mission.addMapMethod(eMapKillMethod::Screwdriver);
+			break;
+		case eMission::BANGKOK_THESOURCE:
+			mission.addMapMethod(eMapKillMethod::AmputationKnife);
+			mission.addMapMethod(eMapKillMethod::CircumcisionKnife);
+			[[fallthrough]];
 		case eMission::BANGKOK_CLUB27:
 			mission.addMapMethod(eMapKillMethod::Cleaver);
 			mission.addMapMethod(eMapKillMethod::FireAxe);
@@ -191,10 +231,15 @@ auto generatorAddMissionMethods(RouletteMission& mission)
 			mission.addMapMethod(eMapKillMethod::OldAxe);
 			mission.addMapMethod(eMapKillMethod::Screwdriver);
 			break;
+		case eMission::HOKKAIDO_SNOWFESTIVAL:
+			mission.addMapMethod(eMapKillMethod::Icicle);
+			[[fallthrough]];
+		case eMission::HOKKAIDO_PATIENTZERO:
 		case eMission::HOKKAIDO_SITUSINVERSUS:
 			mission.addMapMethod(eMapKillMethod::Cleaver);
 			mission.addMapMethod(eMapKillMethod::FireAxe);
 			mission.addMapMethod(eMapKillMethod::Katana);
+			mission.addMapMethod(eMapKillMethod::KitchenKnife);
 			mission.addMapMethod(eMapKillMethod::Scalpel);
 			mission.addMapMethod(eMapKillMethod::Scissors);
 			mission.addMapMethod(eMapKillMethod::Screwdriver);
@@ -894,6 +939,14 @@ auto generatorForMission(RouletteMission& mission)
 			dm.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Extreme, eMethodTag::DuplicateOnlySameDisguise });
 			break;
 		}
+	case eMission::PARIS_HOLIDAYHOARDERS:
+		{
+			auto& hb = mission.addTarget("Harry \"Smokey\" Bagnato", "noel_harry_bagnato.jpg");
+			hb.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Extreme, eMethodTag::DuplicateOnlySameDisguise });
+			auto& mg = mission.addTarget("Marv \"Slick\" Gonif", "noel_marv_gonif.jpg");
+			mg.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Extreme, eMethodTag::DuplicateOnlySameDisguise });
+			break;
+		}
 	case eMission::SAPIENZA_WORLDOFTOMORROW:
 		{
 			auto& sc = mission.addTarget("Silvio Caruso", "world_of_tomorrow_silvio_caruso.jpg");
@@ -902,6 +955,26 @@ auto generatorForMission(RouletteMission& mission)
 
 			auto& fds = mission.addTarget("Francesca De Santis", "world_of_tomorrow_francesca_de_santis.jpg");
 			fds.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Impossible });
+			break;
+		}
+	case eMission::SAPIENZA_THEICON:
+		{
+			auto& db = mission.addTarget("Dino Bosco", "copperhead_roman_strauss_levine.jpg");
+			break;
+		}
+	case eMission::SAPIENZA_LANDSLIDE:
+		{
+			auto& ma = mission.addTarget("Marco Abiatti", "mamba_marco_abiatti.jpg");
+			ma.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Impossible });
+			break;
+		}
+	case eMission::SAPIENZA_THEAUTHOR:
+		{
+			auto& cb = mission.addTarget("Craig Black", "ws_ebola_craig_black.jpg");
+			cb.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Impossible });
+
+			auto& ba = mission.addTarget("Brother Akram", "ws_ebola_brother_akram.jpg");
+			ba.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Impossible });
 			break;
 		}
 	case eMission::MARRAKESH_GILDEDCAGE:
@@ -920,6 +993,12 @@ auto generatorForMission(RouletteMission& mission)
 			}, { eMethodTag::BannedInRR, eMethodTag::Hard });
 			break;
 		}
+	case eMission::MARRAKESH_HOUSEBUILTONSAND:
+		{
+			auto& ktk = mission.addTarget("Kong Tuo-Kwang", "python_kong_tou_kwang_briefing.jpg");
+			auto& mm = mission.addTarget("Matthieu Mendola", "python_matthieu_mendola_briefing.jpg");
+			break;
+		}
 	case eMission::BANGKOK_CLUB27:
 		{
 			auto& stalker = mission.getDisguiseByNameAssert("Stalker");
@@ -935,6 +1014,14 @@ auto generatorForMission(RouletteMission& mission)
 			auto& km = mission.addTarget("Ken Morgan", "club27_ken_morgan.jpg");
 			km.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 			km.addRule(stalkerRemoteTest, { eMethodTag::BannedInRR, eMethodTag::Hard });
+			break;
+		}
+	case eMission::BANGKOK_THESOURCE:
+		{
+			auto& on = mission.addTarget("Oybek Nabazov", "ws_zika_oybek_nabazov.jpg");
+			on.defineMethod(eKillMethod::FallingObject, { eMethodTag::BannedInRR, eMethodTag::Extreme });
+			auto& sy = mission.addTarget("Sister Yulduz", "ws_zika_sister_yulduz.jpg");
+			sy.defineMethod(eKillMethod::FallingObject, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 			break;
 		}
 	case eMission::COLORADO_FREEDOMFIGHTERS:
@@ -964,6 +1051,18 @@ auto generatorForMission(RouletteMission& mission)
 
 			auto& yy = mission.addTarget("Yuki Yamazaki", "snowcrane_yuki_yamazaki_briefing.jpg");
 			yy.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR });
+			break;
+		}
+	case eMission::HOKKAIDO_PATIENTZERO:
+		{
+			auto& oc = mission.addTarget("Owen Cage", "ws_flu_owen_cage.jpg");
+			oc.defineMethod(eKillMethod::Drowning, { eMethodTag::BannedInRR, eMethodTag::Extreme });
+			auto& kl = mission.addTarget("Klaus Liebleid", "ws_flu_klaus_leiblied.jpg");
+			break;
+		}
+	case eMission::HOKKAIDO_SNOWFESTIVAL:
+		{
+			auto& df = mission.addTarget("Dmitri Fedorov", "mamushi_dimitri-fedorov.jpg");
 			break;
 		}
 	case eMission::HAWKESBAY_NIGHTCALL:
@@ -1751,10 +1850,9 @@ auto Croupier::OnRulesetSelect(eRouletteRuleset ruleset) -> void {
 }
 
 auto Croupier::OnMissionSelect(eMission mission) -> void {
-	this->sharedSpin.playerSelectMission();
-
 	auto currentMission = this->spin.getMission();
 	if (currentMission && mission == currentMission->getMission() && !this->spinCompleted) return;
+	this->sharedSpin.playerSelectMission();
 
 	try {
 		this->generator.setMission(this->GetMission(mission));
@@ -1956,7 +2054,8 @@ DEFINE_PLUGIN_DETOUR(Croupier, void, OnWinHttpCallback, void* dwContext, void* h
 
 	if (mission != eMission::NONE) {
 		this->OnMissionSelect(mission);
-		this->sharedSpin.playerStart();
+		if (!this->sharedSpin.isPlaying)
+			this->sharedSpin.playerStart();
 	}
 
 	return HookResult<void>(HookAction::Continue());

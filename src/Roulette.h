@@ -132,6 +132,9 @@ enum class eMapKillMethod {
 	UnicornHorn,
 	VikingAxe,
 
+	HolidayFireAxe,
+	XmasStar,
+
 	Soders_Electrocution,
 	Soders_Explosion,
 	Soders_PoisonStemCells,
