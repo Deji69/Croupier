@@ -19,6 +19,8 @@
 #include "FixMinMax.h"
 #include "util.h"
 
+#define IDT_TIMER1 1001
+
 using namespace std::string_literals;
 
 HINSTANCE hInstance = nullptr;
@@ -71,23 +73,21 @@ CroupierWindow::~CroupierWindow()
 	if (this->wclAtom) UnregisterClass((LPCSTR)this->wclAtom, NULL);
 }
 
-auto CroupierWindow::getWindowWidth() const -> int
+auto CroupierWindow::getWindowWidth(int numConds) const -> int
 {
-	auto const n = this->spin.spin.getConditions().size();
-	if (this->textMode || n < 2) return 640;
-	auto const wide = this->layout == eCroupierWindowLayout::WIDE || (this->layout == eCroupierWindowLayout::ADAPTIVE && n > 2);
+	if (this->textMode || numConds < 2) return 640;
+	auto const wide = this->layout == eCroupierWindowLayout::WIDE || (this->layout == eCroupierWindowLayout::ADAPTIVE && numConds > 2);
 	return wide ? 940 : 640;
 }
 
-auto CroupierWindow::getWindowHeight() const -> int
+auto CroupierWindow::getWindowHeight(int numConds) const -> int
 {
-	auto const n = this->spin.spin.getConditions().size();
-	if (!n && !this->textMode) return 420;
-	auto const wide = !this->textMode && (this->layout == eCroupierWindowLayout::WIDE || (this->layout == eCroupierWindowLayout::ADAPTIVE && n > 2));
-	auto const rows = wide ? (n + 1) / 2 : n;
-	if (this->textMode) return rows * TEXT_ROW_HEIGHT + 45;
+	if (!numConds && !this->textMode) return 420;
+	auto const wide = !this->textMode && (this->layout == eCroupierWindowLayout::WIDE || (this->layout == eCroupierWindowLayout::ADAPTIVE && numConds > 2));
+	auto const rows = wide ? (numConds + 1) / 2 : numConds;
+	if (this->textMode) return rows * TEXT_ROW_HEIGHT + 45 + (this->timer ? 30 : 0);
 	if (!wide) return rows * 195.0f + 45;
-	switch (n) {
+	switch (numConds) {
 	case 1: return 250;
 	case 2: return 185;
 	case 3:
@@ -139,12 +139,21 @@ auto CroupierWindow::create() -> HRESULT
 		windowThread = std::thread([this, hitmanWindow] {
 			if (!this->wclAtom) this->wclAtom = this->registerWindowClass(hInstance, hitmanWindow);
 
+			auto width = 0, height = 0;
+
+			{
+				auto guard = std::shared_lock(this->spin.mutex);
+				auto const numConds = this->spin.spin.getConditions().size();
+				width = this->getWindowWidth(numConds);
+				height = this->getWindowHeight(numConds);
+			}
+
 			this->hWnd = CreateWindow(
 				"Croupier",
 				"Croupier",
 				WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX/* | WS_THICKFRAME*/,	// TODO: figure out resizing contents
 				CW_USEDEFAULT, CW_USEDEFAULT,
-				this->getWindowWidth(), this->getWindowHeight(),
+				width, height,
 				NULL, NULL,
 				hInstance,
 				this
@@ -159,6 +168,8 @@ auto CroupierWindow::create() -> HRESULT
 			ShowWindow(this->hWnd, SW_SHOW);
 			UpdateWindow(this->hWnd);
 			PostMessage(this->hWnd, CROUPIER_UPDATE_WINDOW, 0, 0);
+
+			SetTimer(this->hWnd, IDT_TIMER1, 50, (TIMERPROC)NULL);
 
 			auto msg = MSG{};
 			auto ret = BOOL{};
@@ -177,15 +188,33 @@ auto CroupierWindow::create() -> HRESULT
 						break;
 					}
 					else if (this->hWnd) {
-						if (msg.message == CROUPIER_UPDATE_WINDOW) {
-							auto const w = this->getWindowWidth();
-							auto const h = this->getWindowHeight();
-							InvalidateRect(this->hWnd, NULL, true);
+						if (msg.message == WM_TIMER) {
+							auto elapsed = std::chrono::seconds(0);
+							{
+								auto guard = std::shared_lock(this->spin.mutex);
+								elapsed = this->spin.getTimeElapsed();
+							}
+							if (msg.wParam == IDT_TIMER1 && this->timer && elapsed > this->latestDrawInfo.timeElapsed)
+								InvalidateRect(this->hWnd, NULL, true);
+						}
+						else if (msg.message == CROUPIER_UPDATE_WINDOW) {
+							auto numConds = 0;
+							{
+								auto guard = std::shared_lock(this->spin.mutex);
+								numConds = this->spin.spin.getConditions().size();
+							}
 
-							if (this->wasOnTop != this->onTop)
-								SetWindowPos(this->hWnd, this->onTop ? HWND_TOPMOST : HWND_BOTTOM, 0, 0, w, h, SWP_NOMOVE);
-							else
-								SetWindowPos(this->hWnd, HWND_TOPMOST, 0, 0, w, h, SWP_NOZORDER | SWP_NOMOVE);
+							auto const w = this->getWindowWidth(numConds);
+							auto const h = this->getWindowHeight(numConds);
+							InvalidateRect(this->hWnd, NULL, true);
+							auto const havePos = this->posX.has_value() && this->posY.has_value();
+							auto const onTopFlag = this->wasOnTop == this->onTop ? HWND_TOPMOST : (this->onTop ? HWND_TOPMOST : HWND_BOTTOM);
+							auto const noMoveFlag = this->posX.has_value() && this->posY.has_value() ? 0 : SWP_NOMOVE;
+							auto const flags = (this->wasOnTop != this->onTop ? 0 : SWP_NOZORDER) | noMoveFlag;
+
+							SetWindowPos(this->hWnd, onTopFlag, this->posX.value_or(0), this->posY.value_or(0), w, h, flags);
+
+							if (!this->setPositionApplied) this->setPositionApplied = true;
 						}
 					}
 				}
@@ -292,10 +321,32 @@ auto CroupierWindow::loadImage(std::filesystem::path path) -> ID2D1Bitmap*
 	return pr.first->second.getBitmap(this->RT);
 }
 
+CroupierDrawInfo::CroupierDrawInfo(const SharedRouletteSpin& spin) {
+	this->timeStarted = spin.timeStarted;
+	this->isFinished = spin.isFinished;
+	this->isPlaying = spin.isPlaying;
+	this->isInitialised = true;
+	for (const auto& cond : spin.spin.getConditions()) {
+		Condition condition;
+		condition.condText = widen(std::format("{}: {} / {}", cond.target.get().getName(), cond.methodName, cond.disguise.get().name));
+		condition.killMethodText = widen(cond.methodName);
+		condition.disguiseText = widen(cond.disguise.get().name);
+		condition.killMethodImage = std::filesystem::path(cond.killMethod.method == eKillMethod::NONE ? "weapons"s : ""s) / cond.killMethod.image;
+		condition.targetImage = std::filesystem::path("actors"s) / cond.target.get().getImage();
+		condition.disguiseImage = std::filesystem::path("outfits"s) / cond.disguise.get().image;
+		this->conds.push_back(std::move(condition));
+	}
+}
+
 auto CroupierWindow::OnPaint(HWND wnd) -> LRESULT
 {
 	HRESULT hr = S_OK;
 	PAINTSTRUCT ps = {};
+
+	if (this->spin.mutex.try_lock_shared()) {
+		this->latestDrawInfo = CroupierDrawInfo(this->spin);
+		this->spin.mutex.unlock_shared();
+	}
 
 	if (BeginPaint(wnd, &ps)) {
 		hr = this->createDeviceResources(wnd);
@@ -304,13 +355,17 @@ auto CroupierWindow::OnPaint(HWND wnd) -> LRESULT
 			this->RT->BeginDraw();
 			this->RT->SetTransform(D2D1::Matrix3x2F::Identity());
 			this->RT->Clear(D2D1::ColorF(D2D1::ColorF::Black));
-			auto rtSize = this->RT->GetSize();
 
-			{
-				std::shared_lock guard(this->spin.mutex);
-				auto const& conds = this->spin.spin.getConditions();
-				auto const wide = (this->layout == eCroupierWindowLayout::WIDE || (this->layout == eCroupierWindowLayout::ADAPTIVE && conds.size() > 2)) && conds.size() >= 2;
+			if (this->latestDrawInfo.isInitialised) {
+				auto rtSize = this->RT->GetPixelSize();
+
+				auto const numConds = this->latestDrawInfo.conds.size();
+				auto width = this->getWindowWidth(numConds);
+				auto height = this->getWindowHeight(numConds);
+				auto const& conds = this->latestDrawInfo.conds;
+				auto const wide = (this->layout == eCroupierWindowLayout::WIDE || (this->layout == eCroupierWindowLayout::ADAPTIVE && numConds > 2)) && numConds >= 2;
 				auto scale = rtSize.width / (wide && !this->textMode ? 1280.0f : 640.0f);
+				auto scaler = rtSize.width / 640.0f;
 				auto getRect = [scale, rtSize](FLOAT x, FLOAT y, FLOAT w, FLOAT h){ // grb
 					if (x < 0) x = rtSize.width + x;
 					if (y < 0) y = rtSize.height + y;
@@ -318,18 +373,28 @@ auto CroupierWindow::OnPaint(HWND wnd) -> LRESULT
 					if (h < 0) h = rtSize.height + h;
 					return D2D1::RectF(x * scale, y * scale, (x + w) * scale, (y + h) * scale);
 				};
+				auto getRect2 = [scaler, rtSize](FLOAT x, FLOAT y, FLOAT w, FLOAT h) {
+					if (w < 0) w = 640 + w;
+					if (h < 0) h = rtSize.height + h;
+					if (x < 0) x = 640 - w + x;
+					if (y < 0) y = rtSize.height - h + y;
+					w += x;
+					h += y;
+					//x *= scaler;
+					//w *= scaler;
+					return D2D1::RectF(x * scaler, y, w * scaler, h);
+				};
 				auto n = 0;
 
-				for (auto const& cond : conds) {
+				for (auto const& cond : this->latestDrawInfo.conds) {
 					auto const row = !this->textMode && wide ? n / 2 : n;
 
 					if (this->textMode) {
 						auto const top = TEXT_ROW_HEIGHT * row;
-						auto condTextWide = widen(std::format("{}: {} / {}", cond.target.get().getName(), cond.methodName, cond.disguise.get().name));
 						auto textRect = getRect(6, top + 5, 640 - 6, TEXT_ROW_HEIGHT);
 						this->RT->DrawTextA(
-							condTextWide.c_str(),
-							condTextWide.size(),
+							cond.condText.c_str(),
+							cond.condText.size(),
 							this->DWriteTextFormat,
 							textRect,
 							this->Brush
@@ -337,13 +402,11 @@ auto CroupierWindow::OnPaint(HWND wnd) -> LRESULT
 					} else {
 						auto const col = wide ? n % 2 : 0;
 						auto const top = 200 * row;
-						auto const left = 640 * col + (wide && n == conds.size() - 1 && conds.size() % 2 == 1 ? 640 : 0);
+						auto const left = 640 * col + (wide && n == numConds - 1 && numConds % 2 == 1 ? 640 : 0);
 
-						auto killMethodPath = std::filesystem::path{cond.killMethod.image};
-						auto targetImage = this->loadImage(std::filesystem::path("actors"s) / cond.target.get().getImage());
-						auto killMethodImageFolder = std::filesystem::path(cond.killMethod.method == eKillMethod::NONE ? "weapons"s : ""s);
-						auto killMethodImage = this->loadImage(killMethodImageFolder / killMethodPath);
-						auto disguiseImage = this->loadImage(std::filesystem::path("outfits"s) / cond.disguise.get().image);
+						auto targetImage = this->loadImage(cond.targetImage);
+						auto killMethodImage = this->loadImage(cond.killMethodImage);
+						auto disguiseImage = this->loadImage(cond.disguiseImage);
 
 						auto targetImageRect = getRect(left + 0, top, 260, 200);
 						auto methodImageRect = getRect(left + 260, top, 134, 100);
@@ -353,42 +416,68 @@ auto CroupierWindow::OnPaint(HWND wnd) -> LRESULT
 						if (killMethodImage) this->RT->DrawBitmap(killMethodImage, methodImageRect);
 						if (disguiseImage) this->RT->DrawBitmap(disguiseImage, disguiseImageRect);
 
-						auto killMethodTextWide = widen(cond.methodName);
-						auto disguiseTextWide = widen(cond.disguise.get().name);
-						auto wname = widen(cond.target.get().getName());
 						auto const imagesWidth = this->textMode ? 0 : 260 + 134;
 						auto methodTextRect = getRect(left + imagesWidth + 6, top + 5, 220, 90);
 						auto disguiseTextRect = getRect(left + imagesWidth + 6, top + 100 + 5, 220, 90);
 
 						this->RT->DrawTextA(
-							killMethodTextWide.c_str(),
-							killMethodTextWide.size(),
+							cond.killMethodText.c_str(),
+							cond.killMethodText.size(),
 							this->DWriteTextFormat,
 							methodTextRect,
 							this->Brush
 						);
 						this->RT->DrawTextA(
-							disguiseTextWide.c_str(),
-							disguiseTextWide.size(),
+							cond.disguiseText.c_str(),
+							cond.disguiseText.size(),
 							this->DWriteTextFormat,
 							disguiseTextRect,
 							this->Brush
 						);
 					}
 
-
 					++n;
+
+					if (this->timer) {
+						auto const elapsed = this->latestDrawInfo.getTimeElapsed();
+						auto timeFormat = std::string();
+						auto const includeHr = std::chrono::duration_cast<std::chrono::hours>(elapsed).count() >= 1;
+						auto const left = wide && conds.size() % 2;
+						auto const time = widen(includeHr ? std::format("{:%H:%M:%S}", elapsed) : std::format("{:%M:%S}", elapsed));
+
+						if (this->textMode) {
+							this->RT->DrawTextA(
+								time.c_str(),
+								time.size(),
+								this->DWriteTextFormat,
+								getRect2(6, -5.0, 640.0 - 6, 22.0),
+								this->Brush
+							);
+						}
+						else {
+							this->RT->DrawTextA(
+								time.c_str(),
+								time.size(),
+								this->DWriteTextFormat,
+								getRect2(left ? 6.0 : -5.0, -5.0, includeHr ? 80 : 55, 22.0),
+								this->Brush
+							);
+						}
+					}
 				}
 			}
 
 			hr = this->RT->EndDraw();
-
+			
 			if (hr == D2DERR_RECREATE_TARGET) {
 				for (auto& image : this->loadedImages) {
 					SafeRelease(image.second.D2DBitmap);
 				}
 				SafeRelease(this->RT);
 				hr = InvalidateRect(hWnd, NULL, TRUE) ? S_OK : E_FAIL;
+			}
+			else if (!SUCCEEDED(hr)) {
+				Logger::Error("D2D Err {}", hr);
 			}
 		}
 
@@ -417,6 +506,17 @@ auto CroupierWindow::WndProc(HWND wnd, UINT msg, WPARAM wParam, LPARAM lParam) -
 			return this->OnPaint(wnd);
 		case WM_CREATE:
 			this->update();
+			break;
+		case WM_MOVE:
+			RECT rect;
+			if (!setPositionApplied) break;
+			if (GetWindowRect(this->hWnd, &rect)) {
+				auto guard = std::unique_lock(this->spin.mutex);
+				this->spin.windowX = rect.left;
+				this->spin.windowY = rect.top;
+				this->posX = rect.left;
+				this->posY = rect.top;
+			}
 			break;
 	}
 	return DefWindowProc(wnd, msg, wParam, lParam);
@@ -496,6 +596,20 @@ auto CroupierWindow::setDarkMode(bool enable) -> void
 auto CroupierWindow::setAlwaysOnTop(bool enable) -> void
 {
 	this->onTop = enable;
+	this->update();
+}
+
+auto CroupierWindow::setPosition(LONG x, LONG y) -> void
+{
+	this->posX = x;
+	this->posY = y;
+	this->setPositionApplied = false;
+	this->update();
+}
+
+auto CroupierWindow::setTimerEnabled(bool enable) -> void
+{
+	this->timer = enable;
 	this->update();
 }
 

@@ -34,6 +34,14 @@ Allows manual selection of mission, fully custom spins, respins, and going back 
 
 <img src="./images/croupier-berlin-ingame.jpg" title="Unintrusive in-game spin display." width="47%">
 
+### Spin Timer
+
+An optional spin timer that automatically starts when you enter the planning screen, and freezes the moment you exit the level, until the next spin. The timer can also be manually reset.
+
+_Experimental feature. Due to the timer causing frequent (1FPS) redraws of the external window attached to the Hitman process, some software such as GeForce Record/Instant Replay or RTSS may periodically mistake it for the main game window, potentially causing instability or issues with recordings. The in-game overlay timer does not have such issues._
+
+_A potential workaround for the GeForce issues is to ensure to only toggle instant replay or recordings with the timer or external window disabled, or ensure that when toggling, the GeForce notification appears on the correct window and with the correct size. RTSS has been found to consistently cause a crash with On-Screen Display Support enabled but your mileage may vary._
+
 ### Custom Spins
 
 Spins can be specified with the entire range of conditions available in each mission.

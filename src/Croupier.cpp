@@ -7,6 +7,7 @@
 #include <Glacier/ZGameLoopManager.h>
 #include <Glacier/ZScene.h>
 #include <Glacier/ZString.h>
+#include <chrono>
 #include <variant>
 #include "Events.h"
 #include "json.hpp"
@@ -51,15 +52,15 @@ std::vector<MissionInfo> missionInfos = {
 	{eMission::BANGKOK_CLUB27, "Bangkok: Club 27"},
 	{eMission::COLORADO_FREEDOMFIGHTERS, "Colorado: Freedom Fighters"},
 	{eMission::HOKKAIDO_SITUSINVERSUS, "Hokkaido: Situs Inversus"},
-	//{eMission::NONE, "--- SEASON 1 BONUS ---", false},
+	{eMission::NONE, "--- SEASON 1 BONUS ---", false},
 	//{eMission::BANGKOK_THESOURCE, "Bangkok: The Source", false},
-	//{eMission::SAPIENZA_THEAUTHOR, "Sapienza: The Author", false},
-	//{eMission::HOKKAIDO_PATIENTZERO, "Hokkaido: Patient Zero", false},
-	//{eMission::PARIS_HOLIDAYHOARDERS, "Paris: Holiday Hoarders", false},
-	//{eMission::SAPIENZA_THEICON, "Sapienza: The Icon", false},
-	//{eMission::SAPIENZA_LANDSLIDE, "Sapienza: Landslide", false},
-	//{eMission::MARRAKESH_HOUSEBUILTONSAND, "Marrakesh: A House Built On Sand", false},
-	//{eMission::HOKKAIDO_SNOWFESTIVAL, "Hokkaido: Snow Festival", false},
+	{eMission::SAPIENZA_THEAUTHOR, "Sapienza: The Author", false},
+	{eMission::HOKKAIDO_PATIENTZERO, "Hokkaido: Patient Zero", false},
+	{eMission::PARIS_HOLIDAYHOARDERS, "Paris: Holiday Hoarders", false},
+	{eMission::SAPIENZA_THEICON, "Sapienza: The Icon", false},
+	{eMission::SAPIENZA_LANDSLIDE, "Sapienza: Landslide", false},
+	{eMission::MARRAKESH_HOUSEBUILTONSAND, "Marrakesh: A House Built On Sand", false},
+	{eMission::HOKKAIDO_SNOWFESTIVAL, "Hokkaido: Snow Festival", false},
 	{eMission::NONE, "--------- SEASON 2 ---------"},
 	{eMission::HAWKESBAY_NIGHTCALL, "Hawke's Bay: Nightcall", false},
 	{eMission::MIAMI_FINISHLINE, "Miami: The Finish Line"},
@@ -95,15 +96,15 @@ std::unordered_map<std::string, eMission> Croupier::MissionContractIds = {
 	{"b341d9f-58a4-411d-be57-0bc4ed85646b", eMission::BANGKOK_CLUB27},
 	{"2bac555-bbb9-429d-a8ce-f1ffdf94211c", eMission::COLORADO_FREEDOMFIGHTERS},
 	{"e81a82e-b409-41e9-9e3b-5f82e57f7a12", eMission::HOKKAIDO_SITUSINVERSUS},
-	//{"e45e91a-94ca-4d89-89fc-1b250e608e73", eMission::PARIS_HOLIDAYHOARDERS},
-	//{"0000000-0000-0000-0001-000000000006", eMission::SAPIENZA_THEICON},
-	//{"0000000-0000-0000-0001-000000000005", eMission::SAPIENZA_LANDSLIDE},
-	//{"e3f758a-2435-42de-93bd-d8f0b72c63a4", eMission::SAPIENZA_THEAUTHOR},
-	//{"ed93d8f-9535-425a-beb9-ef219e781e81", eMission::MARRAKESH_HOUSEBUILTONSAND},
-	//{"24b6964-a3bb-4457-b085-08f9a7dc7fb7", eMission::BANGKOK_THESOURCE},
+	{"e45e91a-94ca-4d89-89fc-1b250e608e73", eMission::PARIS_HOLIDAYHOARDERS},
+	{"0000000-0000-0000-0001-000000000006", eMission::SAPIENZA_THEICON},
+	{"0000000-0000-0000-0001-000000000005", eMission::SAPIENZA_LANDSLIDE},
+	{"e3f758a-2435-42de-93bd-d8f0b72c63a4", eMission::SAPIENZA_THEAUTHOR},
+	{"ed93d8f-9535-425a-beb9-ef219e781e81", eMission::MARRAKESH_HOUSEBUILTONSAND},
+	{"24b6964-a3bb-4457-b085-08f9a7dc7fb7", eMission::BANGKOK_THESOURCE},
 	//{"da6205e-6ee8-4189-9cdb-4947cccd84f4", eMission::COLORADO_THEVECTOR},
-	//{"2befcec-7799-4987-9215-6a152cb6a320", eMission::HOKKAIDO_PATIENTZERO},
-	//{"414a084-a7b9-43ce-b6ca-590620acd87e", eMission::HOKKAIDO_SNOWFESTIVAL},
+	{"2befcec-7799-4987-9215-6a152cb6a320", eMission::HOKKAIDO_PATIENTZERO},
+	{"414a084-a7b9-43ce-b6ca-590620acd87e", eMission::HOKKAIDO_SNOWFESTIVAL},
 	{"65019e5-43a8-4a33-8a2a-84c750a5eeb3", eMission::HAWKESBAY_NIGHTCALL},
 	{"1d015b4-be08-4e44-808e-ada0f387656f", eMission::MIAMI_FINISHLINE},
 	{"22519be-ed2e-44df-9dac-18f739d44fd9", eMission::SANTAFORTUNA_THREEHEADEDSERPENT},
@@ -134,7 +135,11 @@ auto generatorAddMissionMethods(RouletteMission& mission)
 		case eMission::ICAFACILITY_FINALTEST:
 			break;
 		case eMission::PARIS_HOLIDAYHOARDERS:
-			//generator.addMapMethod(eMapKillMethod::HolidayFireAxe);
+			mission.addMapMethod(eMapKillMethod::CircumcisionKnife);
+			mission.addMapMethod(eMapKillMethod::HolidayFireAxe);
+			mission.addMapMethod(eMapKillMethod::Katana);
+			mission.addMapMethod(eMapKillMethod::Shuriken);
+			mission.addMapMethod(eMapKillMethod::XmasStar);
 			[[fallthrough]];
 		case eMission::PARIS_SHOWSTOPPER:
 			mission.addMapMethod(eMapKillMethod::BattleAxe);
@@ -164,6 +169,30 @@ auto generatorAddMissionMethods(RouletteMission& mission)
 			mission.addMapMethod(eMapKillMethod::Scissors);
 			mission.addMapMethod(eMapKillMethod::Screwdriver);
 			break;
+		case eMission::SAPIENZA_LANDSLIDE:
+			mission.addMapMethod(eMapKillMethod::Cleaver);
+			mission.addMapMethod(eMapKillMethod::FireAxe);
+			mission.addMapMethod(eMapKillMethod::FoldingKnife);
+			mission.addMapMethod(eMapKillMethod::KitchenKnife);
+			mission.addMapMethod(eMapKillMethod::LetterOpener);
+			mission.addMapMethod(eMapKillMethod::OldAxe);
+			mission.addMapMethod(eMapKillMethod::Saber);
+			mission.addMapMethod(eMapKillMethod::Scissors);
+			mission.addMapMethod(eMapKillMethod::Screwdriver);
+			break;
+		case eMission::SAPIENZA_THEICON:
+			mission.addMapMethod(eMapKillMethod::BattleAxe);
+			mission.addMapMethod(eMapKillMethod::Cleaver);
+			mission.addMapMethod(eMapKillMethod::FireAxe);
+			mission.addMapMethod(eMapKillMethod::KitchenKnife);
+			mission.addMapMethod(eMapKillMethod::Screwdriver);
+			break;
+		case eMission::SAPIENZA_THEAUTHOR:
+			mission.addMapMethod(eMapKillMethod::FireAxe);
+			mission.addMapMethod(eMapKillMethod::KitchenKnife);
+			mission.addMapMethod(eMapKillMethod::Scissors);
+			mission.addMapMethod(eMapKillMethod::Screwdriver);
+			break;
 		case eMission::MARRAKESH_GILDEDCAGE:
 			mission.addMapMethod(eMapKillMethod::BattleAxe);
 			mission.addMapMethod(eMapKillMethod::Cleaver);
@@ -174,6 +203,18 @@ auto generatorAddMissionMethods(RouletteMission& mission)
 			mission.addMapMethod(eMapKillMethod::Scissors);
 			mission.addMapMethod(eMapKillMethod::Screwdriver);
 			break;
+		case eMission::MARRAKESH_HOUSEBUILTONSAND:
+			mission.addMapMethod(eMapKillMethod::BattleAxe);
+			mission.addMapMethod(eMapKillMethod::Cleaver);
+			mission.addMapMethod(eMapKillMethod::FoldingKnife);
+			mission.addMapMethod(eMapKillMethod::KitchenKnife);
+			mission.addMapMethod(eMapKillMethod::Scissors);
+			mission.addMapMethod(eMapKillMethod::Screwdriver);
+			break;
+		case eMission::BANGKOK_THESOURCE:
+			mission.addMapMethod(eMapKillMethod::AmputationKnife);
+			mission.addMapMethod(eMapKillMethod::CircumcisionKnife);
+			[[fallthrough]];
 		case eMission::BANGKOK_CLUB27:
 			mission.addMapMethod(eMapKillMethod::Cleaver);
 			mission.addMapMethod(eMapKillMethod::FireAxe);
@@ -190,10 +231,15 @@ auto generatorAddMissionMethods(RouletteMission& mission)
 			mission.addMapMethod(eMapKillMethod::OldAxe);
 			mission.addMapMethod(eMapKillMethod::Screwdriver);
 			break;
+		case eMission::HOKKAIDO_SNOWFESTIVAL:
+			mission.addMapMethod(eMapKillMethod::Icicle);
+			[[fallthrough]];
+		case eMission::HOKKAIDO_PATIENTZERO:
 		case eMission::HOKKAIDO_SITUSINVERSUS:
 			mission.addMapMethod(eMapKillMethod::Cleaver);
 			mission.addMapMethod(eMapKillMethod::FireAxe);
 			mission.addMapMethod(eMapKillMethod::Katana);
+			mission.addMapMethod(eMapKillMethod::KitchenKnife);
 			mission.addMapMethod(eMapKillMethod::Scalpel);
 			mission.addMapMethod(eMapKillMethod::Scissors);
 			mission.addMapMethod(eMapKillMethod::Screwdriver);
@@ -893,6 +939,14 @@ auto generatorForMission(RouletteMission& mission)
 			dm.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Extreme, eMethodTag::DuplicateOnlySameDisguise });
 			break;
 		}
+	case eMission::PARIS_HOLIDAYHOARDERS:
+		{
+			auto& hb = mission.addTarget("Harry \"Smokey\" Bagnato", "noel_harry_bagnato.jpg");
+			hb.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Extreme, eMethodTag::DuplicateOnlySameDisguise });
+			auto& mg = mission.addTarget("Marv \"Slick\" Gonif", "noel_marv_gonif.jpg");
+			mg.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Extreme, eMethodTag::DuplicateOnlySameDisguise });
+			break;
+		}
 	case eMission::SAPIENZA_WORLDOFTOMORROW:
 		{
 			auto& sc = mission.addTarget("Silvio Caruso", "world_of_tomorrow_silvio_caruso.jpg");
@@ -901,6 +955,26 @@ auto generatorForMission(RouletteMission& mission)
 
 			auto& fds = mission.addTarget("Francesca De Santis", "world_of_tomorrow_francesca_de_santis.jpg");
 			fds.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Impossible });
+			break;
+		}
+	case eMission::SAPIENZA_THEICON:
+		{
+			auto& db = mission.addTarget("Dino Bosco", "copperhead_roman_strauss_levine.jpg");
+			break;
+		}
+	case eMission::SAPIENZA_LANDSLIDE:
+		{
+			auto& ma = mission.addTarget("Marco Abiatti", "mamba_marco_abiatti.jpg");
+			ma.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Impossible });
+			break;
+		}
+	case eMission::SAPIENZA_THEAUTHOR:
+		{
+			auto& cb = mission.addTarget("Craig Black", "ws_ebola_craig_black.jpg");
+			cb.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Impossible });
+
+			auto& ba = mission.addTarget("Brother Akram", "ws_ebola_brother_akram.jpg");
+			ba.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Impossible });
 			break;
 		}
 	case eMission::MARRAKESH_GILDEDCAGE:
@@ -919,6 +993,12 @@ auto generatorForMission(RouletteMission& mission)
 			}, { eMethodTag::BannedInRR, eMethodTag::Hard });
 			break;
 		}
+	case eMission::MARRAKESH_HOUSEBUILTONSAND:
+		{
+			auto& ktk = mission.addTarget("Kong Tuo-Kwang", "python_kong_tou_kwang_briefing.jpg");
+			auto& mm = mission.addTarget("Matthieu Mendola", "python_matthieu_mendola_briefing.jpg");
+			break;
+		}
 	case eMission::BANGKOK_CLUB27:
 		{
 			auto& stalker = mission.getDisguiseByNameAssert("Stalker");
@@ -934,6 +1014,14 @@ auto generatorForMission(RouletteMission& mission)
 			auto& km = mission.addTarget("Ken Morgan", "club27_ken_morgan.jpg");
 			km.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 			km.addRule(stalkerRemoteTest, { eMethodTag::BannedInRR, eMethodTag::Hard });
+			break;
+		}
+	case eMission::BANGKOK_THESOURCE:
+		{
+			auto& on = mission.addTarget("Oybek Nabazov", "ws_zika_oybek_nabazov.jpg");
+			on.defineMethod(eKillMethod::FallingObject, { eMethodTag::BannedInRR, eMethodTag::Extreme });
+			auto& sy = mission.addTarget("Sister Yulduz", "ws_zika_sister_yulduz.jpg");
+			sy.defineMethod(eKillMethod::FallingObject, { eMethodTag::BannedInRR, eMethodTag::Extreme });
 			break;
 		}
 	case eMission::COLORADO_FREEDOMFIGHTERS:
@@ -963,6 +1051,18 @@ auto generatorForMission(RouletteMission& mission)
 
 			auto& yy = mission.addTarget("Yuki Yamazaki", "snowcrane_yuki_yamazaki_briefing.jpg");
 			yy.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR });
+			break;
+		}
+	case eMission::HOKKAIDO_PATIENTZERO:
+		{
+			auto& oc = mission.addTarget("Owen Cage", "ws_flu_owen_cage.jpg");
+			oc.defineMethod(eKillMethod::Drowning, { eMethodTag::BannedInRR, eMethodTag::Extreme });
+			auto& kl = mission.addTarget("Klaus Liebleid", "ws_flu_klaus_leiblied.jpg");
+			break;
+		}
+	case eMission::HOKKAIDO_SNOWFESTIVAL:
+		{
+			auto& df = mission.addTarget("Dmitri Fedorov", "mamushi_dimitri-fedorov.jpg");
 			break;
 		}
 	case eMission::HAWKESBAY_NIGHTCALL:
@@ -1190,7 +1290,9 @@ auto Croupier::LoadConfiguration() -> void {
 	bool inHistorySection = false;
 
 	auto parseMainSection = [this, parseBool, parseInt](std::string_view cmd, std::string_view val) {
-		if (cmd == "spin_overlay")
+		if (cmd == "timer")
+			this->config.timer = parseBool(val, this->config.timer);
+		else if (cmd == "spin_overlay")
 			this->config.spinOverlay = parseBool(val, this->config.spinOverlay);
 		else if (cmd == "external_window")
 			this->config.externalWindow = parseBool(val, this->config.externalWindow);
@@ -1198,6 +1300,10 @@ auto Croupier::LoadConfiguration() -> void {
 			this->config.externalWindowOnTop = parseBool(val, this->config.externalWindowOnTop);
 		else if (cmd == "external_window_text_only")
 			this->config.externalWindowTextOnly = parseBool(val, this->config.externalWindowTextOnly);
+		else if (cmd == "external_window_pos_x")
+			this->config.windowPosX = static_cast<LONG>(parseInt(val, 0));
+		else if (cmd == "external_window_pos_y")
+			this->config.windowPosY = static_cast<LONG>(parseInt(val, 0));
 	};
 
 	auto parseHistorySection = [this](std::string_view line) {
@@ -1296,12 +1402,24 @@ auto Croupier::SaveConfiguration() -> void {
 	std::string content;
 	const auto filepath = this->modulePath / "mods" / "Croupier" / "croupier.txt";
 
+	std::optional<LONG> windowPosX = std::nullopt;
+	std::optional<LONG> windowPosY = std::nullopt;
+
+	{
+		auto guard = std::shared_lock(this->sharedSpin.mutex);
+		windowPosX = this->sharedSpin.windowX;
+		windowPosY = this->sharedSpin.windowY;
+	}
+
 	this->file.open(filepath, std::ios::out | std::ios::trunc);
 
 	std::println(this->file, "spin_overlay {}", this->config.spinOverlay ? "true" : "false");
 	std::println(this->file, "external_window {}", this->config.externalWindow ? "true" : "false");
 	std::println(this->file, "external_window_on_top {}", this->config.externalWindowOnTop ? "true" : "false");
 	std::println(this->file, "external_window_text_only {}", this->config.externalWindowTextOnly ? "true" : "false");
+	if (windowPosX) std::println(this->file, "external_window_pos_x {}", windowPosX.value());
+	if (windowPosY) std::println(this->file, "external_window_pos_y {}", windowPosY.value());
+	std::println(this->file, "timer {}", this->config.timer ? "true" : "false");
 	std::println(this->file, "");
 	std::println(this->file, "[history]");
 
@@ -1326,11 +1444,15 @@ auto Croupier::OnEngineInitialized() -> void {
 	this->LoadConfiguration();
 	this->PreviousSpin();
 
-	if (this->config.externalWindow)
+	if (this->config.externalWindow) {
 		this->window.create();
+		if (this->config.windowPosX.has_value() && this->config.windowPosY.has_value())
+			this->window.setPosition(*this->config.windowPosX, *this->config.windowPosY);
+	}
 
 	this->window.setAlwaysOnTop(this->config.externalWindowOnTop);
 	this->window.setTextMode(this->config.externalWindowTextOnly);
+	this->window.setTimerEnabled(this->config.timer);
 
 	Hooks::ZAchievementManagerSimple_OnEventReceived->AddDetour(this, &Croupier::OnEventReceived);
 	Hooks::ZAchievementManagerSimple_OnEventSent->AddDetour(this, &Croupier::OnEventSent);
@@ -1369,24 +1491,42 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 
 	if (ImGui::Begin(ICON_MD_SETTINGS " CROUPIER", &this->showUI)) {
 		ImGui::PushFont(SDK()->GetImGuiRegularFont());
+		
+		if (ImGui::Checkbox("Timer (BETA)", &this->config.timer)) {
+			this->window.setTimerEnabled(this->config.timer);
+			this->SaveConfiguration();
+		}
 
-		ImGui::Checkbox("In-Game Window", &this->config.spinOverlay);
+		ImGui::SameLine();
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 50.0);
+		if (ImGui::Button("Reset")) {
+			auto guard = std::unique_lock(this->sharedSpin.mutex);
+			this->sharedSpin.timeStarted = std::chrono::steady_clock::now();
+		}
+
+		if (ImGui::Checkbox("In-Game Window", &this->config.spinOverlay))
+			this->SaveConfiguration();
 
 		{
 			if (ImGui::Checkbox("External Window", &this->config.externalWindow)) {
 				if (this->config.externalWindow) this->window.create();
 				else this->window.destroy();
+				this->SaveConfiguration();
 			}
 
 			ImGui::SameLine();
 		
-			if (ImGui::Checkbox("On Top", &this->config.externalWindowOnTop))
+			if (ImGui::Checkbox("On Top", &this->config.externalWindowOnTop)) {
 				this->window.setAlwaysOnTop(this->config.externalWindowOnTop);
+				this->SaveConfiguration();
+			}
 
 			ImGui::SameLine();
 
-			if (ImGui::Checkbox("Text-Only", &this->config.externalWindowTextOnly))
+			if (ImGui::Checkbox("Text-Only", &this->config.externalWindowTextOnly)) {
 				this->window.setTextMode(this->config.externalWindowTextOnly);
+				this->SaveConfiguration();
+			}
 		}
 
 		{
@@ -1472,11 +1612,30 @@ auto Croupier::DrawSpinUI(bool focused) -> void {
 	if (ImGui::Begin(ICON_MD_CASINO " CROUPIER - SPIN", &this->config.spinOverlay, ImGuiWindowFlags_AlwaysAutoResize)) {
 		ImGui::PushFont(SDK()->GetImGuiBoldFont());
 
-		auto const& conds = this->spin.getConditions();
-		for (auto& cond : conds) {
-			auto str = std::format("{}: {} / {}", cond.target.get().getName(), cond.methodName, cond.disguise.get().name);
-			ImGui::Text(str.c_str());
+		auto elapsed = std::chrono::seconds::zero();
+
+		{
+			auto guard = std::shared_lock(this->sharedSpin.mutex);
+			auto const& conds = this->spin.getConditions();
+			elapsed = this->sharedSpin.getTimeElapsed();
+			for (auto& cond : conds) {
+				auto str = std::format("{}: {} / {}", cond.target.get().getName(), cond.methodName, cond.disguise.get().name);
+				ImGui::Text(str.c_str());
+			}
 		}
+
+		if (this->config.timer) {
+			auto timeFormat = std::string();
+			auto const includeHr = std::chrono::duration_cast<std::chrono::hours>(elapsed).count() >= 1;
+			auto const time = includeHr ? std::format("{:%H:%M:%S}", elapsed) : std::format("{:%M:%S}", elapsed);
+			auto windowWidth = ImGui::GetWindowSize().x;
+			auto textWidth = ImGui::CalcTextSize(time.c_str()).x;
+
+			ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
+			ImGui::Text(time.c_str());
+		}
+
+		ImGui::PopFont();
 	}
 
 	ImGui::End();
@@ -1535,7 +1694,7 @@ auto Croupier::DrawEditSpinUI(bool focused) -> void {
 						auto const selected = method == currentMapMethod;
 
 						if (ImGui::Selectable(name.data(), selected)) {
-							auto const guard = std::unique_lock(this->sharedSpin.mutex);
+							auto guard = std::unique_lock(this->sharedSpin.mutex);
 							this->spin.setTargetMapMethod(target, method);
 							this->window.update();
 						}
@@ -1711,6 +1870,7 @@ auto Croupier::OnRulesetSelect(eRouletteRuleset ruleset) -> void {
 auto Croupier::OnMissionSelect(eMission mission) -> void {
 	auto currentMission = this->spin.getMission();
 	if (currentMission && mission == currentMission->getMission() && !this->spinCompleted) return;
+	this->sharedSpin.playerSelectMission();
 
 	try {
 		this->generator.setMission(this->GetMission(mission));
@@ -1722,6 +1882,7 @@ auto Croupier::OnMissionSelect(eMission mission) -> void {
 
 auto Croupier::SaveSpinHistory() -> void {
 	if (!this->generator.getMission()) return;
+	auto guard = std::shared_lock(this->sharedSpin.mutex);
 	if (this->spin.getConditions().empty()) return;
 
 	if (!this->currentSpinSaved) {
@@ -1751,12 +1912,17 @@ auto Croupier::OnFinishMission() -> void {
 
 auto Croupier::PreviousSpin() -> void {
 	if (this->spinHistory.empty()) return;
-	auto guard = std::unique_lock(this->sharedSpin.mutex);
-	this->spin = std::move(this->spinHistory.top());
-	this->currentSpinSaved = true;
-	this->generator.setMission(this->spin.getMission());
-	this->spinHistory.pop();
-	this->spinCompleted = false;
+	{
+		auto guard = std::unique_lock(this->sharedSpin.mutex);
+		this->spin = std::move(this->spinHistory.top());
+		this->sharedSpin.isPlaying = false;
+		this->currentSpinSaved = true;
+		this->generator.setMission(this->spin.getMission());
+		this->spinHistory.pop();
+		this->spinCompleted = false;
+	}
+
+	this->sharedSpin.playerStart();
 	this->LogSpin();
 }
 
@@ -1773,6 +1939,7 @@ auto Croupier::Respin() -> void {
 		}
 
 		this->spin = this->generator.spin();
+		this->sharedSpin.timeStarted = std::chrono::steady_clock::now();
 		this->currentSpinSaved = false;
 		this->spinCompleted = false;
 	} catch (const std::runtime_error& ex) {
@@ -1785,6 +1952,8 @@ auto Croupier::Respin() -> void {
 }
 
 auto Croupier::LogSpin() -> void {
+	auto guard = std::shared_lock(this->sharedSpin.mutex);
+
 	std::string spinText;
 	for (auto& cond : this->spin.getConditions())
 	{
@@ -1814,11 +1983,12 @@ auto Croupier::SetupMissions() -> void {
 
 auto Croupier::SetupEvents() -> void {
 	events.listen<Events::ContractStart>([this](auto& ev) {
-		auto guard = std::unique_lock(this->sharedSpin.mutex);
-		this->sharedSpin.kills.clear();
+		if (!this->sharedSpin.isPlaying || this->sharedSpin.isFinished)
+			this->sharedSpin.playerStart();
 	});
 	events.listen<Events::ExitGate>([this](const ServerEvent<Events::ExitGate>& ev) {
 		this->exitGateTime = ev.Timestamp;
+		this->sharedSpin.playerExit();
 	});
 	events.listen<Events::ContractEnd>([this](const ServerEvent<Events::ContractEnd>& ev){
 		this->spinCompleted = true;
@@ -1900,8 +2070,11 @@ DEFINE_PLUGIN_DETOUR(Croupier, void, OnWinHttpCallback, void* dwContext, void* h
 
 	auto mission = Croupier::getMissionFromContractId(contractId);
 
-	if (mission != eMission::NONE)
+	if (mission != eMission::NONE) {
 		this->OnMissionSelect(mission);
+		if (!this->sharedSpin.isPlaying)
+			this->sharedSpin.playerStart();
+	}
 
 	return HookResult<void>(HookAction::Continue());
 }

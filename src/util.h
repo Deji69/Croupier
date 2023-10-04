@@ -27,11 +27,15 @@ inline std::string narrow(const std::wstring& wstr)
 }
 
 inline auto ltrim(std::string_view str, std::string_view delimiter = " \t\n\r") {
-	return str.substr(str.find_first_not_of(delimiter));
+	if (str.empty()) return str;
+	auto const n = str.find_first_not_of(delimiter);
+	return n == str.npos ? str.substr(0, 0) : str.substr(n);
 }
 
 inline auto rtrim(std::string_view str, std::string_view delimiter = " \t\n\r") {
-	return str.substr(0, str.find_last_not_of(delimiter) + 1);
+	if (str.empty()) return str;
+	auto const n = str.find_last_not_of(delimiter);
+	return str.substr(0, n == str.npos ? 0 : n + 1);
 }
 
 inline auto trim(std::string_view str, std::string_view delimiter = " \t\n\r") -> std::string_view {

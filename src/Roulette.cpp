@@ -15,18 +15,28 @@ std::unordered_map<std::string, std::string> Keyword::targetKeyMap = {
 	{"Jasper Knight", "JK"},
 	{"Viktor Novikov", "VN"},
 	{"Dalia Margolis", "DM"},
+	{"Harry \"Smokey\" Bagnato", "HSB"},
+	{"Marv \"Slick\" Gonif", "MSG"},
 	{"Silvio Caruso", "SC"},
 	{"Francesca De Santis", "FDS"},
+	{"Dino Bosco", "DB"},
+	{"Marco Abiatti", "MA"},
+	{"Craig Black", "CB"},
+	{"Brother Akram", "BA"},
 	{"Reza Zaydan", "RZ"},
 	{"Claus Hugo Strandberg", "CHS"},
 	{"Jordan Cross", "JC"},
 	{"Ken Morgan", "KM"},
 	{"Sean Rose", "SR"},
+	{"Oybek Nabazov", "ON"},
+	{"Sister Yulduz", "SY"},
 	{"Penelope Graves", "PG"},
 	{"Ezra Berg", "EB"},
 	{"Maya Parvati", "MP"},
 	{"Erich Soders", "ES"},
 	{"Yuki Yamazaki", "YY"},
+	{"Owen Cage", "OC"},
+	{"Klaus Liebleid", "KL"},
 	{"Alma Reynard", "AR"},
 	{"Sierra Knox", "SK"},
 	{"Robert Knox", "RK"},
@@ -65,8 +75,12 @@ std::unordered_map<std::string, eMission> targetMissionMap = {
 	{"Jasper Knight", eMission::ICAFACILITY_FINALTEST},
 	{"Viktor Novikov", eMission::PARIS_SHOWSTOPPER},
 	{"Dalia Margolis", eMission::PARIS_SHOWSTOPPER},
+	{"Harry \"Smokey\" Bagnato", eMission::PARIS_HOLIDAYHOARDERS},
+	{"Marv \"Smokey\" Gonif", eMission::PARIS_HOLIDAYHOARDERS},
 	{"Silvio Caruso", eMission::SAPIENZA_WORLDOFTOMORROW},
 	{"Francesca De Santis", eMission::SAPIENZA_WORLDOFTOMORROW},
+	{"Craig Black", eMission::SAPIENZA_THEAUTHOR},
+	{"Brother Akram", eMission::SAPIENZA_THEAUTHOR},
 	{"Reza Zaydan", eMission::MARRAKESH_GILDEDCAGE},
 	{"Claus Hugo Strandberg", eMission::MARRAKESH_GILDEDCAGE},
 	{"Jordan Cross", eMission::BANGKOK_CLUB27},
@@ -227,6 +241,8 @@ std::vector<Keyword> Keyword::keywords = {
 	{ "Tanto", eMapKillMethod::Tanto },
 	{ "UnicornHorn", eMapKillMethod::UnicornHorn },
 	{ "VikingAxe", eMapKillMethod::VikingAxe },
+	{ "HolidayFireAxe", eMapKillMethod::HolidayFireAxe },
+	{ "XmasStar", eMapKillMethod::XmasStar },
 	// Map Kill Method - Soders
 	{ "PosionStemCells", eMapKillMethod::Soders_PoisonStemCells, "Poison" },
 	{ "StemCells", eMapKillMethod::Soders_PoisonStemCells, "Poison" },
@@ -478,6 +494,8 @@ auto getSpecificKillMethodNameAndImage(eMapKillMethod method) -> std::pair<std::
 	case eMapKillMethod::Tanto: return {"Tanto", "item_perspective_9488fa1e-10e1-49c9-bb24-6635d2e5bd49_0.jpg"};
 	case eMapKillMethod::UnicornHorn: return {"Unicorn Horn", "item_perspective_58769c58-3e70-4746-be8e-4c7114f8c2bb_0.jpg"};
 	case eMapKillMethod::VikingAxe: return {"Viking Axe", "item_perspective_9a7711c7-ede9-4230-853e-ab94c65fc0c9_0.jpg"};
+	case eMapKillMethod::HolidayFireAxe: return {"Holiday Fire Axe", "item_perspective_2add9602-cda7-43fd-9758-6269c8fbb233_0.jpg"};
+	case eMapKillMethod::XmasStar: return { "Xmas Star", "item_perspective_1a852006-e632-401f-aedc-d0cf76521b1f_0.jpg" };
 	case eMapKillMethod::Soders_Electrocution: return {"Electrocution", "snowcrane_sign_soders_electrocute.jpg"};
 	case eMapKillMethod::Soders_Explosion: return {"Explosion", "condition_killmethod_accident_explosion.jpg"};
 	case eMapKillMethod::Soders_PoisonStemCells: return {"Poison Stem Cells", "snowcrane_soders_poison.jpg"};
