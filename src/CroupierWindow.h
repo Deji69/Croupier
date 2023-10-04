@@ -57,6 +57,8 @@ struct SharedRouletteSpin
 	std::chrono::seconds timeElapsed = std::chrono::seconds(0);
 	bool isPlaying = false;
 	bool isFinished = false;
+	LONG windowX = 0;
+	LONG windowY = 0;
 	std::shared_mutex mutex;
 
 	SharedRouletteSpin(const RouletteSpin& spin) : spin(spin), timeElapsed(0)
@@ -64,7 +66,7 @@ struct SharedRouletteSpin
 		timeStarted = std::chrono::steady_clock().now();
 	}
 
-	auto getTimeElapsed() -> std::chrono::seconds {
+	auto getTimeElapsed() const -> std::chrono::seconds {
 		if (!this->isFinished && this->isPlaying) {
 			return std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock().now() - timeStarted);
 		}
@@ -137,6 +139,7 @@ public:
 	auto setAlwaysOnTop(bool enable) -> void;
 	auto setTimerEnabled(bool enable) -> void;
 	auto setTextMode(bool enable) -> void;
+	auto setPosition(LONG x, LONG y) -> void;
 
 	auto paint(HWND wnd) -> void;
 
@@ -166,6 +169,9 @@ private:
 	bool alignRight = false;
 	bool textMode = false;
 	bool timer = false;
+	bool setPositionApplied = false;
+	std::optional<LONG> posX = std::nullopt;
+	std::optional<LONG> posY = std::nullopt;
 	eCroupierWindowLayout layout = eCroupierWindowLayout::ADAPTIVE;
 
 	std::thread windowThread;

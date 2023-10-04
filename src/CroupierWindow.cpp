@@ -203,14 +203,18 @@ auto CroupierWindow::create() -> HRESULT
 								auto guard = std::shared_lock(this->spin.mutex);
 								numConds = this->spin.spin.getConditions().size();
 							}
+
 							auto const w = this->getWindowWidth(numConds);
 							auto const h = this->getWindowHeight(numConds);
 							InvalidateRect(this->hWnd, NULL, true);
+							auto const havePos = this->posX.has_value() && this->posY.has_value();
+							auto const onTopFlag = this->wasOnTop == this->onTop ? HWND_TOPMOST : (this->onTop ? HWND_TOPMOST : HWND_BOTTOM);
+							auto const noMoveFlag = this->posX.has_value() && this->posY.has_value() ? 0 : SWP_NOMOVE;
+							auto const flags = (this->wasOnTop != this->onTop ? 0 : SWP_NOZORDER) | noMoveFlag;
 
-							if (this->wasOnTop != this->onTop)
-								SetWindowPos(this->hWnd, this->onTop ? HWND_TOPMOST : HWND_BOTTOM, 0, 0, w, h, SWP_NOMOVE);
-							else
-								SetWindowPos(this->hWnd, HWND_TOPMOST, 0, 0, w, h, SWP_NOZORDER | SWP_NOMOVE);
+							SetWindowPos(this->hWnd, onTopFlag, this->posX.value_or(0), this->posY.value_or(0), w, h, flags);
+
+							if (!this->setPositionApplied) this->setPositionApplied = true;
 						}
 					}
 				}
@@ -503,6 +507,17 @@ auto CroupierWindow::WndProc(HWND wnd, UINT msg, WPARAM wParam, LPARAM lParam) -
 		case WM_CREATE:
 			this->update();
 			break;
+		case WM_MOVE:
+			RECT rect;
+			if (!setPositionApplied) break;
+			if (GetWindowRect(this->hWnd, &rect)) {
+				auto guard = std::unique_lock(this->spin.mutex);
+				this->spin.windowX = rect.left;
+				this->spin.windowY = rect.top;
+				this->posX = rect.left;
+				this->posY = rect.top;
+			}
+			break;
 	}
 	return DefWindowProc(wnd, msg, wParam, lParam);
 }
@@ -581,6 +596,14 @@ auto CroupierWindow::setDarkMode(bool enable) -> void
 auto CroupierWindow::setAlwaysOnTop(bool enable) -> void
 {
 	this->onTop = enable;
+	this->update();
+}
+
+auto CroupierWindow::setPosition(LONG x, LONG y) -> void
+{
+	this->posX = x;
+	this->posY = y;
+	this->setPositionApplied = false;
 	this->update();
 }
 

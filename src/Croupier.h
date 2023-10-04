@@ -29,6 +29,8 @@ struct Configuration {
 	bool externalWindowTextOnly = false;
 	bool spinOverlay = false;
 	bool timer = false;
+	std::optional<LONG> windowPosX = std::nullopt;
+	std::optional<LONG> windowPosY = std::nullopt;
 
 	std::vector<SerializedSpin> spinHistory;
 };

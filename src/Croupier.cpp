@@ -1300,6 +1300,10 @@ auto Croupier::LoadConfiguration() -> void {
 			this->config.externalWindowOnTop = parseBool(val, this->config.externalWindowOnTop);
 		else if (cmd == "external_window_text_only")
 			this->config.externalWindowTextOnly = parseBool(val, this->config.externalWindowTextOnly);
+		else if (cmd == "external_window_pos_x")
+			this->config.windowPosX = static_cast<LONG>(parseInt(val, 0));
+		else if (cmd == "external_window_pos_y")
+			this->config.windowPosY = static_cast<LONG>(parseInt(val, 0));
 	};
 
 	auto parseHistorySection = [this](std::string_view line) {
@@ -1398,12 +1402,23 @@ auto Croupier::SaveConfiguration() -> void {
 	std::string content;
 	const auto filepath = this->modulePath / "mods" / "Croupier" / "croupier.txt";
 
+	std::optional<LONG> windowPosX = std::nullopt;
+	std::optional<LONG> windowPosY = std::nullopt;
+
+	{
+		auto guard = std::shared_lock(this->sharedSpin.mutex);
+		windowPosX = this->sharedSpin.windowX;
+		windowPosY = this->sharedSpin.windowY;
+	}
+
 	this->file.open(filepath, std::ios::out | std::ios::trunc);
 
 	std::println(this->file, "spin_overlay {}", this->config.spinOverlay ? "true" : "false");
 	std::println(this->file, "external_window {}", this->config.externalWindow ? "true" : "false");
 	std::println(this->file, "external_window_on_top {}", this->config.externalWindowOnTop ? "true" : "false");
 	std::println(this->file, "external_window_text_only {}", this->config.externalWindowTextOnly ? "true" : "false");
+	if (windowPosX) std::println(this->file, "external_window_pos_x {}", windowPosX.value());
+	if (windowPosY) std::println(this->file, "external_window_pos_y {}", windowPosY.value());
 	std::println(this->file, "timer {}", this->config.timer ? "true" : "false");
 	std::println(this->file, "");
 	std::println(this->file, "[history]");
@@ -1429,8 +1444,11 @@ auto Croupier::OnEngineInitialized() -> void {
 	this->LoadConfiguration();
 	this->PreviousSpin();
 
-	if (this->config.externalWindow)
+	if (this->config.externalWindow) {
 		this->window.create();
+		if (this->config.windowPosX.has_value() && this->config.windowPosY.has_value())
+			this->window.setPosition(*this->config.windowPosX, *this->config.windowPosY);
+	}
 
 	this->window.setAlwaysOnTop(this->config.externalWindowOnTop);
 	this->window.setTextMode(this->config.externalWindowTextOnly);
