@@ -78,7 +78,7 @@ private:
 	SharedRouletteSpin sharedSpin;
 	std::stack<RouletteSpin> spinHistory;
 	eMission currentMission = eMission::NONE;
-	eRouletteRuleset ruleset = eRouletteRuleset::RR12;
+	eRouletteRuleset ruleset = eRouletteRuleset::RRWC2023;
 	EventSystem events;
 	std::fstream file;
 	std::filesystem::path modulePath;

@@ -38,6 +38,7 @@ struct RulesetInfo {
 std::vector<RulesetInfo> rulesets = {
 	{eRouletteRuleset::RR12, "RR12"},
 	{eRouletteRuleset::RR11, "RR11"},
+	{eRouletteRuleset::RRWC2023, "RRWC 2023"},
 	{eRouletteRuleset::Custom, "Custom"},
 };
 
@@ -1848,7 +1849,9 @@ auto Croupier::DrawCustomRulesetUI(bool focused) -> void {
 }
 
 auto Croupier::OnRulesetCustomised() -> void {
-	if (RouletteRuleset::compare(this->rules, makeRouletteRuleset(eRouletteRuleset::RR12)))
+	if (RouletteRuleset::compare(this->rules, makeRouletteRuleset(eRouletteRuleset::RRWC2023)))
+		this->OnRulesetSelect(eRouletteRuleset::RRWC2023);
+	else if (RouletteRuleset::compare(this->rules, makeRouletteRuleset(eRouletteRuleset::RR12)))
 		this->OnRulesetSelect(eRouletteRuleset::RR12);
 	else if (RouletteRuleset::compare(this->rules, makeRouletteRuleset(eRouletteRuleset::RR11)))
 		this->OnRulesetSelect(eRouletteRuleset::RR11);

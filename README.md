@@ -50,7 +50,7 @@ Spins can be specified with the entire range of conditions available in each mis
 
 ### Configurable Rulesets
 
-Built-in support for the following Roulette Rivals tournaments rulesets: **RR12**, **RR11**. Also supports **custom** rulesets.
+Built-in support for the following Roulette Rivals tournaments rulesets: **RRWC2023**, **RR12**, **RR11**. Also supports **custom** rulesets.
 
 Spins are generated to comply with the chosen ruleset, preventing unwanted kill conditions or ones that are known to be impossible, unbalanced or bugged.
 
