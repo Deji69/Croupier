@@ -182,6 +182,7 @@ struct MapKillMethod;
 class RouletteSpinCondition;
 class RouletteSpinGenerator;
 
+auto isMethodTagHigherDifficulty(eMethodTag a, eMethodTag b) -> bool;
 auto isKillMethodGun(eKillMethod) -> bool;
 auto isKillMethodLarge(eKillMethod) -> bool;
 auto isKillMethodRemote(eKillMethod) -> bool;
@@ -636,18 +637,6 @@ public:
 		this->duplicateKillMethodAllowed = allow;
 	}
 
-	auto allowBannedInRR(bool allow) {
-		this->bannedInRRConditionsAllowed = allow;
-	}
-
-	auto allowImpossible(bool allow) {
-		this->impossibleConditionsAllowed = allow;
-	}
-
-	auto allowBuggy(bool allow) {
-		this->buggyConditionsAllowed = allow;
-	}
-
 	auto spin() {
 		static auto methodTypes = std::vector<eMethodType>{
 			eMethodType::Standard,
@@ -673,7 +662,7 @@ public:
 
 				auto useSpecificMethod = methodType == eMethodType::Map;
 				auto& disguise = randomVectorElement(disguises);
-				if (spin.hasDisguise(disguise) && !this->duplicateDisguiseAllowed) continue;
+				if (spin.hasDisguise(disguise) && !this->rules->allowDuplicateDisguise) continue;
 
 				auto cond = std::optional<RouletteSpinCondition>();
 
@@ -690,7 +679,7 @@ public:
 						? false
 						: usedMethods.contains(killMethod);
 
-					if (alreadySpanMethod && !this->duplicateKillMethodAllowed) continue;
+					if (alreadySpanMethod && !this->rules->allowDuplicateMethod) continue;
 
 					cond.emplace(target, disguise, std::move(killInfo), std::move(mapMethodInfo), killType);
 				}
@@ -705,17 +694,18 @@ public:
 						? usedMapMethods.contains(mapMethodInfo.method)
 						: usedMethods.contains(killMethod);
 
-					if (alreadySpanMethod && !this->duplicateKillMethodAllowed) continue;
-
-					auto& tags = target.getMethodTags(killMethod);
-					auto killInfo = KillMethod{killMethod};
-
-					if (this->doTagsViolateRules(tags)) continue;
+					if (alreadySpanMethod && !this->rules->allowDuplicateMethod) continue;
 
 					auto killType = eKillType::Any;
+					auto killInfo = KillMethod{killMethod};
+
 					if (killInfo.isGun) killType = randomVectorElement(this->gunKillTypes);
 					else if (killMethod == eKillMethod::Explosive) killType = randomVectorElement(this->explosiveKillTypes);
 					else if (useSpecificMethod && mapMethodInfo.isMelee) killType = randomVectorElement(meleeKillTypes);
+
+					//
+					auto& tags = target.getMethodTags(killMethod);
+					if (this->doTagsViolateRules(tags)) continue;
 
 					// Check live complications are enabled, if we have a standard kill check it's prefixable, then check more stuff...
 					auto canHaveLiveKill = this->rules->liveComplications && (killMethod == eKillMethod::NONE || isKillMethodLivePrefixable(killMethod)) && (
@@ -728,7 +718,7 @@ public:
 						// Allow all specific/map melee kills
 						|| (useSpecificMethod && mapMethodInfo.isMelee)
 					);
-					// 20% chance of 'Live' kill complication
+
 					auto killComplication = canHaveLiveKill && randomBool(this->rules->liveComplicationChance)
 						? eKillComplication::Live
 						: eKillComplication::None;
@@ -763,11 +753,11 @@ public:
 
 	auto doTagsViolateRules(const std::set<eMethodTag>& tags) -> bool {
 		if (tags.empty()) return false;
-		return (tags.contains(eMethodTag::Buggy) && !this->buggyConditionsAllowed)
-			|| (tags.contains(eMethodTag::BannedInRR) && !this->bannedInRRConditionsAllowed)
-			|| (tags.contains(eMethodTag::Hard) && !this->hardConditionsAllowed)
-			|| (tags.contains(eMethodTag::Extreme) && !this->extremeConditionsAllowed)
-			|| (tags.contains(eMethodTag::Impossible) && !this->impossibleConditionsAllowed);
+		return (tags.contains(eMethodTag::Buggy) && !this->rules->enableBuggy)
+			|| (tags.contains(eMethodTag::BannedInRR) && !this->rules->enableMedium)
+			|| (tags.contains(eMethodTag::Hard) && !this->rules->enableHard)
+			|| (tags.contains(eMethodTag::Extreme) && !this->rules->enableExtreme)
+			|| (tags.contains(eMethodTag::Impossible) && !this->rules->enableImpossible);
 	}
 
 private:
@@ -799,14 +789,6 @@ private:
 private:
 	const RouletteRuleset* rules = nullptr;
 	const RouletteMission* mission = nullptr;
-	bool buggyConditionsAllowed = false;
-	bool liveKillTypeAllowed = false;
-	bool eliminationsAllowed = false;
-	bool specificEliminationsAllowed = false;
-	bool bannedInRRConditionsAllowed = false;
-	bool hardConditionsAllowed = false;
-	bool extremeConditionsAllowed = false;
-	bool impossibleConditionsAllowed = false;
 	bool duplicateDisguiseAllowed = false;
 	bool duplicateKillMethodAllowed = false;
 };

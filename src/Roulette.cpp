@@ -301,6 +301,20 @@ MapKillMethod::MapKillMethod(eMapKillMethod method) : method(method),
 	isMelee(isSpecificKillMethodMelee(method))
 { }
 
+auto isMethodTagHigherDifficulty(eMethodTag a, eMethodTag b) -> bool {
+	switch (a) {
+	case eMethodTag::BannedInRR:
+		return false;
+	case eMethodTag::Hard:
+		return b == eMethodTag::BannedInRR;
+	case eMethodTag::Extreme:
+		return b == eMethodTag::BannedInRR || b == eMethodTag::Hard;
+	case eMethodTag::Impossible:
+		return b == eMethodTag::BannedInRR || b == eMethodTag::Hard || b == eMethodTag::Hard;
+	}
+	return false;
+}
+
 auto isKillMethodGun(eKillMethod method) -> bool {
 	switch (method) {
 	case eKillMethod::Pistol:

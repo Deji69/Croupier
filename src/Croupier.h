@@ -29,6 +29,8 @@ struct Configuration {
 	bool externalWindowTextOnly = false;
 	bool spinOverlay = false;
 	bool timer = false;
+	RouletteRuleset customRules;
+	eRouletteRuleset ruleset = eRouletteRuleset::Default;
 	std::optional<LONG> windowPosX = std::nullopt;
 	std::optional<LONG> windowPosY = std::nullopt;
 
@@ -50,6 +52,7 @@ public:
 	auto DrawEditSpinUI(bool focused) -> void;
 	auto DrawCustomRulesetUI(bool focused) -> void;
 	auto DrawSpinUI(bool focused) -> void;
+	auto Random() -> void;
 	auto Respin() -> void;
 	auto PreviousSpin() -> void;
 	auto LoadConfiguration() -> void;

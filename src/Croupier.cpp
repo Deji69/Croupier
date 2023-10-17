@@ -1,5 +1,4 @@
 #include "Croupier.h"
-
 #include <Logging.h>
 #include <IconsMaterialDesign.h>
 #include <Globals.h>
@@ -24,22 +23,6 @@ struct MissionInfo {
 	MissionInfo(eMission mission, std::string_view name, bool isMainMap = true) :
 		mission(mission), name(name), isMainMap(isMainMap)
 	{ }
-};
-
-struct RulesetInfo {
-	eRouletteRuleset ruleset;
-	std::string_view name;
-
-	RulesetInfo(eRouletteRuleset ruleset, std::string_view name) :
-		ruleset(ruleset), name(name)
-	{ }
-};
-
-std::vector<RulesetInfo> rulesets = {
-	{eRouletteRuleset::RR12, "RR12"},
-	{eRouletteRuleset::RR11, "RR11"},
-	{eRouletteRuleset::RRWC2023, "RRWC 2023"},
-	{eRouletteRuleset::Custom, "Custom"},
 };
 
 std::vector<MissionInfo> missionInfos = {
@@ -1305,6 +1288,30 @@ auto Croupier::LoadConfiguration() -> void {
 			this->config.windowPosX = static_cast<LONG>(parseInt(val, 0));
 		else if (cmd == "external_window_pos_y")
 			this->config.windowPosY = static_cast<LONG>(parseInt(val, 0));
+		else if (cmd == "ruleset")
+			this->config.ruleset = getRulesetByName(val).value_or(this->config.ruleset);
+		else if (cmd == "ruleset_custom_medium")
+			this->config.customRules.enableMedium = parseBool(val, this->config.customRules.enableMedium);
+		else if (cmd == "ruleset_custom_hard")
+			this->config.customRules.enableHard = parseBool(val, this->config.customRules.enableHard);
+		else if (cmd == "ruleset_custom_extreme")
+			this->config.customRules.enableExtreme = parseBool(val, this->config.customRules.enableExtreme);
+		else if (cmd == "ruleset_custom_impossible")
+			this->config.customRules.enableImpossible = parseBool(val, this->config.customRules.enableImpossible);
+		else if (cmd == "ruleset_custom_buggy")
+			this->config.customRules.enableBuggy = parseBool(val, this->config.customRules.enableBuggy);
+		else if (cmd == "ruleset_custom_generic_elims")
+			this->config.customRules.genericEliminations = parseBool(val, this->config.customRules.genericEliminations);
+		else if (cmd == "ruleset_custom_live_complications")
+			this->config.customRules.liveComplications = parseBool(val, this->config.customRules.liveComplications);
+		else if (cmd == "ruleset_custom_live_complications_exclude_standard")
+			this->config.customRules.liveComplicationsExcludeStandard = parseBool(val, this->config.customRules.liveComplicationsExcludeStandard);
+		else if (cmd == "ruleset_custom_live_complication_chance")
+			this->config.customRules.liveComplicationChance = parseInt(val, this->config.customRules.liveComplicationChance);
+		else if (cmd == "ruleset_custom_melee_kill_types")
+			this->config.customRules.meleeKillTypes = parseBool(val, this->config.customRules.meleeKillTypes);
+		else if (cmd == "ruleset_custom_thrown_kill_types")
+			this->config.customRules.thrownKillTypes = parseBool(val, this->config.customRules.thrownKillTypes);
 	};
 
 	auto parseHistorySection = [this](std::string_view line) {
@@ -1394,7 +1401,7 @@ auto Croupier::LoadConfiguration() -> void {
 			auto tokens = split(sv, " ");
 			if (tokens.size() < 2) continue;
 
-			parseMainSection(tokens[0], tokens[1]);
+			parseMainSection(tokens[0], trim(tokens[1]));
 		}
 	}
 }
@@ -1414,13 +1421,26 @@ auto Croupier::SaveConfiguration() -> void {
 
 	this->file.open(filepath, std::ios::out | std::ios::trunc);
 
+	std::println(this->file, "timer {}", this->config.timer ? "true" : "false");
 	std::println(this->file, "spin_overlay {}", this->config.spinOverlay ? "true" : "false");
 	std::println(this->file, "external_window {}", this->config.externalWindow ? "true" : "false");
 	std::println(this->file, "external_window_on_top {}", this->config.externalWindowOnTop ? "true" : "false");
 	std::println(this->file, "external_window_text_only {}", this->config.externalWindowTextOnly ? "true" : "false");
 	if (windowPosX) std::println(this->file, "external_window_pos_x {}", windowPosX.value());
 	if (windowPosY) std::println(this->file, "external_window_pos_y {}", windowPosY.value());
-	std::println(this->file, "timer {}", this->config.timer ? "true" : "false");
+	std::println(this->file, "ruleset {}", getRulesetName(this->config.ruleset));
+	std::println(this->file, "ruleset_custom_medium {}", this->config.customRules.enableMedium ? "true" : "false");
+	std::println(this->file, "ruleset_custom_hard {}", this->config.customRules.enableHard ? "true" : "false");
+	std::println(this->file, "ruleset_custom_extreme {}", this->config.customRules.enableExtreme ? "true" : "false");
+	std::println(this->file, "ruleset_custom_impossible {}", this->config.customRules.enableImpossible ? "true" : "false");
+	std::println(this->file, "ruleset_custom_buggy {}", this->config.customRules.enableBuggy ? "true" : "false");
+	std::println(this->file, "ruleset_custom_generic_elims {}", this->config.customRules.genericEliminations ? "true" : "false");
+	std::println(this->file, "ruleset_custom_live_complications {}", this->config.customRules.liveComplications ? "true" : "false");
+	std::println(this->file, "ruleset_custom_live_complications_exclude_standard {}", this->config.customRules.liveComplicationsExcludeStandard ? "true" : "false");
+	std::println(this->file, "ruleset_custom_live_complication_chance {}", this->config.customRules.liveComplicationChance);
+	std::println(this->file, "ruleset_custom_melee_kill_types {}", this->config.customRules.meleeKillTypes ? "true" : "false");
+	std::println(this->file, "ruleset_custom_thrown_kill_types {}", this->config.customRules.thrownKillTypes ? "true" : "false");
+
 	std::println(this->file, "");
 	std::println(this->file, "[history]");
 
@@ -1498,11 +1518,13 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 			this->SaveConfiguration();
 		}
 
-		ImGui::SameLine();
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 50.0);
-		if (ImGui::Button("Reset")) {
-			auto guard = std::unique_lock(this->sharedSpin.mutex);
-			this->sharedSpin.timeStarted = std::chrono::steady_clock::now();
+		if (this->config.timer) {
+			ImGui::SameLine();
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 50.0);
+			if (ImGui::Button("Reset")) {
+				auto guard = std::unique_lock(this->sharedSpin.mutex);
+				this->sharedSpin.timeStarted = std::chrono::steady_clock::now();
+			}
 		}
 
 		if (ImGui::Checkbox("In-Game Window", &this->config.spinOverlay))
@@ -1532,12 +1554,8 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 
 		{
 			// Ruleset select
-			auto rulesetInfoIt = std::find_if(rulesets.begin(), rulesets.end(), [this](const RulesetInfo& info) {
-				return info.ruleset == this->ruleset;
-			});
-			auto const currentIdx = rulesetInfoIt != rulesets.end() ? std::distance(rulesets.begin(), rulesetInfoIt) : 0;
-			auto const& currentMissionInfo = rulesets[currentIdx];
-			if (ImGui::BeginCombo("##Ruleset", currentMissionInfo.name.data(), ImGuiComboFlags_HeightLarge)) {
+			auto const rulesetName = getRulesetName(this->ruleset);
+			if (ImGui::BeginCombo("##Ruleset", rulesetName.value_or("").data(), ImGuiComboFlags_HeightLarge)) {
 				for (auto& info : rulesets) {
 					auto const selected = this->ruleset == info.ruleset;
 					auto flags = info.ruleset == eRouletteRuleset::Custom ? ImGuiSelectableFlags_Disabled : 0;
@@ -1819,7 +1837,38 @@ auto Croupier::DrawCustomRulesetUI(bool focused) -> void {
 	if (ImGui::Begin(ICON_MD_EDIT " CROUPIER - CONFIGURE RULESET", &this->showCustomRulesetUI, ImGuiWindowFlags_AlwaysAutoResize)) {
 		ImGui::PushFont(SDK()->GetImGuiRegularFont());
 
-		ImGui::TextUnformatted("Enable/disable certain condition types from being in spins.");
+		ImGui::PushFont(SDK()->GetImGuiBoldFont());
+		ImGui::TextUnformatted("Toggle conditions of particular difficulty levels, regardless of RR ban status.");
+		ImGui::PopFont();
+
+		ImGui::TextUnformatted("'Medium' conditions require decent map knowledge but aren't too hard to pull off (Yuki fire).");
+
+		if (ImGui::Checkbox("Enable medium conditions", &this->rules.enableMedium))
+			this->OnRulesetCustomised();
+
+		ImGui::TextUnformatted("'Hard' conditions require good routing, practice and some tricks (Claus prisoner, Bangkok stalker).");
+
+		if (ImGui::Checkbox("Enable hard conditions", &this->rules.enableHard))
+			this->OnRulesetCustomised();
+
+		ImGui::TextUnformatted("'Extreme' conditions may require glitches, huge time investment or advanced tricks (Paris fire, WC Beak Staff etc.).");
+
+		if (ImGui::Checkbox("Enable extreme conditions", &this->rules.enableExtreme))
+			this->OnRulesetCustomised();
+
+		ImGui::TextUnformatted("'Buggy' conditions have been found to encounter game bugs sometimes.");
+
+		if (ImGui::Checkbox("Enable buggy conditions", &this->rules.enableBuggy))
+			this->OnRulesetCustomised();
+
+		ImGui::TextUnformatted("'Impossible' conditions are unfeasible due to objects not existing near target routes (Sapienza fire, etc.).");
+
+		if (ImGui::Checkbox("Enable 'impossible' conditions", &this->rules.enableImpossible))
+			this->OnRulesetCustomised();
+
+		ImGui::PushFont(SDK()->GetImGuiBoldFont());
+		ImGui::TextUnformatted("Toggle certain condition types from being in spins.");
+		ImGui::PopFont();
 
 		if (ImGui::Checkbox("Generic eliminations", &this->rules.genericEliminations))
 			this->OnRulesetCustomised();
@@ -1855,6 +1904,8 @@ auto Croupier::OnRulesetCustomised() -> void {
 		this->OnRulesetSelect(eRouletteRuleset::RR12);
 	else if (RouletteRuleset::compare(this->rules, makeRouletteRuleset(eRouletteRuleset::RR11)))
 		this->OnRulesetSelect(eRouletteRuleset::RR11);
+	else if (RouletteRuleset::compare(this->rules, makeRouletteRuleset(eRouletteRuleset::Normal)))
+		this->OnRulesetSelect(eRouletteRuleset::Normal);
 	else
 		this->OnRulesetSelect(eRouletteRuleset::Custom);
 }
@@ -1927,6 +1978,10 @@ auto Croupier::PreviousSpin() -> void {
 
 	this->sharedSpin.playerStart();
 	this->LogSpin();
+}
+
+auto Croupier::Random() -> void
+{
 }
 
 auto Croupier::Respin() -> void {
