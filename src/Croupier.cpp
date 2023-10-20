@@ -15,6 +15,28 @@
 using namespace std::string_literals;
 using namespace std::string_view_literals;
 
+std::vector<eMission> defaultMissionPool = {
+	eMission::PARIS_SHOWSTOPPER,
+	eMission::SAPIENZA_WORLDOFTOMORROW,
+	eMission::MARRAKESH_GILDEDCAGE,
+	eMission::BANGKOK_CLUB27,
+	eMission::COLORADO_FREEDOMFIGHTERS,
+	eMission::HOKKAIDO_SITUSINVERSUS,
+	eMission::MIAMI_FINISHLINE,
+	eMission::SANTAFORTUNA_THREEHEADEDSERPENT,
+	eMission::MUMBAI_CHASINGAGHOST,
+	eMission::WHITTLETON_ANOTHERLIFE,
+	eMission::ISLEOFSGAIL_THEARKSOCIETY,
+	eMission::NEWYORK_GOLDENHANDSHAKE,
+	eMission::HAVEN_THELASTRESORT,
+	eMission::DUBAI_ONTOPOFTHEWORLD,
+	eMission::DARTMOOR_DEATHINTHEFAMILY,
+	eMission::CHONGQING_ENDOFANERA,
+	eMission::BERLIN_APEXPREDATOR,
+	eMission::MENDOZA_THEFAREWELL,
+	eMission::AMBROSE_SHADOWSINTHEWATER,
+};
+
 struct MissionInfo {
 	eMission mission;
 	std::string_view name;
@@ -109,6 +131,16 @@ std::unordered_map<std::string, eMission> Croupier::MissionContractIds = {
 	{"3e19d55-64a6-4282-bb3c-d18c3f3e6e29", eMission::CARPATHIAN_UNTOUCHABLE},
 	{"2aac100-dfc7-4f85-b9cd-528114436f6c", eMission::AMBROSE_SHADOWSINTHEWATER},
 };
+
+std::random_device rd;
+std::mt19937 gen;
+
+template<typename T>
+static auto randomVectorElement(const std::vector<T>& vec) -> const T&
+{
+	std::uniform_int_distribution<> dist(0, vec.size() - 1);
+	return vec[dist(gen)];
+}
 
 auto generatorAddMissionMethods(RouletteMission& mission)
 {
@@ -1272,46 +1304,49 @@ auto Croupier::LoadConfiguration() -> void {
 	};
 
 	bool inHistorySection = false;
-
-	auto parseMainSection = [this, parseBool, parseInt](std::string_view cmd, std::string_view val) {
-		if (cmd == "timer")
-			this->config.timer = parseBool(val, this->config.timer);
-		else if (cmd == "spin_overlay")
-			this->config.spinOverlay = parseBool(val, this->config.spinOverlay);
-		else if (cmd == "external_window")
-			this->config.externalWindow = parseBool(val, this->config.externalWindow);
-		else if (cmd == "external_window_on_top")
-			this->config.externalWindowOnTop = parseBool(val, this->config.externalWindowOnTop);
-		else if (cmd == "external_window_text_only")
-			this->config.externalWindowTextOnly = parseBool(val, this->config.externalWindowTextOnly);
-		else if (cmd == "external_window_pos_x")
-			this->config.windowPosX = static_cast<LONG>(parseInt(val, 0));
-		else if (cmd == "external_window_pos_y")
-			this->config.windowPosY = static_cast<LONG>(parseInt(val, 0));
-		else if (cmd == "ruleset")
-			this->config.ruleset = getRulesetByName(val).value_or(this->config.ruleset);
-		else if (cmd == "ruleset_custom_medium")
-			this->config.customRules.enableMedium = parseBool(val, this->config.customRules.enableMedium);
-		else if (cmd == "ruleset_custom_hard")
-			this->config.customRules.enableHard = parseBool(val, this->config.customRules.enableHard);
-		else if (cmd == "ruleset_custom_extreme")
-			this->config.customRules.enableExtreme = parseBool(val, this->config.customRules.enableExtreme);
-		else if (cmd == "ruleset_custom_impossible")
+	auto cmds = std::map<std::string, std::function<void (std::string_view val)>> {
+		{"timer", [this, parseBool](std::string_view val) { this->config.timer = parseBool(val, this->config.timer); }},
+		{"spin_overlay", [this, parseBool](std::string_view val) { this->config.spinOverlay = parseBool(val, this->config.spinOverlay); }},
+		{"external_window", [this, parseBool](std::string_view val) { this->config.externalWindow = parseBool(val, this->config.externalWindow); }},
+		{"external_window_on_top", [this, parseBool](std::string_view val) { this->config.externalWindowOnTop = parseBool(val, this->config.externalWindowOnTop); }},
+		{"external_window_text_only", [this, parseBool](std::string_view val) { this->config.externalWindowTextOnly = parseBool(val, this->config.externalWindowTextOnly); }},
+		{"external_window_pos_x", [this, parseInt](std::string_view val) { this->config.windowPosX = static_cast<LONG>(parseInt(val, 0)); }},
+		{"external_window_pos_y", [this, parseInt](std::string_view val) { this->config.windowPosY = static_cast<LONG>(parseInt(val, 0)); }},
+		{"ruleset", [this](std::string_view val) { this->config.ruleset = getRulesetByName(val).value_or(this->config.ruleset); }},
+		{"ruleset_medium", [this, parseBool](std::string_view val) { this->config.customRules.enableMedium = parseBool(val, this->config.customRules.enableMedium); }},
+		{"ruleset_hard", [this, parseBool](std::string_view val) { this->config.customRules.enableHard = parseBool(val, this->config.customRules.enableHard); }},
+		{"ruleset_extreme", [this, parseBool](std::string_view val) { this->config.customRules.enableExtreme = parseBool(val, this->config.customRules.enableExtreme); }},
+		{"ruleset_buggy", [this, parseBool](std::string_view val) { this->config.customRules.enableBuggy = parseBool(val, this->config.customRules.enableBuggy); }},
+		{"ruleset_impossible", [this, parseBool](std::string_view val) {
 			this->config.customRules.enableImpossible = parseBool(val, this->config.customRules.enableImpossible);
-		else if (cmd == "ruleset_custom_buggy")
-			this->config.customRules.enableBuggy = parseBool(val, this->config.customRules.enableBuggy);
-		else if (cmd == "ruleset_custom_generic_elims")
+		}},
+		{"ruleset_generic_elims", [this, parseBool](std::string_view val) {
 			this->config.customRules.genericEliminations = parseBool(val, this->config.customRules.genericEliminations);
-		else if (cmd == "ruleset_custom_live_complications")
+		}},
+		{"ruleset_live_complications", [this, parseBool](std::string_view val) {
 			this->config.customRules.liveComplications = parseBool(val, this->config.customRules.liveComplications);
-		else if (cmd == "ruleset_custom_live_complications_exclude_standard")
+		}},
+		{"ruleset_live_complications_exclude_standard", [this, parseBool](std::string_view val) {
 			this->config.customRules.liveComplicationsExcludeStandard = parseBool(val, this->config.customRules.liveComplicationsExcludeStandard);
-		else if (cmd == "ruleset_custom_live_complication_chance")
+		}},
+		{"ruleset_live_complication_chance", [this, parseInt](std::string_view val) {
 			this->config.customRules.liveComplicationChance = parseInt(val, this->config.customRules.liveComplicationChance);
-		else if (cmd == "ruleset_custom_melee_kill_types")
+		}},
+		{"ruleset_melee_kill_types", [this, parseBool](std::string_view val) {
 			this->config.customRules.meleeKillTypes = parseBool(val, this->config.customRules.meleeKillTypes);
-		else if (cmd == "ruleset_custom_thrown_kill_types")
+		}},
+		{"ruleset_thrown_kill_types", [this, parseBool](std::string_view val) {
 			this->config.customRules.thrownKillTypes = parseBool(val, this->config.customRules.thrownKillTypes);
+		}},
+		{"mission_pool", [this](std::string_view val) {
+			const auto maps = split(val, ",");
+			this->config.missionPool.clear();
+			for (const auto& map : maps) {
+				auto mission = getMissionByCodename(std::string(trim(map)));
+				if (mission != eMission::NONE)
+					this->config.missionPool.push_back(mission);
+			}
+		}},
 	};
 
 	auto parseHistorySection = [this](std::string_view line) {
@@ -1401,7 +1436,8 @@ auto Croupier::LoadConfiguration() -> void {
 			auto tokens = split(sv, " ");
 			if (tokens.size() < 2) continue;
 
-			parseMainSection(tokens[0], trim(tokens[1]));
+			auto const it = cmds.find(std::string(tokens[0]));
+			if (it != cend(cmds)) it->second(trim(tokens[1]));
 		}
 	}
 }
@@ -1428,18 +1464,28 @@ auto Croupier::SaveConfiguration() -> void {
 	std::println(this->file, "external_window_text_only {}", this->config.externalWindowTextOnly ? "true" : "false");
 	if (windowPosX) std::println(this->file, "external_window_pos_x {}", windowPosX.value());
 	if (windowPosY) std::println(this->file, "external_window_pos_y {}", windowPosY.value());
-	std::println(this->file, "ruleset {}", getRulesetName(this->config.ruleset));
-	std::println(this->file, "ruleset_custom_medium {}", this->config.customRules.enableMedium ? "true" : "false");
-	std::println(this->file, "ruleset_custom_hard {}", this->config.customRules.enableHard ? "true" : "false");
-	std::println(this->file, "ruleset_custom_extreme {}", this->config.customRules.enableExtreme ? "true" : "false");
-	std::println(this->file, "ruleset_custom_impossible {}", this->config.customRules.enableImpossible ? "true" : "false");
-	std::println(this->file, "ruleset_custom_buggy {}", this->config.customRules.enableBuggy ? "true" : "false");
-	std::println(this->file, "ruleset_custom_generic_elims {}", this->config.customRules.genericEliminations ? "true" : "false");
-	std::println(this->file, "ruleset_custom_live_complications {}", this->config.customRules.liveComplications ? "true" : "false");
-	std::println(this->file, "ruleset_custom_live_complications_exclude_standard {}", this->config.customRules.liveComplicationsExcludeStandard ? "true" : "false");
-	std::println(this->file, "ruleset_custom_live_complication_chance {}", this->config.customRules.liveComplicationChance);
-	std::println(this->file, "ruleset_custom_melee_kill_types {}", this->config.customRules.meleeKillTypes ? "true" : "false");
-	std::println(this->file, "ruleset_custom_thrown_kill_types {}", this->config.customRules.thrownKillTypes ? "true" : "false");
+	const auto rulesetName = getRulesetName(this->config.ruleset);
+	if (rulesetName) std::println(this->file, "ruleset {}", rulesetName.value());
+	std::println(this->file, "ruleset_medium {}", this->config.customRules.enableMedium ? "true" : "false");
+	std::println(this->file, "ruleset_hard {}", this->config.customRules.enableHard ? "true" : "false");
+	std::println(this->file, "ruleset_extreme {}", this->config.customRules.enableExtreme ? "true" : "false");
+	std::println(this->file, "ruleset_impossible {}", this->config.customRules.enableImpossible ? "true" : "false");
+	std::println(this->file, "ruleset_buggy {}", this->config.customRules.enableBuggy ? "true" : "false");
+	std::println(this->file, "ruleset_generic_elims {}", this->config.customRules.genericEliminations ? "true" : "false");
+	std::println(this->file, "ruleset_live_complications {}", this->config.customRules.liveComplications ? "true" : "false");
+	std::println(this->file, "ruleset_live_complications_exclude_standard {}", this->config.customRules.liveComplicationsExcludeStandard ? "true" : "false");
+	std::println(this->file, "ruleset_live_complication_chance {}", this->config.customRules.liveComplicationChance);
+	std::println(this->file, "ruleset_melee_kill_types {}", this->config.customRules.meleeKillTypes ? "true" : "false");
+	std::println(this->file, "ruleset_thrown_kill_types {}", this->config.customRules.thrownKillTypes ? "true" : "false");
+
+	std::string mapPoolValue;
+	for (const auto mission : this->config.missionPool) {
+		auto codename = getMissionCodename(mission);
+		if (!codename) continue;
+		if (mapPoolValue.size()) mapPoolValue += ", ";
+		mapPoolValue += codename.value();
+	}
+	std::println(this->file, "mission_pool {}", mapPoolValue);
 
 	std::println(this->file, "");
 	std::println(this->file, "[history]");
@@ -1463,6 +1509,10 @@ auto Croupier::OnEngineInitialized() -> void {
 	Logger::Info("Croupier has been initialized!");
 
 	this->LoadConfiguration();
+
+	if (this->config.missionPool.empty())
+		this->SetDefaultMissionPool();
+
 	this->PreviousSpin();
 
 	if (this->config.externalWindow) {
@@ -1504,6 +1554,7 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 	this->DrawSpinUI(focused);
 	this->DrawEditSpinUI(focused);
 	this->DrawCustomRulesetUI(focused);
+	this->DrawEditMissionPoolUI(focused);
 
 	if (!this->showUI) return;
 
@@ -1595,8 +1646,17 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 			ImGui::EndCombo();
 		}
 
+		ImGui::SameLine();
+		if (ImGui::Button("Edit Pool"))
+			this->showEditMissionPoolUI = !this->showEditMissionPoolUI;
+
 		if (ImGui::Button("Respin"))
 			this->Respin();
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Random Map"))
+			this->Random();
 
 		if (this->spin.getMission()) {
 			ImGui::SameLine();
@@ -1897,6 +1957,45 @@ auto Croupier::DrawCustomRulesetUI(bool focused) -> void {
 	ImGui::PopFont();
 }
 
+auto Croupier::DrawEditMissionPoolUI(bool focused) -> void {
+	if (!this->showEditMissionPoolUI) return;
+
+	ImGui::PushFont(SDK()->GetImGuiBlackFont());
+
+	if (ImGui::Begin(ICON_MD_EDIT " CROUPIER - EDIT MISSION POOL", &this->showEditMissionPoolUI, ImGuiWindowFlags_AlwaysAutoResize)) {
+		ImGui::PushFont(SDK()->GetImGuiRegularFont());
+
+		ImGui::TextUnformatted("Select which missions will be in the pool for randomisation.");
+
+		auto i = 0;
+
+		for (auto& missionInfo : missionInfos) {
+			if (missionInfo.mission == eMission::NONE) {
+				i = 0;
+				ImGui::PushFont(SDK()->GetImGuiBoldFont());
+				ImGui::TextUnformatted(missionInfo.name.data());
+				ImGui::PopFont();
+				continue;
+			}
+
+			if (++i % 3 == 0) ImGui::NewLine();
+			else ImGui::SameLine(120 * i);
+
+			auto it = find(cbegin(this->config.missionPool), cend(this->config.missionPool), missionInfo.mission);
+			auto enabled = it != cend(this->config.missionPool);
+			if (ImGui::Checkbox(missionInfo.name.data(), &enabled)) {
+				this->config.missionPool.erase(remove(begin(this->config.missionPool), end(this->config.missionPool), missionInfo.mission));
+				if (enabled) this->config.missionPool.push_back(missionInfo.mission);
+			}
+		}
+
+		ImGui::PopFont();
+	}
+
+	ImGui::End();
+	ImGui::PopFont();
+}
+
 auto Croupier::OnRulesetCustomised() -> void {
 	if (RouletteRuleset::compare(this->rules, makeRouletteRuleset(eRouletteRuleset::RRWC2023)))
 		this->OnRulesetSelect(eRouletteRuleset::RRWC2023);
@@ -1964,6 +2063,10 @@ auto Croupier::OnFinishMission() -> void {
 	if (this->spin.getConditions().empty()) return;
 }
 
+auto Croupier::SetDefaultMissionPool() -> void {
+	this->config.missionPool = defaultMissionPool;
+}
+
 auto Croupier::PreviousSpin() -> void {
 	if (this->spinHistory.empty()) return;
 	{
@@ -1982,6 +2085,12 @@ auto Croupier::PreviousSpin() -> void {
 
 auto Croupier::Random() -> void
 {
+	if (this->config.missionPool.empty())
+		this->SetDefaultMissionPool();
+	if (this->config.missionPool.empty())
+		return;
+	auto mission = randomVectorElement(this->config.missionPool);
+	this->OnMissionSelect(mission);
 }
 
 auto Croupier::Respin() -> void {
@@ -2045,7 +2154,6 @@ auto Croupier::SetupEvents() -> void {
 			this->sharedSpin.playerStart();
 	});
 	events.listen<Events::ExitGate>([this](const ServerEvent<Events::ExitGate>& ev) {
-		this->exitGateTime = ev.Timestamp;
 		this->sharedSpin.playerExit();
 	});
 	events.listen<Events::ContractEnd>([this](const ServerEvent<Events::ContractEnd>& ev){

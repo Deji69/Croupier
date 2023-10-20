@@ -33,6 +33,7 @@ struct Configuration {
 	eRouletteRuleset ruleset = eRouletteRuleset::Default;
 	std::optional<LONG> windowPosX = std::nullopt;
 	std::optional<LONG> windowPosY = std::nullopt;
+	std::vector<eMission> missionPool;
 
 	std::vector<SerializedSpin> spinHistory;
 };
@@ -51,12 +52,14 @@ public:
 	auto OnFinishMission() -> void;
 	auto DrawEditSpinUI(bool focused) -> void;
 	auto DrawCustomRulesetUI(bool focused) -> void;
+	auto DrawEditMissionPoolUI(bool focused) -> void;
 	auto DrawSpinUI(bool focused) -> void;
 	auto Random() -> void;
 	auto Respin() -> void;
 	auto PreviousSpin() -> void;
 	auto LoadConfiguration() -> void;
 	auto SaveConfiguration() -> void;
+	auto SetDefaultMissionPool() -> void;
 
 private:
 	static std::unordered_map<std::string, eMission> MissionContractIds;
@@ -89,10 +92,10 @@ private:
 	bool currentSpinSaved = true;
 	bool showUI = false;
 	bool showManualModeUI = false;
+	bool showEditMissionPoolUI = false;
 	bool showCustomRulesetUI = false;
 	bool spinCompleted = false;
 	Configuration config;
-	double exitGateTime = 0;
 };
 
 DEFINE_ZHM_PLUGIN(Croupier)
