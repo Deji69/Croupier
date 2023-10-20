@@ -42,7 +42,7 @@ inline auto trim(std::string_view str, std::string_view delimiter = " \t\n\r") -
 	return ltrim(rtrim(str));
 }
 
-inline auto split(std::string_view p_String, const std::string& p_Delimeter) -> std::vector<std::string_view>
+inline auto split(std::string_view p_String, const std::string& p_Delimeter, int limit = -1) -> std::vector<std::string_view>
 {
 	std::vector<std::string_view> s_Parts;
 
@@ -51,6 +51,7 @@ inline auto split(std::string_view p_String, const std::string& p_Delimeter) -> 
 
 	while ((s_PartEnd = p_String.find_first_of(p_Delimeter, s_PartStart)) != std::string::npos)
 	{
+		if (limit != -1 && s_Parts.size() >= (limit - 1)) break;
 		s_Parts.push_back(p_String.substr(s_PartStart, s_PartEnd - s_PartStart));
 		s_PartStart = p_String.find_first_not_of(p_Delimeter, s_PartEnd);
 	}

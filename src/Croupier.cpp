@@ -40,55 +40,56 @@ std::vector<eMission> defaultMissionPool = {
 struct MissionInfo {
 	eMission mission;
 	std::string_view name;
+	std::string_view simpleName;
 	bool isMainMap = false;
 
-	MissionInfo(eMission mission, std::string_view name, bool isMainMap = true) :
-		mission(mission), name(name), isMainMap(isMainMap)
+	MissionInfo(eMission mission, std::string_view name, std::string_view simpleName, bool isMainMap = true) :
+		mission(mission), name(name), simpleName(simpleName), isMainMap(isMainMap)
 	{ }
 };
 
 std::vector<MissionInfo> missionInfos = {
-	{eMission::NONE, "--------- PROLOGUE ---------", false},
-	{eMission::ICAFACILITY_FREEFORM, "Prologue: Freeform Training", false},
-	{eMission::ICAFACILITY_FINALTEST, "Prologue: The Final Test", false},
-	{eMission::NONE, "--------- SEASON 1 ---------"},
-	{eMission::PARIS_SHOWSTOPPER, "Paris: The Showstopper"},
-	{eMission::SAPIENZA_WORLDOFTOMORROW, "Sapienza: World of Tomorrow"},
-	{eMission::MARRAKESH_GILDEDCAGE, "Marrakesh: A Gilded Cage"},
-	{eMission::BANGKOK_CLUB27, "Bangkok: Club 27"},
-	{eMission::COLORADO_FREEDOMFIGHTERS, "Colorado: Freedom Fighters"},
-	{eMission::HOKKAIDO_SITUSINVERSUS, "Hokkaido: Situs Inversus"},
-	{eMission::NONE, "--- SEASON 1 BONUS ---", false},
-	{eMission::BANGKOK_THESOURCE, "Bangkok: The Source", false},
-	{eMission::SAPIENZA_THEAUTHOR, "Sapienza: The Author", false},
-	{eMission::HOKKAIDO_PATIENTZERO, "Hokkaido: Patient Zero", false},
-	{eMission::PARIS_HOLIDAYHOARDERS, "Paris: Holiday Hoarders", false},
-	{eMission::SAPIENZA_THEICON, "Sapienza: The Icon", false},
-	{eMission::SAPIENZA_LANDSLIDE, "Sapienza: Landslide", false},
-	{eMission::MARRAKESH_HOUSEBUILTONSAND, "Marrakesh: A House Built On Sand", false},
-	{eMission::HOKKAIDO_SNOWFESTIVAL, "Hokkaido: Snow Festival", false},
-	{eMission::NONE, "--------- SEASON 2 ---------"},
-	{eMission::HAWKESBAY_NIGHTCALL, "Hawke's Bay: Nightcall", false},
-	{eMission::MIAMI_FINISHLINE, "Miami: The Finish Line"},
-	{eMission::SANTAFORTUNA_THREEHEADEDSERPENT, "Santa Fortuna: Three-Headed Serpent"},
-	{eMission::MUMBAI_CHASINGAGHOST, "Mumbai: Chasing a Ghost"},
-	{eMission::WHITTLETON_ANOTHERLIFE, "Whittleton Creek: Another Life"},
-	{eMission::ISLEOFSGAIL_THEARKSOCIETY, "Isle of Sgàil: The Ark Society"},
-	{eMission::NEWYORK_GOLDENHANDSHAKE, "New York: Golden Handshake"},
-	{eMission::HAVEN_THELASTRESORT, "Haven: The Last Resort"},
-	{eMission::NONE, "- SPECIAL ASSIGNMENTS -", false},
-	{eMission::MIAMI_ASILVERTONGUE, "Miami: A Silver Tongue"},
-	{eMission::SANTAFORTUNA_EMBRACEOFTHESERPENT, "Santa Fortuna: Embrace of the Serpent", false},
-	{eMission::MUMBAI_ILLUSIONSOFGRANDEUR, "Mumbai: Illusions of Grandeur", false},
-	{eMission::WHITTLETON_ABITTERPILL, "Whittleton Creek: A Bitter Pill", false},
-	{eMission::NONE, "--------- SEASON 3 ---------"},
-	{eMission::DUBAI_ONTOPOFTHEWORLD, "Dubai: On Top of the World"},
-	{eMission::DARTMOOR_DEATHINTHEFAMILY, "Dartmoor: Death in the Family"},
-	{eMission::BERLIN_APEXPREDATOR, "Berlin: Apex Predator"},
-	{eMission::CHONGQING_ENDOFANERA, "Chongqing: End of an Era"},
-	{eMission::MENDOZA_THEFAREWELL, "Mendoza: The Farewell"},
-	{eMission::CARPATHIAN_UNTOUCHABLE, "Carpathian Mountains: Untouchable", false},
-	{eMission::AMBROSE_SHADOWSINTHEWATER, "Ambrose Island: Shadows in the Water"},
+	{eMission::NONE, "--------- PROLOGUE ---------", "PROLGUE", false},
+	{eMission::ICAFACILITY_FREEFORM, "Prologue: Freeform Training", "Freeform Training", false},
+	{eMission::ICAFACILITY_FINALTEST, "Prologue: The Final Test", "The Final Test", false},
+	{eMission::NONE, "--------- SEASON 1 ---------", "SEASON 1"},
+	{eMission::PARIS_SHOWSTOPPER, "Paris: The Showstopper", "The Showstopper"},
+	{eMission::SAPIENZA_WORLDOFTOMORROW, "Sapienza: World of Tomorrow", "World of Tomorrow"},
+	{eMission::MARRAKESH_GILDEDCAGE, "Marrakesh: A Gilded Cage", "A Gilded Cage"},
+	{eMission::BANGKOK_CLUB27, "Bangkok: Club 27", "Club 27"},
+	{eMission::COLORADO_FREEDOMFIGHTERS, "Colorado: Freedom Fighters", "Freedom Fighters"},
+	{eMission::HOKKAIDO_SITUSINVERSUS, "Hokkaido: Situs Inversus", "Situs Inversus"},
+	{eMission::NONE, "--- SEASON 1 BONUS ---", "SEASON 1 BONUS", false},
+	{eMission::BANGKOK_THESOURCE, "Bangkok: The Source", "The Source", false},
+	{eMission::SAPIENZA_THEAUTHOR, "Sapienza: The Author", "The Author", false},
+	{eMission::HOKKAIDO_PATIENTZERO, "Hokkaido: Patient Zero", "Patient Zero", false},
+	{eMission::PARIS_HOLIDAYHOARDERS, "Paris: Holiday Hoarders", "Holiday Hoarders", false},
+	{eMission::SAPIENZA_THEICON, "Sapienza: The Icon", "The Icon", false},
+	{eMission::SAPIENZA_LANDSLIDE, "Sapienza: Landslide", "Landslide", false},
+	{eMission::MARRAKESH_HOUSEBUILTONSAND, "Marrakesh: A House Built On Sand", "A House Built On Sand", false},
+	{eMission::HOKKAIDO_SNOWFESTIVAL, "Hokkaido: Snow Festival", "Snow Festival", false},
+	{eMission::NONE, "--------- SEASON 2 ---------", "SEASON 2"},
+	{eMission::HAWKESBAY_NIGHTCALL, "Hawke's Bay: Nightcall", "Nightcall", false},
+	{eMission::MIAMI_FINISHLINE, "Miami: The Finish Line", "The Finish Line"},
+	{eMission::SANTAFORTUNA_THREEHEADEDSERPENT, "Santa Fortuna: Three-Headed Serpent", "Three-Headed Serpent"},
+	{eMission::MUMBAI_CHASINGAGHOST, "Mumbai: Chasing a Ghost", "Chasing a Ghost"},
+	{eMission::WHITTLETON_ANOTHERLIFE, "Whittleton Creek: Another Life", "Another Life"},
+	{eMission::ISLEOFSGAIL_THEARKSOCIETY, "Isle of Sgàil: The Ark Society", "The Ark Society"},
+	{eMission::NEWYORK_GOLDENHANDSHAKE, "New York: Golden Handshake", "Golden Handshake"},
+	{eMission::HAVEN_THELASTRESORT, "Haven: The Last Resort", "The Last Resort"},
+	{eMission::NONE, "- SPECIAL ASSIGNMENTS -", "SPECIAL ASSIGNMENTS", false},
+	{eMission::MIAMI_ASILVERTONGUE, "Miami: A Silver Tongue", "A Silver Tongue"},
+	{eMission::SANTAFORTUNA_EMBRACEOFTHESERPENT, "Santa Fortuna: Embrace of the Serpent", "Embrace of the Serpent", false},
+	{eMission::MUMBAI_ILLUSIONSOFGRANDEUR, "Mumbai: Illusions of Grandeur", "Illusions of Grandeur", false},
+	{eMission::WHITTLETON_ABITTERPILL, "Whittleton Creek: A Bitter Pill", "A Bitter Pill", false},
+	{eMission::NONE, "--------- SEASON 3 ---------", "SEASON 3"},
+	{eMission::DUBAI_ONTOPOFTHEWORLD, "Dubai: On Top of the World", "On Top of the World"},
+	{eMission::DARTMOOR_DEATHINTHEFAMILY, "Dartmoor: Death in the Family", "Death in the Family"},
+	{eMission::BERLIN_APEXPREDATOR, "Berlin: Apex Predator", "Apex Predator"},
+	{eMission::CHONGQING_ENDOFANERA, "Chongqing: End of an Era", "End of an Era"},
+	{eMission::MENDOZA_THEFAREWELL, "Mendoza: The Farewell", "The Farewell"},
+	{eMission::CARPATHIAN_UNTOUCHABLE, "Carpathian Mountains: Untouchable", "Untouchable", false},
+	{eMission::AMBROSE_SHADOWSINTHEWATER, "Ambrose Island: Shadows in the Water", "Shadows in the Water"},
 };
 
 std::unordered_map<std::string, eMission> Croupier::MissionContractIds = {
@@ -133,7 +134,7 @@ std::unordered_map<std::string, eMission> Croupier::MissionContractIds = {
 };
 
 std::random_device rd;
-std::mt19937 gen;
+std::mt19937 gen(rd());
 
 template<typename T>
 static auto randomVectorElement(const std::vector<T>& vec) -> const T&
@@ -1453,7 +1454,7 @@ auto Croupier::LoadConfiguration() -> void {
 		else if (trim(sv) == "[history]")
 			inHistorySection = true;
 		else {
-			auto tokens = split(sv, " ");
+			auto tokens = split(sv, " ", 2);
 			if (tokens.size() < 2) continue;
 
 			auto const it = cmds.find(std::string(tokens[0]));
@@ -1675,7 +1676,7 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 
 		ImGui::SameLine();
 
-		if (ImGui::Button("Random Map"))
+		if (ImGui::Button("Random"))
 			this->Random();
 
 		if (this->spin.getMission()) {
@@ -1992,20 +1993,23 @@ auto Croupier::DrawEditMissionPoolUI(bool focused) -> void {
 		for (auto& missionInfo : missionInfos) {
 			if (missionInfo.mission == eMission::NONE) {
 				i = 0;
+				ImGui::NewLine();
 				ImGui::PushFont(SDK()->GetImGuiBoldFont());
-				ImGui::TextUnformatted(missionInfo.name.data());
+				ImGui::TextUnformatted(missionInfo.simpleName.data());
 				ImGui::PopFont();
 				continue;
 			}
 
-			if (++i % 3 == 0) ImGui::NewLine();
-			else ImGui::SameLine(120 * i);
+			if (++i % 3 != 1)
+				ImGui::SameLine(320 * ((i - 1) % 3));
 
 			auto it = find(cbegin(this->config.missionPool), cend(this->config.missionPool), missionInfo.mission);
 			auto enabled = it != cend(this->config.missionPool);
 			if (ImGui::Checkbox(missionInfo.name.data(), &enabled)) {
-				this->config.missionPool.erase(remove(begin(this->config.missionPool), end(this->config.missionPool), missionInfo.mission));
+				auto it = remove(begin(this->config.missionPool), end(this->config.missionPool), missionInfo.mission);
+				if (it != end(this->config.missionPool)) this->config.missionPool.erase(it);
 				if (enabled) this->config.missionPool.push_back(missionInfo.mission);
+				SaveConfiguration();
 			}
 		}
 
@@ -2109,8 +2113,14 @@ auto Croupier::Random() -> void
 		this->SetDefaultMissionPool();
 	if (this->config.missionPool.empty())
 		return;
+
 	auto mission = randomVectorElement(this->config.missionPool);
-	this->OnMissionSelect(mission);
+	auto currentMission = this->spin.getMission();
+
+	if (currentMission && mission == currentMission->getMission())
+		this->Respin();
+	else
+		this->OnMissionSelect(mission);
 }
 
 auto Croupier::Respin() -> void {
