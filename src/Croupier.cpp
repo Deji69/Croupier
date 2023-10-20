@@ -59,7 +59,7 @@ std::vector<MissionInfo> missionInfos = {
 	{eMission::COLORADO_FREEDOMFIGHTERS, "Colorado: Freedom Fighters"},
 	{eMission::HOKKAIDO_SITUSINVERSUS, "Hokkaido: Situs Inversus"},
 	{eMission::NONE, "--- SEASON 1 BONUS ---", false},
-	//{eMission::BANGKOK_THESOURCE, "Bangkok: The Source", false},
+	{eMission::BANGKOK_THESOURCE, "Bangkok: The Source", false},
 	{eMission::SAPIENZA_THEAUTHOR, "Sapienza: The Author", false},
 	{eMission::HOKKAIDO_PATIENTZERO, "Hokkaido: Patient Zero", false},
 	{eMission::PARIS_HOLIDAYHOARDERS, "Paris: Holiday Hoarders", false},
@@ -76,11 +76,11 @@ std::vector<MissionInfo> missionInfos = {
 	{eMission::ISLEOFSGAIL_THEARKSOCIETY, "Isle of Sgàil: The Ark Society"},
 	{eMission::NEWYORK_GOLDENHANDSHAKE, "New York: Golden Handshake"},
 	{eMission::HAVEN_THELASTRESORT, "Haven: The Last Resort"},
-	//{eMission::NONE, "- SPECIAL ASSIGNMENTS -", false},
-	//{eMission::MIAMI_ASILVERTONGUE, "Miami: A Silver Tongue"},
-	//{eMission::SANTAFORTUNA_EMBRACEOFTHESERPENT, "Santa Fortuna: Embrace of the Serpent", false},
-	//{eMission::MUMBAI_ILLUSIONSOFGRANDEUR, "Mumbai: Illusions of Grandeur", false},
-	//{eMission::WHITTLETON_ABITTERPILL, "Whittleton Creek: A Bitter Pill", false},
+	{eMission::NONE, "- SPECIAL ASSIGNMENTS -", false},
+	{eMission::MIAMI_ASILVERTONGUE, "Miami: A Silver Tongue"},
+	{eMission::SANTAFORTUNA_EMBRACEOFTHESERPENT, "Santa Fortuna: Embrace of the Serpent", false},
+	{eMission::MUMBAI_ILLUSIONSOFGRANDEUR, "Mumbai: Illusions of Grandeur", false},
+	{eMission::WHITTLETON_ABITTERPILL, "Whittleton Creek: A Bitter Pill", false},
 	{eMission::NONE, "--------- SEASON 3 ---------"},
 	{eMission::DUBAI_ONTOPOFTHEWORLD, "Dubai: On Top of the World"},
 	{eMission::DARTMOOR_DEATHINTHEFAMILY, "Dartmoor: Death in the Family"},
@@ -119,10 +119,10 @@ std::unordered_map<std::string, eMission> Croupier::MissionContractIds = {
 	{"d225edf-40cd-4f20-a30f-b62a373801d3", eMission::ISLEOFSGAIL_THEARKSOCIETY},
 	{"a03a97d-238c-48bd-bda0-e5f279569cce", eMission::NEWYORK_GOLDENHANDSHAKE},
 	{"95261b5-e15b-4ca1-9bb7-001fb85c5aaa", eMission::HAVEN_THELASTRESORT},
-	//{"1ba328f-e3dd-4ef8-bb26-0363499fdd95", eMission::MIAMI_ASILVERTONGUE},
-	//{"79563a4-727a-4072-b354-c9fff4e8bff0", eMission::SANTAFORTUNA_EMBRACEOFTHESERPENT},
-	//{"8036782-de0a-4353-b522-0ab7a384bade", eMission::MUMBAI_ILLUSIONSOFGRANDEUR},
-	//{"b616e62-af0c-495b-82e3-b778e82b5912", eMission::WHITTLETON_ABITTERPILL},
+	{"1ba328f-e3dd-4ef8-bb26-0363499fdd95", eMission::MIAMI_ASILVERTONGUE},
+	{"79563a4-727a-4072-b354-c9fff4e8bff0", eMission::SANTAFORTUNA_EMBRACEOFTHESERPENT},
+	{"8036782-de0a-4353-b522-0ab7a384bade", eMission::MUMBAI_ILLUSIONSOFGRANDEUR},
+	{"b616e62-af0c-495b-82e3-b778e82b5912", eMission::WHITTLETON_ABITTERPILL},
 	{"d85f2b0-80ca-49be-a2b7-d56f67faf252", eMission::DUBAI_ONTOPOFTHEWORLD},
 	{"55984a8-fb0b-4673-8637-95cfe7d34e0f", eMission::DARTMOOR_DEATHINTHEFAMILY},
 	{"bcd14b2-0786-4ceb-a2a4-e771f60d0125", eMission::BERLIN_APEXPREDATOR},
@@ -1096,6 +1096,11 @@ auto generatorForMission(RouletteMission& mission)
 			rk.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Impossible });
 			break;
 		}
+	case eMission::MIAMI_ASILVERTONGUE:
+		{
+			auto& aj = mission.addTarget("Ajit \"AJ\" Krish", "cottonmouth_ajit_krish.jpg");
+			break;
+		}
 	case eMission::SANTAFORTUNA_THREEHEADEDSERPENT:
 		{
 			auto& rd = mission.addTarget("Rico Delgado", "hippo_rico_delgado.jpg");
@@ -1107,6 +1112,11 @@ auto generatorForMission(RouletteMission& mission)
 
 			auto& am = mission.addTarget("Andrea Martinez", "hippo_andrea_martinez.jpg");
 			am.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Extreme });
+			break;
+		}
+	case eMission::SANTAFORTUNA_EMBRACEOFTHESERPENT:
+		{
+			auto& br = mission.addTarget("Blair Reddington", "anaconda_blair_reddington_face.jpg");
 			break;
 		}
 	case eMission::MUMBAI_CHASINGAGHOST:
@@ -1127,6 +1137,11 @@ auto generatorForMission(RouletteMission& mission)
 			dr.addRule(loudElimTest, { eMethodTag::BannedInRR, eMethodTag::Hard });
 			break;
 		}
+	case eMission::MUMBAI_ILLUSIONSOFGRANDEUR:
+		{
+			auto& bc = mission.addTarget("Basil Carnaby", "kingcobra_basil_carnaby_face.jpg");
+			break;
+		}
 	case eMission::WHITTLETON_ANOTHERLIFE:
 		{
 			auto& j = mission.addTarget("Janus", "skunk_janus.jpg");
@@ -1139,6 +1154,11 @@ auto generatorForMission(RouletteMission& mission)
 			nc.defineMethod(eKillMethod::Fire, { eMethodTag::BannedInRR, eMethodTag::Impossible });
 			nc.defineMethod(eMapKillMethod::BattleAxe, { eMethodTag::BannedInRR, eMethodTag::Hard });
 			nc.defineMethod(eMapKillMethod::BeakStaff, { eMethodTag::BannedInRR, eMethodTag::Extreme });
+			break;
+		}
+	case eMission::WHITTLETON_ABITTERPILL:
+		{
+			auto& gv = mission.addTarget("Galen Vholes", "gartersnake_ghalen_vholes.jpg");
 			break;
 		}
 	case eMission::ISLEOFSGAIL_THEARKSOCIETY:
