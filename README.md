@@ -14,11 +14,11 @@ Spins are automatically generated for the mission currently active in-game. Play
 
 _This feature requires being in online mode._
 
-### All Main Missions
+### All Main Missions & Bonus Missions
 
-Supports every mission in the main campaign, including tutorial missions (Freeform Training, The Final Test, Nightcall), Untouchable and Shadows in the Water.
+Supports every mission in the main campaign, including tutorial missions (Freeform Training, The Final Test, Nightcall), Untouchable and Shadows in the Water. Also includes the missions in the Patient Zero campaign (except The Vector), all S1 bonus missions, and S2 special assignments.
 
-_Support for bonus missions and special assignments is WIP._
+_Rules (banned conditions) for bonus missions are WIP._
 
 <img src="./images/croupier-ingame-untouchable-mission-select.jpg" title="Mission selection list." width="47%">
 
@@ -48,17 +48,21 @@ Spins can be specified with the entire range of conditions available in each mis
 
 <img src="./images/croupier-ingame-sapienza-editspin.jpg" title="The external window." width="47%">
 
+### Mission Randomisation
+
+You can configure your desired pool of missions and have Croupier generate a spin for one at random. Your chosen map pool will persist between game sessions.
+
 ### Configurable Rulesets
 
 Built-in support for the following Roulette Rivals tournaments rulesets: **RRWC2023**, **RR12**, **RR11**. Also supports **custom** rulesets.
 
-Spins are generated to comply with the chosen ruleset, preventing unwanted kill conditions or ones that are known to be impossible, unbalanced or bugged.
+Spins are generated to comply with the chosen ruleset, preventing unwanted kill conditions or ones that are known to be impossible, unbalanced or bugged. You can expand and customise the amount of possible spins by configuring your own ruleset.
 
 _WIP feature, more options are being added._
 
 ### Stream Friendly
 
-External window displays the spins with images and is perfect for window capturing in OBS (use #000000 colour key with similarity and smoothness set to 1).
+External window displays the spins with images and is perfect for window capturing in recording/streaming software like OBS (use #000000 colour key with similarity and smoothness set to 1).
 
 <img src="./images/croupier-stream-overlay.png" title="Stream overlay in OBS." width="47%">
 
