@@ -62,9 +62,6 @@ public:
 	auto LoadConfiguration() -> void;
 	auto SaveConfiguration() -> void;
 	auto SetDefaultMissionPool() -> void;
-	//auto ConnectToPipeServer() -> bool;
-	//auto TryPipeReconnect() -> bool;
-	//auto PipeMessage(std::string message) -> bool;
 	auto SendRespin(eMission = eMission::NONE) -> void;
 	auto SendPrev() -> void;
 

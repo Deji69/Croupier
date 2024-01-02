@@ -1685,19 +1685,6 @@ Croupier::~Croupier() {
 	Globals::GameLoopManager->UnregisterFrameUpdate(frameUpdateDelegate, 1, EUpdateMode::eUpdatePlayMode);
 }
 
-/*auto Croupier::PipeMessage(std::string str) -> bool {
-	if (!this->ConnectToPipeServer()) return false;
-	str += "\n";
-	DWORD written = 0;
-	BOOL success = WriteFile(this->pipe, str.data(), str.size(), &written, NULL);
-	DWORD err = GetLastError();
-	if (err == ERROR_NO_DATA || err == ERROR_PIPE_NOT_CONNECTED) {
-		if (this->TryPipeReconnect())
-			WriteFile(this->pipe, str.data(), str.size(), &written, NULL);
-	}
-	return true;
-}*/
-
 auto Croupier::SendRespin(eMission mission) -> void {
 	this->client->send(eClientMessage::Respin, {getMissionCodename(mission).value_or("").data()});
 }
