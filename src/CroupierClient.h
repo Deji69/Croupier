@@ -11,6 +11,7 @@
 enum class eClientMessage {
 	Spin,
 	Respin,
+	AutoSpin,
 	SpinData,
 	Prev,
 };
@@ -48,9 +49,8 @@ private:
 	mutable std::shared_mutex connectionMutex;
 	std::deque<ClientMessage> queue;
 	std::deque<ClientMessage> messages;
-	std::atomic<bool> connected = false;
-	std::atomic<bool> keepOpen = false;
-	HANDLE pipe = INVALID_HANDLE_VALUE;
+	std::atomic_bool connected = false;
+	std::atomic_bool keepOpen = false;
 	SOCKET sock = INVALID_SOCKET;
 	OVERLAPPED overlapped = {};
 };

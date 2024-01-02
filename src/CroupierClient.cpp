@@ -12,14 +12,15 @@
 
 using namespace std::chrono_literals;
 
-static constexpr const char* pipeName = "\\\\.\\pipe\\CroupierPipe";
 std::map<eClientMessage, std::string> clientMessageTypeMap = {
 	{eClientMessage::Respin, "Respin"},
+	{eClientMessage::AutoSpin, "AutoSpin"},
 	{eClientMessage::Spin, "Spin"},
 	{eClientMessage::SpinData, "SpinData"},
 };
 std::map<std::string, eClientMessage> clientMessageTypeMapRev = {
 	{"Respin", eClientMessage::Respin},
+	{"AutoSpin", eClientMessage::AutoSpin},
 	{"Spin", eClientMessage::Spin},
 	{"SpinData", eClientMessage::SpinData},
 };
@@ -27,21 +28,16 @@ std::map<std::string, eClientMessage> clientMessageTypeMapRev = {
 auto ClientMessage::toString() const -> std::string {
 	auto it = clientMessageTypeMap.find(this->type);
 	if (it == end(clientMessageTypeMap)) return "";
-	//std::string args;
-	//for (auto const& arg : this->args) {
-	//	if (!args.empty()) args += "\t";
-	//	args += arg;
-	//}
 	return std::format("{}:{}", it->second, this->args);
 }
 
-CroupierClient::CroupierClient() {
-}
+CroupierClient::CroupierClient() {}
 
 auto CroupierClient::reconnect() -> bool {
 	if (!this->keepOpen) return false;
 	if (this->connected) return true;
 
+	// Make this thread-safe (?)
 	if (!connectionMutex.try_lock()) return false;
 
 	if (!this->connected) {
@@ -128,82 +124,24 @@ auto CroupierClient::start() -> bool {
 	});
 	readThread = std::thread([this] {
 		char buffer[1024] = {0};
+
 		while (this->keepOpen) {
 			if (!this->reconnect()) {
 				std::this_thread::sleep_for(3s);
 				continue;
 			}
-	
+
+			// Read message from socket
 			auto read = recv(this->sock, buffer, sizeof(buffer), 0);
 			if (read == -1) {
 				this->connected = false;
 				continue;
 			}
-	
+
+			// Process message and add to queue
 			this->processMessage(std::string(buffer, read));
 		}
 	});
-	/*clientThread = std::thread([this] {
-		while (true) {
-			this->pipe = CreateFile(pipeName, GENERIC_WRITE | GENERIC_READ | FILE_WRITE_ATTRIBUTES, 0, NULL, OPEN_EXISTING, 0, NULL);
-			this->overlapped = {};
-			if (this->pipe == INVALID_HANDLE_VALUE) {
-				std::this_thread::sleep_for(5s);
-				continue;
-			}
-
-			DWORD mode = PIPE_READMODE_MESSAGE;
-			auto success = SetNamedPipeHandleState(&this->pipe, &mode, NULL, NULL);
-			if (!success) { 
-				Logger::Error("SetNamedPipeHandleState failed. GLE={}", GetLastError());
-				CloseHandle(this->pipe);
-				continue;
-			}
-
-			char buffer[512] = "";
-			DWORD read = 0;
-			this->connected = true;
-
-			while (this->connected) {
-				do {
-					// Read from the pipe
-					success = ReadFile(this->pipe, buffer, 512, &read, NULL);
-					auto err = GetLastError();
-
-					if (!success && err != ERROR_MORE_DATA) {
-						this->connected = false;
-						this->pipe = INVALID_HANDLE_VALUE;
-						CloseHandle(this->pipe);
-						break;
-					}
-				} while (!success);
-
-				// Process the outward message queue
-				if (this->queueMutex.try_lock()) {
-					while (!this->queue.empty()) {
-						auto& msg = this->queue.front();
-						pipeMessageOutQueue.push_back(std::move(msg));
-						this->queue.pop_front();
-					}
-					this->queueMutex.unlock();
-				}
-
-				if (!this->connected) break;
-
-				// Write out messages to pipe
-				while (!pipeMessageOutQueue.empty()) {
-					auto& msg = pipeMessageOutQueue.back();
-					if (!this->writeMessage(msg)) break;
-					pipeMessageOutQueue.pop_back();
-				}
-			}
-
-			if (!this->connected)
-				std::this_thread::sleep_for(250ms);
-		}
-
-		CloseHandle(pipe);
-	});*/
 	return true;
 }
 
@@ -237,24 +175,20 @@ auto CroupierClient::writeMessage(const ClientMessage& msg) -> bool {
 		return false;
 	}
 	return true;
-	//BOOL success = WriteFile(this->pipe, data.data(), data.size(), &written, NULL);
-	//DWORD err = GetLastError();
-	//if (err == ERROR_NO_DATA || err == ERROR_PIPE_NOT_CONNECTED) {
-	//	this->connected = false;
-	//	return false;
-	//}
-	//return success;
 }
 
 auto CroupierClient::processMessage(const std::string& msg) -> void {
+	// Try to parse message
 	auto toks = split(msg, ":", 2);
 	if (toks.size() < 2) return;
+
 	auto it = clientMessageTypeMapRev.find(std::string(toks[0]));
 	if (it == end(clientMessageTypeMapRev)) return;
-	auto msgType = it->second;
+
+	// Put message in the queue
 	auto lock = std::unique_lock(this->messagesMutex);
 	auto message = ClientMessage();
-	message.type = msgType;
+	message.type = it->second;
 	message.args = toks[1];
 	this->messages.push_back(std::move(message));
 }
