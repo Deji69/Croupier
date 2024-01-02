@@ -80,21 +80,27 @@ std::unordered_map<std::string, eMission> targetMissionMap = {
 	{"Viktor Novikov", eMission::PARIS_SHOWSTOPPER},
 	{"Dalia Margolis", eMission::PARIS_SHOWSTOPPER},
 	{"Harry \"Smokey\" Bagnato", eMission::PARIS_HOLIDAYHOARDERS},
-	{"Marv \"Smokey\" Gonif", eMission::PARIS_HOLIDAYHOARDERS},
+	{"Marv \"Slick\" Gonif", eMission::PARIS_HOLIDAYHOARDERS},
 	{"Silvio Caruso", eMission::SAPIENZA_WORLDOFTOMORROW},
 	{"Francesca De Santis", eMission::SAPIENZA_WORLDOFTOMORROW},
 	{"Craig Black", eMission::SAPIENZA_THEAUTHOR},
 	{"Brother Akram", eMission::SAPIENZA_THEAUTHOR},
+	{"Dino Bosco", eMission::SAPIENZA_THEICON},
+	{"Marco Abiatti", eMission::SAPIENZA_LANDSLIDE},
 	{"Reza Zaydan", eMission::MARRAKESH_GILDEDCAGE},
 	{"Claus Hugo Strandberg", eMission::MARRAKESH_GILDEDCAGE},
 	{"Jordan Cross", eMission::BANGKOK_CLUB27},
 	{"Ken Morgan", eMission::BANGKOK_CLUB27},
+	{"Oybek Nabazov", eMission::BANGKOK_THESOURCE},
+	{"Sister Yulduz", eMission::BANGKOK_THESOURCE},
 	{"Sean Rose", eMission::COLORADO_FREEDOMFIGHTERS},
 	{"Penelope Graves", eMission::COLORADO_FREEDOMFIGHTERS},
 	{"Ezra Berg", eMission::COLORADO_FREEDOMFIGHTERS},
 	{"Maya Parvati", eMission::COLORADO_FREEDOMFIGHTERS},
 	{"Erich Soders", eMission::HOKKAIDO_SITUSINVERSUS},
 	{"Yuki Yamazaki", eMission::HOKKAIDO_SITUSINVERSUS},
+	{"Owen Cage", eMission::HOKKAIDO_PATIENTZERO},
+	{"Klaus Liebleid", eMission::HOKKAIDO_PATIENTZERO},
 	{"Alma Reynard", eMission::HAWKESBAY_NIGHTCALL},
 	{"Sierra Knox", eMission::MIAMI_FINISHLINE},
 	{"Robert Knox", eMission::MIAMI_FINISHLINE},
@@ -108,8 +114,8 @@ std::unordered_map<std::string, eMission> targetMissionMap = {
 	{"Dawood Rangan", eMission::MUMBAI_CHASINGAGHOST},
 	{"Basil Carnaby", eMission::MUMBAI_ILLUSIONSOFGRANDEUR},
 	{"Janus", eMission::WHITTLETON_ANOTHERLIFE},
-	{"Galen Vholes", eMission::WHITTLETON_ABITTERPILL},
 	{"Nolan Cassidy", eMission::WHITTLETON_ANOTHERLIFE},
+	{"Galen Vholes", eMission::WHITTLETON_ABITTERPILL},
 	{"Zoe Washington", eMission::ISLEOFSGAIL_THEARKSOCIETY},
 	{"Sophia Washington", eMission::ISLEOFSGAIL_THEARKSOCIETY},
 	{"Athena Savalas", eMission::NEWYORK_GOLDENHANDSHAKE},
@@ -252,7 +258,7 @@ std::vector<Keyword> Keyword::keywords = {
 	{ "HolidayFireAxe", eMapKillMethod::HolidayFireAxe },
 	{ "XmasStar", eMapKillMethod::XmasStar },
 	// Map Kill Method - Soders
-	{ "PosionStemCells", eMapKillMethod::Soders_PoisonStemCells, "Poison" },
+	{ "PoisonStemCells", eMapKillMethod::Soders_PoisonStemCells, "Poison" },
 	{ "StemCells", eMapKillMethod::Soders_PoisonStemCells, "Poison" },
 	{ "RobotArms", eMapKillMethod::Soders_RobotArms },
 	{ "ShootHeart", eMapKillMethod::Soders_ShootHeart },
@@ -318,7 +324,7 @@ auto isMethodTagHigherDifficulty(eMethodTag a, eMethodTag b) -> bool {
 	case eMethodTag::Extreme:
 		return b == eMethodTag::BannedInRR || b == eMethodTag::Hard;
 	case eMethodTag::Impossible:
-		return b == eMethodTag::BannedInRR || b == eMethodTag::Hard || b == eMethodTag::Hard;
+		return b == eMethodTag::BannedInRR || b == eMethodTag::Hard || b == eMethodTag::Extreme;
 	}
 	return false;
 }
