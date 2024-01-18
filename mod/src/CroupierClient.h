@@ -17,6 +17,8 @@ enum class eClientMessage {
 	Prev,
 	Random,
 	Missions,
+	SpinLock,
+	ToggleSpinLock,
 };
 
 class ClientMessage {

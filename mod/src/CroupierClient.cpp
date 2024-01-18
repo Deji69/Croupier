@@ -21,6 +21,8 @@ std::map<eClientMessage, std::string> clientMessageTypeMap = {
 	{eClientMessage::Next, "Next"},
 	{eClientMessage::Random, "Random"},
 	{eClientMessage::Missions, "Missions"},
+	{eClientMessage::SpinLock, "SpinLock"},
+	{eClientMessage::ToggleSpinLock, "ToggleSpinLock"},
 };
 std::map<std::string, eClientMessage> clientMessageTypeMapRev = {
 	{"Respin", eClientMessage::Respin},
@@ -31,6 +33,8 @@ std::map<std::string, eClientMessage> clientMessageTypeMapRev = {
 	{"Next", eClientMessage::Next},
 	{"Random", eClientMessage::Random},
 	{"Missions", eClientMessage::Missions},
+	{"SpinLock", eClientMessage::SpinLock},
+	{"ToggleSpinLock", eClientMessage::ToggleSpinLock},
 };
 
 auto ClientMessage::toString() const -> std::string {

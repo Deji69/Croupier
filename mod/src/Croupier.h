@@ -64,6 +64,7 @@ public:
 	auto SendPrev() -> void;
 	auto SendRandom() -> void;
 	auto SendMissions() -> void;
+	auto SendToggleSpinLock() -> void;
 
 private:
 	static std::unordered_map<std::string, eMission> MissionContractIds;
@@ -102,6 +103,7 @@ private:
 	bool showEditMissionPoolUI = false;
 	bool showCustomRulesetUI = false;
 	bool spinCompleted = false;
+	bool spinLocked = false;
 	Configuration config;
 };
 

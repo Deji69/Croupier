@@ -1620,6 +1620,10 @@ auto Croupier::OnFrameUpdate(const SGameUpdateEvent&) -> void {
 				return ProcessSpinDataMessage(message);
 			case eClientMessage::Missions:
 				return ProcessMissionsMessage(message);
+			case eClientMessage::SpinLock:
+				if (message.args.size() < 1) break;
+				this->spinLocked = message.args[0] == '1';
+				return;
 		}
 	}
 }
@@ -1686,6 +1690,10 @@ auto Croupier::SendMissions() -> void {
 	}
 
 	this->client->send(eClientMessage::Missions, {buffer});
+}
+
+auto Croupier::SendToggleSpinLock() -> void {
+	this->client->send(eClientMessage::ToggleSpinLock);
 }
 
 auto Croupier::SendSpinData() -> void {
@@ -1832,6 +1840,13 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 		}
 
 		if (connected || this->spin.getMission()) {
+			if (ImGui::Button(this->spinLocked ? ICON_MD_LOCK : ICON_MD_LOCK_OPEN)) {
+				this->spinLocked = !this->spinLocked;
+				this->SendToggleSpinLock();
+			}
+			if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) ImGui::SetTooltip("Toggle Spin Lock");
+			ImGui::SameLine();
+
 			if (ImGui::Button(ICON_MD_EDIT))
 				this->showManualModeUI = !this->showManualModeUI;
 			if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) ImGui::SetTooltip("Edit Spin");
@@ -2038,15 +2053,6 @@ auto Croupier::DrawEditSpinUI(bool focused) -> void {
 
 				ImGui::EndCombo();
 			}
-
-			ImGui::Button(ICON_MD_REFRESH);
-			ImGui::SameLine();
-
-			if (ImGui::Button(currentCondition->lockDisguise ? ICON_MD_LOCK_OPEN : ICON_MD_LOCK)) {
-				currentCondition->lockDisguise = !currentCondition->lockDisguise;
-			}
-
-			ImGui::SameLine();
 
 			if (ImGui::BeginCombo(("Disguise##"s + target.getName()).c_str(), currentDisguise ? currentDisguise->name.c_str() : nullptr, ImGuiComboFlags_HeightLarge)) {
 				for (auto const& disguise : disguises) {

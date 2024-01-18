@@ -1,0 +1,364 @@
+﻿<Window x:Class="Croupier.UI.MainWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:materialIcons="clr-namespace:Material.Icons.WPF;assembly=Material.Icons.WPF"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:local="clr-namespace:Croupier.UI" xmlns:system="http://schemas.microsoft.com/winfx/2009/xaml"
+		d:DataContext="{d:DesignInstance Type=local:MainWindow}"
+		mc:Ignorable="d"
+		Name="CroupierWindow"
+		Title="Croupier"
+		Width="450"
+		Height="300"
+		MinWidth="450"
+		MinHeight="250"
+		WindowStyle="None"
+		Loaded="Window_Loaded"
+		MouseDown="OnMouseDown"
+		Icon="/Resources/CroupierLogoIconsFlatLg.png"
+		SizeChanged="OnSizeChange"
+		Closing="Window_Closing"
+		Deactivated="Window_Deactivated">
+	<Window.CommandBindings>
+		<CommandBinding Command="{x:Static local:MainWindow.CopySpinCommand}" CanExecute="Command_AlwaysCanExecute" Executed="CopySpinCommand_Executed" />
+		<CommandBinding Command="{x:Static local:MainWindow.PasteSpinCommand}" CanExecute="PasteSpinCommand_CanExecute" Executed="PasteSpinCommand_Executed" />
+		<CommandBinding Command="{x:Static local:MainWindow.EditSpinCommand}" CanExecute="Command_AlwaysCanExecute" Executed="EditSpinCommand_Executed" />
+		<CommandBinding Command="{x:Static local:MainWindow.EditMapPoolCommand}" CanExecute="Command_AlwaysCanExecute" Executed="EditMapPoolCommand_Executed" />
+		<CommandBinding Command="{x:Static local:MainWindow.EditRulesetsCommand}" CanExecute="Command_AlwaysCanExecute" Executed="EditRulesetsCommand_Executed" />
+		<CommandBinding Command="{x:Static local:MainWindow.PrevSpinCommand}" CanExecute="PrevSpinCommand_CanExecute" Executed="PrevSpinCommand_Executed" />
+		<CommandBinding Command="{x:Static local:MainWindow.NextSpinCommand}" CanExecute="NextSpinCommand_CanExecute" Executed="NextSpinCommand_Executed" />
+		<CommandBinding Command="{x:Static local:MainWindow.ShuffleCommand}" CanExecute="ShuffleCommand_CanExecute" Executed="ShuffleCommand_Executed" />
+		<CommandBinding Command="{x:Static local:MainWindow.RespinCommand}" CanExecute="Command_AlwaysCanExecute" Executed="RespinCommand_Executed" />
+	</Window.CommandBindings>
+	<Window.Resources>
+		<BooleanToVisibilityConverter x:Key="VisibilityOfBool" />
+		<Style x:Key="ButtonFlatStyle" TargetType="{x:Type Button}">
+			<Setter Property="UIElement.SnapsToDevicePixels" Value="True"/>
+			<Setter Property="TextElement.Foreground" Value="{StaticResource NormalFGBrush}"/>
+			<Setter Property="Background" Value="{StaticResource NormalBGBrush}" />
+			<Setter Property="Foreground" Value="{StaticResource NormalFGBrush}" />
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type Button}">
+						<Border Background="{TemplateBinding Background}" BorderBrush="{StaticResource NormalBorderBrush}" BorderThickness="1">
+							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="4,3,4,3" />
+						</Border>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+			<Style.Triggers>
+				<Trigger Property="IsMouseOver" Value="True">
+					<Setter Property="Background" Value="{StaticResource HoverBGBrush}"/>
+					<Setter Property="BorderBrush" Value="{StaticResource NormalBorderBrush}"/>
+				</Trigger>
+				<Trigger Property="IsEnabled" Value="False">
+					<Setter Property="Foreground" Value="{StaticResource DisabledFGBrush}" />
+					<Setter Property="Background" Value="{StaticResource DisabledBGBrush}" />
+				</Trigger>
+			</Style.Triggers>
+		</Style>
+		<Style x:Key="ToggleButtonFlatStyle" TargetType="{x:Type ToggleButton}">
+			<Setter Property="UIElement.SnapsToDevicePixels" Value="True"/>
+			<Setter Property="TextElement.Foreground" Value="{StaticResource NormalFGBrush}"/>
+			<Setter Property="Background" Value="{StaticResource NormalBGBrush}" />
+			<Setter Property="Foreground" Value="{StaticResource NormalFGBrush}" />
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type ToggleButton}">
+						<Border Background="{TemplateBinding Background}" BorderBrush="{StaticResource NormalBorderBrush}" BorderThickness="1">
+							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="4,3,4,3" />
+						</Border>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+			<Style.Triggers>
+				<Trigger Property="IsChecked" Value="True">
+					<Setter Property="Background" Value="{StaticResource HoverBGBrush}"/>
+				</Trigger>
+				<Trigger Property="IsMouseOver" Value="True">
+					<Setter Property="Background" Value="{StaticResource HoverBGBrush}"/>
+					<Setter Property="BorderBrush" Value="{StaticResource NormalBorderBrush}"/>
+				</Trigger>
+				<MultiTrigger>
+					<MultiTrigger.Conditions>
+						<Condition Property="IsChecked" Value="True" />
+						<Condition Property="IsMouseOver" Value="True" />
+					</MultiTrigger.Conditions>
+					<Setter Property="Background" Value="{StaticResource NormalBGBrush}"/>
+				</MultiTrigger>
+			</Style.Triggers>
+		</Style>
+		
+		<DataTemplate x:Name="SpinConditionDataTemplate" x:Key="SpinConditionDataTemplate" DataType="{x:Type local:SpinCondition}">
+			<Grid
+				x:Name="ContentGrid"
+				Focusable="False"
+				Width="{Binding DataContext.SpinGridWidth, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=UniformGrid}}"
+				Height="{Binding DataContext.SpinGridHeight, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=UniformGrid}}"
+				HorizontalAlignment="{Binding DataContext.SpinAlignHorz, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=UniformGrid}}"
+				VerticalAlignment="Top"
+				KeyboardNavigation.IsTabStop="False"
+			>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width=".9*" />
+					<ColumnDefinition Width="2*" />
+				</Grid.ColumnDefinitions>
+				<Image
+					Source="{Binding TargetImagePath}"
+					Margin="0 0 0 0"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Center"
+					Stretch="UniformToFill"
+					/>
+				<Grid
+					Grid.Column="1"
+				>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="1*" />
+						<RowDefinition Height="1*" />
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="1*" />
+						<ColumnDefinition Width="2*" />
+					</Grid.ColumnDefinitions>
+					<Image
+						Source="{Binding MethodImagePath}"
+						HorizontalAlignment="Center"
+						VerticalAlignment="Center"
+						Stretch="UniformToFill" />
+					<TextBlock
+						Grid.Column="1"
+						Text="{Binding MethodName}"
+						TextWrapping="Wrap"
+						VerticalAlignment="Stretch"
+						HorizontalAlignment="Stretch"
+						Foreground="White"
+						Padding="5,0"
+						FontSize="{Binding DataContext.SpinFontSize, RelativeSource={RelativeSource AncestorType=UniformGrid}}">
+						<Run FontSize=".01">i</Run>
+					</TextBlock>
+					<Image
+						Grid.Row="1"
+						Source="{Binding DisguiseImagePath}"
+						HorizontalAlignment="Center"
+						VerticalAlignment="Center"
+						Stretch="UniformToFill" />
+					<TextBlock
+						Grid.Column="1"
+						Grid.Row="1"
+						Text="{Binding DisguiseName}"
+						TextWrapping="Wrap"
+						VerticalAlignment="Stretch"
+						HorizontalAlignment="Stretch"
+						Foreground="White"
+						Padding="5,0"
+						FontSize="{Binding DataContext.SpinFontSize, RelativeSource={RelativeSource AncestorType=UniformGrid}}">
+						<Run FontSize=".01">i</Run>
+					</TextBlock>
+				</Grid>
+			</Grid>
+		</DataTemplate>
+		<DataTemplate x:Key="MissionSelectTemplate" DataType="{x:Type local:MissionComboBoxItem}">
+			<ContentPresenter Content="{Binding}" HorizontalAlignment="Stretch">
+				<ContentPresenter.Style>
+					<Style TargetType="{x:Type ContentPresenter}">
+						<Setter Property="ContentTemplate" Value="{StaticResource MissionComboBoxItemTemplate}" />
+						<Style.Triggers>
+							<DataTrigger Binding="{Binding IsSeparator}" Value="True">
+								<Setter Property="ContentTemplate" Value="{StaticResource MissionComboBoxSeparatorTemplate}" />
+							</DataTrigger>
+						</Style.Triggers>
+					</Style>
+				</ContentPresenter.Style>
+			</ContentPresenter>
+		</DataTemplate>
+	</Window.Resources>
+	<DockPanel LastChildFill="True" Background="{DynamicResource BackgroundBrush}">
+		<Grid Name="HeaderGrid" DockPanel.Dock="Top" Background="{DynamicResource BackgroundBrush}" UseLayoutRounding="True">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="10000*" MaxWidth="400" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="193" MinWidth="193" MaxWidth="300" />
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+			<Grid Name="Menu" Height="34" Margin="3,3,3,3" VerticalAlignment="Center">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="34" />
+					<ColumnDefinition Width="1*" />
+				</Grid.ColumnDefinitions>
+				<Image Source="/Resources/CroupierLogoIconsFlatLg.png" ToolTip="Croupier v2.0" />
+				<ComboBox Name="MissionSelect"
+					Style="{StaticResource ComboBoxFlatStyle}"
+					Height="34"
+					Margin="5,0,3,0"
+					FontSize="16"
+					MinWidth="150"
+					MaxWidth="400"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Center"
+					VerticalContentAlignment="Center"
+					MaxDropDownHeight="400"
+					Grid.Column="1"
+					ItemTemplate="{StaticResource MissionSelectTemplate}"
+					SelectionChanged="MissionSelect_SelectionChanged"
+				>
+					<ComboBox.Background>
+						<LinearGradientBrush EndPoint="0,1">
+							<GradientStop Color="#FF5C5C5C"/>
+							<GradientStop Color="#FF343434" Offset="1"/>
+							<GradientStop Color="#FF393939" Offset="0.856"/>
+						</LinearGradientBrush>
+					</ComboBox.Background>
+					<ComboBox.ItemContainerStyle>
+						<Style TargetType="ComboBoxItem">
+							<Style.Triggers>
+								<DataTrigger Binding="{Binding IsSeparator}" Value="True">
+									<Setter Property="HorizontalAlignment" Value="Center" />
+									<Setter Property="IsEnabled" Value="False"/>
+								</DataTrigger>
+							</Style.Triggers>
+						</Style>
+					</ComboBox.ItemContainerStyle>
+				</ComboBox>
+			</Grid>
+			<WrapPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Width="192" Grid.Column="2" Height="26" Margin="1,0,0,0">
+				<Button Margin="0,0,4,0" Style="{StaticResource ButtonFlatStyle}"
+					VerticalAlignment="Stretch"
+					Width="28"
+					ToolTip="Previous Spin (Alt+Left arrow)"
+					ToolTipService.InitialShowDelay="750"
+					Command="{x:Static local:MainWindow.PrevSpinCommand}"
+					Content="{materialIcons:MaterialIconExt Kind=ArrowBack}"/>
+				<Button Margin="0,0,4,0" Style="{StaticResource ButtonFlatStyle}"
+					VerticalAlignment="Stretch"
+					Width="28"
+					ToolTip="Next Spin (Alt+Right arrow)"
+					ToolTipService.InitialShowDelay="750"
+					Command="{x:Static local:MainWindow.NextSpinCommand}"
+					Content="{materialIcons:MaterialIconExt Kind=ArrowForward}"/>
+				<ToggleButton Name="LockSpinToggle" Margin="0,0,4,0"
+					VerticalAlignment="Stretch"
+					Width="28"
+					ToolTipService.InitialShowDelay="750"
+					IsChecked="{Binding SpinLock, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+					<ToggleButton.Style>
+						<Style TargetType="ToggleButton" BasedOn="{StaticResource ToggleButtonFlatStyle}">
+							<Style.Triggers>
+								<Trigger Property="IsChecked" Value="True">
+									<Trigger.Setters>
+										<Setter Property="Content" Value="{materialIcons:MaterialIconExt Kind=Lock}" />
+										<Setter Property="ToolTip" Value="Unlock Spin (Allow auto-spin)" />
+									</Trigger.Setters>
+								</Trigger>
+								<Trigger Property="IsChecked" Value="False">
+									<Trigger.Setters>
+										<Setter Property="Content" Value="{materialIcons:MaterialIconExt Kind=LockOpenVariant}" />
+										<Setter Property="ToolTip" Value="Lock Spin (Prevent auto-spin)" />
+									</Trigger.Setters>
+								</Trigger>
+							</Style.Triggers>
+						</Style>
+					</ToggleButton.Style>
+				</ToggleButton>
+				<Button Margin="0,0,4,0" Style="{StaticResource ButtonFlatStyle}"
+					VerticalAlignment="Stretch"
+					Width="28"
+					ToolTip="Edit Spin (Alt+E)"
+					ToolTipService.InitialShowDelay="750"
+					Command="{x:Static local:MainWindow.EditSpinCommand}"
+					Content="{materialIcons:MaterialIconExt Kind=Edit}" />
+				<Button Margin="0,0,4,0" Style="{StaticResource ButtonFlatStyle}"
+					VerticalAlignment="Stretch"
+					Width="28"
+					ToolTip="Random Map/Spin (Map Pool) (Alt+Spacebar)"
+					ToolTipService.InitialShowDelay="750"
+					Command="{x:Static local:MainWindow.ShuffleCommand}"
+					Content="{materialIcons:MaterialIconExt Kind=ShuffleVariant}"/>
+				<Button Margin="0,0,0,0" Style="{StaticResource ButtonFlatStyle}"
+					VerticalAlignment="Stretch"
+					Width="28"
+					ToolTip="Respin Current Map (Ctrl+R)"
+					ToolTipService.InitialShowDelay="750"
+					Command="{x:Static local:MainWindow.RespinCommand}"
+					Content="{materialIcons:MaterialIconExt Kind=RotateClockwise}" />
+			</WrapPanel>
+		</Grid>
+		<UniformGrid
+			Name="ContentGrid"
+			Background="{DynamicResource BackgroundBrush}"
+			HorizontalAlignment="{Binding ContentGridAlign, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"
+			VerticalAlignment="Top"
+			FlowDirection="{Binding RightToLeftFlowDir, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"
+			/>
+		<DockPanel.ContextMenu>
+			<ContextMenu Name="MainContextMenu">
+				<MenuItem
+					Name="ContextMenuHistory"
+					Header="_History"
+				>
+					<MenuItem.ItemContainerStyle>
+						<Style TargetType="MenuItem">
+							<Setter Property="Header" Value="{Binding Name}" />
+							<Setter Property="IsChecked" Value="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" />
+							<Setter Property="Command" Value="{Binding DataContext.HistoryEntrySelectCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+							<Setter Property="CommandParameter" Value="{Binding Index}"/>
+						</Style>
+					</MenuItem.ItemContainerStyle>
+				</MenuItem>
+				<Separator />
+				<MenuItem
+					Header="_Copy Spin"
+					Command="{x:Static local:MainWindow.CopySpinCommand}"
+				/>
+				<MenuItem
+					Header="_Paste Spin"
+					Command="{x:Static local:MainWindow.PasteSpinCommand}"
+				/>
+				<Separator />
+				<MenuItem
+					Header="Always On _Top"
+					IsChecked="{Binding TopmostEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					IsCheckable="True"
+				/>
+				<MenuItem
+					Header="Right to Left"
+					IsChecked="{Binding RightToLeft, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					IsCheckable="True"
+				/>
+				<MenuItem
+					Header="Vertical Display"
+					IsChecked="{Binding VerticalDisplay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					IsCheckable="True"
+				/>
+				<MenuItem
+					Header="Static Size"
+					IsChecked="{Binding StaticSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					IsCheckable="True"
+				/>
+				<MenuItem
+					Header="Static Size Align Left"
+					IsChecked="{Binding StaticSizeLHS, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					IsCheckable="True"
+					IsEnabled="{Binding StaticSize, UpdateSourceTrigger=PropertyChanged}"
+				/>
+				<Separator />
+				<MenuItem
+					Header="_Map Pool"
+					Command="{x:Static local:MainWindow.EditMapPoolCommand}"
+				/>
+				<MenuItem
+					Header="_Rulesets"
+					Command="{x:Static local:MainWindow.EditRulesetsCommand}"
+				/>
+				<MenuItem
+					Header="E_xit"
+					Click="ContextMenu_Exit"
+					InputGestureText="Alt+F4"
+				/>
+			</ContextMenu>
+		</DockPanel.ContextMenu>
+	</DockPanel>
+</Window>
