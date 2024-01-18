@@ -1,0 +1,200 @@
+﻿<Window x:Class="Croupier.UI.EditSpinWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:local="clr-namespace:Croupier.UI"
+		d:DataContext="{d:DesignInstance Type=local:EditSpinViewModel}"
+		mc:Ignorable="d"
+		Title="Edit Spin - Croupier"
+		WindowStyle="SingleBorderWindow"
+		Width="600"
+		Height="400"
+		MaxHeight="540"
+		MinHeight="142"
+		MinWidth="500"
+		MaxWidth="720"
+		Icon="/CroupierLogoIconsFlatLg.png"
+		SizeChanged="OnSizeChange">
+	<Window.Resources>
+		<DataTemplate x:Key="MethodSelectTemplate" DataType="{x:Type local:MissionComboBoxItem}">
+			<ContentPresenter Content="{Binding}" HorizontalAlignment="Stretch">
+				<ContentPresenter.Style>
+					<Style TargetType="{x:Type ContentPresenter}">
+						<Setter Property="ContentTemplate" Value="{StaticResource MethodComboBoxItemTemplate}" />
+						<Style.Triggers>
+							<DataTrigger Binding="{Binding IsSeparator}" Value="True">
+								<Setter Property="ContentTemplate" Value="{StaticResource MissionComboBoxSeparatorTemplate}" />
+							</DataTrigger>
+						</Style.Triggers>
+					</Style>
+				</ContentPresenter.Style>
+			</ContentPresenter>
+		</DataTemplate>
+		<DataTemplate x:Key="KillTypeSelectTemplate" DataType="{x:Type local:MissionComboBoxItem}">
+			<ContentPresenter Content="{Binding}" HorizontalAlignment="Stretch">
+				<ContentPresenter.Style>
+					<Style TargetType="{x:Type ContentPresenter}">
+						<Setter Property="ContentTemplate" Value="{StaticResource ComboBoxItemTemplate}" />
+						<Style.Triggers>
+							<DataTrigger Binding="{Binding IsSeparator}" Value="True">
+								<Setter Property="ContentTemplate" Value="{StaticResource MissionComboBoxSeparatorTemplate}" />
+							</DataTrigger>
+						</Style.Triggers>
+					</Style>
+				</ContentPresenter.Style>
+			</ContentPresenter>
+		</DataTemplate>
+	</Window.Resources>
+	<ScrollViewer DockPanel.Dock="Top" Background="Black">
+		<StackPanel UseLayoutRounding="True" Margin="0">
+			<ItemsControl Name="ConditionsEdit" ItemsSource="{Binding Conditions}">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate DataType="{x:Type local:EditSpinCondition}">
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="140" />
+								<ColumnDefinition Width="1*" />
+							</Grid.ColumnDefinitions>
+							<Image Grid.Column="0" Source="{Binding TargetImagePath}" VerticalAlignment="Top" />
+							<StackPanel Grid.Column="1" Orientation="Vertical" Margin="5,0">
+								<TextBlock Text="{Binding TargetName}" Foreground="White" FontSize="16" FontWeight="Bold" />
+								<Grid Margin="0, 4">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="75" />
+										<ColumnDefinition Width="6*" />
+										<ColumnDefinition Width="10" />
+										<ColumnDefinition Width="50" />
+										<ColumnDefinition Width="4*" />
+									</Grid.ColumnDefinitions>
+									<Grid.RowDefinitions>
+										<RowDefinition />
+										<RowDefinition />
+									</Grid.RowDefinitions>
+									<TextBlock
+										Grid.Column="0"
+										Text="Method"
+										Foreground="White"
+										FontSize="16"
+										/>
+									<ComboBox
+										Grid.Column="1"
+										Style="{StaticResource ComboBoxFlatStyle}"
+										ItemsSource="{Binding ValidMethods}"
+										ItemTemplate="{StaticResource MethodSelectTemplate}"
+										SelectedIndex="{Binding SelectedMethodIndex}"
+										FontSize="14"
+										Height="36"
+										>
+										<ComboBox.Background>
+											<LinearGradientBrush EndPoint="0,1">
+												<GradientStop Color="#FF5C5C5C"/>
+												<GradientStop Color="#FF343434" Offset="1"/>
+												<GradientStop Color="#FF393939" Offset="0.856"/>
+											</LinearGradientBrush>
+										</ComboBox.Background>
+										<ComboBox.ItemContainerStyle>
+											<Style TargetType="ComboBoxItem">
+												<Style.Triggers>
+													<DataTrigger Binding="{Binding IsSeparator}" Value="True">
+														<Setter Property="HorizontalAlignment" Value="Center" />
+														<Setter Property="IsEnabled" Value="False"/>
+													</DataTrigger>
+												</Style.Triggers>
+											</Style>
+										</ComboBox.ItemContainerStyle>
+									</ComboBox>
+									<TextBlock
+										Grid.Column="3"
+										Text="Type"
+										Foreground="White"
+										FontSize="16"
+									/>
+									<ComboBox
+										Grid.Column="4"
+										Style="{StaticResource ComboBoxFlatStyle}"
+										ItemsSource="{Binding KillTypes}"
+										ItemTemplate="{StaticResource KillTypeSelectTemplate}"
+										SelectedIndex="{Binding SelectedTypeIndex}"
+										FontSize="14"
+										Height="36"
+									>
+										<ComboBox.Background>
+											<LinearGradientBrush EndPoint="0,1">
+												<GradientStop Color="#FF5C5C5C"/>
+												<GradientStop Color="#FF343434" Offset="1"/>
+												<GradientStop Color="#FF393939" Offset="0.856"/>
+											</LinearGradientBrush>
+										</ComboBox.Background>
+										<ComboBox.ItemContainerStyle>
+											<Style TargetType="ComboBoxItem">
+												<Style.Triggers>
+													<DataTrigger Binding="{Binding IsSeparator}" Value="True">
+														<Setter Property="HorizontalAlignment" Value="Center" />
+														<Setter Property="IsEnabled" Value="False"/>
+													</DataTrigger>
+												</Style.Triggers>
+											</Style>
+										</ComboBox.ItemContainerStyle>
+									</ComboBox>
+									<TextBlock
+										Grid.Column="0"
+										Grid.Row="1"
+										Text="Disguise"
+										Foreground="White"
+										FontSize="16"
+									/>
+									<ComboBox
+										Grid.Column="1"
+										Grid.Row="1"
+										Style="{StaticResource ComboBoxFlatStyle}"
+										ItemsSource="{Binding Disguises, UpdateSourceTrigger=PropertyChanged}"
+										ItemTemplate="{StaticResource MethodSelectTemplate}"
+										SelectedIndex="{Binding SelectedDisguiseIndex}"
+										FontSize="14"
+										Height="36"
+									>
+										<ComboBox.Background>
+											<LinearGradientBrush EndPoint="0,1">
+												<GradientStop Color="#FF5C5C5C"/>
+												<GradientStop Color="#FF343434" Offset="1"/>
+												<GradientStop Color="#FF393939" Offset="0.856"/>
+											</LinearGradientBrush>
+										</ComboBox.Background>
+										<ComboBox.ItemContainerStyle>
+											<Style TargetType="ComboBoxItem">
+												<Style.Triggers>
+													<DataTrigger Binding="{Binding IsSeparator}" Value="True">
+														<Setter Property="HorizontalAlignment" Value="Center" />
+														<Setter Property="IsEnabled" Value="False"/>
+													</DataTrigger>
+												</Style.Triggers>
+											</Style>
+										</ComboBox.ItemContainerStyle>
+									</ComboBox>
+									<StackPanel
+										Orientation="Horizontal"
+										Grid.Row="1"
+										Grid.Column="3"
+										Grid.ColumnSpan="2"
+									>
+										<StackPanel Height="22" Name="LiveKillStackPanel" Orientation="Horizontal">
+											<Viewbox Height="{Binding Path=ActualHeight, ElementName=LiveKillStackPanel}">
+												<CheckBox
+													VerticalContentAlignment="Center"
+													IsChecked="{Binding IsLiveKillChecked}"
+												>
+													<TextBlock Foreground="White" FontSize="12" Text="Live / NTKO" />
+												</CheckBox>
+											</Viewbox>
+										</StackPanel>
+									</StackPanel>
+								</Grid>
+							</StackPanel>
+						</Grid>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</StackPanel>
+	</ScrollViewer>
+</Window>

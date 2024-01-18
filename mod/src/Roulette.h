@@ -444,6 +444,8 @@ struct RouletteSpinCondition
 	MapKillMethod specificKillMethod;
 	eKillType killType = eKillType::Any;
 	eKillComplication killComplication = eKillComplication::None;
+	bool lockMethod = false;
+	bool lockDisguise = false;
 	std::string methodName;
 
 	RouletteSpinCondition(
@@ -542,6 +544,7 @@ public:
 		}) != this->conditions.end();
 	}
 
+	auto& getConditions() noexcept { return this->conditions; }
 	auto const& getConditions() const noexcept { return this->conditions; }
 
 private:
@@ -596,7 +599,7 @@ public:
 		this->duplicateKillMethodAllowed = allow;
 	}
 
-	auto spin() {
+	auto spin(RouletteSpin* existing = nullptr, bool useExistingDisguise = false, bool useExistingCondition = false) {
 		static auto methodTypes = std::vector<eMethodType>{
 			eMethodType::Standard,
 			eMethodType::Map,
@@ -606,6 +609,8 @@ public:
 		RouletteSpin spin(this->mission);
 		std::set<eKillMethod> usedMethods;
 		std::set<eMapKillMethod> usedMapMethods;
+
+		//if (!existing) useExistingDisguise = useExistingCondition = false;
 
 		auto& targets = this->mission->getTargets();
 		auto& disguises = this->mission->getDisguises();
@@ -625,7 +630,10 @@ public:
 
 				auto cond = std::optional<RouletteSpinCondition>();
 
-				if (target.getType() == eTargetType::Soders) {
+				if (useExistingCondition) {
+					//cond.emplace(target, disguise, existing->killMethod, existing->specificKillMethod, existing->killType, existing->killComplication);
+				}
+				else if (target.getType() == eTargetType::Soders) {
 					auto killMethod = !useSpecificMethod ? randomVectorElement(firearmKillMethods) : eKillMethod::NONE;
 					auto specificMethod = useSpecificMethod ? randomVectorElement(sodersKills) : eMapKillMethod::NONE;
 					auto killInfo = KillMethod{killMethod};
@@ -686,13 +694,17 @@ public:
 				}
 
 				if (cond) {
-					if (spin.getNumLargeFirearms() > 0 && cond->killMethod.isGun && cond->killMethod.isLarge) continue;
+					if (!useExistingCondition) {
+						if (spin.getNumLargeFirearms() > 0 && cond->killMethod.isGun && cond->killMethod.isLarge)
+							continue;
+					}
+
 					if (cond->killMethod.method == eKillMethod::Explosive && cond->killType == eKillType::Loud)
 						cond->killMethod.isRemote = false;
 
 					auto tags = target.testRules(*cond);
 
-					if (this->doTagsViolateRules(tags)) continue;
+					if (!useExistingCondition && !useExistingDisguise && this->doTagsViolateRules(tags)) continue;
 
 					if (useSpecificMethod) {
 						cond->killMethod.name = cond->specificKillMethod.name;

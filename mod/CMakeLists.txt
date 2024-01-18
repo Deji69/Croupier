@@ -14,17 +14,11 @@ set(CMAKE_CXX_STANDARD 23)
 add_library(Croupier SHARED
 	src/Croupier.cpp
 	src/Croupier.h
-	src/CroupierWindow.cpp
-	src/CroupierWindow.h
 	src/json.hpp
-	src/DeclareDPIAware.manifest
- "src/Roulette.cpp" "src/util.h" "src/EventSystem.h" "src/Events.h" "src/Enums.h" "src/RouletteRuleset.h" "src/RouletteMission.h")
+ "src/Roulette.cpp" "src/util.h" "src/EventSystem.h" "src/Events.h" "src/Enums.h" "src/RouletteRuleset.h" "src/RouletteMission.h" "src/CroupierClient.h" "src/CroupierClient.cpp")
 
 target_link_libraries(Croupier
 	ZHMModSDK
-	D2D1
-	DWrite
-	WindowsCodecs
 )
 
 install(TARGETS Croupier

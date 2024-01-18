@@ -375,5 +375,6 @@ FodyWeavers.xsd
 /_build/
 /_install/
 
-out/
+/mod/out/
 CMakeUserPresets.json
+/mod/vcpkg
