@@ -196,15 +196,15 @@ namespace Croupier.UI {
 
 		public string ImagePath {
 			get {
-				if (Type == KillMethodType.Specific)
-					return Path.Combine("weapons", GetMethodInfo().Image);
 				return GetMethodInfo().Image;
 			}
 		}
 
 		public Uri ImageUri {
 			get {
-				return new Uri(Path.Combine(Environment.CurrentDirectory, ImagePath));
+				if (Type != KillMethodType.Specific)
+					return new Uri(Path.Combine(Environment.CurrentDirectory, "methods", ImagePath));
+				return new Uri(Path.Combine(Environment.CurrentDirectory, "weapons", ImagePath));
 			}
 		}
 
