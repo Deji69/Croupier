@@ -24,3 +24,6 @@ Go on, take it for a spin.
 2. Extract the contents of `Mod - Install to Game` to the game installation folder (e.g. `C:\Games\HITMAN 3` - merge with existing 'Retail' folder).
 3. Run the game and once in the main menu, press the `~` key (`^` on QWERTZ layouts) and enable `Croupier` from the menu at the top of the screen.
 4. Use the in-game ZHMModSDK UI to control the app or generate spins using the in-game overlay.
+
+### Both
+* Once both are installed and running, 'Connected' should appear in the in-game Croupier UI. You can now control features of the app using the in-game UI controls.
