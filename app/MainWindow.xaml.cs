@@ -337,8 +337,8 @@ namespace Croupier.UI
 
 		public MainWindow()
 		{
-			InitializeComponent();
 			DataContext = this;
+			InitializeComponent();
 			MainContextMenu.DataContext = this;
 			SizeToContent = SizeToContent.Height;
 			((App)Application.Current).WindowPlace.Register(this);
