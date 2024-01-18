@@ -22,17 +22,17 @@
 		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
 	</PropertyGroup>
 	<PropertyGroup>
-		<StartupObject>Croupier.UI.App</StartupObject>
-	</PropertyGroup>
-	<PropertyGroup>
 		<ApplicationIcon>Resources\CroupierLogoIconsFlatLg.ico</ApplicationIcon>
+		<StartupObject>Croupier.UI.App</StartupObject>
+		<AssemblyName>Croupier</AssemblyName>
+		<Copyright>BluntsNBeatz 2024</Copyright>
+		<PackageIcon>CroupierLogoIconsFlatLg.png</PackageIcon>
 	</PropertyGroup>
 	<ItemGroup>
 		<Content Include="Resources\CroupierLogoIconsFlatLg.ico" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Remove="CroupierLogoIconsFlatLg.png" />
-		<None Remove="Resources\CroupierLogoIconsFlatLg.png" />
 	</ItemGroup>
 	<ItemGroup>
 		<Resource Include="CroupierLogoIconsFlatLg.png" />
@@ -76,5 +76,15 @@
 			<Generator>SettingsSingleFileGenerator</Generator>
 			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
 		</None>
+		<None Update="Resources\CroupierLogoIconsFlatLg.png">
+		  <Pack>True</Pack>
+		  <PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+	<ItemGroup>
+	  <EditorConfigFiles Remove="U:\Dev\project\hitman\croupier\app\.editorconfig" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Include="U:\Dev\project\hitman\croupier\app\.editorconfig" />
 	</ItemGroup>
 </Project>

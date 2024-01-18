@@ -33,7 +33,7 @@ namespace Croupier.UI
 
 		private const int PORT = 8898;
 
-		public static void Main() {
+		public static void Start() {
 			var ipAddress = IPAddress.Parse("127.0.0.1");
 			var serverSocket = new TcpListener(ipAddress, PORT);
 			List<Thread> threads = [];

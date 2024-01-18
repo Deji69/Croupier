@@ -14,7 +14,7 @@ namespace Croupier.UI
 		public WindowPlace WindowPlace { get; } = new WindowPlace("app.config");
 
 		public App() : base() {
-			CroupierSocketServer.Main();
+			CroupierSocketServer.Start();
 		} 
 
 		private void Application_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
