@@ -13,7 +13,10 @@ enum class eClientMessage {
 	Respin,
 	AutoSpin,
 	SpinData,
+	Next,
 	Prev,
+	Random,
+	Missions,
 };
 
 class ClientMessage {

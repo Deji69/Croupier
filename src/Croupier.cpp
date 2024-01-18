@@ -1328,11 +1328,6 @@ auto Croupier::LoadConfiguration() -> void {
 	auto cmds = std::map<std::string, std::function<void (std::string_view val)>> {
 		{"timer", [this, parseBool](std::string_view val) { this->config.timer = parseBool(val, this->config.timer); }},
 		{"spin_overlay", [this, parseBool](std::string_view val) { this->config.spinOverlay = parseBool(val, this->config.spinOverlay); }},
-		{"external_window", [this, parseBool](std::string_view val) { this->config.externalWindow = parseBool(val, this->config.externalWindow); }},
-		{"external_window_on_top", [this, parseBool](std::string_view val) { this->config.externalWindowOnTop = parseBool(val, this->config.externalWindowOnTop); }},
-		{"external_window_text_only", [this, parseBool](std::string_view val) { this->config.externalWindowTextOnly = parseBool(val, this->config.externalWindowTextOnly); }},
-		{"external_window_pos_x", [this, parseInt](std::string_view val) { this->config.windowPosX = static_cast<LONG>(parseInt(val, 0)); }},
-		{"external_window_pos_y", [this, parseInt](std::string_view val) { this->config.windowPosY = static_cast<LONG>(parseInt(val, 0)); }},
 		{"ruleset", [this](std::string_view val) { this->config.ruleset = getRulesetByName(val).value_or(this->config.ruleset); }},
 		{"ruleset_medium", [this, parseBool](std::string_view val) { this->config.customRules.enableMedium = parseBool(val, this->config.customRules.enableMedium); }},
 		{"ruleset_hard", [this, parseBool](std::string_view val) { this->config.customRules.enableHard = parseBool(val, this->config.customRules.enableHard); }},
@@ -1467,24 +1462,10 @@ auto Croupier::SaveConfiguration() -> void {
 	std::string content;
 	const auto filepath = this->modulePath / "mods" / "Croupier" / "croupier.txt";
 
-	std::optional<LONG> windowPosX = std::nullopt;
-	std::optional<LONG> windowPosY = std::nullopt;
-
-	{
-		auto guard = std::shared_lock(this->sharedSpin.mutex);
-		windowPosX = this->sharedSpin.windowX;
-		windowPosY = this->sharedSpin.windowY;
-	}
-
 	this->file.open(filepath, std::ios::out | std::ios::trunc);
 
 	std::println(this->file, "timer {}", this->config.timer ? "true" : "false");
 	std::println(this->file, "spin_overlay {}", this->config.spinOverlay ? "true" : "false");
-	std::println(this->file, "external_window {}", this->config.externalWindow ? "true" : "false");
-	std::println(this->file, "external_window_on_top {}", this->config.externalWindowOnTop ? "true" : "false");
-	std::println(this->file, "external_window_text_only {}", this->config.externalWindowTextOnly ? "true" : "false");
-	if (windowPosX) std::println(this->file, "external_window_pos_x {}", windowPosX.value());
-	if (windowPosY) std::println(this->file, "external_window_pos_y {}", windowPosY.value());
 	const auto rulesetName = getRulesetName(this->config.ruleset);
 	if (rulesetName) std::println(this->file, "ruleset {}", rulesetName.value());
 	std::println(this->file, "ruleset_medium {}", this->config.customRules.enableMedium ? "true" : "false");
@@ -1626,16 +1607,6 @@ auto Croupier::OnEngineInitialized() -> void {
 
 	this->PreviousSpin();
 
-	if (this->config.externalWindow) {
-		this->window.create();
-		if (this->config.windowPosX.has_value() && this->config.windowPosY.has_value())
-			this->window.setPosition(*this->config.windowPosX, *this->config.windowPosY);
-	}
-
-	this->window.setAlwaysOnTop(this->config.externalWindowOnTop);
-	this->window.setTextMode(this->config.externalWindowTextOnly);
-	this->window.setTimerEnabled(this->config.timer);
-
 	Hooks::ZAchievementManagerSimple_OnEventReceived->AddDetour(this, &Croupier::OnEventReceived);
 	Hooks::ZAchievementManagerSimple_OnEventSent->AddDetour(this, &Croupier::OnEventSent);
 	Hooks::Http_WinHttpCallback->AddDetour(this, &Croupier::OnWinHttpCallback);
@@ -1647,7 +1618,22 @@ auto Croupier::OnFrameUpdate(const SGameUpdateEvent&) -> void {
 		switch (message.type) {
 			case eClientMessage::SpinData:
 				return ProcessSpinDataMessage(message);
+			case eClientMessage::Missions:
+				return ProcessMissionsMessage(message);
 		}
+	}
+}
+
+auto Croupier::ProcessMissionsMessage(const ClientMessage& message) -> void {
+	auto tokens = split(message.args, ",");
+	this->config.missionPool.clear();
+	std::string buffer;
+
+	for (auto const& token : tokens) {
+		buffer = trim(token);
+		auto mission = getMissionByCodename(buffer);
+		if (mission != eMission::NONE)
+			this->config.missionPool.push_back(mission);
 	}
 }
 
@@ -1657,19 +1643,15 @@ auto Croupier::ProcessSpinDataMessage(const ClientMessage& message) -> void {
 		return;
 	}
 
-	{
-		auto guard = std::unique_lock(this->sharedSpin.mutex);
-		this->spin = std::move(*spin);
-		this->sharedSpin.isPlaying = false;
-		this->currentSpinSaved = true;
-		this->generator.setMission(this->spin.getMission());
-		this->spinCompleted = false;
-	}
-
-	this->window.update();
+	auto guard = std::unique_lock(this->sharedSpin.mutex);
+	this->spin = std::move(*spin);
+	this->sharedSpin.isPlaying = false;
+	this->currentSpinSaved = true;
+	this->generator.setMission(this->spin.getMission());
+	this->spinCompleted = false;
 }
 
-Croupier::Croupier() : sharedSpin(spin), window(sharedSpin) {
+Croupier::Croupier() : sharedSpin(spin) {
 	this->SetupMissions();
 	this->SetupEvents();
 	this->rules = makeRouletteRuleset(this->ruleset);
@@ -1685,12 +1667,66 @@ Croupier::~Croupier() {
 	Globals::GameLoopManager->UnregisterFrameUpdate(frameUpdateDelegate, 1, EUpdateMode::eUpdatePlayMode);
 }
 
+auto Croupier::SendAutoSpin(eMission mission) -> void {
+	this->client->send(eClientMessage::AutoSpin, {getMissionCodename(mission).value_or("").data()});
+}
+
 auto Croupier::SendRespin(eMission mission) -> void {
 	this->client->send(eClientMessage::Respin, {getMissionCodename(mission).value_or("").data()});
 }
 
+auto Croupier::SendMissions() -> void {
+	std::string buffer;
+
+	for (auto const id : this->config.missionPool) {
+		auto codename = getMissionCodename(id);
+		if (!codename.has_value()) continue;
+		if (!buffer.empty()) buffer += ",";
+		buffer += *codename;
+	}
+
+	this->client->send(eClientMessage::Missions, {buffer});
+}
+
+auto Croupier::SendSpinData() -> void {
+	std::string data;
+	std::string prefixes;
+	for (const auto& cond : spin.getConditions()) {
+		if (!data.empty()) data += ", ";
+		if (cond.killComplication == eKillComplication::Live)
+			prefixes += "(Live) ";
+
+		switch (cond.killType) {
+			case eKillType::Silenced:
+				prefixes += "Sil ";
+				break;
+			case eKillType::Loud:
+				prefixes += "Ld ";
+				break;
+			case eKillType::Melee:
+				prefixes += "Melee ";
+				break;
+			case eKillType::Thrown:
+				prefixes += "Thrown ";
+				break;
+		}
+
+		data += std::format("{}: {}{} / {}", Keyword::getForTarget(cond.target.get().getName()), prefixes, cond.killMethod.name, cond.disguise.get().name);
+		prefixes.clear();
+	}
+	this->client->send(eClientMessage::SpinData, { data });
+}
+
+auto Croupier::SendNext() -> void {
+	this->client->send(eClientMessage::Next);
+}
+
 auto Croupier::SendPrev() -> void {
 	this->client->send(eClientMessage::Prev);
+}
+
+auto Croupier::SendRandom() -> void {
+	this->client->send(eClientMessage::Random);
 }
 
 auto Croupier::OnDrawMenu() -> void {
@@ -1718,44 +1754,21 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 
 		ImGui::PushFont(SDK()->GetImGuiRegularFont());
 		
-		if (ImGui::Checkbox("Timer (BETA)", &this->config.timer)) {
-			this->window.setTimerEnabled(this->config.timer);
+		if (ImGui::Checkbox("Timer", &this->config.timer)) {
 			this->SaveConfiguration();
 		}
 
 		if (this->config.timer) {
 			ImGui::SameLine();
-			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 50.0);
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 40.0);
 			if (ImGui::Button("Reset")) {
 				auto guard = std::unique_lock(this->sharedSpin.mutex);
 				this->sharedSpin.timeStarted = std::chrono::steady_clock::now();
 			}
 		}
 
-		if (ImGui::Checkbox("In-Game Window", &this->config.spinOverlay))
+		if (ImGui::Checkbox("Overlay", &this->config.spinOverlay))
 			this->SaveConfiguration();
-
-		{
-			if (ImGui::Checkbox("External Window", &this->config.externalWindow)) {
-				if (this->config.externalWindow) this->window.create();
-				else this->window.destroy();
-				this->SaveConfiguration();
-			}
-
-			ImGui::SameLine();
-		
-			if (ImGui::Checkbox("On Top", &this->config.externalWindowOnTop)) {
-				this->window.setAlwaysOnTop(this->config.externalWindowOnTop);
-				this->SaveConfiguration();
-			}
-
-			ImGui::SameLine();
-
-			if (ImGui::Checkbox("Text-Only", &this->config.externalWindowTextOnly)) {
-				this->window.setTextMode(this->config.externalWindowTextOnly);
-				this->SaveConfiguration();
-			}
-		}
 
 		{
 			// Ruleset select
@@ -1792,7 +1805,7 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 				auto const selected = missionInfo.mission != eMission::NONE && mission && mission->getMission() == missionInfo.mission;
 				auto imGuiFlags = missionInfo.mission == eMission::NONE ? ImGuiSelectableFlags_Disabled : 0;
 				if (ImGui::Selectable(missionInfo.name.data(), selected, imGuiFlags) && missionInfo.mission != eMission::NONE)
-					this->OnMissionSelect(missionInfo.mission);
+					this->OnMissionSelect(missionInfo.mission, false);
 
 				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
 				if (selected) ImGui::SetItemDefaultFocus();
@@ -1804,31 +1817,44 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 		if (ImGui::Button("Edit Pool"))
 			this->showEditMissionPoolUI = !this->showEditMissionPoolUI;
 
-		if (ImGui::Button("Respin"))
-			this->Respin();
+		ImGui::SetWindowFontScale(1.5);
+		ImGui::PushFont(SDK()->GetImGuiBlackFont());
 
-		ImGui::SameLine();
-
-		if (ImGui::Button("Random"))
-			this->Random();
-
-		if (this->spin.getMission()) {
+		if (connected) {
+			if (ImGui::Button(ICON_MD_ARROW_BACK))
+				this->SendPrev();
+			if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) ImGui::SetTooltip("Previous Spin");
 			ImGui::SameLine();
-
-			if (ImGui::Button("Manual"))
-				this->showManualModeUI = !this->showManualModeUI;
+			if (ImGui::Button(ICON_MD_ARROW_FORWARD))
+				this->SendNext();
+			if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) ImGui::SetTooltip("Next Spin");
+			ImGui::SameLine();
 		}
 
-		if (!this->spinHistory.empty()) {
+		if (connected || this->spin.getMission()) {
+			if (ImGui::Button(ICON_MD_EDIT))
+				this->showManualModeUI = !this->showManualModeUI;
+			if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) ImGui::SetTooltip("Edit Spin");
 			ImGui::SameLine();
-			auto update = false;
+		}
 
-			if (ImGui::Button("Previous")) {
+		if (ImGui::Button(ICON_MD_SHUFFLE))
+			this->Random();
+		if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) ImGui::SetTooltip("Random Map/Spin");
+
+		ImGui::SameLine();
+		if (ImGui::Button(ICON_MD_REFRESH))
+			this->Respin(false);
+		if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) ImGui::SetTooltip("Respin Current Map");
+
+		ImGui::PopFont();
+		ImGui::SetWindowFontScale(1.0);
+
+		if (!connected && !this->spinHistory.empty()) {
+			ImGui::SameLine();
+
+			if (ImGui::Button("Previous"))
 				this->PreviousSpin();
-				update = true;
-			}
-
-			if (update) this->window.update();
 		}
 		ImGui::PopFont();
 	}
@@ -1920,15 +1946,6 @@ auto Croupier::DrawEditSpinUI(bool focused) -> void {
 			ImGui::Text(target.getName().c_str());
 			ImGui::PopFont();
 
-			ImGui::Button(ICON_MD_REFRESH);
-			ImGui::SameLine();
-
-			if (ImGui::Button(currentCondition->lockMethod ? ICON_MD_LOCK_OPEN : ICON_MD_LOCK)) {
-				currentCondition->lockMethod = !currentCondition->lockMethod;
-			}
-
-			ImGui::SameLine();
-
 			if (ImGui::BeginCombo(("Method##"s + target.getName()).c_str(), methodName.data(), ImGuiComboFlags_HeightLarge)) {
 				ImGui::Selectable("------ STANDARD ------", false, ImGuiSelectableFlags_Disabled);
 
@@ -1940,7 +1957,7 @@ auto Croupier::DrawEditSpinUI(bool focused) -> void {
 						if (ImGui::Selectable(name.data(), selected)) {
 							auto guard = std::unique_lock(this->sharedSpin.mutex);
 							this->spin.setTargetMapMethod(target, method);
-							this->window.update();
+							this->SendSpinData();
 						}
 
 						if (selected) ImGui::SetItemDefaultFocus();
@@ -1953,7 +1970,7 @@ auto Croupier::DrawEditSpinUI(bool focused) -> void {
 						if (ImGui::Selectable(name.data(), selected)) {
 							auto guard = std::unique_lock(this->sharedSpin.mutex);
 							this->spin.setTargetStandardMethod(target, method);
-							this->window.update();
+							this->SendSpinData();
 						}
 
 						if (selected) ImGui::SetItemDefaultFocus();
@@ -1972,7 +1989,7 @@ auto Croupier::DrawEditSpinUI(bool focused) -> void {
 						if (selected) ImGui::SetItemDefaultFocus();
 						auto guard = std::unique_lock(this->sharedSpin.mutex);
 						this->spin.setTargetStandardMethod(target, method);
-						this->window.update();
+						this->SendSpinData();
 					}
 
 					if (selected) ImGui::SetItemDefaultFocus();
@@ -1987,7 +2004,7 @@ auto Croupier::DrawEditSpinUI(bool focused) -> void {
 						if (ImGui::Selectable(method.name.data(), selected)) {
 							auto guard = std::unique_lock(this->sharedSpin.mutex);
 							this->spin.setTargetMapMethod(target, method.method);
-							this->window.update();
+							this->SendSpinData();
 						}
 
 						if (selected) ImGui::SetItemDefaultFocus();
@@ -2012,7 +2029,7 @@ auto Croupier::DrawEditSpinUI(bool focused) -> void {
 						if (ImGui::Selectable(name.empty() ? "(Any)" : name.data(), selected)) {
 							auto guard = std::unique_lock(this->sharedSpin.mutex);
 							this->spin.setTargetMethodType(target, type);
-							this->window.update();
+							this->SendSpinData();
 						}
 
 						if (selected) ImGui::SetItemDefaultFocus();
@@ -2037,7 +2054,7 @@ auto Croupier::DrawEditSpinUI(bool focused) -> void {
 					if (ImGui::Selectable(disguise.name.c_str(), selected)) {
 						auto guard = std::unique_lock(this->sharedSpin.mutex);
 						this->spin.setTargetDisguise(target, disguise);
-						this->window.update();
+						this->SendSpinData();
 					}
 
 					if (selected) ImGui::SetItemDefaultFocus();
@@ -2052,7 +2069,7 @@ auto Croupier::DrawEditSpinUI(bool focused) -> void {
 			if (ImGui::Checkbox(("Live (No KO)##"s + target.getName()).c_str(), &liveKill)) {
 				auto guard = std::unique_lock(this->sharedSpin.mutex);
 				this->spin.setTargetComplication(target, liveKill ? eKillComplication::Live : eKillComplication::None);
-				this->window.update();
+				this->SendSpinData();
 			}
 		}
 
@@ -2162,6 +2179,7 @@ auto Croupier::DrawEditMissionPoolUI(bool focused) -> void {
 				auto it = remove(begin(this->config.missionPool), end(this->config.missionPool), missionInfo.mission);
 				if (it != end(this->config.missionPool)) this->config.missionPool.erase(it);
 				if (enabled) this->config.missionPool.push_back(missionInfo.mission);
+				SendMissions();
 				SaveConfiguration();
 			}
 		}
@@ -2197,14 +2215,14 @@ auto Croupier::OnRulesetSelect(eRouletteRuleset ruleset) -> void {
 	}
 }
 
-auto Croupier::OnMissionSelect(eMission mission) -> void {
+auto Croupier::OnMissionSelect(eMission mission, bool isAuto) -> void {
 	auto currentMission = this->spin.getMission();
 	if (currentMission && mission == currentMission->getMission() && !this->spinCompleted) return;
 	this->sharedSpin.playerSelectMission();
 
 	try {
 		this->generator.setMission(this->GetMission(mission));
-		this->Respin();
+		this->Respin(isAuto);
 	} catch (const RouletteGeneratorException& ex) {
 		Logger::Error("Croupier: {}", ex.what());
 	}
@@ -2261,6 +2279,11 @@ auto Croupier::PreviousSpin() -> void {
 }
 
 auto Croupier::Random() -> void {
+	if (this->client->isConnected()) {
+		this->SendRandom();
+		return;
+	}
+
 	if (this->config.missionPool.empty())
 		this->SetDefaultMissionPool();
 	if (this->config.missionPool.empty())
@@ -2270,15 +2293,19 @@ auto Croupier::Random() -> void {
 	auto currentMission = this->spin.getMission();
 
 	if (currentMission && mission == currentMission->getMission())
-		this->Respin();
+		this->Respin(false);
 	else
-		this->OnMissionSelect(mission);
+		this->OnMissionSelect(mission, false);
 }
 
-auto Croupier::Respin() -> void {
+auto Croupier::Respin(bool isAuto) -> void {
 	if (!this->generator.getMission()) return;
 
-	SendRespin(this->generator.getMission()->getMission());
+	if (isAuto)
+		SendAutoSpin(this->generator.getMission()->getMission());
+	else
+		SendRespin(this->generator.getMission()->getMission());
+
 	this->generator.setRuleset(&this->rules);
 
 	try {
@@ -2298,7 +2325,6 @@ auto Croupier::Respin() -> void {
 
 	this->LogSpin();
 	this->SaveSpinHistory();
-	this->window.update();
 }
 
 auto Croupier::LogSpin() -> void {

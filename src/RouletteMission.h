@@ -47,7 +47,9 @@ enum class eMission
 };
 
 inline std::unordered_map<std::string, eMission> missionsByCodename = {
+	{"FREEFORM", eMission::ICAFACILITY_FREEFORM},
 	{"POLARBEAR", eMission::ICAFACILITY_FINALTEST},
+	{"FINALTEST", eMission::ICAFACILITY_FINALTEST},
 	{"PEACOCK", eMission::PARIS_SHOWSTOPPER},
 	{"PARISNOEL", eMission::PARIS_HOLIDAYHOARDERS},
 	{"OCTOPUS", eMission::SAPIENZA_WORLDOFTOMORROW},

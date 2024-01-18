@@ -25,15 +25,10 @@ struct SerializedSpin {
 };
 
 struct Configuration {
-	bool externalWindow = true;
-	bool externalWindowOnTop = true;
-	bool externalWindowTextOnly = false;
 	bool spinOverlay = false;
 	bool timer = false;
 	RouletteRuleset customRules;
 	eRouletteRuleset ruleset = eRouletteRuleset::Default;
-	std::optional<LONG> windowPosX = std::nullopt;
-	std::optional<LONG> windowPosY = std::nullopt;
 	std::vector<eMission> missionPool;
 
 	std::vector<SerializedSpin> spinHistory;
@@ -47,7 +42,7 @@ public:
 	auto OnDrawMenu() -> void override;
 	auto OnDrawUI(bool p_HasFocus) -> void override;
 	auto OnFrameUpdate(const SGameUpdateEvent&) -> void;
-	auto OnMissionSelect(eMission) -> void;
+	auto OnMissionSelect(eMission, bool isAuto = true) -> void;
 	auto OnRulesetSelect(eRouletteRuleset) -> void;
 	auto OnRulesetCustomised() -> void;
 	auto SaveSpinHistory() -> void;
@@ -57,13 +52,18 @@ public:
 	auto DrawEditMissionPoolUI(bool focused) -> void;
 	auto DrawSpinUI(bool focused) -> void;
 	auto Random() -> void;
-	auto Respin() -> void;
+	auto Respin(bool isAuto = true) -> void;
 	auto PreviousSpin() -> void;
 	auto LoadConfiguration() -> void;
 	auto SaveConfiguration() -> void;
 	auto SetDefaultMissionPool() -> void;
+	auto SendAutoSpin(eMission = eMission::NONE) -> void;
 	auto SendRespin(eMission = eMission::NONE) -> void;
+	auto SendSpinData() -> void;
+	auto SendNext() -> void;
 	auto SendPrev() -> void;
+	auto SendRandom() -> void;
+	auto SendMissions() -> void;
 
 private:
 	static std::unordered_map<std::string, eMission> MissionContractIds;
@@ -74,6 +74,7 @@ private:
 	auto SetupEvents() -> void;
 	auto SetupMissions() -> void;
 	auto GetMission(eMission mission) -> const RouletteMission*;
+	auto ProcessMissionsMessage(const ClientMessage& message) -> void;
 	auto ProcessSpinDataMessage(const ClientMessage& message) -> void;
 	auto ParseSpin(std::string_view str) -> std::optional<RouletteSpin>;
 
@@ -83,7 +84,6 @@ private:
 
 private:
 	std::unique_ptr<CroupierClient> client;
-	CroupierWindow window;
 	std::vector<RouletteMission> missions;
 	RouletteSpinGenerator generator;
 	RouletteRuleset rules;
