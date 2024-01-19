@@ -10,7 +10,7 @@ Go on, take it for a spin.
 ## Download & Setup
 
 1. There are two parts; an app, and a mod. The app provides the most features, and the mod provides integration with the game. You can use either one individually, but using them both together is recommended for the best experience.
-2. The app works great standalone for generating spins
+2. The app works great standalone for generating spins, but offers no game integration features.
 3. The mod is effectively a remote control for the app, though it also has a lightweight version of some features built-in.
 4. See the following sections for instructions for each part of Croupier.
 5. (If using both) Launch the app and game in any order. 'Connected' should appear in the in-game UI once it detects the app running. You can now control the app via the in-game UI (and vice-versa).
@@ -26,4 +26,5 @@ Go on, take it for a spin.
 4. Use the in-game ZHMModSDK UI to control the app or generate spins using the in-game overlay.
 
 ### Both
-* Once both are installed and running, 'Connected' should appear in the in-game Croupier UI. You can now control features of the app using the in-game UI controls.
+* Once both are installed and running, 'Connected' should appear in the in-game Croupier UI. You can now control features of the app using the in-game UI controls, and the app will automatically spin when you enter the planning screen for a mission (unless 'Spin Lock' is enabled).
+* Note you can still use the app directly to manage spins and the in-game overlay, if enabled, will show the spin from the app.
