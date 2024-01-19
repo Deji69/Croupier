@@ -1,3 +1,5 @@
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/S6S2TGV0B)
+
 # Croupier
 
 Croupier is an app and mod providing a generator of roulette spins for Hitman: World of Assassination that can be easily controlled from in-game and provides many options for customisation.
@@ -13,7 +15,6 @@ Go on, take it for a spin.
 2. The app works great standalone for generating spins, but offers no game integration features.
 3. The mod is effectively a remote control for the app, though it also has a lightweight version of some features built-in.
 4. See the following sections for instructions for each part of Croupier.
-5. (If using both) Launch the app and game in any order. 'Connected' should appear in the in-game UI once it detects the app running. You can now control the app via the in-game UI (and vice-versa).
 
 ### App
 1. Extract the contents of `App - Install Anywhere` to a location of your choosing. This does not need to be in the game installation folder.
