@@ -10,9 +10,57 @@
 #include <Glacier/ZObject.h>
 #include <Glacier/ZString.h>
 #include "CroupierClient.h"
-#include "CroupierWindow.h"
 #include "EventSystem.h"
 #include "Roulette.h"
+
+struct RouletteSpinKill {
+	std::string targetName;
+	bool validMethod = true;
+	bool validDisguise = true;
+
+	RouletteSpinKill(std::string targetName) : targetName(targetName)
+	{ }
+};
+
+struct SharedRouletteSpin {
+	const RouletteSpin& spin;
+	std::vector<RouletteSpinKill> kills;
+	std::chrono::steady_clock::time_point timeStarted;
+	std::chrono::seconds timeElapsed = std::chrono::seconds(0);
+	bool isPlaying = false;
+	bool isFinished = false;
+	LONG windowX = 0;
+	LONG windowY = 0;
+
+	SharedRouletteSpin(const RouletteSpin& spin) : spin(spin), timeElapsed(0) {
+		timeStarted = std::chrono::steady_clock().now();
+	}
+
+	auto getTimeElapsed() const -> std::chrono::seconds {
+		if (!this->isFinished && this->isPlaying) {
+			return std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock().now() - timeStarted);
+		}
+		return this->isFinished ? this->timeElapsed : std::chrono::seconds::zero();
+	}
+
+	auto playerSelectMission() {
+		this->isPlaying = false;
+	}
+
+	auto playerStart() {
+		this->kills.clear();
+		if (!this->isPlaying)
+			this->timeStarted = std::chrono::steady_clock().now();
+		this->isPlaying = true;
+		this->isFinished = false;
+	}
+
+	auto playerExit() {
+		this->timeElapsed = this->getTimeElapsed();
+		this->isPlaying = false;
+		this->isFinished = true;
+	}
+};
 
 struct SerializedSpin {
 	struct Condition {

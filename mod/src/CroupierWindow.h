@@ -39,62 +39,6 @@ struct LoadedImage {
 	}
 };
 
-struct RouletteSpinKill
-{
-	std::string targetName;
-	bool validMethod = true;
-	bool validDisguise = true;
-
-	RouletteSpinKill(std::string targetName) : targetName(targetName)
-	{ }
-};
-
-struct SharedRouletteSpin
-{
-	const RouletteSpin& spin;
-	std::vector<RouletteSpinKill> kills;
-	std::chrono::steady_clock::time_point timeStarted;
-	std::chrono::seconds timeElapsed = std::chrono::seconds(0);
-	bool isPlaying = false;
-	bool isFinished = false;
-	LONG windowX = 0;
-	LONG windowY = 0;
-	std::shared_mutex mutex;
-
-	SharedRouletteSpin(const RouletteSpin& spin) : spin(spin), timeElapsed(0)
-	{
-		timeStarted = std::chrono::steady_clock().now();
-	}
-
-	auto getTimeElapsed() const -> std::chrono::seconds {
-		if (!this->isFinished && this->isPlaying) {
-			return std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock().now() - timeStarted);
-		}
-		return this->isFinished ? this->timeElapsed : std::chrono::seconds::zero();
-	}
-
-	auto playerSelectMission() {
-		auto guard = std::unique_lock(this->mutex);
-		this->isPlaying = false;
-	}
-
-	auto playerStart() {
-		auto guard = std::unique_lock(this->mutex);
-		this->kills.clear();
-		if (!this->isPlaying)
-			this->timeStarted = std::chrono::steady_clock().now();
-		this->isPlaying = true;
-		this->isFinished = false;
-	}
-
-	auto playerExit() {
-		auto guard = std::unique_lock(this->mutex);
-		this->timeElapsed = this->getTimeElapsed();
-		this->isPlaying = false;
-		this->isFinished = true;
-	}
-};
-
 struct CroupierDrawInfo
 {
 	struct Condition
