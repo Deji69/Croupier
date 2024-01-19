@@ -1888,14 +1888,11 @@ auto Croupier::DrawSpinUI(bool focused) -> void {
 
 		auto elapsed = std::chrono::seconds::zero();
 
-		{
-			auto guard = std::shared_lock(this->sharedSpin.mutex);
-			auto const& conds = this->spin.getConditions();
-			elapsed = this->sharedSpin.getTimeElapsed();
-			for (auto& cond : conds) {
-				auto str = std::format("{}: {} / {}", cond.target.get().getName(), cond.methodName, cond.disguise.get().name);
-				ImGui::Text(str.c_str());
-			}
+		auto const& conds = this->spin.getConditions();
+		elapsed = this->sharedSpin.getTimeElapsed();
+		for (auto& cond : conds) {
+			auto str = std::format("{}: {} / {}", cond.target.get().getName(), cond.methodName, cond.disguise.get().name);
+			ImGui::Text(str.c_str());
 		}
 
 		if (this->config.timer) {
@@ -2236,7 +2233,6 @@ auto Croupier::OnMissionSelect(eMission mission, bool isAuto) -> void {
 
 auto Croupier::SaveSpinHistory() -> void {
 	if (!this->generator.getMission()) return;
-	auto guard = std::shared_lock(this->sharedSpin.mutex);
 	if (this->spin.getConditions().empty()) return;
 
 	if (!this->currentSpinSaved) {
@@ -2270,15 +2266,13 @@ auto Croupier::SetDefaultMissionPool() -> void {
 
 auto Croupier::PreviousSpin() -> void {
 	if (this->spinHistory.empty()) return;
-	{
-		auto guard = std::unique_lock(this->sharedSpin.mutex);
-		this->spin = std::move(this->spinHistory.top());
-		this->sharedSpin.isPlaying = false;
-		this->currentSpinSaved = true;
-		this->generator.setMission(this->spin.getMission());
-		this->spinHistory.pop();
-		this->spinCompleted = false;
-	}
+
+	this->spin = std::move(this->spinHistory.top());
+	this->sharedSpin.isPlaying = false;
+	this->currentSpinSaved = true;
+	this->generator.setMission(this->spin.getMission());
+	this->spinHistory.pop();
+	this->spinCompleted = false;
 
 	this->sharedSpin.playerStart();
 	this->LogSpin();
@@ -2315,8 +2309,6 @@ auto Croupier::Respin(bool isAuto) -> void {
 	this->generator.setRuleset(&this->rules);
 
 	try {
-		auto guard = std::unique_lock(this->sharedSpin.mutex);
-
 		if (!this->spin.getConditions().empty()) {
 			this->spinHistory.emplace(std::move(this->spin));
 		}
@@ -2334,8 +2326,6 @@ auto Croupier::Respin(bool isAuto) -> void {
 }
 
 auto Croupier::LogSpin() -> void {
-	auto guard = std::shared_lock(this->sharedSpin.mutex);
-
 	std::string spinText;
 	for (auto& cond : this->spin.getConditions())
 	{
@@ -2378,8 +2368,6 @@ auto Croupier::SetupEvents() -> void {
 	events.listen<Events::Kill>([this](const ServerEvent<Events::Kill>& ev) {
 		if (!ev.Value.IsTarget) return;
 		if (this->spinCompleted) return;
-
-		auto guard = std::shared_lock(this->sharedSpin.mutex);
 
 		auto const& conditions = this->sharedSpin.spin.getConditions();
 		if (conditions.empty()) return;
