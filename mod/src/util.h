@@ -4,6 +4,10 @@
 #include <locale>
 #include <string>
 #include <vector>
+#include "unac.h"
+//#include <unicode/utypes.h>
+//#include <unicode/unistr.h>
+//#include <unicode/translit.h>
 
 // helper type for the visitor #4
 template<class... Ts>
@@ -14,16 +18,40 @@ overloaded(Ts...) -> overloaded<Ts...>;
 
 inline std::wstring widen(const std::string& str)
 {
-	using convert_typeX = std::codecvt_utf8<wchar_t>;
-	std::wstring_convert<convert_typeX, wchar_t> converterX;
+	std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converterX;
 	return converterX.from_bytes(str);
 }
 
 inline std::string narrow(const std::wstring& wstr)
 {
-	using convert_typeX = std::codecvt_utf8<wchar_t>;
-	std::wstring_convert<convert_typeX, wchar_t> converterX;
+	std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converterX;
 	return converterX.to_bytes(wstr);
+}
+
+inline std::string removeDiacritics(const std::string& str) {
+	// UTF-8 std::string -> UTF-16 UnicodeString
+	//icu::UnicodeString source = icu::UnicodeString::fromUTF8(icu::StringPiece(str));
+	//
+	//// Transliterate UTF-16 UnicodeString
+	//UErrorCode status = U_ZERO_ERROR;
+	//icu::Transliterator* accentsConverter = icu::Transliterator::createInstance(
+	//	"NFD; [:M:] Remove; NFC", UTRANS_FORWARD, status);
+	//accentsConverter->transliterate(source);
+	//// TODO: handle errors with status
+	//
+	//// UTF-16 UnicodeString -> UTF-8 std::string
+	//std::string result;
+	//source.toUTF8String(result);
+	//return result;
+	size_t length;
+	char* out = nullptr;
+	if (unac_string("utf-8", str.c_str(), str.size(), &out, &length) == 0) {
+		auto outStr = std::string{out, length};
+		free(out);
+		return outStr;
+	}
+	if (out) free(out);
+	return str;
 }
 
 inline auto ltrim(std::string_view str, std::string_view delimiter = " \t\n\r") {

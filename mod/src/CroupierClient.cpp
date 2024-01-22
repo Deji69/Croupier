@@ -1,11 +1,11 @@
 #include <WinSock2.h>
-#include "CroupierClient.h"
 #include <chrono>
 #include <format>
 #include <map>
 #include <shared_mutex>
 #include <WS2tcpip.h>
 #include <Logging.h>
+#include "CroupierClient.h"
 #include "util.h"
 
 #pragma comment(lib, "Ws2_32.lib")
@@ -145,8 +145,9 @@ auto CroupierClient::start() -> bool {
 
 			// Read message from socket
 			auto read = recv(this->sock, buffer, sizeof(buffer), 0);
-			if (read == -1) {
-				this->connected = false;
+			if (read == SOCKET_ERROR) {
+				if (WSAGetLastError() != WSAETIMEDOUT)
+					this->connected = false;
 				continue;
 			}
 
@@ -174,8 +175,26 @@ auto CroupierClient::stop() -> void {
 	WSACleanup();
 }
 
+auto CroupierClient::abort() -> void {
+	this->keepOpen = false;
+	this->readThread.detach();
+	this->writeThread.detach();
+	this->connected = false;
+
+	if (this->sock != INVALID_SOCKET)
+	{
+		if (shutdown(this->sock, SD_SEND) == SOCKET_ERROR)
+			Logger::Error("Shutdown failed");
+
+		closesocket(this->sock);
+		this->sock = INVALID_SOCKET;
+	}
+
+	WSACleanup();
+}
+
 CroupierClient::~CroupierClient() {
-	if (this->keepOpen) this->stop();
+	if (this->keepOpen) this->abort();
 }
 
 auto CroupierClient::writeMessage(const ClientMessage& msg) -> bool {
@@ -183,13 +202,23 @@ auto CroupierClient::writeMessage(const ClientMessage& msg) -> bool {
 	DWORD written = 0;
 	int bytes_sent = ::send(this->sock, data.c_str(), data.size(), 0);
 	if (bytes_sent == SOCKET_ERROR) {
-		this->connected = false;
+		if (WSAGetLastError() != WSAETIMEDOUT)
+			this->connected = false;
 		return false;
 	}
 	return true;
 }
 
 auto CroupierClient::processMessage(const std::string& msg) -> void {
+	// Check for multiple messages
+	auto msgs = split(msg, "\n", 2);
+	if (msgs.size() > 1) {
+		for (auto& msg : msgs) {
+			if (trim(msg).empty()) continue;
+			this->processMessage(std::string(msg));
+		}
+	}
+
 	// Try to parse message
 	auto toks = split(msg, ":", 2);
 	if (toks.size() < 2) return;

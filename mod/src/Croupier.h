@@ -117,12 +117,8 @@ public:
 private:
 	static std::unordered_map<std::string, eMission> MissionContractIds;
 
-	static auto getMissionFromContractId(const std::string&) -> eMission;
-
 	auto LogSpin() -> void;
 	auto SetupEvents() -> void;
-	auto SetupMissions() -> void;
-	auto GetMission(eMission mission) -> const RouletteMission*;
 	auto ProcessMissionsMessage(const ClientMessage& message) -> void;
 	auto ProcessSpinDataMessage(const ClientMessage& message) -> void;
 	auto ParseSpin(std::string_view str) -> std::optional<RouletteSpin>;
@@ -133,7 +129,6 @@ private:
 
 private:
 	std::unique_ptr<CroupierClient> client;
-	std::vector<RouletteMission> missions;
 	RouletteSpinGenerator generator;
 	RouletteRuleset rules;
 	RouletteSpin spin;

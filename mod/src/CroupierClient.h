@@ -36,6 +36,7 @@ public:
 
 	auto start() -> bool;
 	auto stop() -> void;
+	auto abort() -> void;
 	auto isConnected() const -> bool { return this->connected; }
 	auto send(eClientMessage type, std::initializer_list<std::string> args = {}) -> void;
 	auto tryTakeMessage(ClientMessage&) -> bool;

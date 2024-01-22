@@ -2,9 +2,16 @@
 #include <optional>
 #include <string>
 #include <unordered_map>
+#include "Disguise.h"
+#include "Exception.h"
+#include "Target.h"
 
-enum class eMission
-{
+enum class eMission;
+enum class eMapKillMethod;
+struct MapKillMethod;
+class RouletteTarget;
+
+enum class eMission {
 	NONE,
 	ICAFACILITY_ARRIVAL,
 	ICAFACILITY_GUIDED,
@@ -46,49 +53,119 @@ enum class eMission
 	AMBROSE_SHADOWSINTHEWATER,
 };
 
-inline std::unordered_map<std::string, eMission> missionsByCodename = {
-	{"FREEFORM", eMission::ICAFACILITY_FREEFORM},
-	{"POLARBEAR", eMission::ICAFACILITY_FINALTEST},
-	{"FINALTEST", eMission::ICAFACILITY_FINALTEST},
-	{"PEACOCK", eMission::PARIS_SHOWSTOPPER},
-	{"PARISNOEL", eMission::PARIS_HOLIDAYHOARDERS},
-	{"OCTOPUS", eMission::SAPIENZA_WORLDOFTOMORROW},
-	{"COPPERHEAD", eMission::SAPIENZA_THEICON},
-	{"MAMBA", eMission::SAPIENZA_LANDSLIDE},
-	{"LASTWORD", eMission::SAPIENZA_THEAUTHOR},
-	{"SPIDER", eMission::MARRAKESH_GILDEDCAGE},
-	{"PYTHON", eMission::MARRAKESH_HOUSEBUILTONSAND},
-	{"TIGER", eMission::BANGKOK_CLUB27},
-	{"TAMAGOZAKE", eMission::BANGKOK_THESOURCE},
-	{"BULL", eMission::COLORADO_FREEDOMFIGHTERS},
-	{"SNOWCRANE", eMission::HOKKAIDO_SITUSINVERSUS},
-	{"MAMUSHI", eMission::HOKKAIDO_SNOWFESTIVAL},
-	{"BRONX", eMission::HOKKAIDO_PATIENTZERO},
-	{"SHEEP", eMission::HAWKESBAY_NIGHTCALL},
-	{"FLAMINGO", eMission::MIAMI_FINISHLINE},
-	{"COTTONMOUTH", eMission::MIAMI_ASILVERTONGUE},
-	{"HIPPO", eMission::SANTAFORTUNA_THREEHEADEDSERPENT},
-	{"ANACONDA", eMission::SANTAFORTUNA_EMBRACEOFTHESERPENT},
-	{"MONGOOSE", eMission::MUMBAI_CHASINGAGHOST},
-	{"KINGCOBRA", eMission::MUMBAI_ILLUSIONSOFGRANDEUR},
-	{"SKUNK", eMission::WHITTLETON_ANOTHERLIFE},
-	{"GARTERSNAKE", eMission::WHITTLETON_ABITTERPILL},
-	{"MAGPIE", eMission::ISLEOFSGAIL_THEARKSOCIETY},
-	{"RACCOON", eMission::NEWYORK_GOLDENHANDSHAKE},
-	{"STINGRAY", eMission::HAVEN_THELASTRESORT},
-	{"GECKO", eMission::DUBAI_ONTOPOFTHEWORLD},
-	{"BULLDOG", eMission::DARTMOOR_DEATHINTHEFAMILY},
-	{"FOX", eMission::BERLIN_APEXPREDATOR},
-	{"RAT", eMission::CHONGQING_ENDOFANERA},
-	{"LLAMA", eMission::MENDOZA_THEFAREWELL},
-	{"WOLVERINE", eMission::CARPATHIAN_UNTOUCHABLE},
-	{"DUGONG", eMission::AMBROSE_SHADOWSINTHEWATER},
+enum class eMapKillMethod {
+	NONE,
+	AmputationKnife,
+	AntiqueCurvedKnife,
+	BarberRazor,
+	BattleAxe,
+	BeakStaff,
+	Broadsword,
+	BurialKnife,
+	CircumcisionKnife,
+	CombatKnife,
+	ConcealableKnife,
+	Cleaver,
+	FireAxe,
+	FoldingKnife,
+	GardenFork,
+	GrapeKnife,
+	Hatchet,
+	HobbyKnife,
+	Hook,
+	Icicle,
+	JarlsPirateSaber,
+	Katana,
+	KitchenKnife,
+	KukriMachete,
+	LetterOpener,
+	Machete,
+	MeatFork,
+	OldAxe,
+	OrnateScimitar,
+	RustyScrewdriver,
+	Saber,
+	SacrificialKnife,
+	SappersAxe,
+	Scalpel,
+	Scissors,
+	ScrapSword,
+	Screwdriver,
+	Seashell,
+	Shears,
+	Shuriken,
+	Starfish,
+	Tanto,
+	UnicornHorn,
+	VikingAxe,
+
+	HolidayFireAxe,
+	XmasStar,
+
+	Soders_Electrocution,
+	Soders_Explosion,
+	Soders_PoisonStemCells,
+	Soders_RobotArms,
+	Soders_ShootHeart,
+	Soders_TrashHeart,
+	Yuki_SabotageCableCar,
 };
+
+struct MapKillMethod {
+	eMapKillMethod method;
+	std::string_view name;
+	std::string_view image;
+	bool isMelee = false;
+	bool isLoadout = false;
+
+	MapKillMethod(eMapKillMethod method);
+	MapKillMethod(MapKillMethod&&) noexcept = default;
+	MapKillMethod(const MapKillMethod&) = default;
+	auto operator=(MapKillMethod&&) noexcept -> MapKillMethod& = default;
+};
+
+struct MissionInfo {
+	eMission mission;
+	std::string_view name;
+	std::string_view simpleName;
+	bool isMainMap = false;
+
+	MissionInfo(eMission mission, std::string_view name, std::string_view simpleName, bool isMainMap = true) :
+		mission(mission), name(name), simpleName(simpleName), isMainMap(isMainMap)
+	{ }
+};
+
+extern const std::vector<eMission> defaultMissionPool;
+extern const std::unordered_map<std::string, eMission> missionsByCodename;
+extern const std::unordered_map<std::string, eMission> missionsByContractId;
+extern const std::unordered_map<eMission, std::vector<MapKillMethod>> missionMethods;
+extern const std::unordered_map<eMission, std::vector<RouletteDisguise>> missionDisguises;
+extern const std::vector<MissionInfo> missionInfos;
+
+inline auto& getMissionMethods(eMission mission) {
+	static const std::vector<MapKillMethod> emptyMissionMethods;
+	auto it = missionMethods.find(mission);
+	if (it == end(missionMethods)) return emptyMissionMethods;
+	return it->second;
+}
+
+inline auto& getMissionDisguises(eMission mission) {
+	static const std::vector<RouletteDisguise> emptyDisguises;
+	auto it = missionDisguises.find(mission);
+	if (it == end(missionDisguises)) return emptyDisguises;
+	return it->second;
+}
 
 inline auto getMissionByCodename(const std::string& codename) {
 	auto it = missionsByCodename.find(codename);
 	if (it != missionsByCodename.end()) return it->second;
 	return eMission::NONE;
+}
+
+inline auto getMissionByContractId(const std::string& str) {
+	auto it = missionsByContractId.find(str);
+	if (it == missionsByContractId.end()) return eMission::NONE;
+	return it->second;
 }
 
 inline auto getMissionCodename(eMission mission) -> std::optional<std::string_view> {
@@ -98,3 +175,56 @@ inline auto getMissionCodename(eMission mission) -> std::optional<std::string_vi
 	if (it == cend(missionsByCodename)) return std::nullopt;
 	return std::make_optional<std::string_view>(it->first);
 }
+
+class RouletteMission
+{
+public:
+	RouletteMission(eMission mission) : mission(mission), mapKillMethods(getMissionMethods(mission)), disguises(getMissionDisguises(mission))
+	{ }
+
+	auto getMission() const { return this->mission; }
+	auto& getDisguises() const { return this->disguises; }
+	auto& getTargets() const { return this->targets; }
+	auto& getMapKillMethods() const { return this->mapKillMethods; }
+	auto getObjectiveCount() const { return this->targets.size(); }
+
+	auto getSuitDisguise() const {
+		auto it = find_if(cbegin(this->disguises), cend(this->disguises), [](const RouletteDisguise& disguise) { return disguise.suit; });
+		return it != cend(this->disguises) ? &*it : nullptr;
+	}
+
+	auto getDisguiseByName(std::string_view name) const {
+		auto it = find_if(cbegin(this->disguises), cend(this->disguises), [name](const RouletteDisguise& disguise) {
+			return disguise.name == name;
+		});
+		return it != cend(this->disguises) ? &*it : nullptr;
+	}
+
+	auto& getDisguiseByNameAssert(std::string_view name) const {
+		auto disguise = this->getDisguiseByName(name);
+		if (!disguise) throw RouletteGeneratorException(std::format("Failed to find disguise \"{}\".", name));
+		return *disguise;
+	}
+
+	auto getTargetByName(std::string_view name) const -> const RouletteTarget*;
+
+	auto& addTarget(std::string name, std::string image, eTargetType type = eTargetType::Normal) {
+		this->targets.emplace_back(name, image, type);
+		return this->targets.back();
+	}
+
+private:
+	eMission mission = eMission::NONE;
+	std::vector<RouletteTarget> targets;
+	const std::vector<RouletteDisguise>& disguises;
+	const std::vector<MapKillMethod>& mapKillMethods;
+};
+
+struct Missions {
+	Missions();
+	static auto get(eMission mission) -> const RouletteMission*;
+
+private:
+	static Missions instance;
+	static std::vector<RouletteMission> data;
+};

@@ -12,6 +12,9 @@
 #include <unordered_set>
 #include <variant>
 #include <vector>
+#include "Disguise.h"
+#include "Exception.h"
+#include "Target.h"
 #include "RouletteMission.h"
 #include "RouletteRuleset.h"
 #include "util.h"
@@ -45,64 +48,6 @@ enum class eKillMethod {
 	NeckSnap,
 };
 
-enum class eMapKillMethod {
-	NONE,
-	AmputationKnife,
-	AntiqueCurvedKnife,
-	BarberRazor,
-	BattleAxe,
-	BeakStaff,
-	Broadsword,
-	BurialKnife,
-	CircumcisionKnife,
-	CombatKnife,
-	ConcealableKnife,
-	Cleaver,
-	FireAxe,
-	FoldingKnife,
-	GardenFork,
-	GrapeKnife,
-	Hatchet,
-	HobbyKnife,
-	Hook,
-	Icicle,
-	JarlsPirateSaber,
-	Katana,
-	KitchenKnife,
-	KukriMachete,
-	LetterOpener,
-	Machete,
-	MeatFork,
-	OldAxe,
-	OrnateScimitar,
-	RustyScrewdriver,
-	Saber,
-	SacrificialKnife,
-	SappersAxe,
-	Scalpel,
-	Scissors,
-	ScrapSword,
-	Screwdriver,
-	Seashell,
-	Shears,
-	Shuriken,
-	Starfish,
-	Tanto,
-	UnicornHorn,
-	VikingAxe,
-
-	HolidayFireAxe,
-	XmasStar,
-
-	Soders_Electrocution,
-	Soders_Explosion,
-	Soders_PoisonStemCells,
-	Soders_RobotArms,
-	Soders_ShootHeart,
-	Soders_TrashHeart,
-	Yuki_SabotageCableCar,
-};
-
 enum class eKillType {
 	Any,
 	Silenced,
@@ -132,10 +77,6 @@ enum class eMethodTag {
 	IsRemote,
 };
 
-enum class eTargetType {
-	Normal,
-	Soders,
-};
 struct KillMethod;
 struct MapKillMethod;
 class RouletteSpinCondition;
@@ -167,6 +108,7 @@ public:
 private:
 	static std::unordered_map<std::string, Variant> keywordMap;
 	static std::unordered_map<std::string, std::string> targetKeyMap;
+	static std::unordered_map<std::string, std::string> keyTargetMap;
 
 public:
 	std::string keyword;
@@ -235,19 +177,6 @@ public:
 	}
 };
 
-class RouletteGeneratorException : public std::exception {
-public:
-	RouletteGeneratorException(std::string_view msg) : msg(std::format("Roulette Generator Error - {}", msg))
-	{}
-
-	auto what() const -> char const* override {
-		return msg.c_str();
-	}
-
-private:
-	std::string msg;
-};
-
 struct KillMethod
 {
 	eKillMethod method;
@@ -264,20 +193,6 @@ struct KillMethod
 	auto operator=(KillMethod&&) noexcept -> KillMethod& = default;
 };
 
-struct MapKillMethod
-{
-	eMapKillMethod method;
-	std::string_view name;
-	std::string_view image;
-	bool isMelee = false;
-	bool isLoadout = false;
-
-	MapKillMethod(eMapKillMethod method);
-	MapKillMethod(MapKillMethod&&) noexcept = default;
-	MapKillMethod(const MapKillMethod&) = default;
-	auto operator=(MapKillMethod&&) noexcept -> MapKillMethod& = default;
-};
-
 class RouletteSpinMethod
 {
 public:
@@ -286,18 +201,6 @@ public:
 
 private:
 	eKillMethod killMethod;
-};
-
-struct RouletteDisguise
-{
-public:
-	RouletteDisguise(std::string name, std::string image, bool suit = false) : name(name), image(image), suit(suit)
-	{}
-
-public:
-	std::string name;
-	std::string image;
-	bool suit = false;
 };
 
 class RouletteTarget
@@ -381,59 +284,6 @@ private:
 	std::vector<std::pair<std::function<bool(const RouletteSpinCondition&)>, std::set<eMethodTag>>> rules;
 	std::unordered_map<eKillMethod, std::set<eMethodTag>> methodInfo;
 	std::unordered_map<eMapKillMethod, std::set<eMethodTag>> specialMethodInfo;
-};
-
-class RouletteMission
-{
-public:
-	RouletteMission(eMission mission) : mission(mission) {}
-
-	auto getMission() const { return this->mission; }
-	auto& getDisguises() const { return this->disguises; }
-	auto& getTargets() const { return this->targets; }
-	auto& getMapKillMethods() const { return this->mapKillMethods; }
-	auto getObjectiveCount() const { return this->targets.size(); }
-
-	auto getDisguiseByName(std::string_view name) const {
-		auto it = find_if(cbegin(this->disguises), cend(this->disguises), [name](const RouletteDisguise& disguise) {
-			return disguise.name == name;
-		});
-		return it != cend(this->disguises) ? &*it : nullptr;
-	}
-
-	auto& getDisguiseByNameAssert(std::string_view name) const {
-		auto disguise = this->getDisguiseByName(name);
-		if (!disguise) throw RouletteGeneratorException(std::format("Failed to find disguise \"{}\".", name));
-		return *disguise;
-	}
-
-	auto getTargetByName(std::string_view name) const {
-		auto it = find_if(cbegin(this->targets), cend(this->targets), [name](const RouletteTarget& target) {
-			return target.getName() == name;
-		});
-		return it != cend(this->targets) ? &*it : nullptr;
-	}
-
-	auto& addTarget(std::string name, std::string image, eTargetType type = eTargetType::Normal) {
-		this->targets.emplace_back(name, image, type);
-		return this->targets.back();
-	}
-
-	auto& addDisguise(std::string name, std::string image, bool suit = false) {
-		this->disguises.emplace_back(name, image, suit);
-		return this->disguises.back();
-	}
-
-	auto& addMapMethod(eMapKillMethod method) {
-		this->mapKillMethods.emplace_back(method);
-		return this->mapKillMethods.back();
-	}
-
-private:
-	eMission mission = eMission::NONE;
-	std::vector<RouletteTarget> targets;
-	std::vector<RouletteDisguise> disguises;
-	std::vector<MapKillMethod> mapKillMethods;
 };
 
 struct RouletteSpinCondition
