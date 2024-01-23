@@ -1059,7 +1059,7 @@ DEFINE_PLUGIN_DETOUR(Croupier, void, OnWinHttpCallback, void* dwContext, void* h
 	DWORD size = sizeof(buffer);
 	if (WinHttpQueryOption(hInternet, WINHTTP_OPTION_URL, buffer, &size)) {
 		std::wstring wstr(buffer, size);
-		Logger::Info("URL: {}", narrow(wstr));
+		Logger::Info("WinHttpQueryOption URL: {}", narrow(wstr));
 		auto url = narrow(wstr);
 		std::string_view sv = url;
 
@@ -1075,7 +1075,7 @@ DEFINE_PLUGIN_DETOUR(Croupier, void, OnWinHttpCallback, void* dwContext, void* h
 			}
 		}
 	}
-	else Logger::Warn("WinHttpQueryOption failed: {}", GetLastError());
+	else Logger::Error("WinHttpQueryOption failed: {}", GetLastError());
 	return HookResult<void>(HookAction::Continue());
 }
 
