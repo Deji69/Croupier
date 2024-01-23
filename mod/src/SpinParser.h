@@ -233,6 +233,12 @@ public:
 			auto tokensLeft = context.tokens.size() - i;
 			switch (tokensLeft) {
 			default:
+			case 4:
+				if (parseToken(context.tokens[i] + context.tokens[i+1] + context.tokens[i+2] + context.tokens[i + 3])) {
+					context.tokens.erase(begin(context.tokens) + i, begin(context.tokens) + i + 4);
+					break;
+				}
+				[[fallthrough]];
 			case 3:
 				if (parseToken(context.tokens[i] + context.tokens[i+1] + context.tokens[i+2])) {
 					context.tokens.erase(begin(context.tokens) + i, begin(context.tokens) + i + 3);

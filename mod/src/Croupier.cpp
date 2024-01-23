@@ -582,6 +582,10 @@ auto Croupier::DrawSpinUI(bool focused) -> void {
 
 auto Croupier::DrawEditSpinUI(bool focused) -> void {
 	if (!this->showManualModeUI) return;
+	if (!this->generator.getMission()) {
+		this->showManualModeUI = false;
+		return;
+	}
 
 	ImGui::PushFont(SDK()->GetImGuiBlackFont());
 

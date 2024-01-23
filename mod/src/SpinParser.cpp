@@ -154,7 +154,7 @@ std::unordered_map<std::string, std::string> targetKeywords = {
 	{"sw", "SW"},
 	{"sophiawashington", "SW"},
 	{"sophia", "ZW"}, {"soph", "ZW"},
-	{"as", "ASW"},
+	{"as", "AS"},
 	{"athenasavalas", "AS"},
 	{"athena", "AS"}, {"savalas", "AS"},
 	{"tw", "TW"},
@@ -265,6 +265,8 @@ std::vector<DisguiseKeywords> disguiseKeywords = {
 		{"norfolk", "Terry Norfolk"},
 		{"crew", "Yacht Crew"},
 		{"yachtcrew", "Yacht Crew"},
+		{"yachtsecurity", "Yacht Security"},
+		{"security", "Yacht Security"},
 	}},
 	DisguiseKeywords{{eMission::ICAFACILITY_FINALTEST}, {
 		{"security", "Airfield Security"},
