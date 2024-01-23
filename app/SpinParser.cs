@@ -215,7 +215,7 @@ namespace Croupier {
 			{"sw", "SW"},
 			{"sophiawashington", "SW"},
 			{"sophia", "ZW"}, {"soph", "ZW"},
-			{"as", "ASW"},
+			{"as", "AS"},
 			{"athenasavalas", "AS"},
 			{"athena", "AS"}, {"savalas", "AS"},
 			{"tw", "TW"},
@@ -326,6 +326,8 @@ namespace Croupier {
 				{"norfolk", "Terry Norfolk"},
 				{"crew", "Yacht Crew"},
 				{"yachtcrew", "Yacht Crew"},
+				{"yachtsecurity", "Yacht Security"},
+				{"security", "Yacht Security"},
 			}),
 			new([MissionID.ICAFACILITY_FINALTEST], new(){
 				{"security", "Airfield Security"},
@@ -1587,7 +1589,7 @@ namespace Croupier {
 			List<string> tokens = [];
 			contexts.Add(new(tokens));
 			var detectedMission = MissionID.NONE;
-			var processed = processInput(input);
+			var processed = ProcessInput(input);
 
 			while (ParseCondition(processed, contexts.Last())) {
 				var context = contexts.Last<ParseContext>();
@@ -1795,7 +1797,7 @@ namespace Croupier {
 			return (context.HaveTarget || context.mission == MissionID.BERLIN_APEXPREDATOR) && context.HaveDisguise && context.HaveKillMethod;
 		}
 
-		private static string processInput(string input)
+		private static string ProcessInput(string input)
 		{
 			return Strings.TokenCharacterWithSpacesRegex.Replace(input.RemoveDiacritics().ToLower(), " ");
 		}
