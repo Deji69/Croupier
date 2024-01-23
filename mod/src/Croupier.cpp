@@ -840,7 +840,7 @@ auto Croupier::DrawEditMissionPoolUI(bool focused) -> void {
 			auto enabled = it != cend(this->config.missionPool);
 			if (ImGui::Checkbox(missionInfo.name.data(), &enabled)) {
 				auto it = remove(begin(this->config.missionPool), end(this->config.missionPool), missionInfo.mission);
-				if (it != end(this->config.missionPool)) this->config.missionPool.erase(it);
+				if (it != end(this->config.missionPool)) this->config.missionPool.erase(it, end(this->config.missionPool));
 				if (enabled) this->config.missionPool.push_back(missionInfo.mission);
 				SendMissions();
 				SaveConfiguration();

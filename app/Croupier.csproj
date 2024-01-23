@@ -20,10 +20,10 @@
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<UseWPF>true</UseWPF>
 		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+		<Platforms>AnyCPU;x64</Platforms>
 	</PropertyGroup>
 	<PropertyGroup>
 		<ApplicationIcon>Resources\CroupierLogoIconsFlatLg.ico</ApplicationIcon>
-		<StartupObject>Croupier.UI.App</StartupObject>
 		<AssemblyName>Croupier</AssemblyName>
 		<Copyright>BluntsNBeatz 2024</Copyright>
 		<PackageIcon>CroupierLogoIconsFlatLg.png</PackageIcon>

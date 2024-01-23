@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
-namespace Croupier.UI
+namespace Croupier
 {
 	/// <summary>
 	/// Interaction logic for App.xaml

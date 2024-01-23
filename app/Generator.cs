@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Croupier.UI
+namespace Croupier
 {
 	public class Generator(Ruleset ruleset, Mission mission)
 	{

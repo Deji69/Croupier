@@ -3,12 +3,12 @@ using System.Text;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace Croupier.UI {
+namespace Croupier {
 	public static partial class Strings {
 		public static readonly Regex TokenCharacterRegex = GenerateTokenCharacterRegex();
+		public static readonly Regex TokenCharacterWithSpacesRegex = GenerateTokenCharacterWithSpacesRegex();
 
-		static Dictionary<string, string> foreign_characters = new Dictionary<string, string>
-		{
+		static Dictionary<string, string> foreign_characters = new(){
 			{ "äæǽ", "ae" },
 			{ "öœ", "oe" },
 			{ "ü", "ue" },
@@ -103,7 +103,7 @@ namespace Croupier.UI {
 		public static char RemoveDiacritics(this char c)
 		{
 			foreach (KeyValuePair<string, string> entry in foreign_characters) {
-				if (entry.Key.IndexOf(c) != -1) {
+				if (entry.Key.Contains(c)) {
 					return entry.Value[0];
 				}
 			}
@@ -112,7 +112,6 @@ namespace Croupier.UI {
 
 		public static string RemoveDiacritics(this string s)
 		{
-			//StringBuilder sb = new StringBuilder ();
 			string text = "";
 
 
@@ -120,7 +119,7 @@ namespace Croupier.UI {
 				int len = text.Length;
 
 				foreach (KeyValuePair<string, string> entry in foreign_characters) {
-					if (entry.Key.IndexOf(c) != -1) {
+					if (entry.Key.Contains(c)) {
 						text += entry.Value;
 						break;
 					}
@@ -135,5 +134,8 @@ namespace Croupier.UI {
 
 		[GeneratedRegex("[^a-zA-Z0-9]")]
 		private static partial Regex GenerateTokenCharacterRegex();
+
+		[GeneratedRegex("[^\\sa-zA-Z0-9]")]
+		private static partial Regex GenerateTokenCharacterWithSpacesRegex();
 	}
 }

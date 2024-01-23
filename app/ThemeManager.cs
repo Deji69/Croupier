@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Windows;
 
-namespace Croupier.UI
+namespace Croupier
 {
 	public class ThemeResourceDictionary : ResourceDictionary
 	{

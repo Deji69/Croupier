@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace Croupier.UI
+namespace Croupier
 {
 	public enum MissionGroup {
 		None,
@@ -268,7 +268,7 @@ namespace Croupier.UI
 		public string Image {
 			get {
 				return ID switch {
-					MissionID.ICAFACILITY_ARRIVAL => "polarbear/arrival/tile.jpg",
+					MissionID.ICAFACILITY_ARRIVAL => "polarbear-arrival.jpg",
 					MissionID.ICAFACILITY_GUIDED or MissionID.ICAFACILITY_FREEFORM => "ica-facility-freeform-training.jpg",
 					MissionID.ICAFACILITY_FINALTEST => "ica-facility-the-final-test.jpg",
 					MissionID.PARIS_SHOWSTOPPER => "paris-the-showstopper.jpg",
@@ -276,15 +276,15 @@ namespace Croupier.UI
 					MissionID.SAPIENZA_WORLDOFTOMORROW => "sapienza-world-of-tomorrow.jpg",
 					MissionID.SAPIENZA_LANDSLIDE => "sapienza-landslide.jpg",
 					MissionID.SAPIENZA_THEICON => "sapienza-the-icon.jpg",
-					MissionID.SAPIENZA_THEAUTHOR => "whitespider/002_ebola/tile.jpg",
+					MissionID.SAPIENZA_THEAUTHOR => "whitespider-ebola.jpg",
 					MissionID.MARRAKESH_GILDEDCAGE => "marrakesh-a-gilded-cage.jpg",
 					MissionID.MARRAKESH_HOUSEBUILTONSAND => "marrakesh-a-house-built-on-sand.jpg",
 					MissionID.BANGKOK_CLUB27 => "bangkok-club27.jpg",
-					MissionID.BANGKOK_THESOURCE => "whitespider/001_zika/tile.jpg",
+					MissionID.BANGKOK_THESOURCE => "whitespider-zika.jpg",
 					MissionID.COLORADO_FREEDOMFIGHTERS => "colorado-freedom-fighters.jpg",
 					MissionID.HOKKAIDO_SITUSINVERSUS => "hokkaido-situs-inversus.jpg",
 					MissionID.HOKKAIDO_SNOWFESTIVAL => "hokkaido-snow-festival.jpg",
-					MissionID.HOKKAIDO_PATIENTZERO => "whitespider/004_flu/tile.jpg",
+					MissionID.HOKKAIDO_PATIENTZERO => "whitespider-flu.jpg",
 					MissionID.HAWKESBAY_NIGHTCALL => "hawkes-bay-nightcall.jpg",
 					MissionID.MIAMI_FINISHLINE => "miami-the-finish-line.jpg",
 					MissionID.MIAMI_ASILVERTONGUE => "cottonmouth.jpg",
@@ -1122,250 +1122,255 @@ namespace Croupier.UI
 					];
 				case MissionID.MIAMI_FINISHLINE:
 				case MissionID.MIAMI_ASILVERTONGUE:
-					disguises.Add(new Disguise("Suit", "outfit_1ad1ec9b-1e96-4fac-b0e6-8817a46da9db_0.jpg", true));
-					disguises.Add(new Disguise("Aeon Driver", "outfit_6fca97a0-cb80-4bd7-9a8f-106fa20a5d04_0.jpg"));
-					disguises.Add(new Disguise("Aeon Mechanic", "outfit_da951ccc-1d8b-4d84-b30a-72e74ac2a312_0.jpg"));
-					disguises.Add(new Disguise("Blue Seed Driver", "outfit_46dedef3-bbcf-438c-af2b-c97dd853aac1_0.jpg"));
-					disguises.Add(new Disguise("Crashed Kronstadt Driver", "outfit_8980597c-1559-46a7-ba8d-bc5d95d5936a_0.jpg"));
-					disguises.Add(new Disguise("Event Crew", "outfit_d86e4379-4aad-42cf-a7cf-38d0fa7e727b_0.jpg"));
-					disguises.Add(new Disguise("Event Security", "outfit_dc5b1ccd-0997-4834-93a0-db7543e729cc_0.jpg"));
-					disguises.Add(new Disguise("Florida Man", "outfit_f8ef3523-2500-410c-98fb-b6926a832df4_0.jpg"));
-					disguises.Add(new Disguise("Food Vendor", "outfit_e9ed2969-146a-472d-8e87-39c77bd1757d_0.jpg"));
-					disguises.Add(new Disguise("Journalist", "outfit_723e73f3-9fa4-40d8-bb11-b66184c9a795_0.jpg"));
-					disguises.Add(new Disguise("Kitchen Staff", "outfit_2a5a3dba-bafd-4a1f-8bbf-204668b32fe1_0.jpg"));
-					disguises.Add(new Disguise("Kowoon Driver", "outfit_12181b2f-8c74-4761-8d78-3bedfbf9281d_0.jpg"));
-					disguises.Add(new Disguise("Kowoon Mechanic", "outfit_fc829fad-5afc-4236-8662-65ab8698ef44_0.jpg"));
-					disguises.Add(new Disguise("Kronstadt Engineer", "outfit_9bd53a5a-a152-488f-be20-7394b083d99a_0.jpg"));
-					disguises.Add(new Disguise("Kronstadt Mechanic", "outfit_085e639e-2cf4-4e9b-bd9b-f9fd5b899676_0.jpg"));
-					disguises.Add(new Disguise("Kronstadt Researcher", "outfit_ade47a03-a3ec-4d78-aefa-6057abceea28_0.jpg"));
-					disguises.Add(new Disguise("Kronstadt Security", "outfit_d37ae121-69b4-4a9c-ab57-972063505e2f_0.jpg"));
+					disguises.Add(new("Suit", "outfit_1ad1ec9b-1e96-4fac-b0e6-8817a46da9db_0.jpg", true));
+					disguises.Add(new("Aeon Driver", "outfit_6fca97a0-cb80-4bd7-9a8f-106fa20a5d04_0.jpg"));
+					disguises.Add(new("Aeon Mechanic", "outfit_da951ccc-1d8b-4d84-b30a-72e74ac2a312_0.jpg"));
+					disguises.Add(new("Blue Seed Driver", "outfit_46dedef3-bbcf-438c-af2b-c97dd853aac1_0.jpg"));
+					disguises.Add(new("Crashed Kronstadt Driver", "outfit_8980597c-1559-46a7-ba8d-bc5d95d5936a_0.jpg"));
+					disguises.Add(new("Event Crew", "outfit_d86e4379-4aad-42cf-a7cf-38d0fa7e727b_0.jpg"));
+					disguises.Add(new("Event Security", "outfit_dc5b1ccd-0997-4834-93a0-db7543e729cc_0.jpg"));
+					disguises.Add(new("Florida Man", "outfit_f8ef3523-2500-410c-98fb-b6926a832df4_0.jpg"));
+					disguises.Add(new("Food Vendor", "outfit_e9ed2969-146a-472d-8e87-39c77bd1757d_0.jpg"));
+					disguises.Add(new("Journalist", "outfit_723e73f3-9fa4-40d8-bb11-b66184c9a795_0.jpg"));
+					disguises.Add(new("Kitchen Staff", "outfit_2a5a3dba-bafd-4a1f-8bbf-204668b32fe1_0.jpg"));
+					disguises.Add(new("Kowoon Driver", "outfit_12181b2f-8c74-4761-8d78-3bedfbf9281d_0.jpg"));
+					disguises.Add(new("Kowoon Mechanic", "outfit_fc829fad-5afc-4236-8662-65ab8698ef44_0.jpg"));
+					disguises.Add(new("Kronstadt Engineer", "outfit_9bd53a5a-a152-488f-be20-7394b083d99a_0.jpg"));
+					disguises.Add(new("Kronstadt Mechanic", "outfit_085e639e-2cf4-4e9b-bd9b-f9fd5b899676_0.jpg"));
+					disguises.Add(new("Kronstadt Researcher", "outfit_ade47a03-a3ec-4d78-aefa-6057abceea28_0.jpg"));
+					disguises.Add(new("Kronstadt Security", "outfit_d37ae121-69b4-4a9c-ab57-972063505e2f_0.jpg"));
 					if (mission == MissionID.MIAMI_ASILVERTONGUE)
-						disguises.Add(new Disguise("Mascot", "outfit_5fc2ed75-ab22-4c61-af6c-bdd07b1a55a6_0.jpg"));
+						disguises.Add(new("Mascot", "outfit_5fc2ed75-ab22-4c61-af6c-bdd07b1a55a6_0.jpg"));
 					else
-						disguises.Add(new Disguise("Mascot", "outfit_124d145e-469e-485d-a628-ced82ddf1b75_0.jpg"));
-					disguises.Add(new Disguise("Medic", "outfit_b838226d-5fbf-4b5d-8e5f-98e5c8ddc1f2_0.jpg"));
-					disguises.Add(new Disguise("Moses Lee", "outfit_a45555d8-d68c-4cd7-8006-7d7f61b36c72_0.jpg"));
-					disguises.Add(new Disguise("Pale Rider", "outfit_9df94442-ed1b-436c-942f-3195b1ef7e0e_0.jpg"));
-					disguises.Add(new Disguise("Race Coordinator", "outfit_be9dd1c4-af52-43db-b8f7-37c3c054c90f_0.jpg"));
-					disguises.Add(new Disguise("Race Marshal", "outfit_a166a37e-a3f8-42d2-99d6-e0dd2cf5c090_0.jpg"));
-					disguises.Add(new Disguise("Sheik", "outfit_a68b2030-d52f-4e52-907f-8657b867dd50_0.jpg"));
-					disguises.Add(new Disguise("Sotteraneo Mechanic", "outfit_981b7a3b-5548-4a6f-b568-f767784e6d91_0.jpg"));
-					disguises.Add(new Disguise("Street Musician", "outfit_2018be7c-5f79-497e-a7e1-0e64f31e71f5_0.jpg"));
-					disguises.Add(new Disguise("Ted Mendez", "outfit_d7d8d5e8-070c-4d6c-9a67-f1165a7bb29d_0.jpg"));
-					disguises.Add(new Disguise("Thwack Driver", "outfit_bac37ceb-6f72-406f-bfa3-e49413436525_0.jpg"));
-					disguises.Add(new Disguise("Thwack Mechanic", "outfit_4376850a-3a37-4ad3-a886-168d0e24aa20_0.jpg"));
-					disguises.Add(new Disguise("Waiter", "outfit_c7bbd142-7873-4a91-98c8-76a6900bea60_0.jpg"));
+						disguises.Add(new("Mascot", "outfit_124d145e-469e-485d-a628-ced82ddf1b75_0.jpg"));
+					disguises.Add(new("Medic", "outfit_b838226d-5fbf-4b5d-8e5f-98e5c8ddc1f2_0.jpg"));
+					disguises.Add(new("Moses Lee", "outfit_a45555d8-d68c-4cd7-8006-7d7f61b36c72_0.jpg"));
+					disguises.Add(new("Pale Rider", "outfit_9df94442-ed1b-436c-942f-3195b1ef7e0e_0.jpg"));
+					disguises.Add(new("Race Coordinator", "outfit_be9dd1c4-af52-43db-b8f7-37c3c054c90f_0.jpg"));
+					disguises.Add(new("Race Marshal", "outfit_a166a37e-a3f8-42d2-99d6-e0dd2cf5c090_0.jpg"));
+					disguises.Add(new("Sheik", "outfit_a68b2030-d52f-4e52-907f-8657b867dd50_0.jpg"));
+					disguises.Add(new("Sotteraneo Mechanic", "outfit_981b7a3b-5548-4a6f-b568-f767784e6d91_0.jpg"));
+					disguises.Add(new("Street Musician", "outfit_2018be7c-5f79-497e-a7e1-0e64f31e71f5_0.jpg"));
+					disguises.Add(new("Ted Mendez", "outfit_d7d8d5e8-070c-4d6c-9a67-f1165a7bb29d_0.jpg"));
+					disguises.Add(new("Thwack Driver", "outfit_bac37ceb-6f72-406f-bfa3-e49413436525_0.jpg"));
+					disguises.Add(new("Thwack Mechanic", "outfit_4376850a-3a37-4ad3-a886-168d0e24aa20_0.jpg"));
+					disguises.Add(new("Waiter", "outfit_c7bbd142-7873-4a91-98c8-76a6900bea60_0.jpg"));
 					break;
 				case MissionID.SANTAFORTUNA_THREEHEADEDSERPENT:
 				case MissionID.SANTAFORTUNA_EMBRACEOFTHESERPENT:
-					disguises.Add(new Disguise("Suit", "outfit_ac71f90e-a67d-4898-b2f0-43b605332dc8_0.jpg", true));
-					disguises.Add(new Disguise("Band Member", "outfit_fc0491ac-8592-486d-9dc2-b39af13cf6e3_0.jpg"));
-					disguises.Add(new Disguise("Barman", "outfit_cfacf46a-eb59-4a16-a221-a690defd05a3_0.jpg"));
-					disguises.Add(new Disguise("Chef", "outfit_d0fe70cb-c30b-41a3-8d1c-5503e898f686_0.jpg"));
-					disguises.Add(new Disguise("Coca Field Guard", "outfit_56a589d8-bf28-489f-a30c-2ecea87177f5_0.jpg"));
-					disguises.Add(new Disguise("Coca Field Worker", "outfit_11f2849d-87c5-4806-a25e-1a9dad85981d_0.jpg"));
-					disguises.Add(new Disguise("Construction Worker", "outfit_57342129-03a9-47a4-a509-cc0656e0a76a_0.jpg"));
-					disguises.Add(new Disguise("Drug Lab Worker", "outfit_a741cd97-135e-465e-89c3-4fa52a2bbf9d_0.jpg"));
-					disguises.Add(new Disguise("Elite Guard", "outfit_3e3be8e1-1fe4-4b3a-959c-9e52f595b0c4_0.jpg"));
-					disguises.Add(new Disguise("Gardener", "outfit_886c3b26-b81f-4731-8080-524f2d6da5dd_0.jpg"));
-					disguises.Add(new Disguise("Hippie", "outfit_177410f1-4fd7-4ef2-8ed7-2119bcba3661_0.jpg"));
-					disguises.Add(new Disguise("Hippo Whisperer", "outfit_4a145036-e4cc-4798-a795-42bcee511524_0.jpg"));
-					disguises.Add(new Disguise("Mansion Guard", "outfit_f0d1dfab-ac73-4fe9-bbac-a5587fbc0f91_0.jpg"));
-					disguises.Add(new Disguise("Mansion Staff", "outfit_2dec1e42-0093-462a-83aa-c0f4d82ac224_0.jpg"));
-					disguises.Add(new Disguise("Shaman", "outfit_30005896-2b39-49c0-bb04-3475d4a12ae6_0.jpg"));
-					disguises.Add(new Disguise("Street Soldier", "outfit_ab5a46a2-6e53-4b15-a48e-c336df1ef5ff_0.jpg"));
-					disguises.Add(new Disguise("Submarine Crew", "outfit_f86848e7-ca8c-48e0-94d1-2d925e96a3e7_0.jpg"));
-					disguises.Add(new Disguise("Submarine Engineer", "outfit_dfaa8260-20af-4112-b1ca-88a98481127b_0.jpg"));
-					disguises.Add(new Disguise("Tattoo Artist (P-Power)", "outfit_135073d8-ef7c-4f4d-b30b-cbf65de613cb_0.jpg"));
+					disguises.Add(new("Suit", "outfit_ac71f90e-a67d-4898-b2f0-43b605332dc8_0.jpg", true));
+					disguises.Add(new("Band Member", "outfit_fc0491ac-8592-486d-9dc2-b39af13cf6e3_0.jpg"));
+					disguises.Add(new("Barman", "outfit_cfacf46a-eb59-4a16-a221-a690defd05a3_0.jpg"));
+					disguises.Add(new("Chef", "outfit_d0fe70cb-c30b-41a3-8d1c-5503e898f686_0.jpg"));
+					disguises.Add(new("Coca Field Guard", "outfit_56a589d8-bf28-489f-a30c-2ecea87177f5_0.jpg"));
+					disguises.Add(new("Coca Field Worker", "outfit_11f2849d-87c5-4806-a25e-1a9dad85981d_0.jpg"));
+					disguises.Add(new("Construction Worker", "outfit_57342129-03a9-47a4-a509-cc0656e0a76a_0.jpg"));
+					disguises.Add(new("Drug Lab Worker", "outfit_a741cd97-135e-465e-89c3-4fa52a2bbf9d_0.jpg"));
+					disguises.Add(new("Elite Guard", "outfit_3e3be8e1-1fe4-4b3a-959c-9e52f595b0c4_0.jpg"));
+					disguises.Add(new("Gardener", "outfit_886c3b26-b81f-4731-8080-524f2d6da5dd_0.jpg"));
+					disguises.Add(new("Hippie", "outfit_177410f1-4fd7-4ef2-8ed7-2119bcba3661_0.jpg"));
+					disguises.Add(new("Hippo Whisperer", "outfit_4a145036-e4cc-4798-a795-42bcee511524_0.jpg"));
+					disguises.Add(new("Mansion Guard", "outfit_f0d1dfab-ac73-4fe9-bbac-a5587fbc0f91_0.jpg"));
+					disguises.Add(new("Mansion Staff", "outfit_2dec1e42-0093-462a-83aa-c0f4d82ac224_0.jpg"));
+					disguises.Add(new("Shaman", "outfit_30005896-2b39-49c0-bb04-3475d4a12ae6_0.jpg"));
+					disguises.Add(new("Street Soldier", "outfit_ab5a46a2-6e53-4b15-a48e-c336df1ef5ff_0.jpg"));
+					disguises.Add(new("Submarine Crew", "outfit_f86848e7-ca8c-48e0-94d1-2d925e96a3e7_0.jpg"));
+					disguises.Add(new("Submarine Engineer", "outfit_dfaa8260-20af-4112-b1ca-88a98481127b_0.jpg"));
+					disguises.Add(new("Tattoo Artist (P-Power)", "outfit_135073d8-ef7c-4f4d-b30b-cbf65de613cb_0.jpg"));
 					break;
 				case MissionID.MUMBAI_CHASINGAGHOST:
 				case MissionID.MUMBAI_ILLUSIONSOFGRANDEUR:
-					disguises.Add(new Disguise("Suit", "outfit_5a77f988-62b8-4414-bd8f-b47fd457d0bd_0.jpg", true));
-					disguises.Add(new Disguise("Barber", "outfit_c4011c75-39ff-4bff-aff5-fe902ae4b83b_0.jpg"));
-					disguises.Add(new Disguise("Bollywood Bodyguard", "outfit_06fb2890-e820-45f2-aef3-0cb7d0528ee1_0.jpg"));
-					disguises.Add(new Disguise("Bollywood Crew", "outfit_6d3d59b4-571c-4dbb-9737-205fb34a1ffa_0.jpg"));
-					disguises.Add(new Disguise("Dancer", "outfit_88adef78-2a19-45fb-9c95-988e82c056f1_0.jpg"));
-					disguises.Add(new Disguise("Elite Thug", "outfit_e9e143e1-f5a6-40a5-af56-947cbf32e20a_0.jpg"));
-					disguises.Add(new Disguise("Food Vendor", "outfit_e9dffefc-e896-46e4-b158-1b401b015764_0.jpg"));
-					disguises.Add(new Disguise("Holy Man", "outfit_e4581e1a-a45a-4c42-ba25-3527bd75c0f7_0.jpg"));
-					disguises.Add(new Disguise("Kashmirian", "outfit_6f875d32-869e-437a-8935-368e0c2cc8bc_0.jpg"));
-					disguises.Add(new Disguise("Laundry Foreman", "outfit_eeefa90a-6665-4eb1-8bc9-3e08c222abae_0.jpg"));
-					disguises.Add(new Disguise("Laundry Worker", "outfit_c5c8e251-bb30-4e9e-b146-74ed96c7048f_0.jpg"));
-					disguises.Add(new Disguise("Lead Actor", "outfit_446ace07-c9c6-49fc-b157-fa58e812fcef_0.jpg"));
-					disguises.Add(new Disguise("Local Security", "outfit_d136699a-a244-4789-b332-9a3afc4e3f48_0.jpg"));
-					disguises.Add(new Disguise("Metal Worker", "outfit_48afc44d-cf8a-44ba-9436-663a6979c908_0.jpg"));
-					disguises.Add(new Disguise("Painter", "outfit_81f55bbc-a120-4757-a778-b73fd775d1a4_0.jpg"));
-					disguises.Add(new Disguise("Queen's Bodyguard", "outfit_6edb224d-0970-4d1d-8740-5e86d1e7af59_0.jpg"));
-					disguises.Add(new Disguise("Queen's Guard", "outfit_b36075a1-b352-4e0f-9d84-84f2bdac6a86_0.jpg"));
-					disguises.Add(new Disguise("Tailor", "outfit_b384ff35-9c38-4b08-ab0b-e333cfd7bc6a_0.jpg"));
-					disguises.Add(new Disguise("Thug", "outfit_a2cef12c-77d6-4062-9596-cf9d1a47d1b5_0.jpg"));
-					disguises.Add(new Disguise("Vanya's Servant", "outfit_ae320bab-bb37-42a5-86a1-df283ada49c0_0.jpg"));
+					disguises.Add(new("Suit", "outfit_5a77f988-62b8-4414-bd8f-b47fd457d0bd_0.jpg", true));
+					disguises.Add(new("Barber", "outfit_c4011c75-39ff-4bff-aff5-fe902ae4b83b_0.jpg"));
+					disguises.Add(new("Bollywood Bodyguard", "outfit_06fb2890-e820-45f2-aef3-0cb7d0528ee1_0.jpg"));
+					disguises.Add(new("Bollywood Crew", "outfit_6d3d59b4-571c-4dbb-9737-205fb34a1ffa_0.jpg"));
+					disguises.Add(new("Dancer", "outfit_88adef78-2a19-45fb-9c95-988e82c056f1_0.jpg"));
+					disguises.Add(new("Elite Thug", "outfit_e9e143e1-f5a6-40a5-af56-947cbf32e20a_0.jpg"));
+					disguises.Add(new("Food Vendor", "outfit_e9dffefc-e896-46e4-b158-1b401b015764_0.jpg"));
+					disguises.Add(new("Holy Man", "outfit_e4581e1a-a45a-4c42-ba25-3527bd75c0f7_0.jpg"));
+					disguises.Add(new("Kashmirian", "outfit_6f875d32-869e-437a-8935-368e0c2cc8bc_0.jpg"));
+					disguises.Add(new("Laundry Foreman", "outfit_eeefa90a-6665-4eb1-8bc9-3e08c222abae_0.jpg"));
+					disguises.Add(new("Laundry Worker", "outfit_c5c8e251-bb30-4e9e-b146-74ed96c7048f_0.jpg"));
+					disguises.Add(new("Lead Actor", "outfit_446ace07-c9c6-49fc-b157-fa58e812fcef_0.jpg"));
+					disguises.Add(new("Local Security", "outfit_d136699a-a244-4789-b332-9a3afc4e3f48_0.jpg"));
+					disguises.Add(new("Metal Worker", "outfit_48afc44d-cf8a-44ba-9436-663a6979c908_0.jpg"));
+					disguises.Add(new("Painter", "outfit_81f55bbc-a120-4757-a778-b73fd775d1a4_0.jpg"));
+					disguises.Add(new("Queen's Bodyguard", "outfit_6edb224d-0970-4d1d-8740-5e86d1e7af59_0.jpg"));
+					disguises.Add(new("Queen's Guard", "outfit_b36075a1-b352-4e0f-9d84-84f2bdac6a86_0.jpg"));
+					disguises.Add(new("Tailor", "outfit_b384ff35-9c38-4b08-ab0b-e333cfd7bc6a_0.jpg"));
+					disguises.Add(new("Thug", "outfit_a2cef12c-77d6-4062-9596-cf9d1a47d1b5_0.jpg"));
+					disguises.Add(new("Vanya's Servant", "outfit_ae320bab-bb37-42a5-86a1-df283ada49c0_0.jpg"));
 					break;
 				case MissionID.WHITTLETON_ANOTHERLIFE:
 				case MissionID.WHITTLETON_ABITTERPILL:
-					disguises.Add(new Disguise("Suit", "outfit_cdb31942-27b5-4ec3-9009-f19b34d27fd0_0.jpg", true));
-					disguises.Add(new Disguise("Arkian Robes", "outfit_e75d76b7-25ec-4500-9585-0ce34cec1e1f_0.jpg"));
-					disguises.Add(new Disguise("BBQ Owner", "outfit_44f30ddb-cad9-402b-a307-6076fae3aa74_0.jpg"));
-					disguises.Add(new Disguise("Cassidy Bodyguard", "outfit_7edfb519-9d60-4cd9-b4f4-74dd64d622b9_0.jpg"));
-					disguises.Add(new Disguise("Construction Worker", "outfit_699ce756-8eef-4a6e-bc65-264d0e763fde_0.jpg"));
-					disguises.Add(new Disguise("Exterminator", "outfit_b1739270-f9fc-4a24-a3e7-beb2deb235f2_0.jpg"));
-					disguises.Add(new Disguise("Garbage Man", "outfit_4912d30a-80cb-41d8-8137-7b4727e76e4e_0.jpg"));
-					disguises.Add(new Disguise("Gardener", "outfit_78fc9e38-cade-42c3-958c-c7d8edf43713_0.jpg"));
-					disguises.Add(new Disguise("Gunther Mueller", "outfit_98a9d41b-3a39-4fe3-ab6a-31d8b574f2ff_0.jpg"));
-					disguises.Add(new Disguise("James Batty", "outfit_13cbccd1-8a96-435b-84e8-107c0a29349d_0.jpg"));
-					disguises.Add(new Disguise("Janus' Bodyguard", "outfit_078a5c70-737c-48b7-a190-b356438419b4_0.jpg"));
-					disguises.Add(new Disguise("Mailman", "outfit_89f20c16-4e13-4f89-a85b-44dd17698bc7_0.jpg"));
-					disguises.Add(new Disguise("Nurse", "outfit_4b416b2a-ac08-4379-8c53-46e46d8bcbf8_0.jpg"));
-					disguises.Add(new Disguise("Plumber", "outfit_e4c5735c-ea33-4d11-a72b-584902370cf3_0.jpg"));
-					disguises.Add(new Disguise("Police Deputy", "outfit_b210be64-ea03-4983-aa0f-8d18882a23c7_0.jpg"));
-					disguises.Add(new Disguise("Politician", "outfit_64e48347-cac5-434b-b25c-711ff78c46fd_0.jpg"));
-					disguises.Add(new Disguise("Politician's Assistant", "outfit_aee5458a-51b7-4ee2-996a-b71b3e149354_0.jpg"));
-					disguises.Add(new Disguise("Real Estate Broker", "outfit_d47223f2-3fe4-46d1-a99a-09e0eb57aa7b_0.jpg"));
-					disguises.Add(new Disguise("Server", "outfit_5d19c9f8-7df2-4113-b81d-b32d5e231717_0.jpg"));
-					disguises.Add(new Disguise("Sheriff Masterson", "outfit_874efc03-afda-48f9-b073-b2db0e93bc3f_0.jpg"));
-					disguises.Add(new Disguise("Spencer \"The Hammer\" Green", "outfit_6d1a3100-5dc0-4a8a-b9fc-341c864e3841_0.jpg"));
+					disguises.Add(new("Suit", "outfit_cdb31942-27b5-4ec3-9009-f19b34d27fd0_0.jpg", true));
+					disguises.Add(new("Arkian Robes", "outfit_e75d76b7-25ec-4500-9585-0ce34cec1e1f_0.jpg"));
+					disguises.Add(new("BBQ Owner", "outfit_44f30ddb-cad9-402b-a307-6076fae3aa74_0.jpg"));
+					disguises.Add(new("Cassidy Bodyguard", "outfit_7edfb519-9d60-4cd9-b4f4-74dd64d622b9_0.jpg"));
+					disguises.Add(new("Construction Worker", "outfit_699ce756-8eef-4a6e-bc65-264d0e763fde_0.jpg"));
+					disguises.Add(new("Exterminator", "outfit_b1739270-f9fc-4a24-a3e7-beb2deb235f2_0.jpg"));
+					disguises.Add(new("Garbage Man", "outfit_4912d30a-80cb-41d8-8137-7b4727e76e4e_0.jpg"));
+					disguises.Add(new("Gardener", "outfit_78fc9e38-cade-42c3-958c-c7d8edf43713_0.jpg"));
+					disguises.Add(new("Gunther Mueller", "outfit_98a9d41b-3a39-4fe3-ab6a-31d8b574f2ff_0.jpg"));
+					disguises.Add(new("James Batty", "outfit_13cbccd1-8a96-435b-84e8-107c0a29349d_0.jpg"));
+					disguises.Add(new("Janus' Bodyguard", "outfit_078a5c70-737c-48b7-a190-b356438419b4_0.jpg"));
+					disguises.Add(new("Mailman", "outfit_89f20c16-4e13-4f89-a85b-44dd17698bc7_0.jpg"));
+					disguises.Add(new("Nurse", "outfit_4b416b2a-ac08-4379-8c53-46e46d8bcbf8_0.jpg"));
+					disguises.Add(new("Plumber", "outfit_e4c5735c-ea33-4d11-a72b-584902370cf3_0.jpg"));
+					disguises.Add(new("Police Deputy", "outfit_b210be64-ea03-4983-aa0f-8d18882a23c7_0.jpg"));
+					disguises.Add(new("Politician", "outfit_64e48347-cac5-434b-b25c-711ff78c46fd_0.jpg"));
+					disguises.Add(new("Politician's Assistant", "outfit_aee5458a-51b7-4ee2-996a-b71b3e149354_0.jpg"));
+					disguises.Add(new("Real Estate Broker", "outfit_d47223f2-3fe4-46d1-a99a-09e0eb57aa7b_0.jpg"));
+					disguises.Add(new("Server", "outfit_5d19c9f8-7df2-4113-b81d-b32d5e231717_0.jpg"));
+					disguises.Add(new("Sheriff Masterson", "outfit_874efc03-afda-48f9-b073-b2db0e93bc3f_0.jpg"));
+					disguises.Add(new("Spencer \"The Hammer\" Green", "outfit_6d1a3100-5dc0-4a8a-b9fc-341c864e3841_0.jpg"));
 					break;
 				case MissionID.ISLEOFSGAIL_THEARKSOCIETY:
-					disguises.Add(new Disguise("Suit", "outfit_1e48fda8-4795-4ad4-a05d-0b9ca5d23f78_0.jpg", true));
-					disguises.Add(new Disguise("Architect", "outfit_8d2b15f2-1d23-4b5e-b128-d2f47b53faf7_0.jpg"));
-					disguises.Add(new Disguise("Ark Member", "outfit_b8b1d3c2-cf47-4a44-acc8-d8aa965ec8d8_0.jpg"));
-					disguises.Add(new Disguise("Blake Nathaniel", "outfit_d40fe7e8-ec8d-429b-a86b-7844c0e4d1c7_0.jpg"));
-					disguises.Add(new Disguise("Burial Robes", "outfit_ae340f4d-6282-48d0-8e0d-c3dcb414bb4f_0.jpg"));
-					disguises.Add(new Disguise("Butler", "outfit_e9a9b20d-93de-48b7-8840-73411bace252_0.jpg"));
-					disguises.Add(new Disguise("Castle Staff", "outfit_415c3c97-3c45-43a8-b930-40bece444a55_0.jpg"));
-					disguises.Add(new Disguise("Chef", "outfit_e4aeb186-bedd-41a1-b4c0-bb9c49bc7982_0.jpg"));
-					disguises.Add(new Disguise("Custodian", "outfit_04d72492-1b6b-4e6b-8372-5e65dc209cc4_0.jpg"));
-					disguises.Add(new Disguise("Elite Guard", "outfit_84c55eed-6891-40b3-9449-6881b53fabdd_0.jpg"));
-					disguises.Add(new Disguise("Entertainer", "outfit_f9a34b19-f9ff-44a9-b232-86b1b8fcdbb0_0.jpg"));
-					disguises.Add(new Disguise("Event Staff", "outfit_e3d61bbf-5b28-45cb-88bd-b386f5daa605_0.jpg"));
-					disguises.Add(new Disguise("Guard", "outfit_6565bf3a-aa59-44f5-9b89-ef645f99d4fa_0.jpg"));
-					disguises.Add(new Disguise("Initiate", "outfit_daf223e8-0b22-405f-a3b9-40d2b9992c2f_0.jpg"));
-					disguises.Add(new Disguise("Jebediah Block", "outfit_bef91840-e5aa-4a44-9f2e-30c732b1f7be_0.jpg"));
-					disguises.Add(new Disguise("Knight's Armor", "outfit_fae73e92-2307-4163-8e9f-30401ca884bf_0.jpg"));
-					disguises.Add(new Disguise("Master of Ceremonies", "outfit_9db0a810-7549-4932-b0ab-9d6241afdc2c_0.jpg"));
-					disguises.Add(new Disguise("Raider", "outfit_58f91772-a202-49e4-a558-159f762d78e3_0.jpg"));
+					disguises.Add(new("Suit", "outfit_1e48fda8-4795-4ad4-a05d-0b9ca5d23f78_0.jpg", true));
+					disguises.Add(new("Architect", "outfit_8d2b15f2-1d23-4b5e-b128-d2f47b53faf7_0.jpg"));
+					disguises.Add(new("Ark Member", "outfit_b8b1d3c2-cf47-4a44-acc8-d8aa965ec8d8_0.jpg"));
+					disguises.Add(new("Blake Nathaniel", "outfit_d40fe7e8-ec8d-429b-a86b-7844c0e4d1c7_0.jpg"));
+					disguises.Add(new("Burial Robes", "outfit_ae340f4d-6282-48d0-8e0d-c3dcb414bb4f_0.jpg"));
+					disguises.Add(new("Butler", "outfit_e9a9b20d-93de-48b7-8840-73411bace252_0.jpg"));
+					disguises.Add(new("Castle Staff", "outfit_415c3c97-3c45-43a8-b930-40bece444a55_0.jpg"));
+					disguises.Add(new("Chef", "outfit_e4aeb186-bedd-41a1-b4c0-bb9c49bc7982_0.jpg"));
+					disguises.Add(new("Custodian", "outfit_04d72492-1b6b-4e6b-8372-5e65dc209cc4_0.jpg"));
+					disguises.Add(new("Elite Guard", "outfit_84c55eed-6891-40b3-9449-6881b53fabdd_0.jpg"));
+					disguises.Add(new("Entertainer", "outfit_f9a34b19-f9ff-44a9-b232-86b1b8fcdbb0_0.jpg"));
+					disguises.Add(new("Event Staff", "outfit_e3d61bbf-5b28-45cb-88bd-b386f5daa605_0.jpg"));
+					disguises.Add(new("Guard", "outfit_6565bf3a-aa59-44f5-9b89-ef645f99d4fa_0.jpg"));
+					disguises.Add(new("Initiate", "outfit_daf223e8-0b22-405f-a3b9-40d2b9992c2f_0.jpg"));
+					disguises.Add(new("Jebediah Block", "outfit_bef91840-e5aa-4a44-9f2e-30c732b1f7be_0.jpg"));
+					disguises.Add(new("Knight's Armor", "outfit_fae73e92-2307-4163-8e9f-30401ca884bf_0.jpg"));
+					disguises.Add(new("Master of Ceremonies", "outfit_9db0a810-7549-4932-b0ab-9d6241afdc2c_0.jpg"));
+					disguises.Add(new("Raider", "outfit_58f91772-a202-49e4-a558-159f762d78e3_0.jpg"));
 					break;
 				case MissionID.NEWYORK_GOLDENHANDSHAKE:
-					disguises.Add(new Disguise("Suit", "outfit_84f2e067-70c3-4d79-aa90-53b46b727505_0.jpg", true));
-					disguises.Add(new Disguise("Bank Robber", "outfit_6b22a1db-861c-42fd-ae2d-a4a7bcda72ab_0.jpg"));
-					disguises.Add(new Disguise("Bank Teller", "outfit_d3c1c97f-84d8-4e68-8d72-e2ce7564aaba_0.jpg"));
-					disguises.Add(new Disguise("Fired Banker", "outfit_c105fd1e-a017-42e5-8a0c-2996363352eb_0.jpg"));
-					disguises.Add(new Disguise("High Security Guard", "outfit_513c0da0-1cb0-4029-85c9-ad9e9522818d_0.jpg"));
-					disguises.Add(new Disguise("Investment Banker", "outfit_e2f6fbfb-0237-477d-b93f-2374b02f0354_0.jpg"));
-					disguises.Add(new Disguise("IT Worker", "outfit_88156045-87c6-4aff-9f99-f2fd40e0ab19_0.jpg"));
-					disguises.Add(new Disguise("Janitor", "outfit_f4e27f1a-3e30-42fe-aa80-dc368590886b_0.jpg"));
-					disguises.Add(new Disguise("Job Applicant", "outfit_d7939c60-087c-461e-9798-c0069cfec299_0.jpg"));
-					disguises.Add(new Disguise("Security Guard", "outfit_ee38c686-f447-4a0d-bc5f-3822550db095_0.jpg"));
+					disguises.Add(new("Suit", "outfit_84f2e067-70c3-4d79-aa90-53b46b727505_0.jpg", true));
+					disguises.Add(new("Bank Robber", "outfit_6b22a1db-861c-42fd-ae2d-a4a7bcda72ab_0.jpg"));
+					disguises.Add(new("Bank Teller", "outfit_d3c1c97f-84d8-4e68-8d72-e2ce7564aaba_0.jpg"));
+					disguises.Add(new("Fired Banker", "outfit_c105fd1e-a017-42e5-8a0c-2996363352eb_0.jpg"));
+					disguises.Add(new("High Security Guard", "outfit_513c0da0-1cb0-4029-85c9-ad9e9522818d_0.jpg"));
+					disguises.Add(new("Investment Banker", "outfit_e2f6fbfb-0237-477d-b93f-2374b02f0354_0.jpg"));
+					disguises.Add(new("IT Worker", "outfit_88156045-87c6-4aff-9f99-f2fd40e0ab19_0.jpg"));
+					disguises.Add(new("Janitor", "outfit_f4e27f1a-3e30-42fe-aa80-dc368590886b_0.jpg"));
+					disguises.Add(new("Job Applicant", "outfit_d7939c60-087c-461e-9798-c0069cfec299_0.jpg"));
+					disguises.Add(new("Security Guard", "outfit_ee38c686-f447-4a0d-bc5f-3822550db095_0.jpg"));
 					break;
 				case MissionID.HAVEN_THELASTRESORT:
-					disguises.Add(new Disguise("Suit", "outfit_ea4230f3-03f7-46f1-a3f4-be2ff383b417_0.jpg", true));
-					disguises.Add(new Disguise("Boat Captain", "outfit_2817afb5-6dff-4496-bf56-4cd59b9abc9b_0.jpg"));
-					disguises.Add(new Disguise("Bodyguard", "outfit_95f2f02f-205b-422f-a315-875568f911da_0.jpg"));
-					disguises.Add(new Disguise("Butler", "haven-butler.png"));
-					disguises.Add(new Disguise("Chef", "outfit_cfc19dda-bff1-4bd1-9b0c-b1a799ee011f_0.jpg"));
-					disguises.Add(new Disguise("Doctor", "outfit_f108122d-5b31-487a-857b-d5f1badf2220_0.jpg"));
-					disguises.Add(new Disguise("Gas Suit", "outfit_cbcfe485-f706-46a1-a14a-316f6dedf398_0.jpg"));
-					disguises.Add(new Disguise("Life Guard", "outfit_53415cf7-8d62-45b9-943f-d1a50c7c6024_0.jpg"));
-					disguises.Add(new Disguise("Masseur", "outfit_dec42c4a-3ff0-451f-80b0-a01e68310286_0.jpg"));
-					disguises.Add(new Disguise("Personal Trainer", "outfit_49e70108-2c8d-4418-8e42-8f63d6ed43af_0.jpg"));
-					disguises.Add(new Disguise("Resort Guard", "outfit_d4c9507a-b297-46ce-8e9c-4ec479da22a4_0.jpg"));
-					disguises.Add(new Disguise("Resort Staff", "outfit_e9fa4892-fa2a-40a1-a51c-78d8561034f3_0.jpg"));
-					disguises.Add(new Disguise("Snorkel Instructor", "outfit_30164cfe-a26b-4a72-8bc2-5bc99c0283c1_0.jpg"));
-					disguises.Add(new Disguise("Tech Crew", "outfit_f6e37038-98c1-4e58-bd85-c895f5c19d56_0.jpg"));
-					disguises.Add(new Disguise("Villa Guard", "outfit_33e3a400-0bbc-4edd-b07f-056135329802_0.jpg"));
-					disguises.Add(new Disguise("Villa Staff", "outfit_cda86b1b-63a4-4e3a-975e-d716685335a7_0.jpg"));
-					disguises.Add(new Disguise("Waiter", "outfit_a260d9d6-a33c-499e-a6c5-698cfcc3de8f_0.jpg"));
+					disguises.Add(new("Suit", "outfit_ea4230f3-03f7-46f1-a3f4-be2ff383b417_0.jpg", true));
+					disguises.Add(new("Boat Captain", "outfit_2817afb5-6dff-4496-bf56-4cd59b9abc9b_0.jpg"));
+					disguises.Add(new("Bodyguard", "outfit_95f2f02f-205b-422f-a315-875568f911da_0.jpg"));
+					disguises.Add(new("Butler", "haven-butler.png"));
+					disguises.Add(new("Chef", "outfit_cfc19dda-bff1-4bd1-9b0c-b1a799ee011f_0.jpg"));
+					disguises.Add(new("Doctor", "outfit_f108122d-5b31-487a-857b-d5f1badf2220_0.jpg"));
+					disguises.Add(new("Gas Suit", "outfit_cbcfe485-f706-46a1-a14a-316f6dedf398_0.jpg"));
+					disguises.Add(new("Life Guard", "outfit_53415cf7-8d62-45b9-943f-d1a50c7c6024_0.jpg"));
+					disguises.Add(new("Masseur", "outfit_dec42c4a-3ff0-451f-80b0-a01e68310286_0.jpg"));
+					disguises.Add(new("Personal Trainer", "outfit_49e70108-2c8d-4418-8e42-8f63d6ed43af_0.jpg"));
+					disguises.Add(new("Resort Guard", "outfit_d4c9507a-b297-46ce-8e9c-4ec479da22a4_0.jpg"));
+					disguises.Add(new("Resort Staff", "outfit_e9fa4892-fa2a-40a1-a51c-78d8561034f3_0.jpg"));
+					disguises.Add(new("Snorkel Instructor", "outfit_30164cfe-a26b-4a72-8bc2-5bc99c0283c1_0.jpg"));
+					disguises.Add(new("Tech Crew", "outfit_f6e37038-98c1-4e58-bd85-c895f5c19d56_0.jpg"));
+					disguises.Add(new("Villa Guard", "outfit_33e3a400-0bbc-4edd-b07f-056135329802_0.jpg"));
+					disguises.Add(new("Villa Staff", "outfit_cda86b1b-63a4-4e3a-975e-d716685335a7_0.jpg"));
+					disguises.Add(new("Waiter", "outfit_a260d9d6-a33c-499e-a6c5-698cfcc3de8f_0.jpg"));
 					break;
 				case MissionID.DUBAI_ONTOPOFTHEWORLD:
-					disguises.Add(new Disguise("Suit", "outfit_07ab08e1-013e-439d-a98b-3b7e8c9f13bc_0.jpg", true));
-					disguises.Add(new Disguise("Art Crew", "outfit_2c649c52-f85a-4b29-838a-31c2525cc862_0.jpg"));
-					disguises.Add(new Disguise("Event Security", "outfit_eb12cc2b-6dcf-4831-ba4e-ef8e53180e2f_0.jpg"));
-					disguises.Add(new Disguise("Event Staff", "outfit_77fb4c80-0b81-4672-be65-12c16c3ac7ac_0.jpg"));
-					disguises.Add(new Disguise("Famous Chef", "outfit_6dcf16f6-6620-410f-b51c-179f75de938c_0.jpg"));
-					disguises.Add(new Disguise("Helicopter Pilot", "outfit_ea5b1cea-c305-4f60-9512-78b2e6cd5030_0.jpg"));
-					disguises.Add(new Disguise("Ingram's Bodyguard", "outfit_bdbd806d-eb11-4167-bd2d-f5f015c3fe86_0.jpg"));
-					disguises.Add(new Disguise("Kitchen Staff", "outfit_eb15e523-713f-41ba-ad67-d33b02de43c6_0.jpg"));
-					disguises.Add(new Disguise("Maintenance Staff", "outfit_e65f04b2-47a6-4d3d-b36c-9fb7fa08a00b_0.jpg"));
-					disguises.Add(new Disguise("Penthouse Guard", "outfit_f0a52fef-608a-4fa8-9fd6-bd5c15506188_0.jpg"));
-					disguises.Add(new Disguise("Penthouse Staff", "outfit_a745ca17-3a7e-4c15-8219-6a5d6245ac7f_0.jpg"));
-					disguises.Add(new Disguise("Skydiving Suit", "outfit_c4146f27-81a9-42ef-b3c7-87a9d60b87fe_0.jpg"));
-					disguises.Add(new Disguise("The Assassin", "outfit_ef9dddc5-25c7-450f-afcb-ac1b8f9569c9_0.jpg"));
+					disguises.Add(new("Suit", "outfit_07ab08e1-013e-439d-a98b-3b7e8c9f13bc_0.jpg", true));
+					disguises.Add(new("Art Crew", "outfit_2c649c52-f85a-4b29-838a-31c2525cc862_0.jpg"));
+					disguises.Add(new("Event Security", "outfit_eb12cc2b-6dcf-4831-ba4e-ef8e53180e2f_0.jpg"));
+					disguises.Add(new("Event Staff", "outfit_77fb4c80-0b81-4672-be65-12c16c3ac7ac_0.jpg"));
+					disguises.Add(new("Famous Chef", "outfit_6dcf16f6-6620-410f-b51c-179f75de938c_0.jpg"));
+					disguises.Add(new("Helicopter Pilot", "outfit_ea5b1cea-c305-4f60-9512-78b2e6cd5030_0.jpg"));
+					disguises.Add(new("Ingram's Bodyguard", "outfit_bdbd806d-eb11-4167-bd2d-f5f015c3fe86_0.jpg"));
+					disguises.Add(new("Kitchen Staff", "outfit_eb15e523-713f-41ba-ad67-d33b02de43c6_0.jpg"));
+					disguises.Add(new("Maintenance Staff", "outfit_e65f04b2-47a6-4d3d-b36c-9fb7fa08a00b_0.jpg"));
+					disguises.Add(new("Penthouse Guard", "outfit_f0a52fef-608a-4fa8-9fd6-bd5c15506188_0.jpg"));
+					disguises.Add(new("Penthouse Staff", "outfit_a745ca17-3a7e-4c15-8219-6a5d6245ac7f_0.jpg"));
+					disguises.Add(new("Skydiving Suit", "outfit_c4146f27-81a9-42ef-b3c7-87a9d60b87fe_0.jpg"));
+					disguises.Add(new("The Assassin", "outfit_ef9dddc5-25c7-450f-afcb-ac1b8f9569c9_0.jpg"));
 					break;
 				case MissionID.DARTMOOR_DEATHINTHEFAMILY:
-					disguises.Add(new Disguise("Suit", "outfit_a9de864e-ce00-4970-978a-4a9f8db73974_0.jpg", true));
-					disguises.Add(new Disguise("Bodyguard", "outfit_29389af2-4fe4-4f72-917a-d9747adc0f3d_0.jpg"));
-					disguises.Add(new Disguise("Gardener", "outfit_88246749-2118-2101-5575-991052571240_0.jpg"));
-					disguises.Add(new Disguise("Lawyer", "outfit_ffb2e3a8-728b-4a54-95cb-55eaf616b422_0.jpg"));
-					disguises.Add(new Disguise("Mansion Guard", "outfit_c3349736-91d1-48e3-bc62-fc16a7d8d6f1_0.jpg"));
-					disguises.Add(new Disguise("Mansion Staff", "outfit_4115e440-fdf8-44d2-a3ba-a1bb2285e542_0.jpg"));
-					disguises.Add(new Disguise("Photographer", "outfit_7062bd6b-4926-4ab3-932c-de7d63c095b7_0.jpg"));
-					disguises.Add(new Disguise("Private Investigator", "outfit_12f5bdb5-7e71-4f48-9740-13d0211f48c6_0.jpg"));
-					disguises.Add(new Disguise("Undertaker", "outfit_dc3c386d-52c2-4e17-855d-6c15e080ccf3_0.jpg"));
+					disguises.Add(new("Suit", "outfit_a9de864e-ce00-4970-978a-4a9f8db73974_0.jpg", true));
+					disguises.Add(new("Bodyguard", "outfit_29389af2-4fe4-4f72-917a-d9747adc0f3d_0.jpg"));
+					disguises.Add(new("Gardener", "outfit_88246749-2118-2101-5575-991052571240_0.jpg"));
+					disguises.Add(new("Lawyer", "outfit_ffb2e3a8-728b-4a54-95cb-55eaf616b422_0.jpg"));
+					disguises.Add(new("Mansion Guard", "outfit_c3349736-91d1-48e3-bc62-fc16a7d8d6f1_0.jpg"));
+					disguises.Add(new("Mansion Staff", "outfit_4115e440-fdf8-44d2-a3ba-a1bb2285e542_0.jpg"));
+					disguises.Add(new("Photographer", "outfit_7062bd6b-4926-4ab3-932c-de7d63c095b7_0.jpg"));
+					disguises.Add(new("Private Investigator", "outfit_12f5bdb5-7e71-4f48-9740-13d0211f48c6_0.jpg"));
+					disguises.Add(new("Undertaker", "outfit_dc3c386d-52c2-4e17-855d-6c15e080ccf3_0.jpg"));
 					break;
 				case MissionID.BERLIN_APEXPREDATOR:
-					disguises.Add(new Disguise("Suit", "outfit_19e3757f-01b5-4821-97c3-1a1045646531_0.jpg", true));
-					disguises.Add(new Disguise("Bartender", "outfit_816cf012-ab64-48a0-b4cc-ff7470874007_0.jpg"));
-					disguises.Add(new Disguise("Biker", "outfit_95918f14-fa9f-4315-be95-bf4b9efe6ee6_0.jpg"));
-					disguises.Add(new Disguise("Club Crew", "outfit_6e84215c-28b7-44b2-9d15-83e9be490965_0.jpg"));
-					disguises.Add(new Disguise("Club Security", "outfit_590629f7-19a3-4eb8-88a6-94e550cd1c07_0.jpg"));
-					disguises.Add(new Disguise("Dealer", "outfit_4c379903-4cf2-49cf-953f-db7b31d2987d_0.jpg"));
-					disguises.Add(new Disguise("Delivery Guy", "outfit_2e5bdc9b-822d-4f5f-bc16-bd99729ef4f5_0.jpg"));
-					disguises.Add(new Disguise("DJ", "outfit_ac636da9-fd3a-4019-816a-6333e0c4298e_0.jpg"));
-					disguises.Add(new Disguise("Florida Man", "outfit_0e931214-6ba9-4763-b7e1-32ca64dd864a_0.jpg"));
-					disguises.Add(new Disguise("Rolf Hirschmüller", "outfit_8e41db54-b097-4704-8a88-83043e6557f7_0.jpg"));
-					disguises.Add(new Disguise("Technician", "outfit_f724d6b9-a45b-425f-84f1-c27dedd1fd07_0.jpg"));
+					disguises.Add(new("Suit", "outfit_19e3757f-01b5-4821-97c3-1a1045646531_0.jpg", true));
+					disguises.Add(new("Bartender", "outfit_816cf012-ab64-48a0-b4cc-ff7470874007_0.jpg"));
+					disguises.Add(new("Biker", "outfit_95918f14-fa9f-4315-be95-bf4b9efe6ee6_0.jpg"));
+					disguises.Add(new("Club Crew", "outfit_6e84215c-28b7-44b2-9d15-83e9be490965_0.jpg"));
+					disguises.Add(new("Club Security", "outfit_590629f7-19a3-4eb8-88a6-94e550cd1c07_0.jpg"));
+					disguises.Add(new("Dealer", "outfit_4c379903-4cf2-49cf-953f-db7b31d2987d_0.jpg"));
+					disguises.Add(new("Delivery Guy", "outfit_2e5bdc9b-822d-4f5f-bc16-bd99729ef4f5_0.jpg"));
+					disguises.Add(new("DJ", "outfit_ac636da9-fd3a-4019-816a-6333e0c4298e_0.jpg"));
+					disguises.Add(new("Florida Man", "outfit_0e931214-6ba9-4763-b7e1-32ca64dd864a_0.jpg"));
+					disguises.Add(new("Rolf Hirschmüller", "outfit_8e41db54-b097-4704-8a88-83043e6557f7_0.jpg"));
+					disguises.Add(new("Technician", "outfit_f724d6b9-a45b-425f-84f1-c27dedd1fd07_0.jpg"));
 					break;
 				case MissionID.CHONGQING_ENDOFANERA:
-					disguises.Add(new Disguise("Suit", "outfit_90ad022f-0789-413f-bf3d-603c1237c9b1_0.jpg", true));
-					disguises.Add(new Disguise("Block Guard", "outfit_4dd90d10-ac5f-404f-9c20-4428653ca7ba_0.jpg"));
-					disguises.Add(new Disguise("Dumpling Cook", "outfit_c5f6dd2a-3600-40be-9a82-bbf5d360c379_0.jpg"));
-					disguises.Add(new Disguise("Facility Analyst", "outfit_9c07a86c-2d03-417b-b46f-cb433481080e_0.jpg"));
-					disguises.Add(new Disguise("Facility Engineer", "outfit_8fc343f2-6e9a-4e06-9342-705e5b171895_0.jpg"));
-					disguises.Add(new Disguise("Facility Guard", "outfit_f5c73d58-a24f-4957-b80d-5efb6771ad9b_0.jpg"));
-					disguises.Add(new Disguise("Facility Security", "outfit_b3515a1e-4a32-475c-bd61-4fdae243a7e5_0.jpg"));
-					disguises.Add(new Disguise("Homeless Person", "outfit_ba4e595e-da3b-4902-8622-40889fc088db_0.jpg"));
-					disguises.Add(new Disguise("Perfect Test Subject", "outfit_9cd5fbd7-903c-4ab7-afe8-01eb755ce9da_0.jpg"));
-					disguises.Add(new Disguise("Researcher", "outfit_553bb399-2ee0-41bb-a76b-b7ec6d49f5a3_0.jpg"));
-					disguises.Add(new Disguise("Street Guard", "outfit_86bdb741-6810-4610-8e21-799c93c71849_0.jpg"));
-					disguises.Add(new Disguise("The Board Member", "outfit_fd1d39d8-db06-47b3-8f4b-eb1febf5ccb7_0.jpg"));
+					disguises.Add(new("Suit", "outfit_90ad022f-0789-413f-bf3d-603c1237c9b1_0.jpg", true));
+					disguises.Add(new("Block Guard", "outfit_4dd90d10-ac5f-404f-9c20-4428653ca7ba_0.jpg"));
+					disguises.Add(new("Dumpling Cook", "outfit_c5f6dd2a-3600-40be-9a82-bbf5d360c379_0.jpg"));
+					disguises.Add(new("Facility Analyst", "outfit_9c07a86c-2d03-417b-b46f-cb433481080e_0.jpg"));
+					disguises.Add(new("Facility Engineer", "outfit_8fc343f2-6e9a-4e06-9342-705e5b171895_0.jpg"));
+					disguises.Add(new("Facility Guard", "outfit_f5c73d58-a24f-4957-b80d-5efb6771ad9b_0.jpg"));
+					disguises.Add(new("Facility Security", "outfit_b3515a1e-4a32-475c-bd61-4fdae243a7e5_0.jpg"));
+					disguises.Add(new("Homeless Person", "outfit_ba4e595e-da3b-4902-8622-40889fc088db_0.jpg"));
+					disguises.Add(new("Perfect Test Subject", "outfit_9cd5fbd7-903c-4ab7-afe8-01eb755ce9da_0.jpg"));
+					disguises.Add(new("Researcher", "outfit_553bb399-2ee0-41bb-a76b-b7ec6d49f5a3_0.jpg"));
+					disguises.Add(new("Street Guard", "outfit_86bdb741-6810-4610-8e21-799c93c71849_0.jpg"));
+					disguises.Add(new("The Board Member", "outfit_fd1d39d8-db06-47b3-8f4b-eb1febf5ccb7_0.jpg"));
 					break;
 				case MissionID.MENDOZA_THEFAREWELL:
-					disguises.Add(new Disguise("Suit", "outfit_6c129ec5-41cb-43f1-837d-ebff54f260c6_0.jpg", true));
-					disguises.Add(new Disguise("Asado Chef", "outfit_8d105591-dfbe-46aa-8520-f00f986b57e2_0.jpg"));
-					disguises.Add(new Disguise("Bodyguard", "outfit_aa7dc754-702a-401b-8f84-e806e958869c_0.jpg"));
-					disguises.Add(new Disguise("Chief Winemaker", "outfit_af56d687-ba1b-44c8-8061-fd4a4a1222a3_0.jpg"));
-					disguises.Add(new Disguise("Corvo Black", "outfit_214b2143-3277-44cd-b20f-344747fc23d9_0.jpg"));
-					disguises.Add(new Disguise("Gaucho", "outfit_e887e53a-6b02-455d-88be-284af6d88e94_0.jpg"));
-					disguises.Add(new Disguise("Head of Security", "outfit_16df6808-97ac-4c3a-8d4b-7ddacfc8a7ea_0.jpg"));
-					disguises.Add(new Disguise("Lawyer", "outfit_521ed265-2115-4977-8db0-45404b067102_0.jpg"));
-					disguises.Add(new Disguise("Mercenary", "outfit_69d4d32b-0fc9-4fde-8817-fafd98c13365_0.jpg"));
-					disguises.Add(new Disguise("Providence Herald", "outfit_f5b24132-7a6b-4a3f-868d-193b8692a52b_0.jpg"));
-					disguises.Add(new Disguise("Sommelier", "outfit_7fed7c24-08b2-468b-8e49-22b5ad59b56b_0.jpg"));
-					disguises.Add(new Disguise("Tango Musician", "outfit_6ab03e04-9e88-4237-a596-96e3135420ab_0.jpg"));
-					disguises.Add(new Disguise("Waiter", "outfit_cac0081e-9eb0-4fbf-ba23-70c2815f0874_0.jpg"));
-					disguises.Add(new Disguise("Winery Worker", "outfit_bbdfca80-abef-4b43-953e-9a46c3eee2eb_0.jpg"));
+					disguises.Add(new("Suit", "outfit_6c129ec5-41cb-43f1-837d-ebff54f260c6_0.jpg", true));
+					disguises.Add(new("Asado Chef", "outfit_8d105591-dfbe-46aa-8520-f00f986b57e2_0.jpg"));
+					disguises.Add(new("Bodyguard", "outfit_aa7dc754-702a-401b-8f84-e806e958869c_0.jpg"));
+					disguises.Add(new("Chief Winemaker", "outfit_af56d687-ba1b-44c8-8061-fd4a4a1222a3_0.jpg"));
+					disguises.Add(new("Corvo Black", "outfit_214b2143-3277-44cd-b20f-344747fc23d9_0.jpg"));
+					disguises.Add(new("Gaucho", "outfit_e887e53a-6b02-455d-88be-284af6d88e94_0.jpg"));
+					disguises.Add(new("Head of Security", "outfit_16df6808-97ac-4c3a-8d4b-7ddacfc8a7ea_0.jpg"));
+					disguises.Add(new("Lawyer", "outfit_521ed265-2115-4977-8db0-45404b067102_0.jpg"));
+					disguises.Add(new("Mercenary", "outfit_69d4d32b-0fc9-4fde-8817-fafd98c13365_0.jpg"));
+					disguises.Add(new("Providence Herald", "outfit_f5b24132-7a6b-4a3f-868d-193b8692a52b_0.jpg"));
+					disguises.Add(new("Sommelier", "outfit_7fed7c24-08b2-468b-8e49-22b5ad59b56b_0.jpg"));
+					disguises.Add(new("Tango Musician", "outfit_6ab03e04-9e88-4237-a596-96e3135420ab_0.jpg"));
+					disguises.Add(new("Waiter", "outfit_cac0081e-9eb0-4fbf-ba23-70c2815f0874_0.jpg"));
+					disguises.Add(new("Winery Worker", "outfit_bbdfca80-abef-4b43-953e-9a46c3eee2eb_0.jpg"));
 					break;
 				case MissionID.CARPATHIAN_UNTOUCHABLE:
-					disguises.Add(new Disguise("Suit", "outfit_e1d1ffa6-deca-445a-8e8c-db74b0856cee_0.jpg", true));
-					disguises.Add(new Disguise("Office Staff", "outfit_81fc37ca-e20b-495f-961f-d5be311a6e6d_0.jpg"));
-					disguises.Add(new Disguise("Providence Commando", "outfit_e77b5340-41d3-448a-84d3-a4f7f6426634_0.jpg"));
-					disguises.Add(new Disguise("Providence Commando Leader", "outfit_36402728-1197-4a3c-a8ac-1fed399a2344_0.jpg"));
-					disguises.Add(new Disguise("Providence Doctor", "outfit_abe4b536-1f09-421e-916b-20af142c6adb_0.jpg"));
-					disguises.Add(new Disguise("Providence Elite Guard", "outfit_68225457-66b3-457c-a6ec-065b001f5151_0.jpg"));
-					disguises.Add(new Disguise("Providence Security Guard (Militia Zone)", "outfit_c3239200-0f56-4b45-9be5-e514bdf59d26_0.jpg"));
-					disguises.Add(new Disguise("Providence Security Guard (Office)", "outfit_653ad7d6-7d5d-4554-9551-7573be7205be_0.jpg"));
+					disguises.Add(new("Suit", "outfit_e1d1ffa6-deca-445a-8e8c-db74b0856cee_0.jpg", true));
+					disguises.Add(new("Office Staff", "outfit_81fc37ca-e20b-495f-961f-d5be311a6e6d_0.jpg"));
+					disguises.Add(new("Providence Commando", "outfit_e77b5340-41d3-448a-84d3-a4f7f6426634_0.jpg"));
+					disguises.Add(new("Providence Commando Leader", "outfit_36402728-1197-4a3c-a8ac-1fed399a2344_0.jpg"));
+					disguises.Add(new("Providence Doctor", "outfit_abe4b536-1f09-421e-916b-20af142c6adb_0.jpg"));
+					disguises.Add(new("Providence Elite Guard", "outfit_68225457-66b3-457c-a6ec-065b001f5151_0.jpg"));
+					disguises.Add(new("Providence Security Guard (Militia Zone)", "outfit_c3239200-0f56-4b45-9be5-e514bdf59d26_0.jpg"));
+					disguises.Add(new("Providence Security Guard (Office)", "outfit_653ad7d6-7d5d-4554-9551-7573be7205be_0.jpg"));
 					break;
 				case MissionID.AMBROSE_SHADOWSINTHEWATER:
-					disguises.Add(new Disguise("Suit", "outfit_8b74c103-ec0d-4e4e-8664-d06dfe869e8f_0.jpg", true));
-					disguises.Add(new Disguise("Cook", "outfit_d9d95b38-3708-4220-9838-597c078a1081_0.jpg"));
-					disguises.Add(new Disguise("Engineer", "outfit_c3af265c-7648-4ddb-a02b-ab605a053886_0.jpg"));
-					disguises.Add(new Disguise("Hippie", "outfit_9f95337d-0316-4cfc-9881-13080e2bc365_0.jpg"));
-					disguises.Add(new Disguise("Metal Worker", "outfit_f011f287-ea39-42a4-be1d-17ba5b783611_0.jpg"));
-					disguises.Add(new Disguise("Militia Soldier", "outfit_afdb3b2b-7e5d-4c9a-be6e-4ebc41879e02_0.jpg"));
-					disguises.Add(new Disguise("Pirate", "outfit_1cec2601-c1ed-474f-ac70-ff8614799fcc_0.jpg"));
+					disguises.Add(new("Suit", "outfit_8b74c103-ec0d-4e4e-8664-d06dfe869e8f_0.jpg", true));
+					disguises.Add(new("Cook", "outfit_d9d95b38-3708-4220-9838-597c078a1081_0.jpg"));
+					disguises.Add(new("Engineer", "outfit_c3af265c-7648-4ddb-a02b-ab605a053886_0.jpg"));
+					disguises.Add(new("Hippie", "outfit_9f95337d-0316-4cfc-9881-13080e2bc365_0.jpg"));
+					disguises.Add(new("Metal Worker", "outfit_f011f287-ea39-42a4-be1d-17ba5b783611_0.jpg"));
+					disguises.Add(new("Militia Soldier", "outfit_afdb3b2b-7e5d-4c9a-be6e-4ebc41879e02_0.jpg"));
+					disguises.Add(new("Pirate", "outfit_1cec2601-c1ed-474f-ac70-ff8614799fcc_0.jpg"));
 					break;
 			}
 			return disguises;
+		}
+		public static Disguise GetDisguiseByName(MissionID mission, string name)
+		{
+			var disguises = GetDisguises(mission);
+			return disguises.Find(d => d.Name == name);
 		}
 
 		public static Dictionary<string, Disguise> GetDisguiseDictionary(MissionID mission)
@@ -1414,7 +1419,7 @@ namespace Croupier.UI
 				MissionID.MUMBAI_ILLUSIONSOFGRANDEUR => [Target.Targets["BC"]],
 				MissionID.WHITTLETON_ANOTHERLIFE => [Target.Targets["J"], Target.Targets["NC"]],
 				MissionID.WHITTLETON_ABITTERPILL => [Target.Targets["GV"]],
-				MissionID.ISLEOFSGAIL_THEARKSOCIETY => [Target.Targets["SW"], Target.Targets["ZW"]],
+				MissionID.ISLEOFSGAIL_THEARKSOCIETY => [Target.Targets["ZW"], Target.Targets["SW"]],
 				MissionID.NEWYORK_GOLDENHANDSHAKE => [Target.Targets["AS"]],
 				MissionID.HAVEN_THELASTRESORT => [Target.Targets["TW"], Target.Targets["SB"], Target.Targets["LV"]],
 				MissionID.DUBAI_ONTOPOFTHEWORLD => [Target.Targets["CI"], Target.Targets["MS"]],

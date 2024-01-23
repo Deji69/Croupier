@@ -1,28 +1,14 @@
-﻿using Croupier.UI.Properties;
+﻿using Croupier.Properties;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Xml.Linq;
-using RestoreWindowPlace;
-using System.Reflection;
-using System.Data.Common;
-using static System.Formats.Asn1.AsnWriter;
 
-namespace Croupier.UI
+namespace Croupier
 {
 	public class MissionComboBoxItem
 	{
@@ -246,15 +232,14 @@ namespace Croupier.UI
 		public double SpinGridWidth {
 			get {
 				if (!StaticSize) return double.NaN;
-				var w = (VerticalDisplay ? 300.0 : 150.0) * (Width / 300);
-				return w;
+				return (VerticalDisplay ? Width : Width / 2) - 6;
 			}
 		}
 		public double SpinGridHeight {
 			get {
 				if (!StaticSize)
 					return double.NaN;
-				return SpinGridWidth * 0.36;
+				return SpinGridWidth * 0.32;
 			}
 		}
 
@@ -374,7 +359,8 @@ namespace Croupier.UI
 				disableClientUpdate = false;
 			};
 			CroupierSocketServer.SpinData += (object sender, string data) => {
-				if (UI.Spin.Parse(data, out var spin)) {
+				//if (Croupier.Spin.Parse(data, out var spin)) {
+				if (SpinParser.Parse(data, out var spin)) {
 					disableClientUpdate = true;
 					SetSpin(spin);
 					UpdateSpinHistory();
@@ -482,7 +468,7 @@ namespace Croupier.UI
 		{
 			base.OnApplyTemplate();
 
-			ThemeManager.SetCurrentTheme(this, new Uri("/Croupier.UI;component/Resources/DarkTheme.xaml", UriKind.Relative));
+			ThemeManager.SetCurrentTheme(this, new Uri("/Croupier;component/Resources/DarkTheme.xaml", UriKind.Relative));
 
 			MissionSelect.ItemsSource = MissionListItems;
 			ContextMenuHistory.ItemsSource = HistoryEntries;
@@ -493,7 +479,8 @@ namespace Croupier.UI
 				Settings.Default.SpinHistory.CopyTo(history, 0);
 
 				foreach (var item in history.Reverse()) {
-					if (UI.Spin.Parse(item, out var spin)) PushSpinToHistory(spin);
+					//if (Croupier.Spin.Parse(item, out var spin)) PushSpinToHistory(spin);
+					if (SpinParser.Parse(item, out var spin)) PushSpinToHistory(spin);
 				}
 			}
 
@@ -762,8 +749,8 @@ namespace Croupier.UI
 		private void RefitWindow(bool keepSize = false) {
 			if (StaticSize) {
 				SizeToContent = SizeToContent.Manual;
-				MinHeight = SpinGridHeight * GetNumRows() + 40;
-				MaxHeight = SpinGridHeight * GetNumRows() + 40;
+				MinHeight = SpinGridHeight * GetNumRows() + 53;
+				MaxHeight = SpinGridHeight * GetNumRows() + 53;
 				double v = (Width / 50) * 1.1;
 				SpinFontSize = Math.Max(11.5, v);
 				OnPropertyChanged(nameof(SpinGridWidth));
@@ -771,7 +758,7 @@ namespace Croupier.UI
 				return;
 			}
 
-			var numColumns = GetNumColumns();
+			var numColumns = StaticSize ? 2 : GetNumColumns();
 
 			var width = Math.Max(numColumns switch {
 				1 => Settings.Default.Width1Column,
@@ -837,7 +824,8 @@ namespace Croupier.UI
 		private void PasteSpinCommand_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
 			var text = Clipboard.GetText();
-			if (UI.Spin.Parse(text, out var spin)) {
+			//if (Croupier.Spin.Parse(text, out var spin)) {
+			if (SpinParser.Parse(text, out var spin)) {
 				SetSpin(spin);
 				spinHistoryIndex = 1;
 				PushCurrentSpinToHistory();
@@ -929,7 +917,8 @@ namespace Croupier.UI
 
 		private void PasteSpinCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.CanExecute = UI.Spin.Parse(Clipboard.GetText(), out _);
+			//e.CanExecute = Croupier.Spin.Parse(Clipboard.GetText(), out _);
+			e.CanExecute = SpinParser.Parse(Clipboard.GetText(), out _);
 		}
 
 		private void Command_AlwaysCanExecute(object sender, CanExecuteRoutedEventArgs e)

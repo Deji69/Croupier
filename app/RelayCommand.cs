@@ -2,7 +2,7 @@
 using System.Windows.Input;
 using System;
 
-namespace Croupier.UI {
+namespace Croupier {
 	/// <summary>
 	/// A command whose sole purpose is to 
 	/// relay its functionality to other

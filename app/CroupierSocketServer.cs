@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Croupier.UI
+namespace Croupier
 {
 	public class ClientMessage(string data)
 	{

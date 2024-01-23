@@ -1,8 +1,8 @@
-﻿<Application x:Class="Croupier.UI.App"
+﻿<Application x:Class="Croupier.App"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:local="clr-namespace:Croupier.UI"
-			 xmlns:properties="clr-namespace:Croupier.UI.Properties"
+			 xmlns:local="clr-namespace:Croupier"
+			 xmlns:properties="clr-namespace:Croupier.Properties"
 			 DispatcherUnhandledException="Application_DispatcherUnhandledException"
 			 StartupUri="MainWindow.xaml">
 	<Application.Resources>

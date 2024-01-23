@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Croupier.UI
+namespace Croupier
 {
 	public class Disguise(string name, string image, bool suit = false) {
 		public string Name { get; set; } = name;

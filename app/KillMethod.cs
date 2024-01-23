@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Croupier.UI {
+namespace Croupier {
 	public enum KillMethodType {
 		Standard,
 		Firearm,
@@ -162,7 +162,7 @@ namespace Croupier.UI {
 		public string DisplayText {
 			get {
 				string prefix = "";
-				if (Complication != null)
+				if (Complication != null && Complication != KillComplication.None)
 					prefix = GetComplicationName((KillComplication)Complication) + " ";
 				if (KillType != KillType.Any)
 					prefix += GetKillTypeName(KillType) + " ";

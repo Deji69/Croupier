@@ -1,4 +1,4 @@
-﻿using Croupier.UI.Properties;
+﻿using Croupier.Properties;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,7 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace Croupier.UI
+namespace Croupier
 {
 	/// <summary>
 	/// Interaction logic for EditRulesetWindow.xaml

@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace Croupier.UI
+namespace Croupier
 {
 	public abstract class ViewModel : INotifyPropertyChanged
 	{

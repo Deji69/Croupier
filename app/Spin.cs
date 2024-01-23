@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Croupier.UI
+namespace Croupier
 {
 	public class SpinParseContext {
 		public MissionID Mission { get; set; } = MissionID.NONE;

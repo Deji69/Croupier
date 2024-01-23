@@ -1,5 +1,5 @@
-﻿using Croupier.UI;
-using Croupier.UI.Properties;
+﻿using Croupier;
+using Croupier.Properties;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -17,7 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace Croupier.UI
+namespace Croupier
 {
 	public enum MissionPoolPresetID {
 		Custom,

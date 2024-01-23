@@ -1,4 +1,4 @@
-﻿using Croupier.UI.Properties;
+﻿using Croupier.Properties;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -19,7 +19,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Path = System.IO.Path;
 
-namespace Croupier.UI
+namespace Croupier
 {
 	public class MethodComboBoxItem(string name = "", bool isSeparator = false) {
 		public KillType? KillType { get; set; } = null;

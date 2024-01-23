@@ -55,7 +55,6 @@ struct ParseConditionContext {
 	eKillMethod killMethod = eKillMethod::NONE;
 	eMapKillMethod mapMethod = eMapKillMethod::NONE;
 	eKillType killType = eKillType::Any;
-	std::vector<std::string_view> unknownTokens;
 	eKillComplication complication = eKillComplication::None;
 
 	ParseConditionContext(std::vector<std::string>& tokens) : tokens(tokens) {};
@@ -77,15 +76,13 @@ public:
 			if (it == end(contexts)) return nullptr;
 
 			auto& context = *it;
-			auto target = mission->getTargetByName(context.target);
-			if (!target) return nullptr;
 			auto disguise = mission->getDisguiseByName(context.disguise);
 			if (!disguise) disguise = mission->getSuitDisguise();
 			if (!disguise) return nullptr;
 			auto killMethod = context.killMethod;
 			if (killMethod == eKillMethod::NONE && context.mapMethod == eMapKillMethod::NONE)
 				killMethod = eKillMethod::NeckSnap;
-			spin.add(RouletteSpinCondition{*target, *disguise, KillMethod{killMethod}, MapKillMethod{context.mapMethod}, context.killType, context.complication});
+			spin.add(RouletteSpinCondition{target, *disguise, KillMethod{killMethod}, MapKillMethod{context.mapMethod}, context.killType, context.complication});
 		}
 
 		return spin;
@@ -117,16 +114,12 @@ public:
 	}
 
 	static auto parseCondition(std::string_view processed, ParseConditionContext& context) -> bool {
-		std::string token;
-		std::string prevToken;
-
 		auto parseTargetToken = [&context](const std::string& token){
 			auto it = ::targetKeywords.find(token);
 			if (it != end(::targetKeywords)) {
 				if (context.target.empty()) {
 					context.target = Keyword::targetKeyToName(it->second);
-					if (!it->second.empty())
-						context.mission = getMissionForTarget(context.target);
+					context.mission = getMissionForTarget(context.target);
 				}
 				return true;
 			}
@@ -158,12 +151,10 @@ public:
 
 				if (context.mission == eMission::NONE) return false;
 
-				auto it = find_if(begin(::disguiseKeywords), end(::disguiseKeywords), [&context](const DisguiseKeywords& v) {
-					return v.missions.contains(context.mission);
-				});
-				if (it != end(::disguiseKeywords)) {
-					auto kwd = it->keywords.find(token);
-					if (kwd != end(it->keywords)) {
+				for (auto& dkws : disguiseKeywords) {
+					if (!dkws.keywords.empty() && !dkws.missions.contains(context.mission)) continue;
+					auto kwd = dkws.keywords.find(token);
+					if (kwd != end(dkws.keywords)) {
 						context.disguise = kwd->second;
 						return true;
 					}
@@ -174,7 +165,8 @@ public:
 		};
 
 		if (context.tokens.empty() && context.conditions == 0) {
-			auto hadSpace = false;
+			auto token = std::string{};
+
 			for (auto c : processed) {
 				if (!isspace(c)) {
 					if (isalnum(c)) token += c;
@@ -184,20 +176,27 @@ public:
 				if (token.empty()) continue;
 
 				auto it = ::keywordKeywords.find(token);
+
 				if (it != end(::keywordKeywords))
 					context.tokens.push_back(it->second);
 				else
 					context.tokens.push_back(move(token));
+
 				token = "";
 			}
+
+			if (!token.empty())
+				context.tokens.push_back(move(token));
 		}
 
 		size_t i = context.nextIndex;
 
 		if (context.mission == eMission::NONE) {
+			auto token = std::string{};
+
 			while (i < context.tokens.size()) {
 				auto tokensLeft = context.tokens.size() - i;
-				token = "";
+				
 				switch (tokensLeft) {
 				default:
 				case 3:

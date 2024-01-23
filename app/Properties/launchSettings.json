@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Croupier": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\Deji\\Downloads\\Portable\\Croupier-UI"
+    }
+  }
+}
