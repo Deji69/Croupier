@@ -1494,7 +1494,6 @@ namespace Croupier {
 			{"electric", "Electrocution"},
 			{"zap", "Electrocution"},
 			{"explosion", "Explosion"},
-			{"explosive", "Explosion"},
 			{"stemcells", "Poison Stem Cells"},
 			{"poisonstemcells", "Poison Stem Cells"},
 			{"poison", "Poison Stem Cells"},
@@ -1627,8 +1626,8 @@ namespace Croupier {
 
 			bool parseToken(string token) {
 				var alreadyHaveTarget = context.HaveTarget;
-				if (parseTargetToken(token))
-					return !alreadyHaveTarget;
+				if (!alreadyHaveTarget && parseTargetToken(token))
+					return true;
 
 				if (ComplicationKeywords.TryGetValue(token, out var complication)) {
 					context.killComplication = complication;
