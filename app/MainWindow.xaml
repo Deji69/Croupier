@@ -99,6 +99,7 @@
 				HorizontalAlignment="{Binding DataContext.SpinAlignHorz, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=UniformGrid}}"
 				VerticalAlignment="Top"
 				KeyboardNavigation.IsTabStop="False"
+				FlowDirection="{Binding DataContext.RightToLeftFlowDir, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=UniformGrid}}"
 			>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width=".9*" />
@@ -131,8 +132,10 @@
 						Grid.Column="1"
 						Text="{Binding MethodName}"
 						TextWrapping="Wrap"
+						FlowDirection="LeftToRight"
 						VerticalAlignment="Stretch"
 						HorizontalAlignment="Stretch"
+						TextAlignment="{Binding DataContext.SpinTextAlignment, RelativeSource={RelativeSource AncestorType=UniformGrid}}"
 						Foreground="White"
 						Padding="5,0"
 						FontSize="{Binding DataContext.SpinFontSize, RelativeSource={RelativeSource AncestorType=UniformGrid}}">
@@ -149,12 +152,13 @@
 						Grid.Row="1"
 						Text="{Binding DisguiseName}"
 						TextWrapping="Wrap"
+						FlowDirection="LeftToRight"
 						VerticalAlignment="Stretch"
 						HorizontalAlignment="Stretch"
+						TextAlignment="{Binding DataContext.SpinTextAlignment, RelativeSource={RelativeSource AncestorType=UniformGrid}}"
 						Foreground="White"
 						Padding="5,0"
 						FontSize="{Binding DataContext.SpinFontSize, RelativeSource={RelativeSource AncestorType=UniformGrid}}">
-						<Run FontSize=".01">i</Run>
 					</TextBlock>
 				</Grid>
 			</Grid>
@@ -291,7 +295,7 @@
 			Background="{DynamicResource BackgroundBrush}"
 			HorizontalAlignment="{Binding ContentGridAlign, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"
 			VerticalAlignment="Top"
-			FlowDirection="{Binding RightToLeftFlowDir, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"
+			FlowDirection="{Binding ContentGridFlowDir, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"
 			/>
 		<DockPanel.ContextMenu>
 			<ContextMenu Name="MainContextMenu" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">

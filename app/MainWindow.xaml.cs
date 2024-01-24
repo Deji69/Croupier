@@ -204,6 +204,8 @@ namespace Croupier
 				}
 				OnPropertyChanged(nameof(RightToLeft));
 				OnPropertyChanged(nameof(RightToLeftFlowDir));
+				OnPropertyChanged(nameof(ContentGridFlowDir));
+				OnPropertyChanged(nameof(SpinTextAlignment));
 			}
 		}
 		public bool StaticSize {
@@ -220,6 +222,8 @@ namespace Croupier
 				OnPropertyChanged(nameof(SpinAlignHorz));
 				OnPropertyChanged(nameof(SpinGridWidth));
 				OnPropertyChanged(nameof(SpinGridHeight));
+				OnPropertyChanged(nameof(ContentGridFlowDir));
+				OnPropertyChanged(nameof(RightToLeftFlowDir));
 			}
 		}
 		public bool StaticSizeLHS {
@@ -236,6 +240,8 @@ namespace Croupier
 				OnPropertyChanged(nameof(SpinAlignHorz));
 				OnPropertyChanged(nameof(SpinGridWidth));
 				OnPropertyChanged(nameof(SpinGridHeight));
+				OnPropertyChanged(nameof(ContentGridFlowDir));
+				OnPropertyChanged(nameof(RightToLeftFlowDir));
 			}
 		}
 		public bool ShowSpinLabels {
@@ -252,6 +258,8 @@ namespace Croupier
 		}
 		public FlowDirection RightToLeftFlowDir {
 			get {
+				if (ContentGridFlowDir == FlowDirection.RightToLeft)
+					return RightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
 				return RightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
 			}
 		}
@@ -260,6 +268,18 @@ namespace Croupier
 				if (!StaticSize)
 					return HorizontalAlignment.Stretch;
 				return StaticSizeLHS ? HorizontalAlignment.Left : HorizontalAlignment.Right;
+			}
+		}
+		public TextAlignment SpinTextAlignment {
+			get {
+				return RightToLeft ? TextAlignment.Right : TextAlignment.Left;
+			}
+		}
+		public FlowDirection ContentGridFlowDir {
+			get {
+				if (!StaticSize)
+					return FlowDirection.LeftToRight;
+				return StaticSizeLHS ? FlowDirection.LeftToRight : FlowDirection.RightToLeft;
 			}
 		}
 		public HorizontalAlignment SpinAlignHorz {
@@ -283,6 +303,11 @@ namespace Croupier
 		}
 
 		public ObservableCollection<SpinHistoryEntry> HistoryEntries = [];
+		public ObservableCollection<TargetNameFormatEntry> TargetNameFormatEntries = [
+			new(TargetNameFormat.Initials, "Initials"),
+			new(TargetNameFormat.Full, "Full Name"),
+			new(TargetNameFormat.Short, "Short Name"),
+		];
 
 		private readonly List<SpinCondition> conditions = [];
 		private readonly List<Mission> missions = [
