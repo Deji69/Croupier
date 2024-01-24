@@ -1625,10 +1625,6 @@ namespace Croupier {
 			}
 
 			bool parseToken(string token) {
-				var alreadyHaveTarget = context.HaveTarget;
-				if (!alreadyHaveTarget && parseTargetToken(token))
-					return true;
-
 				if (ComplicationKeywords.TryGetValue(token, out var complication)) {
 					context.killComplication = complication;
 					return true;
@@ -1667,6 +1663,10 @@ namespace Croupier {
 						}
 					}
 				}
+
+				var alreadyHaveTarget = context.HaveTarget;
+				if (!alreadyHaveTarget && parseTargetToken(token))
+					return true;
 
 				if (context.mission == MissionID.NONE)
 					return false;
