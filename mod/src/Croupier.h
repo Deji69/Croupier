@@ -45,6 +45,7 @@ struct SharedRouletteSpin {
 
 	auto playerSelectMission() {
 		this->isPlaying = false;
+		this->isFinished = false;
 	}
 
 	auto playerStart() {

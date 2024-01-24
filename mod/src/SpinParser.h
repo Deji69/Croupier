@@ -7,6 +7,14 @@
 #include <vector>
 #include "Roulette.h"
 
+namespace {
+	struct KeywordInitialiser {
+		static const KeywordInitialiser inst;
+
+		KeywordInitialiser();
+	};
+}
+
 struct DisguiseKeywords {
 	std::unordered_set<eMission> missions;
 	std::unordered_map<std::string, std::string> keywords;
@@ -22,12 +30,12 @@ struct MethodKeywords {
 	{ }
 };
 
-extern std::unordered_map<std::string, eKillComplication> complicationKeywords;
-extern std::unordered_map<std::string, eKillType> killTypeKeywords;
 extern std::unordered_map<std::string, std::string> targetKeywords;
-extern std::unordered_map<std::string, std::string> keywordKeywords;
-extern std::unordered_map<std::string, std::string> methodKeywords;
-extern std::vector<DisguiseKeywords> disguiseKeywords;
+extern const std::unordered_map<std::string, eKillComplication> complicationKeywords;
+extern const std::unordered_map<std::string, eKillType> killTypeKeywords;
+extern const std::unordered_map<std::string, std::string> keywordKeywords;
+extern const std::unordered_map<std::string, std::string> methodKeywords;
+extern const std::vector<DisguiseKeywords> disguiseKeywords;
 inline std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
 
 inline std::string processInput(std::string_view input) {
@@ -67,7 +75,7 @@ public:
 		if (contexts.empty()) return nullptr;
 		auto mission = Missions::get(contexts.front().mission);
 
-		RouletteSpin spin;
+		RouletteSpin spin(mission);
 
 		for (auto& target : mission->getTargets()) {
 			auto it = find_if(begin(contexts), end(contexts), [&target](const ParseConditionContext& ctx) {

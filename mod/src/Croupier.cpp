@@ -886,6 +886,7 @@ auto Croupier::OnMissionSelect(eMission mission, bool isAuto) -> void {
 	auto currentMission = this->spin.getMission();
 	if (currentMission && mission == currentMission->getMission() && !this->spinCompleted) return;
 	this->sharedSpin.playerSelectMission();
+	this->spinCompleted = false;
 
 	try {
 		this->generator.setMission(Missions::get(mission));
