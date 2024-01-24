@@ -8,14 +8,38 @@ using System.Windows;
 
 namespace Croupier
 {
-	public enum TargetType
-	{
+	public enum TargetType {
 		Normal,
 		Soders,
 	}
 
-	public class TargetKillMethodTags
-	{
+	public enum TargetNameFormat {
+		Initials,
+		Full,
+		Short,
+	}
+
+	public static partial class TargetNameFormatMethods {
+		public static string ToString(this TargetNameFormat id)
+		{
+			return id switch {
+				TargetNameFormat.Full => "Full",
+				TargetNameFormat.Short => "Short",
+				_ => "Initials",
+			};
+		}
+
+		public static TargetNameFormat FromString(string id)
+		{
+			return id switch {
+				"Full" => TargetNameFormat.Full,
+				"Short" => TargetNameFormat.Short,
+				_ => TargetNameFormat.Initials,
+			};
+		}
+	}
+
+	public class TargetKillMethodTags {
 		public StandardKillMethod? standard;
 		public FirearmKillMethod? firearm;
 		public SpecificKillMethod? specific;
@@ -61,6 +85,7 @@ namespace Croupier
 			{"KR", new Target() {
 				Name = "Kalvin Ritter",
 				Image = "polarbear2_sparrow.jpg",
+				ShortName = "Kalvin",
 				Mission = MissionID.ICAFACILITY_FREEFORM,
 				MethodTags = [
 					new(StandardKillMethod.Electrocution, [MethodTag.Impossible]),
@@ -74,6 +99,7 @@ namespace Croupier
 			}},
 			{"JK", new Target() {
 				Name = "Jasper Knight",
+				ShortName = "Jasper",
 				Image = "polarbear5.jpg",
 				Mission = MissionID.ICAFACILITY_FINALTEST,
 				MethodTags = [
@@ -88,6 +114,7 @@ namespace Croupier
 			}},
 			{"VN", new Target() {
 				Name = "Viktor Novikov",
+				ShortName = "Viktor",
 				Image = "showstopper_viktor_novikov.jpg",
 				Mission = MissionID.PARIS_SHOWSTOPPER,
 				MethodTags = [
@@ -96,6 +123,7 @@ namespace Croupier
 			}},
 			{"DM", new Target() {
 				Name = "Dalia Margolis",
+				ShortName = "Dalia",
 				Image = "showstopper_dahlia_margolis.jpg",
 				Mission = MissionID.PARIS_SHOWSTOPPER,
 				MethodTags = [
@@ -104,6 +132,7 @@ namespace Croupier
 			}},
 			{"HSB", new Target() {
 				Name = "Harry \"Smokey\" Bagnato",
+				ShortName = "Smokey",
 				Image = "noel_harry_bagnato.jpg",
 				Mission = MissionID.PARIS_HOLIDAYHOARDERS,
 				MethodTags = [
@@ -112,6 +141,7 @@ namespace Croupier
 			}},
 			{"MSG", new Target() {
 				Name = "Marv \"Slick\" Gonif",
+				ShortName = "Slick",
 				Image = "noel_marv_gonif.jpg",
 				Mission = MissionID.PARIS_HOLIDAYHOARDERS,
 				MethodTags = [
@@ -120,6 +150,7 @@ namespace Croupier
 			}},
 			{"SC", new Target() {
 				Name = "Silvio Caruso",
+				ShortName = "Silvio",
 				Image = "world_of_tomorrow_silvio_caruso.jpg",
 				Mission = MissionID.SAPIENZA_WORLDOFTOMORROW,
 				MethodTags = [
@@ -129,6 +160,7 @@ namespace Croupier
 			}},
 			{"FDS", new Target() {
 				Name = "Francesca De Santis",
+				ShortName = "Francesca",
 				Image = "world_of_tomorrow_francesca_de_santis.jpg",
 				Mission = MissionID.SAPIENZA_WORLDOFTOMORROW,
 				MethodTags = [
@@ -137,11 +169,13 @@ namespace Croupier
 			}},
 			{"DB", new Target() {
 				Name = "Dino Bosco",
+				ShortName = "Dino",
 				Image = "copperhead_roman_strauss_levine.jpg",
 				Mission = MissionID.SAPIENZA_THEICON,
 			}},
 			{"MA", new Target() {
 				Name = "Marco Abiatti",
+				ShortName = "Marco",
 				Image = "mamba_marco_abiatti.jpg",
 				Mission = MissionID.SAPIENZA_LANDSLIDE,
 				MethodTags = [
@@ -150,6 +184,7 @@ namespace Croupier
 			}},
 			{"CB", new Target() {
 				Name = "Craig Black",
+				ShortName = "Craig",
 				Image = "ws_ebola_craig_black.jpg",
 				Mission = MissionID.SAPIENZA_THEAUTHOR,
 				MethodTags = [
@@ -158,6 +193,7 @@ namespace Croupier
 			}},
 			{"BA", new Target() {
 				Name = "Brother Akram",
+				ShortName = "Akram",
 				Image = "ws_ebola_brother_akram.jpg",
 				Mission = MissionID.SAPIENZA_THEAUTHOR,
 				MethodTags = [
@@ -166,6 +202,7 @@ namespace Croupier
 			}},
 			{"CHS", new Target() {
 				Name = "Claus Hugo Strandberg",
+				ShortName = "Claus",
 				Image = "tobigforjail_claus_hugo_stranberg.jpg",
 				Mission = MissionID.MARRAKESH_GILDEDCAGE,
 				MethodTags = [
@@ -180,6 +217,7 @@ namespace Croupier
 			}},
 			{"RZ", new Target() {
 				Name = "Reza Zaydan",
+				ShortName = "Reza",
 				Image = "tobigforjail_general_zaydan.jpg",
 				Mission = MissionID.MARRAKESH_GILDEDCAGE,
 				MethodTags = [
@@ -189,16 +227,19 @@ namespace Croupier
 			}},
 			{"KTK", new Target() {
 				Name = "Kong Tuo-Kwang",
+				ShortName = "Kong",
 				Image = "python_kong_tou_kwang_briefing.jpg",
 				Mission = MissionID.MARRAKESH_HOUSEBUILTONSAND,
 			}},
 			{"MM", new Target() {
 				Name = "Matthieu Mendola",
+				ShortName = "Matthieu",
 				Image = "python_matthieu_mendola_briefing.jpg",
 				Mission = MissionID.MARRAKESH_HOUSEBUILTONSAND,
 			}},
 			{"JC", new Target() {
 				Name = "Jordan Cross",
+				ShortName = "Jordan",
 				Image = "club27_jordan_cross.jpg",
 				Mission = MissionID.BANGKOK_CLUB27,
 				MethodTags = [
@@ -210,6 +251,7 @@ namespace Croupier
 			}},
 			{"KM", new Target() {
 				Name = "Ken Morgan",
+				ShortName = "Ken",
 				Image = "club27_ken_morgan.jpg",
 				Mission = MissionID.BANGKOK_CLUB27,
 				MethodTags = [
@@ -221,6 +263,7 @@ namespace Croupier
 			}},
 			{"ON", new Target() {
 				Name = "Oybek Nabazov",
+				ShortName = "Nabazov",
 				Image = "ws_zika_oybek_nabazov.jpg",
 				Mission = MissionID.BANGKOK_THESOURCE,
 				MethodTags = [
@@ -229,6 +272,7 @@ namespace Croupier
 			}},
 			{"SY", new Target() {
 				Name = "Sister Yulduz",
+				ShortName = "Yulduz",
 				Image = "ws_zika_sister_yulduz.jpg",
 				Mission = MissionID.BANGKOK_THESOURCE,
 				MethodTags = [
@@ -237,6 +281,7 @@ namespace Croupier
 			}},
 			{"SR", new Target() {
 				Name = "Sean Rose",
+				ShortName = "Sean",
 				Image = "freedom_fighters_sean_rose.jpg",
 				Mission = MissionID.COLORADO_FREEDOMFIGHTERS,
 				MethodTags = [
@@ -249,6 +294,7 @@ namespace Croupier
 			}},
 			{"PG", new Target() {
 				Name = "Penelope Graves",
+				ShortName = "Penelope",
 				Image = "freedom_fighters_penelope_graves.jpg",
 				Mission = MissionID.COLORADO_FREEDOMFIGHTERS,
 				MethodTags = [
@@ -261,6 +307,7 @@ namespace Croupier
 			}},
 			{"EB", new Target() {
 				Name = "Ezra Berg",
+				ShortName = "Ezra",
 				Image = "freedom_fighters_ezra_berg.jpg",
 				Mission = MissionID.COLORADO_FREEDOMFIGHTERS,
 				MethodTags = [
@@ -271,6 +318,7 @@ namespace Croupier
 			}},
 			{"MP", new Target() {
 				Name = "Maya Parvati",
+				ShortName = "Maya",
 				Image = "freedom_fighters_maya_parvati.jpg",
 				Mission = MissionID.COLORADO_FREEDOMFIGHTERS,
 				MethodTags = [
@@ -279,12 +327,14 @@ namespace Croupier
 			}},
 			{"ES", new Target() {
 				Name = "Erich Soders",
+				ShortName = "Soders",
 				Image = "snowcrane_erich_soders_briefing.jpg",
 				Mission = MissionID.HOKKAIDO_SITUSINVERSUS,
 				Type = TargetType.Soders,
 			}},
 			{"YY", new Target() {
 				Name = "Yuki Yamazaki",
+				ShortName = "Yuki",
 				Image = "snowcrane_yuki_yamazaki_briefing.jpg",
 				Mission = MissionID.HOKKAIDO_SITUSINVERSUS,
 				MethodTags = [
@@ -293,6 +343,7 @@ namespace Croupier
 			}},
 			{"OC", new Target() {
 				Name = "Owen Cage",
+				ShortName = "Owen",
 				Image = "ws_flu_owen_cage.jpg",
 				Mission = MissionID.HOKKAIDO_PATIENTZERO,
 				MethodTags = [
@@ -301,16 +352,19 @@ namespace Croupier
 			}},
 			{"KL", new Target() {
 				Name = "Klaus Liebleid",
+				ShortName = "Klaus",
 				Image = "ws_flu_klaus_leiblied.jpg",
 				Mission = MissionID.HOKKAIDO_PATIENTZERO,
 			}},
 			{"DF", new Target() {
 				Name = "Dmitri Fedorov",
+				ShortName = "Dmitri",
 				Image = "mamushi_dimitri-fedorov.jpg",
 				Mission = MissionID.HOKKAIDO_SNOWFESTIVAL,
 			}},
 			{"AR", new Target() {
 				Name = "Alma Reynard",
+				ShortName = "Alma",
 				Image = "sheep_alma_reynard.jpg",
 				Mission = MissionID.HAWKESBAY_NIGHTCALL,
 				MethodTags = [
@@ -320,11 +374,13 @@ namespace Croupier
 			}},
 			{"SK", new Target() {
 				Name = "Sierra Knox",
+				ShortName = "Sierra",
 				Image = "flamingo_sierra_knox.jpg",
 				Mission = MissionID.MIAMI_FINISHLINE,
 			}},
 			{"RK", new Target() {
 				Name = "Robert Knox",
+				ShortName = "Robert",
 				Image = "flamingo_robert_knox.jpg",
 				Mission = MissionID.MIAMI_FINISHLINE,
 				MethodTags = [
@@ -333,11 +389,13 @@ namespace Croupier
 			}},
 			{"AJ", new Target() {
 				Name = "Ajit \"AJ\" Krish",
+				ShortName = "AJ",
 				Image = "cottonmouth_ajit_krish.jpg",
 				Mission = MissionID.MIAMI_ASILVERTONGUE,
 			}},
 			{"RD", new Target() {
 				Name = "Rico Delgado",
+				ShortName = "Rico",
 				Image = "hippo_rico_delgado.jpg",
 				Mission = MissionID.SANTAFORTUNA_THREEHEADEDSERPENT,
 				MethodTags = [
@@ -347,6 +405,7 @@ namespace Croupier
 			}},
 			{"JF", new Target() {
 				Name = "Jorge Franco",
+				ShortName = "Jorge",
 				Image = "hippo_jorge_franco.jpg",
 				Mission = MissionID.SANTAFORTUNA_THREEHEADEDSERPENT,
 				MethodTags = [
@@ -355,6 +414,7 @@ namespace Croupier
 			}},
 			{"AM", new Target() {
 				Name = "Andrea Martinez",
+				ShortName = "Andrea",
 				Image = "hippo_andrea_martinez.jpg",
 				Mission = MissionID.SANTAFORTUNA_THREEHEADEDSERPENT,
 				MethodTags = [
@@ -363,11 +423,13 @@ namespace Croupier
 			}},
 			{"BR", new Target() {
 				Name = "Blair Reddington",
+				ShortName = "Blair",
 				Image = "anaconda_blair_reddington_face.jpg",
 				Mission = MissionID.SANTAFORTUNA_EMBRACEOFTHESERPENT,
 			}},
 			{"WK", new Target() {
 				Name = "Wazir Kale",
+				ShortName = "Wazir",
 				Image = "mongoose_wazir_kale_identified.jpg",
 				Mission = MissionID.MUMBAI_CHASINGAGHOST,
 				MethodTags = [
@@ -380,6 +442,7 @@ namespace Croupier
 			}},
 			{"VS", new Target() {
 				Name = "Vanya Shah",
+				ShortName = "Vanya",
 				Image = "mongoose_vanya_shah.jpg",
 				Mission = MissionID.MUMBAI_CHASINGAGHOST,
 				MethodTags = [
@@ -392,6 +455,7 @@ namespace Croupier
 			}},
 			{"DR", new Target() {
 				Name = "Dawood Rangan",
+				ShortName = "Dawood",
 				Image = "mongoose_dawood_rangan.jpg",
 				Mission = MissionID.MUMBAI_CHASINGAGHOST,
 				MethodTags = [
@@ -404,11 +468,13 @@ namespace Croupier
 			}},
 			{"BC", new Target() {
 				Name = "Basil Carnaby",
+				ShortName = "Basil",
 				Image = "kingcobra_basil_carnaby_face.jpg",
 				Mission = MissionID.MUMBAI_ILLUSIONSOFGRANDEUR,
 			}},
 			{"J", new Target() {
 				Name = "Janus",
+				ShortName = "Janus",
 				Image = "skunk_janus.jpg",
 				Mission = MissionID.WHITTLETON_ANOTHERLIFE,
 				MethodTags = [
@@ -420,6 +486,7 @@ namespace Croupier
 			}},
 			{"NC", new Target() {
 				Name = "Nolan Cassidy",
+				ShortName = "Nolan",
 				Image = "skunk_nolan_cassidy.jpg",
 				Mission = MissionID.WHITTLETON_ANOTHERLIFE,
 				MethodTags = [
@@ -430,11 +497,13 @@ namespace Croupier
 			}},
 			{"GV", new Target() {
 				Name = "Galen Vholes",
+				ShortName = "Galen",
 				Image = "gartersnake_ghalen_vholes.jpg",
 				Mission = MissionID.WHITTLETON_ABITTERPILL,
 			}},
 			{"ZW", new Target() {
 				Name = "Zoe Washington",
+				ShortName = "Zoe",
 				Image = "magpie_zoe_washington.jpg",
 				Mission = MissionID.ISLEOFSGAIL_THEARKSOCIETY,
 				MethodTags = [
@@ -447,6 +516,7 @@ namespace Croupier
 			}},
 			{"SW", new Target() {
 				Name = "Sophia Washington",
+				ShortName = "Sophia",
 				Image = "magpie_serena_washington.jpg",
 				Mission = MissionID.ISLEOFSGAIL_THEARKSOCIETY,
 				MethodTags = [
@@ -460,6 +530,7 @@ namespace Croupier
 			}},
 			{"AS", new Target() {
 				Name = "Athena Savalas",
+				ShortName = "Athena",
 				Image = "racoon_athena_savalas.jpg",
 				Mission = MissionID.NEWYORK_GOLDENHANDSHAKE,
 				MethodTags = [
@@ -468,6 +539,7 @@ namespace Croupier
 			}},
 			{"TW", new Target() {
 				Name = "Tyson Williams",
+				ShortName = "Tyson",
 				Image = "stingray_tyson_williams.jpg",
 				Mission = MissionID.HAVEN_THELASTRESORT,
 				MethodTags = [
@@ -477,6 +549,7 @@ namespace Croupier
 			}},
 			{"SB", new Target() {
 				Name = "Steven Bradley",
+				ShortName = "Steven",
 				Image = "stingray_steven_bradley.jpg",
 				Mission = MissionID.HAVEN_THELASTRESORT,
 				MethodTags = [
@@ -486,6 +559,7 @@ namespace Croupier
 			}},
 			{"LV", new Target() {
 				Name = "Ljudmila Vetrova",
+				ShortName = "Ljudmila",
 				Image = "stingray_ljudmila_vetrova.jpg",
 				Mission = MissionID.HAVEN_THELASTRESORT,
 				MethodTags = [
@@ -495,6 +569,7 @@ namespace Croupier
 			}},
 			{"CI", new Target() {
 				Name = "Carl Ingram",
+				ShortName = "Carl",
 				Image = "golden_carl_ingram.jpg",
 				Mission = MissionID.DUBAI_ONTOPOFTHEWORLD,
 				MethodTags = [
@@ -504,6 +579,7 @@ namespace Croupier
 			}},
 			{"MS", new Target() {
 				Name = "Marcus Stuyvesant",
+				ShortName = "Marcus",
 				Image = "golden_marcus_stuyvesant.jpg",
 				Mission = MissionID.DUBAI_ONTOPOFTHEWORLD,
 				MethodTags = [
@@ -513,6 +589,7 @@ namespace Croupier
 			}},
 			{"AC", new Target() {
 				Name = "Alexa Carlisle",
+				ShortName = "Alexa",
 				Image = "ancestral_alexa_carlisle.jpg",
 				Mission = MissionID.DARTMOOR_DEATHINTHEFAMILY,
 				MethodTags = [
@@ -521,31 +598,37 @@ namespace Croupier
 			}},
 			{"1", new Target() {
 				Name = "ICA Agent #1",
+				ShortName = "1",
 				Image = "fox_pickup_earpiece.jpg",
 				Mission = MissionID.BERLIN_APEXPREDATOR,
 			}},
 			{"2", new Target() {
 				Name = "ICA Agent #2",
+				ShortName = "2",
 				Image = "fox_pickup_earpiece.jpg",
 				Mission = MissionID.BERLIN_APEXPREDATOR,
 			}},
 			{"3", new Target() {
 				Name = "ICA Agent #3",
+				ShortName = "3",
 				Image = "fox_pickup_earpiece.jpg",
 				Mission = MissionID.BERLIN_APEXPREDATOR,
 			}},
 			{"4", new Target() {
 				Name = "ICA Agent #4",
+				ShortName = "4",
 				Image = "fox_pickup_earpiece.jpg",
 				Mission = MissionID.BERLIN_APEXPREDATOR,
 			}},
 			{"5", new Target() {
 				Name = "ICA Agent #5",
+				ShortName = "5",
 				Image = "fox_pickup_earpiece.jpg",
 				Mission = MissionID.BERLIN_APEXPREDATOR,
 			}},
 			{"H", new Target() {
 				Name = "Hush",
+				ShortName = "Hush",
 				Image = "wet_hush.jpg",
 				Mission = MissionID.CHONGQING_ENDOFANERA,
 				MethodTags = [
@@ -558,6 +641,7 @@ namespace Croupier
 			}},
 			{"IR", new Target() {
 				Name = "Imogen Royce",
+				ShortName = "Imogen",
 				Image = "wet_imogen_royce.jpg",
 				Mission = MissionID.CHONGQING_ENDOFANERA,
 				MethodTags = [
@@ -568,6 +652,7 @@ namespace Croupier
 			}},
 			{"DY", new Target() {
 				Name = "Don Archibald Yates",
+				ShortName = "Don",
 				Image = "elegant_yates.jpg",
 				Mission = MissionID.MENDOZA_THEFAREWELL,
 				MethodTags = [
@@ -577,6 +662,7 @@ namespace Croupier
 			}},
 			{"TV", new Target() {
 				Name = "Tamara Vidal",
+				ShortName = "Tamara",
 				Image = "elegant_vidal.jpg",
 				Mission = MissionID.MENDOZA_THEFAREWELL,
 				MethodTags = [
@@ -587,6 +673,7 @@ namespace Croupier
 			}},
 			{"AE", new Target() {
 				Name = "Arthur Edwards",
+				ShortName = "Arthur",
 				Image = "trapped_arthur_edwards.jpg",
 				Mission = MissionID.CARPATHIAN_UNTOUCHABLE,
 				MethodTags = [
@@ -601,11 +688,13 @@ namespace Croupier
 			}},
 			{"NCR", new Target() {
 				Name = "Noel Crest",
+				ShortName = "Noel",
 				Image = "rocky_noel_crest.jpg",
 				Mission = MissionID.AMBROSE_SHADOWSINTHEWATER,
 			}},
 			{"SV", new Target() {
 				Name = "Sinhi \"Akka\" Venthan",
+				ShortName = "Akka",
 				Image = "rocky_sinhi_akka_venthan.jpg",
 				Mission = MissionID.AMBROSE_SHADOWSINTHEWATER,
 			}},
@@ -763,6 +852,7 @@ namespace Croupier
 		}
 
 		public string Name { get; set; }
+		public string ShortName { get; set; }
 		public MissionID Mission { get; set; }
 		public List<TargetKillMethodTags> MethodTags { get; set; }
 		public List<MethodRule> Rules { get; set; } = [];

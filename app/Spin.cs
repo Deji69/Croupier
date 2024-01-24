@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Croupier.Properties;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -95,7 +96,12 @@ namespace Croupier
 		public Uri MethodImagePath { get { return Method.ImageUri; } }
 
 		public override string ToString() {
-			var targetKey = Target.GetTargetKey(TargetName);
+			var format = TargetNameFormatMethods.FromString(Settings.Default.TargetNameFormat);
+			var targetKey = format switch {
+				TargetNameFormat.Full => TargetName,
+				TargetNameFormat.Short => Target.ShortName ?? Target.GetTargetKey(TargetName),
+				_ => Target.GetTargetKey(TargetName),
+			};
 			return $"{targetKey}: {MethodSerialized} / {DisguiseName}";
 		}
 

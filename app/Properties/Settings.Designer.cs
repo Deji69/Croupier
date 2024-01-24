@@ -284,5 +284,17 @@ namespace Croupier.Properties {
                 this["SpinHistory"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string TargetNameFormat {
+            get {
+                return ((string)(this["TargetNameFormat"]));
+            }
+            set {
+                this["TargetNameFormat"] = value;
+            }
+        }
     }
 }

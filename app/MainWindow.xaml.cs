@@ -19,6 +19,32 @@ namespace Croupier
 		public bool IsSeparator { get; set; }
 	}
 
+	public class TargetNameFormatEntry(TargetNameFormat id, string name) : INotifyPropertyChanged {
+		public TargetNameFormat ID { get; set; } = id;
+		public int Index { get { return (int)ID; } }
+		public string Name { get; set; } = name;
+		public bool IsSelected {
+			get {
+				return TargetNameFormatMethods.FromString(Settings.Default.TargetNameFormat) == ID;
+			}
+			set {
+				Settings.Default.TargetNameFormat = value.ToString();
+				OnPropertyChanged(nameof(IsSelected));
+			}
+		}
+
+		public void Refresh() {
+			OnPropertyChanged(nameof(IsSelected));
+			OnPropertyChanged(nameof(Name));
+		}
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected virtual void OnPropertyChanged(string propertyName) {
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		}
+	}
+
 	public class SpinHistoryEntry(string name, int index) : INotifyPropertyChanged
 	{
 		private string _name = name;
@@ -98,6 +124,7 @@ namespace Croupier
 		private EditMapPoolWindow EditMapPoolWindowInst;
 		private EditRulesetWindow EditRulesetWindowInst;
 		private EditSpinWindow EditSpinWindowInst;
+		private TargetNameFormat _targetNameFormat = TargetNameFormat.Initials;
 		private double _spinFontSize = 16;
 		private bool _rightToLeft = false;
 		private bool _topmostEnabled = false;
@@ -106,6 +133,18 @@ namespace Croupier
 		private bool _editMode = false;
 		private bool _staticSize = false;
 		private bool _staticSizeLHS = false;
+
+		public TargetNameFormat TargetNameFormat {
+			get { return _targetNameFormat; }
+			set {
+				_targetNameFormat = value;
+				Settings.Default.TargetNameFormat = value.ToString();
+				OnPropertyChanged(nameof(TargetNameFormat));
+				SyncHistoryEntries();
+				foreach (var entry in TargetNameFormatEntries)
+					entry.Refresh();
+			}
+		}
 
 		public double SpinFontSize {
 			get { return _spinFontSize; }
@@ -392,6 +431,7 @@ namespace Croupier
 			RightToLeft = Settings.Default.RightToLeft;
 			StaticSize = Settings.Default.StaticSize;
 			StaticSizeLHS = Settings.Default.StaticSizeLHS;
+			TargetNameFormat = TargetNameFormatMethods.FromString(Settings.Default.TargetNameFormat);
 			LoadMissionPool();
 		}
 
@@ -471,6 +511,8 @@ namespace Croupier
 			ThemeManager.SetCurrentTheme(this, new Uri("/Croupier;component/Resources/DarkTheme.xaml", UriKind.Relative));
 
 			MissionSelect.ItemsSource = MissionListItems;
+			ContextMenuTargetNameFormat.ItemsSource = TargetNameFormatEntries;
+			ContextMenuTargetNameFormat.DataContext = this;
 			ContextMenuHistory.ItemsSource = HistoryEntries;
 			ContextMenuHistory.DataContext = this;
 
@@ -658,10 +700,17 @@ namespace Croupier
 		}
 
 		private ICommand _historyEntrySelectCommand;
+		private ICommand _targetNameFormatSelectCommand;
 
 		public ICommand HistoryEntrySelectCommand {
 			get {
 				return _historyEntrySelectCommand ??= new RelayCommand(param => this.HistoryEntrySelected(param));
+			}
+		}
+
+		public ICommand TargetNameFormatSelectCommand {
+			get {
+				return _targetNameFormatSelectCommand ??= new RelayCommand(param => this.TargetNameFormatSelected(param));
 			}
 		}
 
@@ -670,6 +719,14 @@ namespace Croupier
 			var index = param as int?;
 			if (index == null || index < 0 || index >= spinHistory.Count) return;
 			SetSpinHistory(Math.Abs(index.Value - spinHistory.Count));
+		}
+
+		private void TargetNameFormatSelected(object param)
+		{
+			var index = param as int?;
+			if (index == null || index < 0 || index >= TargetNameFormatEntries.Count)
+				return;
+			TargetNameFormat = TargetNameFormatEntries[index.Value].ID;
 		}
 
 		private void ContextMenu_Exit(object sender, RoutedEventArgs e)

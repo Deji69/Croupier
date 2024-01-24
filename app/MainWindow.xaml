@@ -294,14 +294,14 @@
 			FlowDirection="{Binding RightToLeftFlowDir, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"
 			/>
 		<DockPanel.ContextMenu>
-			<ContextMenu Name="MainContextMenu">
+			<ContextMenu Name="MainContextMenu" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
 				<MenuItem
 					Name="ContextMenuHistory"
 					Header="_History"
 				>
 					<MenuItem.ItemContainerStyle>
 						<Style TargetType="MenuItem">
-							<Setter Property="Header" Value="{Binding Name}" />
+							<Setter Property="Header" Value="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
 							<Setter Property="IsChecked" Value="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" />
 							<Setter Property="Command" Value="{Binding DataContext.HistoryEntrySelectCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
 							<Setter Property="CommandParameter" Value="{Binding Index}"/>
@@ -318,6 +318,17 @@
 					Command="{x:Static local:MainWindow.PasteSpinCommand}"
 				/>
 				<Separator />
+				<MenuItem Name="ContextMenuTargetNameFormat" Header="Target Name Format" StaysOpenOnClick="True">
+					<MenuItem.ItemContainerStyle>
+						<Style TargetType="MenuItem">
+							<Setter Property="Header" Value="{Binding Name}" />
+							<Setter Property="IsChecked" Value="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" />
+							<Setter Property="StaysOpenOnClick" Value="True" />
+							<Setter Property="Command" Value="{Binding DataContext.TargetNameFormatSelectCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+							<Setter Property="CommandParameter" Value="{Binding Index}"/>
+						</Style>
+					</MenuItem.ItemContainerStyle>
+				</MenuItem>
 				<MenuItem
 					Header="Always On _Top"
 					IsChecked="{Binding TopmostEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
