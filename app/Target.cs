@@ -72,8 +72,7 @@ namespace Croupier
 
 	public class Target {
 		static private readonly Func<Disguise, KillMethod, bool> stalkerRemoteTest = (Disguise disguise, KillMethod method) => {
-			if (disguise.Name == "Stalker") return false;
-			return !method.IsRemote;
+			return disguise.Name == "Stalker" && !method.IsRemote;
 		};
 		static private readonly Func<Disguise, KillMethod, bool> loudLiveTest = (Disguise disguise, KillMethod method) => {
 			return method.IsLiveFirearm && method.IsLoudWeapon;
