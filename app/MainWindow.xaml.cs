@@ -347,8 +347,9 @@ namespace Croupier
 			new Mission(MissionID.CARPATHIAN_UNTOUCHABLE),
 			new Mission(MissionID.AMBROSE_SHADOWSINTHEWATER),
 		];
-		private Ruleset rules = new("current", RulesetPreset.RRWC2023);
+		private Ruleset rules = new("current", RulesetPreset.RR13);
 		private readonly ObservableCollection<Ruleset> rulesets = [
+			new("RR13", RulesetPreset.RR13),
 			new("RRWC 2023", RulesetPreset.RRWC2023),
 			new("RR12", RulesetPreset.RR12),
 			new("RR11", RulesetPreset.RR11),
@@ -450,7 +451,11 @@ namespace Croupier
 		{
 			if (!Enum.IsDefined(typeof(MissionPoolPresetID), Settings.Default.MissionPool))
 				Settings.Default.MissionPool = (int)MissionPoolPresetID.MainMissions;
-			
+
+			var newRuleset = rulesets.FirstOrDefault(r => r.Name == Settings.Default.Ruleset);
+			if (newRuleset != null) rules = newRuleset;
+			else Settings.Default.Ruleset = rules.Name;
+
 			VerticalDisplay = Settings.Default.VerticalDisplay;
 			TopmostEnabled = Settings.Default.AlwaysOnTop;
 			RightToLeft = Settings.Default.RightToLeft;

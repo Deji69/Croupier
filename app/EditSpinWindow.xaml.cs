@@ -1,23 +1,8 @@
-﻿using Croupier.Properties;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Configuration;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using Path = System.IO.Path;
 
 namespace Croupier
 {
@@ -42,6 +27,9 @@ namespace Croupier
 		private readonly List<MethodComboBoxItem> explosiveKillTypes = [
 			new("Any") { KillType = KillType.Any },
 			new("Loud") { KillType = KillType.Loud },
+			new("Impact") { KillType = KillType.Impact},
+			new("Remote") { KillType = KillType.Remote },
+			new("Loud Remote") { KillType = KillType.LoudRemote },
 		];
 		private readonly List<MethodComboBoxItem> meleeKillTypes = [
 			new("Any") { KillType = KillType.Any },
@@ -122,28 +110,22 @@ namespace Croupier
 				});
 			}
 			set {
-				bool methodTypeChange;
 				if (value.Standard != null) {
-					methodTypeChange = Method.Type != KillMethodType.Standard;
 					Method.Type = KillMethodType.Standard;
 					Method.Standard = value.Standard;
 				}
 				else if (value.Specific != null) {
-					methodTypeChange = Method.Type != KillMethodType.Specific;
 					Method.Type = KillMethodType.Specific;
 					Method.Specific = value.Specific;
 				}
 				else if (value.Weapon != null) {
-					methodTypeChange = Method.Type != KillMethodType.Firearm;
 					Method.Type = KillMethodType.Firearm;
 					Method.Firearm = value.Weapon;
 				}
 				else return;
-				if (methodTypeChange) {
-					Method.KillType = KillType.Any;
-					OnPropertyChanged(nameof(KillTypes));
-					OnPropertyChanged(nameof(SelectedTypeIndex));
-				}
+				OnPropertyChanged(nameof(KillTypes));
+				Method.KillType = KillType.Any;
+				OnPropertyChanged(nameof(SelectedTypeIndex));
 				OnPropertyChanged(nameof(SelectedMethod));
 			}
 		}

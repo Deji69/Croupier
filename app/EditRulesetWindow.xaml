@@ -35,6 +35,10 @@
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
 					</Grid.RowDefinitions>
 					<CheckBox
 						Grid.Row="0"
@@ -188,12 +192,78 @@
 						VerticalAlignment="Top">
 						Enable generation of 'Thrown' as a potential 'kill type' for melee weapons.
 					</TextBlock>
+					<CheckBox
+						Grid.Row="6"
+						Grid.Column="0"
+						Margin="0,0,10,0"
+						Foreground="White"
+						FontWeight="Bold"
+						VerticalContentAlignment="Top"
+						IsChecked="{Binding RemoteExplosiveKillTypes}">
+						<TextBlock TextWrapping="Wrap">
+							'Remote' Explosive Kill Types
+						</TextBlock>
+					</CheckBox>
+					<TextBlock
+						Grid.Row="6"
+						Grid.Column="1"
+						Foreground="White"
+						Margin="5,0,0,0"
+						TextWrapping="WrapWithOverflow"
+						FontWeight="Normal"
+						VerticalAlignment="Top">
+						Enable generation of 'Remote' as a potential 'kill type' for explosives.
+					</TextBlock>
+					<CheckBox
+						Grid.Row="7"
+						Grid.Column="0"
+						Margin="0,0,10,0"
+						Foreground="White"
+						FontWeight="Bold"
+						VerticalContentAlignment="Top"
+						IsChecked="{Binding ImpactExplosiveKillTypes}">
+						<TextBlock TextWrapping="Wrap">
+							'Impact' Explosive Kill Types
+						</TextBlock>
+					</CheckBox>
+					<TextBlock
+						Grid.Row="7"
+						Grid.Column="1"
+						Foreground="White"
+						Margin="5,0,0,0"
+						TextWrapping="WrapWithOverflow"
+						FontWeight="Normal"
+						VerticalAlignment="Top">
+						Enable generation of 'Impact' as a potential 'kill type' for explosives.
+					</TextBlock>
+					<CheckBox
+						Grid.Row="8"
+						Grid.Column="0"
+						Margin="0,0,10,0"
+						Foreground="White"
+						FontWeight="Bold"
+						VerticalContentAlignment="Top"
+						IsChecked="{Binding LoudRemoteExplosiveKillTypes}">
+						<TextBlock TextWrapping="Wrap">
+							'Loud Remote' Explosive Kill Types
+						</TextBlock>
+					</CheckBox>
+					<TextBlock
+						Grid.Row="8"
+						Grid.Column="1"
+						Foreground="White"
+						Margin="5,0,0,0"
+						TextWrapping="WrapWithOverflow"
+						FontWeight="Normal"
+						VerticalAlignment="Top">
+						Enable generation of 'Loud Remote' as a potential 'kill type' for explosives.
+					</TextBlock>
 				</Grid>
 				<Expander
 					Foreground="White"
 					Header="Enable banned conditions"
 					FontWeight="Bold"
-					Margin="0,8,0,0"
+					Margin="0,5,0,0"
 					>
 					<Grid Margin="5">
 						<Grid.ColumnDefinitions>
@@ -201,6 +271,7 @@
 							<ColumnDefinition Width="2*" />
 						</Grid.ColumnDefinitions>
 						<Grid.RowDefinitions>
+							<RowDefinition />
 							<RowDefinition />
 							<RowDefinition />
 							<RowDefinition />
@@ -300,13 +371,32 @@
 							VerticalAlignment="Top">
 							Conditions that are impossible or almost impossible to accomplish with standard rules (e.g. Sapienza fire).
 						</TextBlock>
+						<CheckBox
+							Grid.Row="5"
+							Grid.Column="0"
+							Margin="0,0,10,0"
+							Content="Enable easter egg methods"
+							Foreground="White"
+							VerticalContentAlignment="Top"
+							IsChecked="{Binding EasterEggConditions}"
+							/>
+						<TextBlock
+							Grid.Row="5"
+							Grid.Column="1"
+							Foreground="White"
+							Margin="5,0"
+							TextWrapping="WrapWithOverflow"
+							FontWeight="Normal"
+							VerticalAlignment="Top">
+							Methods that require following a lengthy easter egg (e.g. Santa Fortuna Sacrificial Knife) or mission story (e.g. Mendoza Letter Opener) process to obtain.
+						</TextBlock>
 					</Grid>
 				</Expander>
 				<Expander
 					Foreground="White"
 					Header="Disguise / Suit Only options"
 					FontWeight="Bold"
-					Margin="0,8,0,0"
+					Margin="0,5,0,0"
 					>
 					<Grid Margin="5">
 						<Grid.ColumnDefinitions>

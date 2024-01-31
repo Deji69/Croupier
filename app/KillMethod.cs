@@ -18,7 +18,10 @@ namespace Croupier {
 		Silenced,
 		Loud,
 		Melee,
-		Thrown
+		Thrown,
+		Impact,
+		Remote,
+		LoudRemote,
 	}
 
 	public enum KillComplication {
@@ -253,7 +256,7 @@ namespace Croupier {
 		public bool IsLoudWeapon {
 			get {
 				return Type == KillMethodType.Firearm
-					&& KillType == KillType.Loud;
+					&& (KillType == KillType.Loud || KillType == KillType.LoudRemote || KillType == KillType.Impact);
 			}
 		}
 
@@ -403,6 +406,9 @@ namespace Croupier {
 				KillType.Loud => "Loud",
 				KillType.Melee => "Melee",
 				KillType.Thrown => "Thrown",
+				KillType.Remote => "Remote",
+				KillType.LoudRemote => "Loud Remote",
+				KillType.Impact => "Impact",
 				_ => "",
 			};
 		}
@@ -580,6 +586,9 @@ namespace Croupier {
 				"ld" or "loud" => KillType.Loud,
 				"melee" => KillType.Melee,
 				"throw" or "thrown" => KillType.Thrown,
+				"remote" or "rem" => KillType.Remote,
+				"impact" or "imp" => KillType.Impact,
+				"loudremote" or "loudrem" or "ldremote" or "ldrem" => KillType.LoudRemote,
 				"any" => KillType.Any,
 				"" => KillType.Any,
 				_ => null,

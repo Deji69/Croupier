@@ -296,5 +296,53 @@ namespace Croupier.Properties {
                 this["TargetNameFormat"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Ruleset_Custom_RemoteExplosiveKillTypes {
+            get {
+                return ((bool)(this["Ruleset_Custom_RemoteExplosiveKillTypes"]));
+            }
+            set {
+                this["Ruleset_Custom_RemoteExplosiveKillTypes"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Ruleset_Custom_LoudRemoteExplosiveKillTypes {
+            get {
+                return ((bool)(this["Ruleset_Custom_LoudRemoteExplosiveKillTypes"]));
+            }
+            set {
+                this["Ruleset_Custom_LoudRemoteExplosiveKillTypes"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Ruleset_Custom_ImpactExplosiveKillTypes {
+            get {
+                return ((bool)(this["Ruleset_Custom_ImpactExplosiveKillTypes"]));
+            }
+            set {
+                this["Ruleset_Custom_ImpactExplosiveKillTypes"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Ruleset_Custom_BannedEasterEgg {
+            get {
+                return ((bool)(this["Ruleset_Custom_BannedEasterEgg"]));
+            }
+            set {
+                this["Ruleset_Custom_BannedEasterEgg"] = value;
+            }
+        }
     }
 }

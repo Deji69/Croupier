@@ -660,6 +660,7 @@ namespace Croupier
 						methods.Add(SpecificKillMethod.Icicle);
 						methods.Add(SpecificKillMethod.JarlsPirateSaber);
 						methods.Add(SpecificKillMethod.KitchenKnife);
+						methods.Add(SpecificKillMethod.LetterOpener);
 						methods.Add(SpecificKillMethod.Machete);
 						methods.Add(SpecificKillMethod.SappersAxe);
 						methods.Add(SpecificKillMethod.Screwdriver);
@@ -1390,6 +1391,16 @@ namespace Croupier
 				if (item.Suit) return item;
 			}
 			return null;
+		}
+
+		public static List<SpecificKillMethod> GetEasterEggMethods(MissionID mission)
+		{
+			return mission switch {
+				MissionID.SANTAFORTUNA_THREEHEADEDSERPENT or MissionID.SANTAFORTUNA_EMBRACEOFTHESERPENT => [SpecificKillMethod.SacrificialKnife],
+				MissionID.WHITTLETON_ANOTHERLIFE or MissionID.WHITTLETON_ABITTERPILL => [SpecificKillMethod.BattleAxe, SpecificKillMethod.BeakStaff],
+				MissionID.MENDOZA_THEFAREWELL => [SpecificKillMethod.LetterOpener],
+				_ => [],
+			};
 		}
 
 		public static List<Target> MakeTargetList(MissionID mission) {

@@ -82,6 +82,36 @@ namespace Croupier
 				OnPropertyChanged(nameof(ThrownKillTypes));
 			}
 		}
+		public bool RemoteExplosiveKillTypes {
+			get {
+				return Ruleset.enableRemoteExplosives;
+			}
+			set {
+				Ruleset.enableRemoteExplosives = value;
+				CustomRulesetChanged();
+				OnPropertyChanged(nameof(RemoteExplosiveKillTypes));
+			}
+		}
+		public bool ImpactExplosiveKillTypes {
+			get {
+				return Ruleset.enableImpactExplosives;
+			}
+			set {
+				Ruleset.enableImpactExplosives = value;
+				CustomRulesetChanged();
+				OnPropertyChanged(nameof(ImpactExplosiveKillTypes));
+			}
+		}
+		public bool LoudRemoteExplosiveKillTypes {
+			get {
+				return Ruleset.enableLoudRemoteExplosives;
+			}
+			set {
+				Ruleset.enableLoudRemoteExplosives = value;
+				CustomRulesetChanged();
+				OnPropertyChanged(nameof(LoudRemoteExplosiveKillTypes));
+			}
+		}
 
 		public bool MediumConditions
 		{
@@ -133,6 +163,16 @@ namespace Croupier
 				OnPropertyChanged(nameof(ImpossibleConditions));
 			}
 		}
+		public bool EasterEggConditions {
+			get {
+				return Ruleset.enableEasterEggConditions;
+			}
+			set {
+				Ruleset.enableEasterEggConditions = value;
+				CustomRulesetChanged();
+				OnPropertyChanged(nameof(EasterEggConditions));
+			}
+		}
 		public bool SuitOnlyMode {
 			get {
 				return Ruleset.suitOnlyMode;
@@ -166,11 +206,15 @@ namespace Croupier
 				OnPropertyChanged(nameof(GenericEliminations));
 				OnPropertyChanged(nameof(MeleeKillTypes));
 				OnPropertyChanged(nameof(ThrownKillTypes));
+				OnPropertyChanged(nameof(RemoteExplosiveKillTypes));
+				OnPropertyChanged(nameof(ImpactExplosiveKillTypes));
+				OnPropertyChanged(nameof(LoudRemoteExplosiveKillTypes));
 				OnPropertyChanged(nameof(MediumConditions));
 				OnPropertyChanged(nameof(HardConditions));
 				OnPropertyChanged(nameof(ExtremeConditions));
 				OnPropertyChanged(nameof(BuggyConditions));
 				OnPropertyChanged(nameof(ImpossibleConditions));
+				OnPropertyChanged(nameof(EasterEggConditions));
 			}
 		}
 		private readonly ObservableCollection<Ruleset> Rulesets;
@@ -184,6 +228,7 @@ namespace Croupier
 
 			var customRuleset = Rulesets.First(r => r.Preset == RulesetPreset.Custom);
 			if (customRuleset != null) {
+				customRuleset.enableEasterEggConditions = Settings.Default.Ruleset_Custom_BannedEasterEgg;
 				customRuleset.enableBuggy = Settings.Default.Ruleset_Custom_BannedBuggy;
 				customRuleset.enableExtreme = Settings.Default.Ruleset_Custom_BannedExtreme;
 				customRuleset.enableHard = Settings.Default.Ruleset_Custom_BannedHard;
@@ -195,11 +240,18 @@ namespace Croupier
 				customRuleset.liveComplicationsExcludeStandard = Settings.Default.Ruleset_Custom_LiveComplicationsExcludeStandard;
 				customRuleset.meleeKillTypes = Settings.Default.Ruleset_Custom_MeleeKillTypes;
 				customRuleset.thrownKillTypes = Settings.Default.Ruleset_Custom_ThrownKillTypes;
+				customRuleset.enableRemoteExplosives = Settings.Default.Ruleset_Custom_RemoteExplosiveKillTypes;
+				customRuleset.enableLoudRemoteExplosives = Settings.Default.Ruleset_Custom_LoudRemoteExplosiveKillTypes;
+				customRuleset.enableImpactExplosives = Settings.Default.Ruleset_Custom_ImpactExplosiveKillTypes;
 			}
 
-			var idx = Rulesets.IndexOf(Rulesets.First(r => r.Name == Settings.Default.Ruleset));
-			if (idx == -1) idx = 0;
-			SelectRuleset(Rulesets[idx]);
+			var ruleset = Rulesets.FirstOrDefault(r => r.Name == Settings.Default.Ruleset);
+			if (ruleset != null) {
+				var idx = Rulesets.IndexOf(ruleset);
+				if (idx == -1) idx = 0;
+				SelectRuleset(Rulesets[idx]);
+			}
+			else SelectRuleset(Rulesets[0]);
 		}
 
 		private void RulesetComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -245,11 +297,15 @@ namespace Croupier
 					Settings.Default.Ruleset_Custom_GenericEliminations = Ruleset.genericEliminations;
 					Settings.Default.Ruleset_Custom_MeleeKillTypes = Ruleset.meleeKillTypes;
 					Settings.Default.Ruleset_Custom_ThrownKillTypes = Ruleset.thrownKillTypes;
+					Settings.Default.Ruleset_Custom_RemoteExplosiveKillTypes = Ruleset.enableRemoteExplosives;
+					Settings.Default.Ruleset_Custom_ImpactExplosiveKillTypes = Ruleset.enableImpactExplosives;
+					Settings.Default.Ruleset_Custom_LoudRemoteExplosiveKillTypes = Ruleset.enableLoudRemoteExplosives;
 					Settings.Default.Ruleset_Custom_BannedMedium = Ruleset.enableMedium;
 					Settings.Default.Ruleset_Custom_BannedHard = Ruleset.enableHard;
-					Settings.Default.Ruleset_Custom_BannedExtreme = Ruleset.enableExtreme;	
+					Settings.Default.Ruleset_Custom_BannedExtreme = Ruleset.enableExtreme;
 					Settings.Default.Ruleset_Custom_BannedImpossible = Ruleset.enableImpossible;
 					Settings.Default.Ruleset_Custom_BannedBuggy = Ruleset.enableBuggy;
+					Settings.Default.Ruleset_Custom_BannedEasterEgg = Ruleset.enableEasterEggConditions;
 					Settings.Default.Save();
 				}
 				else ApplyRuleset?.Invoke(this, Ruleset);

@@ -8,6 +8,7 @@ namespace Croupier
 {
 	public enum RulesetPreset {
 		Custom,
+		RR13,
 		RRWC2023,
 		RR12,
 		RR11,
@@ -27,10 +28,22 @@ namespace Croupier
 
 		public void ApplyPresetDefaults() {
 			switch (Preset) {
+				case RulesetPreset.RR13:
+					genericEliminations = false;
+					meleeKillTypes = false;
+					thrownKillTypes = false;
+					enableEasterEggConditions = false;
+					enableImpactExplosives = true;
+					enableRemoteExplosives = true;
+					liveComplications = true;
+					liveComplicationsExcludeStandard = true;
+					liveComplicationChance = 25;
+					break;
 				case RulesetPreset.RRWC2023:
 					genericEliminations = false;
 					meleeKillTypes = false;
 					thrownKillTypes = false;
+					enableEasterEggConditions = true;
 					liveComplications = true;
 					liveComplicationsExcludeStandard = true;
 					liveComplicationChance = 25;
@@ -39,6 +52,7 @@ namespace Croupier
 					genericEliminations = false;
 					meleeKillTypes = false;
 					thrownKillTypes = false;
+					enableEasterEggConditions = true;
 					liveComplications = true;
 					liveComplicationsExcludeStandard = true;
 					liveComplicationChance = 20;
@@ -47,11 +61,13 @@ namespace Croupier
 					genericEliminations = true;
 					meleeKillTypes = true;
 					thrownKillTypes = true;
+					enableEasterEggConditions = true;
 					break;
 				case RulesetPreset.Croupier:
 					genericEliminations = false;
 					liveComplications = true;
 					liveComplicationChance = 25;
+					enableEasterEggConditions = false;
 					enableMedium = true;
 					break;
 			}
@@ -71,5 +87,10 @@ namespace Croupier
 		public bool allowDuplicateMethod = false;
 		public bool suitOnlyMode = false;
 		public int liveComplicationChance = 30;
+
+		public bool enableImpactExplosives = false;
+		public bool enableRemoteExplosives = false;
+		public bool enableLoudRemoteExplosives = false;
+		public bool enableEasterEggConditions = false;
 	}
 }

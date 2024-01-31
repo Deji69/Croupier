@@ -77,6 +77,13 @@ namespace Croupier
 		static private readonly Func<Disguise, KillMethod, bool> loudLiveTest = (Disguise disguise, KillMethod method) => {
 			return method.IsLiveFirearm && method.IsLoudWeapon;
 		};
+		static private readonly Func<Disguise, KillMethod, bool> remoteExplosiveTest = (Disguise disguise, KillMethod method) => {
+			return method.Type == KillMethodType.Firearm && method.Firearm == FirearmKillMethod.Explosive
+				&& (method.KillType == KillType.Remote || method.KillType == KillType.LoudRemote);
+		};
+		static private readonly Func<Disguise, KillMethod, bool> impactExplosiveTest = (Disguise disguise, KillMethod method) => {
+			return method.Type == KillMethodType.Firearm && method.Firearm == FirearmKillMethod.Explosive && method.KillType == KillType.Impact;
+		};
 		static private readonly Func<Disguise, KillMethod, bool> knightsArmourTrapTest = (Disguise disguise, KillMethod method) => {
 			return disguise.Name == "Knight's Armor" && !method.IsRemote;
 		};
@@ -95,6 +102,9 @@ namespace Croupier
 					new(FirearmKillMethod.SMG, [MethodTag.Impossible]),
 					new(FirearmKillMethod.Sniper, [MethodTag.Impossible]),
 				],
+				Rules = [
+					new(impactExplosiveTest, [ MethodTag.BannedInRR, MethodTag.Impossible ]),
+				]
 			}},
 			{"JK", new Target() {
 				Name = "Jasper Knight",
@@ -110,6 +120,9 @@ namespace Croupier
 					new(FirearmKillMethod.SMG, [MethodTag.Impossible]),
 					new(FirearmKillMethod.Sniper, [MethodTag.Impossible]),
 				],
+				Rules = [
+					new(impactExplosiveTest, [ MethodTag.BannedInRR, MethodTag.Impossible ]),
+				]
 			}},
 			{"VN", new Target() {
 				Name = "Viktor Novikov",
@@ -507,7 +520,6 @@ namespace Croupier
 				Mission = MissionID.ISLEOFSGAIL_THEARKSOCIETY,
 				MethodTags = [
 					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Impossible]),
-					new(StandardKillMethod.Drowning, [MethodTag.BannedInRR, MethodTag.Hard]),
 				],
 				Rules = {
 					new(knightsArmourTrapTest, [MethodTag.BannedInRR, MethodTag.Extreme])
@@ -684,6 +696,10 @@ namespace Croupier
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Impossible]),
 					new(FirearmKillMethod.Sniper, [MethodTag.BannedInRR, MethodTag.Impossible]),
 				],
+				Rules = [
+					new(remoteExplosiveTest, [ MethodTag.BannedInRR, MethodTag.Impossible ]),
+					new(impactExplosiveTest, [ MethodTag.BannedInRR, MethodTag.Impossible ]),
+				]
 			}},
 			{"NCR", new Target() {
 				Name = "Noel Crest",

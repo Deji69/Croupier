@@ -71,8 +71,17 @@ namespace Croupier
 				case KillMethodType.Firearm:
 					method.Firearm = KillMethod.WeaponList[random.Next(KillMethod.WeaponList.Count)];
 					
-					// Randomly apply loud to explosive
+					// Randomly apply kill types to explosive
 					if (method.Firearm == FirearmKillMethod.Explosive) {
+						List<KillType> explosiveKillTypes = [ KillType.Any, KillType.Loud ];
+						if (ruleset.enableImpactExplosives)
+							explosiveKillTypes.Add(KillType.Impact);
+						if (ruleset.enableRemoteExplosives)
+							explosiveKillTypes.Add(KillType.Remote);
+						if (ruleset.enableLoudRemoteExplosives)
+							explosiveKillTypes.Add(KillType.LoudRemote);
+						method.KillType = explosiveKillTypes[random.Next(explosiveKillTypes.Count)];
+
 						if (random.Next(2) != 0) method.KillType = KillType.Loud;
 					}
 					else {
@@ -81,8 +90,19 @@ namespace Croupier
 					}
 					break;
 				case KillMethodType.Specific:
-					method.Specific = mission.Methods[random.Next(mission.Methods.Count)];
-					
+					while (true) {
+						method.Specific = mission.Methods[random.Next(mission.Methods.Count)];
+
+						// Skip easter egg conditions unless enabled
+						if (!ruleset.enableEasterEggConditions) {
+							var easterEggMethods = Mission.GetEasterEggMethods(mission.ID);
+							if (easterEggMethods.Contains(method.Specific.Value))
+								continue;
+						}
+
+						break;
+					}
+
 					// Randomly apply thrown or melee to specific melee kills if enabled
 					if (KillMethod.IsSpecificKillMethodMelee((SpecificKillMethod)method.Specific)) {
 						List<KillType> killTypes = [ KillType.Any ];
@@ -147,7 +167,9 @@ namespace Croupier
 			switch (method.Type)
 			{
 				case KillMethodType.Firearm:
-					// Allow all firearm kills
+					// Allow all firearm kills except explosive (unless enabled)
+					if (method.Firearm == FirearmKillMethod.Explosive)
+						return !ruleset.liveComplicationsExcludeStandard;
 					return true;
 				case KillMethodType.Specific:
 					// Allow all specific melee kills

@@ -1543,14 +1543,22 @@ namespace Croupier {
 		public static readonly Dictionary<string, KillType> KillTypeKeywords = new() {
 			{"loud", KillType.Loud},
 			{"ld", KillType.Loud},
-			{"melee", KillType.Melee},
-			{"mel", KillType.Melee},
-			{"thrown", KillType.Thrown},
-			{"throw", KillType.Thrown},
 			{"silenced", KillType.Silenced},
 			{"silence", KillType.Silenced},
 			{"sil", KillType.Silenced},
 			{"silent", KillType.Silenced},
+			{"melee", KillType.Melee},
+			{"mel", KillType.Melee},
+			{"thrown", KillType.Thrown},
+			{"throw", KillType.Thrown},
+			{"remote", KillType.Remote},
+			{"impact", KillType.Impact},
+			{"imp", KillType.Impact},
+			{"rem", KillType.Remote},
+			{"loudremote", KillType.LoudRemote},
+			{"ldremote", KillType.LoudRemote},
+			{"loudrem", KillType.LoudRemote},
+			{"ldrem", KillType.LoudRemote},
 		};
 		
 		public static bool CreateSpinFromParseContexts(List<ParseContext> contexts, out Spin spin) {
