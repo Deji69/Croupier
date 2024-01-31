@@ -1398,6 +1398,7 @@ namespace Croupier
 			return mission switch {
 				MissionID.SANTAFORTUNA_THREEHEADEDSERPENT or MissionID.SANTAFORTUNA_EMBRACEOFTHESERPENT => [SpecificKillMethod.SacrificialKnife],
 				MissionID.WHITTLETON_ANOTHERLIFE or MissionID.WHITTLETON_ABITTERPILL => [SpecificKillMethod.BattleAxe, SpecificKillMethod.BeakStaff],
+				MissionID.ISLEOFSGAIL_THEARKSOCIETY => [SpecificKillMethod.SacrificialKnife],
 				MissionID.MENDOZA_THEFAREWELL => [SpecificKillMethod.LetterOpener],
 				_ => [],
 			};
