@@ -119,10 +119,9 @@ namespace Croupier
 					new(FirearmKillMethod.Shotgun, [MethodTag.LoudOnly]),
 					new(FirearmKillMethod.SMG, [MethodTag.Impossible]),
 					new(FirearmKillMethod.Sniper, [MethodTag.Impossible]),
+					new(FirearmKillMethod.Explosive, [MethodTag.Impossible]),
 				],
-				Rules = [
-					new(impactExplosiveTest, [ MethodTag.BannedInRR, MethodTag.Impossible ]),
-				]
+				Rules = []
 			}},
 			{"VN", new Target() {
 				Name = "Viktor Novikov",
