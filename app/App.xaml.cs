@@ -1,4 +1,5 @@
-﻿using RestoreWindowPlace;
+﻿using Croupier.Properties;
+using RestoreWindowPlace;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -14,6 +15,7 @@ namespace Croupier
 		public WindowPlace WindowPlace { get; } = new WindowPlace("app.config");
 
 		public App() : base() {
+			Settings.Default.Upgrade();
 			CroupierSocketServer.Start();
 		} 
 
