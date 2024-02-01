@@ -1,5 +1,7 @@
 {
-    "name": "croupier",
-    "version": "1.0.0",
-    "dependencies": []
+	"name": "croupier",
+	"version": "1.0.0",
+	"dependencies": [
+		"directx-headers"
+	]
 }
