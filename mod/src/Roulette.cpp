@@ -210,6 +210,11 @@ std::vector<Keyword> Keyword::keywords = {
 	{ "Loud", eKillType::Loud, "Ld"},
 	{ "Melee", eKillType::Melee },
 	{ "Mel", eKillType::Melee, "Melee"},
+	{ "Remote", eKillType::Remote },
+	{ "Rem", eKillType::Remote, "Remote"},
+	{ "Impact", eKillType::Impact},
+	{ "Imp", eKillType::Impact, "Impact"},
+	{ "LoudRemote", eKillType::LoudRemote},
 	{ "Silenced", eKillType::Silenced, "Sil" },
 	{ "Silence", eKillType::Silenced, "Sil" },
 	{ "Silent", eKillType::Silenced, "Sil" },
@@ -372,9 +377,17 @@ const std::vector<eKillType> RouletteSpinGenerator::gunKillTypes {
 	eKillType::Silenced,
 };
 
+const std::vector<eKillType> RouletteSpinGenerator::ogExplosiveKillTypes {
+	eKillType::Any,
+	eKillType::Loud,
+};
+
 const std::vector<eKillType> RouletteSpinGenerator::explosiveKillTypes {
 	eKillType::Any,
 	eKillType::Loud,
+	eKillType::Impact,
+	eKillType::Remote,
+	eKillType::LoudRemote,
 };
 
 const std::vector<eMapKillMethod> RouletteSpinGenerator::sodersKills {
@@ -454,8 +467,8 @@ auto isKillMethodRemote(eKillMethod method) -> bool {
 	switch (method) {
 	case eKillMethod::ConsumedPoison:
 	case eKillMethod::Electrocution:
-	case eKillMethod::Explosion:
 	case eKillMethod::Explosive:
+	case eKillMethod::Explosion:
 	case eKillMethod::Fire:
 		return true;
 	}
@@ -499,6 +512,9 @@ auto isSpecificKillMethodLivePrefixable(eMapKillMethod method) -> bool {
 auto getKillTypeName(eKillType type) -> std::string_view {
 	switch (type) {
 	case eKillType::Loud: return "Loud";
+	case eKillType::LoudRemote: return "Loud Remote";
+	case eKillType::Remote: return "Remote";
+	case eKillType::Impact: return "Impact";
 	case eKillType::Silenced: return "Silenced";
 	case eKillType::Melee: return "Melee";
 	case eKillType::Thrown: return "Thrown";

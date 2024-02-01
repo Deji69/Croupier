@@ -54,6 +54,9 @@ enum class eKillType {
 	Loud,
 	Melee,
 	Thrown,
+	Remote,
+	Impact,
+	LoudRemote,
 };
 
 enum class eKillComplication {
@@ -408,6 +411,7 @@ public:
 	static const std::vector<eKillMethod> standardKillMethods;
 	static const std::vector<eKillType> gunKillTypes;
 	static const std::vector<eKillType> explosiveKillTypes;
+	static const std::vector<eKillType> ogExplosiveKillTypes;
 	static const std::vector<eMapKillMethod> sodersKills;
 	std::vector<eKillType> meleeKillTypes;
 	std::vector<eKillMethod> firearmKillMethods;
@@ -517,7 +521,7 @@ public:
 					auto killInfo = KillMethod{killMethod};
 
 					if (killInfo.isGun) killType = randomVectorElement(this->gunKillTypes);
-					else if (killMethod == eKillMethod::Explosive) killType = randomVectorElement(this->explosiveKillTypes);
+					else if (killMethod == eKillMethod::Explosive) killType = randomVectorElement(this->ogExplosiveKillTypes);
 					else if (useSpecificMethod && mapMethodInfo.isMelee) killType = randomVectorElement(meleeKillTypes);
 
 					//

@@ -1352,14 +1352,22 @@ const std::unordered_map<std::string, eKillComplication> complicationKeywords = 
 const std::unordered_map<std::string, eKillType> killTypeKeywords = {
 	{"loud", eKillType::Loud},
 	{"ld", eKillType::Loud},
-	{"melee", eKillType::Melee},
-	{"mel", eKillType::Melee},
-	{"thrown", eKillType::Thrown},
-	{"throw", eKillType::Thrown},
 	{"silenced", eKillType::Silenced},
 	{"silence", eKillType::Silenced},
 	{"sil", eKillType::Silenced},
 	{"silent", eKillType::Silenced},
+	{"melee", eKillType::Melee},
+	{"mel", eKillType::Melee},
+	{"thrown", eKillType::Thrown},
+	{"throw", eKillType::Thrown},
+	{"remote", eKillType::Remote},
+	{"impact", eKillType::Impact},
+	{"imp", eKillType::Impact},
+	{"rem", eKillType::Remote},
+	{"loudremote", eKillType::LoudRemote},
+	{"ldremote", eKillType::LoudRemote},
+	{"loudrem", eKillType::LoudRemote},
+	{"ldrem", eKillType::LoudRemote},
 };
 
 const KeywordInitialiser KeywordInitialiser::inst;

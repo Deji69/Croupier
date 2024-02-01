@@ -379,6 +379,15 @@ auto Croupier::SendSpinData() -> void {
 			case eKillType::Loud:
 				prefixes += "Ld ";
 				break;
+			case eKillType::LoudRemote:
+				prefixes += "Ld Remote ";
+				break;
+			case eKillType::Remote:
+				prefixes += "Remote ";
+				break;
+			case eKillType::Impact:
+				prefixes += "Impact ";
+				break;
 			case eKillType::Melee:
 				prefixes += "Melee ";
 				break;
