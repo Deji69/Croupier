@@ -74,6 +74,7 @@ public:
 	static auto createSpinFromParseContexts(const std::vector<ParseConditionContext>& contexts) -> std::optional<RouletteSpin> {
 		if (contexts.empty()) return nullptr;
 		auto mission = Missions::get(contexts.front().mission);
+		if (!mission) return nullptr;
 
 		RouletteSpin spin(mission);
 
