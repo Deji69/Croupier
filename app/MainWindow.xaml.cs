@@ -905,7 +905,21 @@ namespace Croupier
 
 		private void CopySpinCommand_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			Clipboard.SetText(new Spin(conditions).ToString());
+			// Have a few attempts at accessing the clipboard. In Windows this is usually a data race vs. other processes.
+			for (var i = 0; i < 10; ++i) {
+				try {
+					Clipboard.SetText(new Spin(conditions).ToString());
+					return;
+				} catch {
+				}
+				System.Threading.Thread.Sleep(10);
+			}
+
+			// Give up for now and inform the use to retry.
+			MessageBox.Show(
+				"Clipboard access failed. Another process may have attempted to access the clipboard at the same time. Please try again.",
+				"Copy Spin Failed"
+			);
 		}
 
 		private void PasteSpinCommand_Executed(object sender, ExecutedRoutedEventArgs e)
