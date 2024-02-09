@@ -215,7 +215,9 @@ namespace Croupier {
 			get {
 				if (Type == KillMethodType.Specific) return false;
 				if (Type == KillMethodType.Firearm)
-					return Firearm == FirearmKillMethod.Explosive && KillType != KillType.Loud;
+					return Firearm == FirearmKillMethod.Explosive
+						&& KillType != KillType.Loud
+						&& KillType != KillType.Impact;
 				if (Type == KillMethodType.Standard) {
 					switch (Standard) {
 						case StandardKillMethod.ConsumedPoison:
