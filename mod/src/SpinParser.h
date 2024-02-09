@@ -161,7 +161,7 @@ public:
 				if (context.mission == eMission::NONE) return false;
 
 				for (auto& dkws : disguiseKeywords) {
-					if (!dkws.keywords.empty() && !dkws.missions.contains(context.mission)) continue;
+					if (!dkws.missions.empty() && !dkws.missions.contains(context.mission)) continue;
 					auto kwd = dkws.keywords.find(token);
 					if (kwd != end(dkws.keywords)) {
 						context.disguise = kwd->second;
