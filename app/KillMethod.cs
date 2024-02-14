@@ -309,7 +309,10 @@ namespace Croupier {
 						//case FirearmKillMethod.Elimination: return new KillMethodInfo("Elimination", "condition_killmethod_close_combat_pistol_elimination.jpg");
 						//case FirearmKillMethod.PistolElimination: return new KillMethodInfo("Pistol Elimination", "condition_killmethod_close_combat_pistol_elimination.jpg");
 						//case FirearmKillMethod.SMGElimination: return new KillMethodInfo("SMG Elimination", "condition_killmethod_close_combat_smg_elimination.jpg");
-						case FirearmKillMethod.Explosive: return new KillMethodInfo("Explosive", "condition_killmethod_explosive.jpg");
+						case FirearmKillMethod.Explosive:
+							if (KillType == KillType.Impact)
+								return new KillMethodInfo("Explosive", "impact_explosive.png");
+							return new KillMethodInfo("Explosive", "condition_killmethod_explosive.jpg");
 					}
 					break;
 				case KillMethodType.Specific:
