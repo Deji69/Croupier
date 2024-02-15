@@ -1563,6 +1563,11 @@ namespace Croupier {
 			{"loudrem", KillType.LoudRemote},
 			{"ldrem", KillType.LoudRemote},
 		};
+		public static readonly Dictionary<string, bool> IgnoreKeywords = new() {
+			{"as", true},
+			{"in", true},
+			{"with", true},
+		};
 		
 		public static bool CreateSpinFromParseContexts(List<ParseContext> contexts, out Spin spin) {
 			spin = null;
@@ -1763,7 +1768,7 @@ namespace Croupier {
 					context.mission = MissionID.BERLIN_APEXPREDATOR;
 			}
 
-			for (i = 0; i < context.tokens.Count; ) {
+			for (i = context.nextIndex; i < context.tokens.Count; ) {
 				var tokensLeft = context.tokens.Count - i;
 				switch (tokensLeft) {
 					default:
@@ -1786,7 +1791,7 @@ namespace Croupier {
 						}
 						goto case 1;
 					case 1:
-						if (parseToken(context.tokens[i])) {
+						if (parseToken(context.tokens[i]) || IgnoreKeywords.ContainsKey(context.tokens[i])) {
 							context.tokens.RemoveAt(i);
 							break;
 						}
