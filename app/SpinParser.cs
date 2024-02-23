@@ -1612,22 +1612,38 @@ namespace Croupier {
 			var detectedMission = MissionID.NONE;
 			var processed = ProcessInput(input);
 
-			while (ParseCondition(processed, contexts.Last())) {
+			while (true) {
 				var context = contexts.Last<ParseContext>();
+				var haveFullCondition = ParseCondition(processed, contexts.Last());
 				var mission = context.mission;
 				var nextIndex = context.nextIndex;
 
-				if (detectedMission == MissionID.NONE)
-					detectedMission = mission;
-				else if (mission != detectedMission)
-					return false;
+				if (haveFullCondition) {
+					if (detectedMission == MissionID.NONE)
+						detectedMission = mission;
+					else if (mission != detectedMission)
+						return false;
 
-				contexts.Add(new(tokens) {
-					nextIndex = nextIndex,
-					mission = mission,
-					conditions = contexts.Count,
-				});
+					contexts.Add(new(tokens) {
+						nextIndex = nextIndex,
+						mission = mission,
+						conditions = contexts.Count,
+					});
+				}
+				else if (contexts.Count > 1 && !context.HaveTarget && !context.HaveDisguise && !context.HaveKillMethod) {
+					var prevContext = contexts[^2];
+					if (prevContext.killComplication == KillComplication.None)
+						prevContext.killComplication = context.killComplication;
+					if (prevContext.killType == KillType.Any)
+						prevContext.killType = context.killType;
+
+					context.killComplication = KillComplication.None;
+					context.killType = KillType.Any;
+				}
+				if (nextIndex >= tokens.Count)
+					break;
 			}
+
 			return CreateSpinFromParseContexts(contexts, out spin);
 		}
 
@@ -1723,6 +1739,9 @@ namespace Croupier {
 					else
 						context.tokens.Add(token);
 
+					if (c == '\n')
+						context.tokens.Add("\n");
+
 					token = "";
 				}
 
@@ -1776,6 +1795,12 @@ namespace Croupier {
 
 			for (i = context.nextIndex; i < context.tokens.Count; ) {
 				var tokensLeft = context.tokens.Count - i;
+
+				if (context.tokens[i] == "\n") {
+					++i;
+					break;
+				}
+
 				switch (tokensLeft) {
 					default:
 					case 4:
