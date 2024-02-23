@@ -24,6 +24,7 @@
 		<CommandBinding Command="{x:Static local:MainWindow.CopySpinCommand}" CanExecute="Command_AlwaysCanExecute" Executed="CopySpinCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.PasteSpinCommand}" CanExecute="PasteSpinCommand_CanExecute" Executed="PasteSpinCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.EditSpinCommand}" CanExecute="Command_AlwaysCanExecute" Executed="EditSpinCommand_Executed" />
+		<CommandBinding Command="{x:Static local:MainWindow.ShowHitmapsWindowCommand}" CanExecute="Command_AlwaysCanExecute" Executed="ShowHitmapsWindowCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.EditMapPoolCommand}" CanExecute="Command_AlwaysCanExecute" Executed="EditMapPoolCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.EditRulesetsCommand}" CanExecute="Command_AlwaysCanExecute" Executed="EditRulesetsCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.PrevSpinCommand}" CanExecute="PrevSpinCommand_CanExecute" Executed="PrevSpinCommand_Executed" />
@@ -360,6 +361,10 @@
 					IsEnabled="{Binding StaticSize, UpdateSourceTrigger=PropertyChanged}"
 				/>
 				<Separator />
+				<MenuItem
+					Header="Hitmaps/Webpage Integration"
+					Command="{x:Static local:MainWindow.ShowHitmapsWindowCommand}"
+				/>
 				<MenuItem
 					Header="_Map Pool"
 					Command="{x:Static local:MainWindow.EditMapPoolCommand}"

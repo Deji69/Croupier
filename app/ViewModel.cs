@@ -12,10 +12,15 @@ namespace Croupier
 		{
 			if (!EqualityComparer<T>.Default.Equals(field, value)) {
 				field = value;
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+				UpdateProperty(propertyName);
 				return true;
 			}
 			return false;
+		}
+
+		protected void UpdateProperty([CallerMemberName] string propertyName = null)
+		{
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 	}
 }

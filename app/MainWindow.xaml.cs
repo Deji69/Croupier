@@ -98,6 +98,9 @@ namespace Croupier
 		public static readonly RoutedUICommand EditMapPoolCommand = new("Edit Map Pool", "EditMapPool", typeof(MainWindow), [
 			new KeyGesture(Key.M, ModifierKeys.Alt),
 		]);
+		public static readonly RoutedUICommand ShowHitmapsWindowCommand = new("Show Hitmaps Window", "ShowHitmapsWindow", typeof(MainWindow), [
+			new KeyGesture(Key.H, ModifierKeys.Alt),
+		]);
 		public static readonly RoutedUICommand EditRulesetsCommand = new("Edit Rulesets", "EditRulesets", typeof(MainWindow), [
 			new KeyGesture(Key.R, ModifierKeys.Alt),
 		]);
@@ -124,6 +127,7 @@ namespace Croupier
 		private EditMapPoolWindow EditMapPoolWindowInst;
 		private EditRulesetWindow EditRulesetWindowInst;
 		private EditSpinWindow EditSpinWindowInst;
+		private HitmapsWindow HitmapsWindowInst;
 		private TargetNameFormat _targetNameFormat = TargetNameFormat.Initials;
 		private double _spinFontSize = 16;
 		private bool _rightToLeft = false;
@@ -433,6 +437,13 @@ namespace Croupier
 					disableClientUpdate = false;
 				}
 			};
+			HitmapsSpinLink.ReceiveNewSpinData += (object sender, string data) => {
+				if (SpinParser.Parse(data, out var spin)) {
+					SetSpin(spin);
+					UpdateSpinHistory();
+					PostConditionUpdate();
+				}
+			};
 
 			SendMissionsToClient();
 			SendSpinToClient();
@@ -465,24 +476,9 @@ namespace Croupier
 			LoadMissionPool();
 		}
 
-		private void EditRulesetWindow_Closed(object sender, EventArgs e)
-		{
-			EditRulesetWindowInst = null;
-		}
-
 		private void EditRulesetWindow_ApplyRuleset(object sender, Ruleset ruleset)
 		{
 			rules = ruleset;
-		}
-
-		private void EditMapPoolWindow_Closed(object sender, EventArgs e)
-		{
-			EditMapPoolWindowInst = null;
-		}
-
-		private void EditSpinWindow_Closed(object sender, EventArgs e)
-		{
-			EditSpinWindowInst = null;
 		}
 
 		private void EditSpinWindow_SetCondition(object _sender, SpinCondition condition)
@@ -946,7 +942,9 @@ namespace Croupier
 			};
 			EditMapPoolWindowInst.AddMissionToPool += EditMapPoolWindow_AddMissionToPool;
 			EditMapPoolWindowInst.RemoveMissionFromPool += EditMapPoolWindow_RemoveMissionFromPool;
-			EditMapPoolWindowInst.Closed += EditMapPoolWindow_Closed;
+			EditMapPoolWindowInst.Closed += (object sender, EventArgs e) => {
+				EditMapPoolWindowInst = null;
+			};
 			EditMapPoolWindowInst.UpdateMissionPool(missionPool);
 			EditMapPoolWindowInst.Show();
 		}
@@ -962,8 +960,31 @@ namespace Croupier
 				WindowStartupLocation = WindowStartupLocation.CenterOwner
 			};
 			EditRulesetWindowInst.ApplyRuleset += EditRulesetWindow_ApplyRuleset;
-			EditRulesetWindowInst.Closed += EditRulesetWindow_Closed;
+			EditRulesetWindowInst.Closed += (object sender, EventArgs e) => {
+				EditRulesetWindowInst = null;
+			};
 			EditRulesetWindowInst.Show();
+		}
+
+		private void HitmapsWindow_Closed(object sender, EventArgs e)
+		{
+			HitmapsWindowInst = null;
+		}
+
+		private void ShowHitmapsWindowCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (HitmapsWindowInst != null) {
+				HitmapsWindowInst.Activate();
+				return;
+			}
+			HitmapsWindowInst = new() {
+				Owner = this,
+				WindowStartupLocation = WindowStartupLocation.CenterOwner
+			};
+			HitmapsWindowInst.Closed += (object sender, EventArgs e) => {
+				HitmapsWindowInst = null;
+			};
+			HitmapsWindowInst.Show();
 		}
 
 		private void EditSpinCommand_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -977,7 +998,9 @@ namespace Croupier
 				WindowStartupLocation = WindowStartupLocation.CenterOwner
 			};
 			EditSpinWindowInst.SetCondition += EditSpinWindow_SetCondition;
-			EditSpinWindowInst.Closed += EditSpinWindow_Closed;
+			EditSpinWindowInst.Closed += (object sender, EventArgs e) => {
+				EditSpinWindowInst = null;
+			};
 			EditSpinWindowInst.Show();
 		}
 

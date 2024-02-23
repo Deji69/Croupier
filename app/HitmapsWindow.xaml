@@ -1,0 +1,153 @@
+﻿<Window x:Class="Croupier.HitmapsWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:local="clr-namespace:Croupier"
+		d:DataContext="{d:DesignInstance Type=local:HitmapsWindowViewModel}"
+		mc:Ignorable="d"
+		Title="Hitmaps - Croupier"
+		WindowStyle="SingleBorderWindow"
+		Width="600"
+		Height="400"
+		MaxHeight="540"
+		MinHeight="142"
+		MinWidth="500"
+		MaxWidth="720"
+		Icon="/CroupierLogoIconsFlatLg.png">
+	<Window.Resources>
+		<DataTemplate x:Key="MethodSelectTemplate" DataType="{x:Type local:MissionComboBoxItem}">
+			<ContentPresenter Content="{Binding}" HorizontalAlignment="Stretch">
+				<ContentPresenter.Style>
+					<Style TargetType="{x:Type ContentPresenter}">
+						<Setter Property="ContentTemplate" Value="{StaticResource MethodComboBoxItemTemplate}" />
+						<Style.Triggers>
+							<DataTrigger Binding="{Binding IsSeparator}" Value="True">
+								<Setter Property="ContentTemplate" Value="{StaticResource MissionComboBoxSeparatorTemplate}" />
+							</DataTrigger>
+						</Style.Triggers>
+					</Style>
+				</ContentPresenter.Style>
+			</ContentPresenter>
+		</DataTemplate>
+		<DataTemplate x:Key="KillTypeSelectTemplate" DataType="{x:Type local:MissionComboBoxItem}">
+			<ContentPresenter Content="{Binding}" HorizontalAlignment="Stretch">
+				<ContentPresenter.Style>
+					<Style TargetType="{x:Type ContentPresenter}">
+						<Setter Property="ContentTemplate" Value="{StaticResource ComboBoxItemTemplate}" />
+						<Style.Triggers>
+							<DataTrigger Binding="{Binding IsSeparator}" Value="True">
+								<Setter Property="ContentTemplate" Value="{StaticResource MissionComboBoxSeparatorTemplate}" />
+							</DataTrigger>
+						</Style.Triggers>
+					</Style>
+				</ContentPresenter.Style>
+			</ContentPresenter>
+		</DataTemplate>
+	</Window.Resources>
+	<ScrollViewer DockPanel.Dock="Top" Background="Black">
+		<StackPanel UseLayoutRounding="True" Margin="0">
+			<StackPanel Orientation="Vertical">
+				<TextBlock
+					Text="Hitmaps/Webpage Integration"
+					FontWeight="Bold"
+					Foreground="White"
+					Margin="5,2"
+					/>
+				<TextBlock
+					Text="To enable using Hitmaps spin links (or any custom webpage containing a .targets element with spin in text form), Croupier needs to use a (headless) chrome browser. Use the buttons below to install/uninstall the necessary requirements."
+					Foreground="White"
+					TextWrapping="WrapWithOverflow"
+					Margin="5,2"
+					/>
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,8">
+					<Button
+						Content="Install"
+						Click="Install_Click"
+						IsEnabled="{Binding EnableInstallBrowserButton}"
+						HorizontalAlignment="Center"
+						Margin="5,0"
+						Padding="10,3"
+						FontSize="13"
+						/>
+					<Button
+						Content="Uninstall"
+						Click="Uninstall_Click"
+						IsEnabled="{Binding EnableUninstallBrowserButton}"
+						HorizontalAlignment="Center"
+						Margin="5,0"
+						Padding="10,3"
+						FontSize="13"
+						/>
+				</StackPanel>
+				<StackPanel Orientation="Horizontal">
+					<TextBlock
+						Text="Status: "
+						Foreground="White"
+						Margin="5,0"
+						/>
+					<TextBlock
+						Text="{Binding BrowserInstallStatusText}"
+						Foreground="{Binding BrowserInstallStatusColour}"
+						Margin="0,0"
+						/>
+				</StackPanel>
+			</StackPanel>
+			<TextBlock
+				Text="Spin Link"
+				FontWeight="Bold"
+				Foreground="White"
+				Margin="5, 10, 5, 2"
+				/>
+			<Grid Margin="8,0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="40*" />
+					<ColumnDefinition Width="10" />
+					<ColumnDefinition Width="60*" />
+				</Grid.ColumnDefinitions>
+				<TextBlock
+					Text="Enter spin link to automatically receive the current and future spins sent through it."
+					Foreground="White"
+					TextWrapping="WrapWithOverflow"
+					Grid.Column="0"
+					/>
+				<Grid Grid.Column="2">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="1*" />
+						<ColumnDefinition Width="10" />
+						<ColumnDefinition Width="50" />
+						<ColumnDefinition Width="5" />
+						<ColumnDefinition Width="50" />
+					</Grid.ColumnDefinitions>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="24" />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
+					<TextBox
+						MaxLines="1"
+						VerticalAlignment="Stretch"
+						Text="{Binding HitmapsSpinLinkInput}"
+						/>
+					<Button
+						Click="SpinLinkStart_Click"
+						Content="Start"
+						IsEnabled="{Binding IsBrowserInstalled}"
+						Grid.Column="2" />
+					<Button
+						Click="SpinLinkStop_Click"
+						Content="Stop"
+						IsEnabled="{Binding IsBrowserInstalled}"
+						Grid.Column="4" />
+					<Grid Grid.Row="1" Grid.ColumnSpan="5">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="50" />
+							<ColumnDefinition Width="1*" />
+						</Grid.ColumnDefinitions>
+						<TextBlock Foreground="White" Text="Status: " />
+						<TextBlock Grid.Column="1" Foreground="White" Text="{Binding SpinLinkStatusText}" TextWrapping="WrapWithOverflow" />
+					</Grid>
+				</Grid>
+			</Grid>
+		</StackPanel>
+	</ScrollViewer>
+</Window>

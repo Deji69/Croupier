@@ -12,6 +12,8 @@ namespace Croupier
 	/// </summary>
 	public partial class App : Application
 	{
+		public readonly HitmapsSpinLink HitmapsSpinLink = new();
+
 		public WindowPlace WindowPlace { get; } = new WindowPlace("app.config");
 
 		public App() : base() {
@@ -27,6 +29,7 @@ namespace Croupier
 
 		protected override void OnExit(ExitEventArgs e)
 		{
+			HitmapsSpinLink.ForceStop();
 			base.OnExit(e);
 			WindowPlace.Save();
 		}
