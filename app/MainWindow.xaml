@@ -362,7 +362,7 @@
 				/>
 				<Separator />
 				<MenuItem
-					Header="Hitmaps/Webpage Integration"
+					Header="Hitmaps/Web Link"
 					Command="{x:Static local:MainWindow.ShowHitmapsWindowCommand}"
 				/>
 				<MenuItem
