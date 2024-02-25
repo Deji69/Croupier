@@ -17,7 +17,7 @@ namespace Croupier
 		public WindowPlace WindowPlace { get; } = new WindowPlace("app.config");
 
 		public App() : base() {
-			Settings.Default.Upgrade();
+			Config.Load();
 			CroupierSocketServer.Start();
 		} 
 
@@ -31,6 +31,7 @@ namespace Croupier
 		{
 			HitmapsSpinLink.ForceStop();
 			base.OnExit(e);
+			Config.Save();
 			WindowPlace.Save();
 		}
 	}

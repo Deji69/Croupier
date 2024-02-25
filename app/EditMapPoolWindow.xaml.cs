@@ -70,11 +70,11 @@ namespace Croupier
 					list.AddRange(additionalMissions);
 					break;
 				case MissionPoolPresetID.Custom:
-					if (Settings.Default.CustomMissionPool == null) break;
+					if (Config.Default.CustomMissionPool == null) break;
 					
 					var toRemove = new List<string>();
 					
-					foreach (var key in Settings.Default.CustomMissionPool) {
+					foreach (var key in Config.Default.CustomMissionPool) {
 						if (!Mission.GetMissionFromString(key, out var id)) {
 							toRemove.Add(key);
 							continue;
@@ -84,8 +84,8 @@ namespace Croupier
 					}
 
 					if (toRemove.Count > 0) {
-						toRemove.ForEach(key => Settings.Default.CustomMissionPool.Remove(key));
-						Settings.Default.Save();
+						toRemove.ForEach(key => Config.Default.CustomMissionPool.Remove(key));
+						Config.Save();
 					}
 					break;
 			}
@@ -255,7 +255,7 @@ namespace Croupier
 			}
 		}
 
-		private static readonly MissionPoolPresetEntry customMissionPoolPresetEntry = new() { Name = $"Custom ({Settings.Default.CustomMissionPool?.Count ?? 0})", Preset = MissionPoolPresetID.Custom };
+		private static readonly MissionPoolPresetEntry customMissionPoolPresetEntry = new() { Name = $"Custom ({Config.Default.CustomMissionPool?.Count ?? 0})", Preset = MissionPoolPresetID.Custom };
 		public ObservableCollection<MissionPoolPresetEntry> MissionPoolPresetEntries = [
 			customMissionPoolPresetEntry,
 			new(){Name = "Main Missions (19)", Preset = MissionPoolPresetID.MainMissions},
@@ -278,33 +278,33 @@ namespace Croupier
 			MapPool.ItemsSource = MissionPoolList;
 			MissionPoolPresetComboBox.ItemsSource = MissionPoolPresetEntries;
 
-			if (!Enum.IsDefined(typeof(MissionPoolPresetID), Settings.Default.MissionPool))
-				Settings.Default.MissionPool = (int)MissionPoolPresetID.MainMissions;
+			if (!Enum.IsDefined(typeof(MissionPoolPresetID), Config.Default.MissionPool))
+				Config.Default.MissionPool = MissionPoolPresetID.MainMissions;
 
-			MissionPoolPresetComboBox.SelectedValue = (MissionPoolPresetID)Settings.Default.MissionPool;
+			MissionPoolPresetComboBox.SelectedValue = Config.Default.MissionPool;
 
-			if (Settings.Default.CustomMissionPool == null)
-				Settings.Default.CustomMissionPool = [];
+			if (Config.Default.CustomMissionPool == null)
+				Config.Default.CustomMissionPool = [];
 			else {
-				var unique = Settings.Default.CustomMissionPool.OfType<string>().Distinct().Where(v => MissionIDMethods.FromKey(v) != MissionID.NONE).ToArray();
-				Settings.Default.CustomMissionPool.Clear();
-				Settings.Default.CustomMissionPool.AddRange(unique);
+				var unique = Config.Default.CustomMissionPool.OfType<string>().Distinct().Where(v => MissionIDMethods.FromKey(v) != MissionID.NONE).ToArray();
+				Config.Default.CustomMissionPool.Clear();
+				Config.Default.CustomMissionPool.AddRange(unique);
 			}
 
 			AddMissionToPool += (object sender, MissionID e) => {
 				if (!IsCustomPoolSelected) return;
 				var key = e.GetKey();
-				if (!Settings.Default.CustomMissionPool.Contains(key))
-					Settings.Default.CustomMissionPool.Add(key);
-				Settings.Default.Save();
+				if (!Config.Default.CustomMissionPool.Contains(key))
+					Config.Default.CustomMissionPool.Add(key);
+				Config.Save();
 
-				customMissionPoolPresetEntry.Name = "Custom (" + Settings.Default.CustomMissionPool.Count.ToString() + ")";
+				customMissionPoolPresetEntry.Name = "Custom (" + Config.Default.CustomMissionPool.Count.ToString() + ")";
 			};
 			RemoveMissionFromPool += (object sender, MissionID e) => {
 				if (!IsCustomPoolSelected) return;
-				Settings.Default.CustomMissionPool.Remove(e.GetKey());
-				Settings.Default.Save();
-				customMissionPoolPresetEntry.Name = "Custom (" + Settings.Default.CustomMissionPool.Count.ToString() + ")";
+				Config.Default.CustomMissionPool.Remove(e.GetKey());
+				Config.Save();
+				customMissionPoolPresetEntry.Name = "Custom (" + Config.Default.CustomMissionPool.Count.ToString() + ")";
 			};
 		}
 
@@ -355,7 +355,7 @@ namespace Croupier
 		{
 			var comboBox = (ComboBox)sender;
 			if (comboBox.SelectedValue == null) {
-				comboBox.SelectedValue = (MissionPoolPresetID)Settings.Default.MissionPool;
+				comboBox.SelectedValue = Config.Default.MissionPool;
 				return;
 			}
 
@@ -364,8 +364,8 @@ namespace Croupier
 			if (presetEntry == null) return;
 			UpdateMissionPool(presetEntry.GetMissions());
 			IsCustomPoolSelected = (MissionPoolPresetID)comboBox.SelectedValue == MissionPoolPresetID.Custom;
-			Settings.Default.MissionPool = (int)id;
-			Settings.Default.Save();
+			Config.Default.MissionPool = id;
+			Config.Save();
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

@@ -228,24 +228,24 @@ namespace Croupier
 
 			var customRuleset = Rulesets.First(r => r.Preset == RulesetPreset.Custom);
 			if (customRuleset != null) {
-				customRuleset.enableEasterEggConditions = Settings.Default.Ruleset_Custom_BannedEasterEgg;
-				customRuleset.enableBuggy = Settings.Default.Ruleset_Custom_BannedBuggy;
-				customRuleset.enableExtreme = Settings.Default.Ruleset_Custom_BannedExtreme;
-				customRuleset.enableHard = Settings.Default.Ruleset_Custom_BannedHard;
-				customRuleset.enableImpossible = Settings.Default.Ruleset_Custom_BannedImpossible;
-				customRuleset.enableMedium = Settings.Default.Ruleset_Custom_BannedMedium;
-				customRuleset.genericEliminations = Settings.Default.Ruleset_Custom_GenericEliminations;
-				customRuleset.liveComplicationChance = Settings.Default.Ruleset_Custom_LiveComplicationChance;
-				customRuleset.liveComplications = Settings.Default.Ruleset_Custom_LiveComplications;
-				customRuleset.liveComplicationsExcludeStandard = Settings.Default.Ruleset_Custom_LiveComplicationsExcludeStandard;
-				customRuleset.meleeKillTypes = Settings.Default.Ruleset_Custom_MeleeKillTypes;
-				customRuleset.thrownKillTypes = Settings.Default.Ruleset_Custom_ThrownKillTypes;
-				customRuleset.enableRemoteExplosives = Settings.Default.Ruleset_Custom_RemoteExplosiveKillTypes;
-				customRuleset.enableLoudRemoteExplosives = Settings.Default.Ruleset_Custom_LoudRemoteExplosiveKillTypes;
-				customRuleset.enableImpactExplosives = Settings.Default.Ruleset_Custom_ImpactExplosiveKillTypes;
+				customRuleset.enableEasterEggConditions = Config.Default.Ruleset_BannedEasterEgg;
+				customRuleset.enableBuggy = Config.Default.Ruleset_BannedBuggy;
+				customRuleset.enableExtreme = Config.Default.Ruleset_BannedExtreme;
+				customRuleset.enableHard = Config.Default.Ruleset_BannedHard;
+				customRuleset.enableImpossible = Config.Default.Ruleset_BannedImpossible;
+				customRuleset.enableMedium = Config.Default.Ruleset_BannedMedium;
+				customRuleset.genericEliminations = Config.Default.Ruleset_GenericEliminations;
+				customRuleset.liveComplicationChance = Config.Default.Ruleset_LiveComplicationChance;
+				customRuleset.liveComplications = Config.Default.Ruleset_LiveComplications;
+				customRuleset.liveComplicationsExcludeStandard = Config.Default.Ruleset_LiveComplicationsExcludeStandard;
+				customRuleset.meleeKillTypes = Config.Default.Ruleset_MeleeKillTypes;
+				customRuleset.thrownKillTypes = Config.Default.Ruleset_ThrownKillTypes;
+				customRuleset.enableRemoteExplosives = Config.Default.Ruleset_RemoteExplosiveKillTypes;
+				customRuleset.enableLoudRemoteExplosives = Config.Default.Ruleset_LoudRemoteExplosiveKillTypes;
+				customRuleset.enableImpactExplosives = Config.Default.Ruleset_ImpactExplosiveKillTypes;
 			}
 
-			var ruleset = Rulesets.FirstOrDefault(r => r.Name == Settings.Default.Ruleset);
+			var ruleset = Rulesets.FirstOrDefault(r => r.Name == Config.Default.Ruleset);
 			if (ruleset != null) {
 				var idx = Rulesets.IndexOf(ruleset);
 				if (idx == -1) idx = 0;
@@ -278,8 +278,8 @@ namespace Croupier
 			Ruleset = ruleset;
 			ApplyRuleset?.Invoke(this, Ruleset);
 
-			Settings.Default.Ruleset = ruleset.Name;
-			Settings.Default.Save();
+			Config.Default.Ruleset = ruleset.Name;
+			Config.Save();
 		}
 
 		private void CustomRulesetChanged() {
@@ -291,22 +291,22 @@ namespace Croupier
 					SelectRuleset(Rulesets[i]);
 					Ruleset = customisedRuleset;
 
-					Settings.Default.Ruleset_Custom_LiveComplications = Ruleset.liveComplications;
-					Settings.Default.Ruleset_Custom_LiveComplicationsExcludeStandard = Ruleset.liveComplicationsExcludeStandard;
-					Settings.Default.Ruleset_Custom_LiveComplicationChance = Ruleset.liveComplicationChance;
-					Settings.Default.Ruleset_Custom_GenericEliminations = Ruleset.genericEliminations;
-					Settings.Default.Ruleset_Custom_MeleeKillTypes = Ruleset.meleeKillTypes;
-					Settings.Default.Ruleset_Custom_ThrownKillTypes = Ruleset.thrownKillTypes;
-					Settings.Default.Ruleset_Custom_RemoteExplosiveKillTypes = Ruleset.enableRemoteExplosives;
-					Settings.Default.Ruleset_Custom_ImpactExplosiveKillTypes = Ruleset.enableImpactExplosives;
-					Settings.Default.Ruleset_Custom_LoudRemoteExplosiveKillTypes = Ruleset.enableLoudRemoteExplosives;
-					Settings.Default.Ruleset_Custom_BannedMedium = Ruleset.enableMedium;
-					Settings.Default.Ruleset_Custom_BannedHard = Ruleset.enableHard;
-					Settings.Default.Ruleset_Custom_BannedExtreme = Ruleset.enableExtreme;
-					Settings.Default.Ruleset_Custom_BannedImpossible = Ruleset.enableImpossible;
-					Settings.Default.Ruleset_Custom_BannedBuggy = Ruleset.enableBuggy;
-					Settings.Default.Ruleset_Custom_BannedEasterEgg = Ruleset.enableEasterEggConditions;
-					Settings.Default.Save();
+					Config.Default.Ruleset_LiveComplications = Ruleset.liveComplications;
+					Config.Default.Ruleset_LiveComplicationsExcludeStandard = Ruleset.liveComplicationsExcludeStandard;
+					Config.Default.Ruleset_LiveComplicationChance = Ruleset.liveComplicationChance;
+					Config.Default.Ruleset_GenericEliminations = Ruleset.genericEliminations;
+					Config.Default.Ruleset_MeleeKillTypes = Ruleset.meleeKillTypes;
+					Config.Default.Ruleset_ThrownKillTypes = Ruleset.thrownKillTypes;
+					Config.Default.Ruleset_RemoteExplosiveKillTypes = Ruleset.enableRemoteExplosives;
+					Config.Default.Ruleset_ImpactExplosiveKillTypes = Ruleset.enableImpactExplosives;
+					Config.Default.Ruleset_LoudRemoteExplosiveKillTypes = Ruleset.enableLoudRemoteExplosives;
+					Config.Default.Ruleset_BannedMedium = Ruleset.enableMedium;
+					Config.Default.Ruleset_BannedHard = Ruleset.enableHard;
+					Config.Default.Ruleset_BannedExtreme = Ruleset.enableExtreme;
+					Config.Default.Ruleset_BannedImpossible = Ruleset.enableImpossible;
+					Config.Default.Ruleset_BannedBuggy = Ruleset.enableBuggy;
+					Config.Default.Ruleset_BannedEasterEgg = Ruleset.enableEasterEggConditions;
+					Config.Save();
 				}
 				else ApplyRuleset?.Invoke(this, Ruleset);
 				break;

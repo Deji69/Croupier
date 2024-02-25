@@ -96,7 +96,7 @@ namespace Croupier
 		public Uri MethodImagePath { get { return Method.ImageUri; } }
 
 		public override string ToString() {
-			var format = TargetNameFormatMethods.FromString(Settings.Default.TargetNameFormat);
+			var format = TargetNameFormatMethods.FromString(Config.Default.TargetNameFormat);
 			var targetKey = format switch {
 				TargetNameFormat.Full => TargetName,
 				TargetNameFormat.Short => Target.ShortName ?? Target.GetTargetKey(TargetName),

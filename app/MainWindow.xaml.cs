@@ -25,10 +25,10 @@ namespace Croupier
 		public string Name { get; set; } = name;
 		public bool IsSelected {
 			get {
-				return TargetNameFormatMethods.FromString(Settings.Default.TargetNameFormat) == ID;
+				return TargetNameFormatMethods.FromString(Config.Default.TargetNameFormat) == ID;
 			}
 			set {
-				Settings.Default.TargetNameFormat = value.ToString();
+				Config.Default.TargetNameFormat = value.ToString();
 				OnPropertyChanged(nameof(IsSelected));
 			}
 		}
@@ -142,7 +142,7 @@ namespace Croupier
 			get { return _targetNameFormat; }
 			set {
 				_targetNameFormat = value;
-				Settings.Default.TargetNameFormat = value.ToString();
+				Config.Default.TargetNameFormat = value.ToString();
 				OnPropertyChanged(nameof(TargetNameFormat));
 				SyncHistoryEntries();
 				foreach (var entry in TargetNameFormatEntries)
@@ -173,8 +173,8 @@ namespace Croupier
 			set {
 				_topmostEnabled = value;
 				Topmost = value;
-				Settings.Default.AlwaysOnTop = value;
-				Settings.Default.Save();
+				Config.Default.AlwaysOnTop = value;
+				Config.Save();
 				OnPropertyChanged(nameof(TopmostEnabled));
 			}
 		}
@@ -182,8 +182,8 @@ namespace Croupier
 			get { return _verticalDisplay; }
 			set {
 				_verticalDisplay = value;
-				Settings.Default.VerticalDisplay = value;
-				Settings.Default.Save();
+				Config.Default.VerticalDisplay = value;
+				Config.Save();
 				OnPropertyChanged(nameof(VerticalDisplay));
 			}
 		}
@@ -202,9 +202,9 @@ namespace Croupier
 			set {
 				if (value == _rightToLeft) return;
 				_rightToLeft = value;
-				if (value != Settings.Default.RightToLeft) {
-					Settings.Default.RightToLeft = value;
-					Settings.Default.Save();
+				if (value != Config.Default.RightToLeft) {
+					Config.Default.RightToLeft = value;
+					Config.Save();
 				}
 				OnPropertyChanged(nameof(RightToLeft));
 				OnPropertyChanged(nameof(RightToLeftFlowDir));
@@ -217,9 +217,9 @@ namespace Croupier
 			set {
 				if (value == _staticSize) return;
 				_staticSize = value;
-				if (value != Settings.Default.StaticSize) {
-					Settings.Default.StaticSize = value;
-					Settings.Default.Save();
+				if (value != Config.Default.StaticSize) {
+					Config.Default.StaticSize = value;
+					Config.Save();
 				}
 				OnPropertyChanged(nameof(ContentGridAlign));
 				OnPropertyChanged(nameof(StaticSize));
@@ -235,9 +235,9 @@ namespace Croupier
 			set {
 				if (value == _staticSizeLHS) return;
 				_staticSizeLHS = value;
-				if (value != Settings.Default.StaticSizeLHS) {
-					Settings.Default.StaticSizeLHS = value;
-					Settings.Default.Save();
+				if (value != Config.Default.StaticSizeLHS) {
+					Config.Default.StaticSizeLHS = value;
+					Config.Save();
 				}
 				OnPropertyChanged(nameof(ContentGridAlign));
 				OnPropertyChanged(nameof(StaticSize));
@@ -398,6 +398,24 @@ namespace Croupier
 			((App)Application.Current).WindowPlace.Register(this);
 			Focus();
 
+			if (Config.Default.SpinHistory.Count > 0) {
+				string[] history = new string[Config.Default.SpinHistory.Count];
+				Config.Default.SpinHistory.CopyTo(history, 0);
+
+				foreach (var item in history.Reverse()) {
+					//if (Croupier.Spin.Parse(item, out var spin)) PushSpinToHistory(spin);
+					if (SpinParser.Parse(item, out var spin))
+						PushSpinToHistory(spin);
+				}
+			}
+
+			if (spinHistory.Count > 0)
+				SetSpinHistory(1);
+			else {
+				SetMission(missions[0].ID);
+				Spin(currentMission.ID);
+			}
+
 			LoadSettings();
 
 			PropertyChanged += MainWindow_PropertyChanged;
@@ -460,19 +478,19 @@ namespace Croupier
 
 		private void LoadSettings()
 		{
-			if (!Enum.IsDefined(typeof(MissionPoolPresetID), Settings.Default.MissionPool))
-				Settings.Default.MissionPool = (int)MissionPoolPresetID.MainMissions;
+			if (!Enum.IsDefined(typeof(MissionPoolPresetID), Config.Default.MissionPool))
+				Config.Default.MissionPool = MissionPoolPresetID.MainMissions;
 
-			var newRuleset = rulesets.FirstOrDefault(r => r.Name == Settings.Default.Ruleset);
+			var newRuleset = rulesets.FirstOrDefault(r => r.Name == Config.Default.Ruleset);
 			if (newRuleset != null) rules = newRuleset;
-			else Settings.Default.Ruleset = rules.Name;
+			else Config.Default.Ruleset = rules.Name;
 
-			VerticalDisplay = Settings.Default.VerticalDisplay;
-			TopmostEnabled = Settings.Default.AlwaysOnTop;
-			RightToLeft = Settings.Default.RightToLeft;
-			StaticSize = Settings.Default.StaticSize;
-			StaticSizeLHS = Settings.Default.StaticSizeLHS;
-			TargetNameFormat = TargetNameFormatMethods.FromString(Settings.Default.TargetNameFormat);
+			VerticalDisplay = Config.Default.VerticalDisplay;
+			TopmostEnabled = Config.Default.AlwaysOnTop;
+			RightToLeft = Config.Default.RightToLeft;
+			StaticSize = Config.Default.StaticSize;
+			StaticSizeLHS = Config.Default.StaticSizeLHS;
+			TargetNameFormat = TargetNameFormatMethods.FromString(Config.Default.TargetNameFormat);
 			LoadMissionPool();
 		}
 
@@ -513,21 +531,23 @@ namespace Croupier
 
 		private void SaveCustomMissionPool()
 		{
-			if ((MissionPoolPresetID)Settings.Default.MissionPool != MissionPoolPresetID.Custom)
+			if (Config.Default.MissionPool != MissionPoolPresetID.Custom)
 				return;
-			Settings.Default.CustomMissionPool ??= [];
-			Settings.Default.CustomMissionPool.Clear();
+			
+			Config.Default.CustomMissionPool ??= [];
+			Config.Default.CustomMissionPool.Clear();
+
 			foreach (var mission in missionPool) {
 				if (!Mission.GetMissionCodename(mission, out var name))
 					continue;
-				Settings.Default.CustomMissionPool.Add(name);
+				Config.Default.CustomMissionPool.Add(name);
 			}
 		}
 
 		private void LoadMissionPool()
 		{
 			missionPool.Clear();
-			missionPool.AddRange(((MissionPoolPresetID)Settings.Default.MissionPool).GetMissions());
+			missionPool.AddRange(Config.Default.MissionPool.GetMissions());
 		}
 
 		public override void OnApplyTemplate()
@@ -541,23 +561,6 @@ namespace Croupier
 			ContextMenuTargetNameFormat.DataContext = this;
 			ContextMenuHistory.ItemsSource = HistoryEntries;
 			ContextMenuHistory.DataContext = this;
-
-			if (Settings.Default.SpinHistory != null && Settings.Default.SpinHistory.Count > 0) {
-				string[] history = new string[Settings.Default.SpinHistory.Count];
-				Settings.Default.SpinHistory.CopyTo(history, 0);
-
-				foreach (var item in history.Reverse()) {
-					//if (Croupier.Spin.Parse(item, out var spin)) PushSpinToHistory(spin);
-					if (SpinParser.Parse(item, out var spin)) PushSpinToHistory(spin);
-				}
-			}
-
-			if (spinHistory.Count > 0)
-				SetSpinHistory(1);
-			else {
-				SetMission(missions[0].ID);
-				Spin(currentMission.ID);
-			}
 
 			var idx = MissionListItems.ToList().FindIndex(item => item.ID == currentMission.ID);
 			MissionSelect.SelectedIndex = idx;
@@ -643,10 +646,7 @@ namespace Croupier
 		public void SyncHistoryEntries() {
 			var fwdIndex = spinHistory.Count - spinHistoryIndex;
 
-			if (Settings.Default.SpinHistory == null)
-				Settings.Default.SpinHistory = [];
-
-			Settings.Default.SpinHistory.Clear();
+			Config.Default.SpinHistory.Clear();
 
 			for (var i = 0; i < spinHistory.Count && i < HistoryEntries.Count; ++i) {
 				var absIdx = spinHistory.Count - i - 1;
@@ -654,10 +654,10 @@ namespace Croupier
 				entry.Name = spinHistory[absIdx].ToString();
 				entry.Index = absIdx;
 				entry.IsSelected = absIdx == fwdIndex;
-				Settings.Default.SpinHistory.Add(entry.Name);
+				Config.Default.SpinHistory.Add(entry.Name);
 			}
 
-			Settings.Default.Save();
+			Config.Save();
 			OnPropertyChanged(nameof(HistoryEntries));
 		}
 
@@ -772,12 +772,12 @@ namespace Croupier
 				var numColumns = GetNumColumns();
 				if (!StaticSize) {
 					if (numColumns == 2) {
-						Settings.Default.Width2Column = e.NewSize.Width;
-						Settings.Default.Save();
+						Config.Default.Width2Column = e.NewSize.Width;
+						Config.Save();
 					}
 					else if (numColumns == 1) {
-						Settings.Default.Width1Column = e.NewSize.Width;
-						Settings.Default.Save();
+						Config.Default.Width1Column = e.NewSize.Width;
+						Config.Save();
 					}
 				}
 				
@@ -844,8 +844,8 @@ namespace Croupier
 			var numColumns = StaticSize ? 2 : GetNumColumns();
 
 			var width = Math.Max(numColumns switch {
-				1 => Settings.Default.Width1Column,
-				2 => Settings.Default.Width2Column,
+				1 => Config.Default.Width1Column,
+				2 => Config.Default.Width2Column,
 				_ => Width,
 			}, 450);
 
@@ -896,7 +896,6 @@ namespace Croupier
 
 		private void Window_Closing(object sender, CancelEventArgs e)
 		{
-			Settings.Default.Save();
 		}
 
 		private void CopySpinCommand_Executed(object sender, ExecutedRoutedEventArgs e)
