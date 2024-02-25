@@ -31,6 +31,7 @@ namespace Croupier {
 		public bool Ruleset_LoudRemoteExplosiveKillTypes { get; set; } = false;
 		public bool Ruleset_ImpactExplosiveKillTypes { get; set; } = false;
 		public List<string> SpinHistory { get; set; } = [];
+		public List<string> Bookmarks { get; set; } = [];
 
 		public bool AlwaysOnTop { get; set; } = false;
 		public bool RightToLeft { get; set; } = false;

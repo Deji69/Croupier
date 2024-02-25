@@ -313,6 +313,20 @@
 						</Style>
 					</MenuItem.ItemContainerStyle>
 				</MenuItem>
+				<MenuItem
+					Name="ContextMenuBookmarks"
+					Header="_Bookmarks"
+					StaysOpenOnClick="True"
+				>
+					<MenuItem.ItemContainerStyle>
+						<Style TargetType="MenuItem">
+							<Setter Property="Header" Value="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+							<Setter Property="StaysOpenOnClick" Value="True" />
+							<Setter Property="Command" Value="{Binding DataContext.BookmarkEntrySelectCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+							<Setter Property="CommandParameter" Value="{Binding Index}"/>
+						</Style>
+					</MenuItem.ItemContainerStyle>
+				</MenuItem>
 				<Separator />
 				<MenuItem
 					Header="_Copy Spin"

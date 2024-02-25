@@ -306,6 +306,10 @@ namespace Croupier
 		}
 
 		public ObservableCollection<SpinHistoryEntry> HistoryEntries = [];
+		public ObservableCollection<SpinHistoryEntry> BookmarkEntries = [
+			new("<Add Current>", 0),
+			new("<Remove Current>", 1),
+		];
 		public ObservableCollection<TargetNameFormatEntry> TargetNameFormatEntries = [
 			new(TargetNameFormat.Initials, "Initials"),
 			new(TargetNameFormat.Full, "Full Name"),
@@ -491,6 +495,10 @@ namespace Croupier
 			StaticSizeLHS = Config.Default.StaticSizeLHS;
 			TargetNameFormat = TargetNameFormatMethods.FromString(Config.Default.TargetNameFormat);
 			LoadMissionPool();
+
+			foreach (var bookmark in Config.Default.Bookmarks) {
+				BookmarkEntries.Add(new(bookmark, BookmarkEntries.Count));
+			}
 		}
 
 		private void EditRulesetWindow_ApplyRuleset(object sender, Ruleset ruleset)
@@ -560,6 +568,8 @@ namespace Croupier
 			ContextMenuTargetNameFormat.DataContext = this;
 			ContextMenuHistory.ItemsSource = HistoryEntries;
 			ContextMenuHistory.DataContext = this;
+			ContextMenuBookmarks.ItemsSource = BookmarkEntries;
+			ContextMenuBookmarks.DataContext = this;
 
 			var idx = MissionListItems.ToList().FindIndex(item => item.ID == currentMission.ID);
 			MissionSelect.SelectedIndex = idx;
@@ -660,6 +670,17 @@ namespace Croupier
 			OnPropertyChanged(nameof(HistoryEntries));
 		}
 
+		public void SyncBookmarks()
+		{
+			Config.Default.Bookmarks.Clear();
+			
+			for (var i = 2; i < BookmarkEntries.Count; ++i) {
+				Config.Default.Bookmarks.Add(BookmarkEntries[i].Name);
+			}
+
+			Config.Save();
+		}
+
 		public void SetSpin(Spin spin) {
 			if (spin == null) return;
 			conditions.Clear();
@@ -725,11 +746,18 @@ namespace Croupier
 		}
 
 		private ICommand _historyEntrySelectCommand;
+		private ICommand _bookmarkEntrySelectCommand;
 		private ICommand _targetNameFormatSelectCommand;
 
 		public ICommand HistoryEntrySelectCommand {
 			get {
 				return _historyEntrySelectCommand ??= new RelayCommand(param => this.HistoryEntrySelected(param));
+			}
+		}
+
+		public ICommand BookmarkEntrySelectCommand {
+			get {
+				return _bookmarkEntrySelectCommand ??= new RelayCommand(param => this.BookmarkEntrySelected(param));
 			}
 		}
 
@@ -744,6 +772,33 @@ namespace Croupier
 			var index = param as int?;
 			if (index == null || index < 0 || index >= spinHistory.Count) return;
 			SetSpinHistory(Math.Abs(index.Value - spinHistory.Count));
+		}
+
+		private void BookmarkEntrySelected(object param)
+		{
+			var index = param as int?;
+			if (index == null || index < 0 || index >= BookmarkEntries.Count) return;
+			if (index == 0) {
+				BookmarkEntries.Add(new(new Spin(conditions).ToString(), BookmarkEntries.Count));
+				SyncBookmarks();
+			}
+			else if (index == 1) {
+				var currentSpin = new Spin(conditions);
+				var currentSpinStr = currentSpin.ToString();
+				for (int i = 2; i < BookmarkEntries.Count; ++i) {
+					if (currentSpinStr != BookmarkEntries[i].Name) continue;
+					BookmarkEntries.RemoveAt(i);
+					for (; i < BookmarkEntries.Count; ++i)
+						--BookmarkEntries[i].Index;
+					break;
+				}
+				SyncBookmarks();
+			}
+			else if (SpinParser.Parse(BookmarkEntries[index.Value].Name, out var spin)) {
+				SetSpin(spin);
+				SyncHistoryEntries();
+				SendSpinToClient();
+			}
 		}
 
 		private void TargetNameFormatSelected(object param)
