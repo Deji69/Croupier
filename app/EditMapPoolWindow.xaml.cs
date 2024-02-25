@@ -269,7 +269,7 @@ namespace Croupier
 		private bool _IsCustomPoolSelected = false;
 		public bool IsCustomPoolSelected {
 			get { return _IsCustomPoolSelected; }
-			set { _IsCustomPoolSelected = value; OnPropertyChanged("IsCustomPoolSelected"); }
+			set { _IsCustomPoolSelected = value; OnPropertyChanged(nameof(IsCustomPoolSelected)); }
 		}
 
 		public EditMapPoolWindow()
