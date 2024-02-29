@@ -45,11 +45,11 @@ namespace Croupier {
 
 		static public bool Load()
 		{
-			//try {
+			try {
 				var json = File.ReadAllText("config.json");
 				Default = JsonSerializer.Deserialize<Config>(json, jsonSerializerOptions);
-			//}
-			//catch { }
+			}
+			catch { }
 			return true;
 		}
 
