@@ -123,6 +123,8 @@ const std::unordered_map<std::string, std::string> keywordKeywords = {
 	{"guacho", "gaucho"},
 	{"somelier", "sommelier"},
 	{"sacraficial", "sacrificial"},
+	{"millitary", "military"},
+	{"prison", "prisoner"},
 };
 const std::vector<DisguiseKeywords> disguiseKeywords = {
 	DisguiseKeywords{{}, {{"suit", "Suit"}}},
@@ -157,6 +159,7 @@ const std::vector<DisguiseKeywords> disguiseKeywords = {
 		{"cook", "Chef"},
 		{"bodyguard", "CICADA Bodyguard"},
 		{"cicada", "CICADA Bodyguard"},
+		{"cicadabodyguard", "CICADA Bodyguard"},
 		{"helmut", "Helmut Kruger"},
 		{"kruger", "Helmut Kruger"},
 		{"helmutkruger", "Helmut Kruger"},
@@ -173,6 +176,10 @@ const std::vector<DisguiseKeywords> disguiseKeywords = {
 		{"salman", "Sheikh Salman Al-Ghazali"},
 		{"alghazali", "Sheikh Salman Al-Ghazali"},
 		{"ghazali", "Sheikh Salman Al-Ghazali"},
+		{"sheikhsalman", "Sheikh Salman Al-Ghazali"},
+		{"sheikhsalmanal", "Sheikh Salman Al-Ghazali"},
+		{"sheikhsalmanalghazali", "Sheikh Salman Al-Ghazali"},
+		{"salmanalghazali", "Sheikh Salman Al-Ghazali"},
 		{"stylist", "Stylist"},
 		{"tech", "Tech Crew"},
 		{"techcrew", "Tech Crew"},
@@ -182,8 +189,6 @@ const std::vector<DisguiseKeywords> disguiseKeywords = {
 		{"vampiremagician", "Vampire Magician"},
 		{"vampire", "Vampire Magician"},
 		{"magician", "Vampire Magician"},
-		{"millitary", "military"},
-		{"prison", "prisoner"},
 	}},
 	DisguiseKeywords{{eMission::PARIS_HOLIDAYHOARDERS}, {
 		{"santaclaus", "Santa"},
