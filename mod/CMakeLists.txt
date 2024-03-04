@@ -19,10 +19,10 @@ add_library(Croupier SHARED
 	src/Croupier.cpp
 	src/Croupier.h
 	src/json.hpp
-	"src/Roulette.cpp" "src/util.h" "src/EventSystem.h" "src/Events.h" "src/Enums.h" "src/RouletteRuleset.h" "src/RouletteMission.h" "src/CroupierClient.h" "src/CroupierClient.cpp" "src/SpinParser.h" "src/SpinParser.cpp" "src/RouletteMission.cpp" "src/Disguise.h" "src/Target.h" "src/Exception.h" "src/unac.h" "src/unac.c" "deps/iconv.h")
+	"src/Roulette.cpp" "src/util.h" "src/EventSystem.h" "src/Events.h" "src/Enums.h" "src/RouletteRuleset.h" "src/RouletteMission.h" "src/CroupierClient.h" "src/CroupierClient.cpp" "src/SpinParser.h" "src/SpinParser.cpp" "src/RouletteMission.cpp" "src/Disguise.h" "src/Target.h" "src/Exception.h" "src/unac.h" "src/unac.c" "deps/iconv.h" "src/KillConfirmation.h" "src/KillMethod.h")
 
 add_library(unac STATIC)
-target_sources(unac PRIVATE "src/unac.h" "src/unac.c")
+target_sources(unac PRIVATE "src/unac.h" "src/unac.c" "src/KillConfirmation.h" "src/KillMethod.h")
 find_library(ICONV_LIB_PATH iconv)
 find_package(directx-headers CONFIG REQUIRED)
 
