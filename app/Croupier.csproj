@@ -59,10 +59,10 @@
 		</BootstrapperPackage>
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Material.Icons" Version="2.0.13">
+		<PackageReference Include="Material.Icons" Version="2.1.6">
 		  <TreatAsUsed>true</TreatAsUsed>
 		</PackageReference>
-		<PackageReference Include="Material.Icons.WPF" Version="2.0.0">
+		<PackageReference Include="Material.Icons.WPF" Version="2.1.0">
 		  <TreatAsUsed>true</TreatAsUsed>
 		</PackageReference>
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
