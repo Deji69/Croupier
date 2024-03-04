@@ -115,6 +115,8 @@ public:
 	auto SendMissions() -> void;
 	auto SendToggleSpinLock() -> void;
 
+	auto InstallHooks() -> void;
+	auto UninstallHooks() -> void;
 private:
 	static std::unordered_map<std::string, eMission> MissionContractIds;
 
@@ -148,6 +150,7 @@ private:
 	bool showCustomRulesetUI = false;
 	bool spinCompleted = false;
 	bool spinLocked = false;
+	bool hooksInstalled = false;
 	Configuration config;
 };
 

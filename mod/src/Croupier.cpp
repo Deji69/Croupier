@@ -29,6 +29,20 @@ static auto randomVectorElement(const std::vector<T>& vec) -> const T&
 	return vec[dist(gen)];
 }
 
+Croupier::Croupier() : sharedSpin(spin) {
+	this->SetupEvents();
+	this->rules = makeRouletteRuleset(this->ruleset);
+
+	CHAR filename[MAX_PATH] = {};
+	if (GetModuleFileName(NULL, filename, MAX_PATH) != 0)
+		this->modulePath = std::filesystem::path(filename).parent_path();
+}
+
+Croupier::~Croupier() {
+	this->SaveConfiguration();
+	this->UninstallHooks();
+}
+
 auto Croupier::LoadConfiguration() -> void {
 	if (this->file.is_open()) return;
 
@@ -269,19 +283,39 @@ auto Croupier::OnEngineInitialized() -> void {
 
 	client = std::make_unique<CroupierClient>();
 	client->start();
-	const ZMemberDelegate<Croupier, void(const SGameUpdateEvent&)> frameUpdateDelegate(this, &Croupier::OnFrameUpdate);
-	Globals::GameLoopManager->RegisterFrameUpdate(frameUpdateDelegate, 1, EUpdateMode::eUpdateAlways);
-
+	this->InstallHooks();
 	this->LoadConfiguration();
 
 	if (this->config.missionPool.empty())
 		this->SetDefaultMissionPool();
 
 	this->PreviousSpin();
+}
+
+auto Croupier::InstallHooks() -> void {
+	if (this->hooksInstalled) return;
+
+	const ZMemberDelegate<Croupier, void(const SGameUpdateEvent&)> frameUpdateDelegate(this, &Croupier::OnFrameUpdate);
+	Globals::GameLoopManager->RegisterFrameUpdate(frameUpdateDelegate, 1, EUpdateMode::eUpdateAlways);
 
 	Hooks::ZAchievementManagerSimple_OnEventReceived->AddDetour(this, &Croupier::OnEventReceived);
 	Hooks::ZAchievementManagerSimple_OnEventSent->AddDetour(this, &Croupier::OnEventSent);
 	Hooks::Http_WinHttpCallback->AddDetour(this, &Croupier::OnWinHttpCallback);
+
+	this->hooksInstalled = true;
+}
+
+auto Croupier::UninstallHooks() -> void {
+	if (!this->hooksInstalled) return;
+
+	const ZMemberDelegate<Croupier, void(const SGameUpdateEvent&)> frameUpdateDelegate(this, &Croupier::OnFrameUpdate);
+	Globals::GameLoopManager->UnregisterFrameUpdate(frameUpdateDelegate, 1, EUpdateMode::eUpdatePlayMode);
+
+	Hooks::ZAchievementManagerSimple_OnEventReceived->RemoveDetour(&Croupier::OnEventReceived);
+	Hooks::ZAchievementManagerSimple_OnEventSent->RemoveDetour(&Croupier::OnEventSent);
+	Hooks::Http_WinHttpCallback->RemoveDetour(&Croupier::OnWinHttpCallback);
+
+	this->hooksInstalled = false;
 }
 
 auto Croupier::OnFrameUpdate(const SGameUpdateEvent&) -> void {
@@ -322,21 +356,6 @@ auto Croupier::ProcessSpinDataMessage(const ClientMessage& message) -> void {
 	this->currentSpinSaved = true;
 	this->generator.setMission(this->spin.getMission());
 	this->spinCompleted = false;
-}
-
-Croupier::Croupier() : sharedSpin(spin) {
-	this->SetupEvents();
-	this->rules = makeRouletteRuleset(this->ruleset);
-
-	CHAR filename[MAX_PATH] = {};
-	if (GetModuleFileName(NULL, filename, MAX_PATH) != 0)
-		this->modulePath = std::filesystem::path(filename).parent_path();
-}
-
-Croupier::~Croupier() {
-	this->SaveConfiguration();
-	const ZMemberDelegate<Croupier, void(const SGameUpdateEvent&)> frameUpdateDelegate(this, &Croupier::OnFrameUpdate);
-	Globals::GameLoopManager->UnregisterFrameUpdate(frameUpdateDelegate, 1, EUpdateMode::eUpdatePlayMode);
 }
 
 auto Croupier::SendAutoSpin(eMission mission) -> void {
