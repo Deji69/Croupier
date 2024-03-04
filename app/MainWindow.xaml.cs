@@ -487,7 +487,7 @@ namespace Croupier
 					};
 					for (var i = 0; i < conditions.Count; ++i) {
 						var cond = conditions[i];
-						if (cond.Target.ID != kv.target) return;
+						if (cond.Target.ID != kv.target) continue;
 						cond.KillValidation = kv;
 					}
 				}
