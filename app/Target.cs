@@ -19,6 +19,103 @@ namespace Croupier
 		Short,
 	}
 
+	public enum TargetID {
+		Unknown,
+		Target1,
+		Target2,
+		Target3,
+		Target4,
+		Target5,
+		Target6,
+		Target7,
+		Target8,
+		Target9,
+		Target10,
+		KalvinRitter,
+		JasperKnight,
+		ViktorNovikov,
+		DaliaMargolis,
+		HarrySmokeyBagnato,
+		MarvSlickGonif,
+		SilvioCaruso,
+		FrancescaDeSantis,
+		DinoBosco,
+		MarcoAbiatti,
+		CraigBlack,
+		BrotherAkram,
+		RezaZaydan,
+		ClausHugoStrandberg,
+		KongTuoKwang,
+		MatthieuMendola,
+		JordanCross,
+		KenMorgan,
+		OybekNabazov,
+		SisterYulduz,
+		SeanRose,
+		PenelopeGraves,
+		EzraBerg,
+		MayaParvati,
+		ErichSoders,
+		YukiYamazaki,
+		OwenCage,
+		KlausLiebleid,
+		DmitriFedorov,
+		AlmaReynard,
+		SierraKnox,
+		RobertKnox,
+		AjitKrish,
+		RicoDelgado,
+		JorgeFranco,
+		AndreaMartinez,
+		BlairReddington,
+		WazirKale,
+		VanyaShah,
+		DawoodRangan,
+		BasilCarnaby,
+		Janus,
+		NolanCassidy,
+		GalenVholes,
+		ZoeWashington,
+		SophiaWashington,
+		AthenaSavalas,
+		TysonWilliams,
+		StevenBradley,
+		LjudmilaVetrova,
+		CarlIngram,
+		MarcusStuyvesant,
+		AlexaCarlisle,
+		Agent1,
+		Agent2,
+		Agent3,
+		Agent4,
+		Agent5,
+		Agent6,
+		Agent7,
+		Agent8,
+		Agent9,
+		Agent10,
+		Agent11,
+		AgentMontgomery,
+		AgentChamberlin,
+		AgentDavenport,
+		AgentLowenthal,
+		AgentThames,
+		AgentGreen,
+		AgentTremaine,
+		AgentBanner,
+		AgentSwan,
+		AgentRhodes,
+		AgentPrice,
+		Hush,
+		ImogenRoyce,
+		DonArchibaldYates,
+		TamaraVidal,
+		DianaBurnwood,
+		ArthurEdwards,
+		NoelCrest,
+		SinhiAkkaVenthan,
+	}
+
 	public static partial class TargetNameFormatMethods {
 		public static string ToString(this TargetNameFormat id)
 		{
@@ -70,6 +167,14 @@ namespace Croupier
 		public readonly MethodTag[] Tags = tags;
 	}
 
+	public class TargetInfo(string name, string shortName, string initials, string image, MissionID mission) {
+		public string Name = name;
+		public string ShortName = shortName;
+		public string Initials = initials;
+		public string Image = image;
+		public MissionID Mission = mission;
+	}
+
 	public class Target {
 		static private readonly Func<Disguise, KillMethod, bool> stalkerRemoteTest = (Disguise disguise, KillMethod method) => {
 			return disguise.Name == "Stalker" && !method.IsRemote;
@@ -87,12 +192,92 @@ namespace Croupier
 		static private readonly Func<Disguise, KillMethod, bool> knightsArmourTrapTest = (Disguise disguise, KillMethod method) => {
 			return disguise.Name == "Knight's Armor" && !method.IsRemote;
 		};
+		static public readonly Dictionary<TargetID, TargetInfo> targetInfos = new() {
+			{ TargetID.KalvinRitter, new("Kalvin Ritter", "Kalvin", "KR", "polarbear2_sparrow.jpg", MissionID.ICAFACILITY_FREEFORM) },
+			{ TargetID.JasperKnight, new("Jasper Knight", "Jasper", "JK", "polarbear5.jpg", MissionID.ICAFACILITY_FINALTEST) },
+			{ TargetID.ViktorNovikov, new("Viktor Novikov", "Viktor", "VN", "showstopper_viktor_novikov.jpg", MissionID.PARIS_SHOWSTOPPER) },
+			{ TargetID.DaliaMargolis, new("Dalia Margolis", "Dalia", "DM", "showstopper_dahlia_margolis.jpg", MissionID.PARIS_SHOWSTOPPER) },
+			{ TargetID.HarrySmokeyBagnato, new("Harry \"Smokey\" Bagnato", "Smokey", "HSB", "noel_harry_bagnato.jpg", MissionID.PARIS_HOLIDAYHOARDERS) },
+			{ TargetID.MarvSlickGonif, new("Marv \"Slick\" Gonif", "Slick", "MSG", "noel_marv_gonif.jpg", MissionID.PARIS_HOLIDAYHOARDERS) },
+			{ TargetID.SilvioCaruso, new("Silvio Caruso", "Silvio", "SC", "world_of_tomorrow_silvio_caruso.jpg", MissionID.SAPIENZA_WORLDOFTOMORROW) },
+			{ TargetID.FrancescaDeSantis, new("Francesca De Santis", "Francesca", "FDS", "world_of_tomorrow_francesca_de_santis.jpg", MissionID.SAPIENZA_WORLDOFTOMORROW) },
+			{ TargetID.DinoBosco, new("Dino Bosco", "Dino", "FDS", "copperhead_roman_strauss_levine.jpg", MissionID.SAPIENZA_THEICON) },
+			{ TargetID.MarcoAbiatti, new("Marco Abiatti", "Marco", "MA", "mamba_marco_abiatti.jpg", MissionID.SAPIENZA_LANDSLIDE) },
+			{ TargetID.CraigBlack, new("Craig Black", "Craig", "CB", "ws_ebola_craig_black.jpg", MissionID.SAPIENZA_THEAUTHOR) },
+			{ TargetID.BrotherAkram, new("Brother Akram", "Akram", "BA", "ws_ebola_brother_akram.jpg", MissionID.SAPIENZA_THEAUTHOR) },
+			{ TargetID.ClausHugoStrandberg, new("Claus Hugo Strandberg", "Claus", "CHS", "tobigforjail_claus_hugo_stranberg.jpg", MissionID.MARRAKESH_GILDEDCAGE) },
+			{ TargetID.RezaZaydan, new("Reza Zaydan", "Reza", "RZ", "tobigforjail_general_zaydan.jpg", MissionID.MARRAKESH_GILDEDCAGE) },
+			{ TargetID.KongTuoKwang, new("Kong Tuo-Kwang", "Kong", "KTK", "python_kong_tou_kwang_briefing.jpg", MissionID.MARRAKESH_HOUSEBUILTONSAND) },
+			{ TargetID.MatthieuMendola, new("Matthieu Mendola", "Matthieu", "MM", "python_matthieu_mendola_briefing.jpg", MissionID.MARRAKESH_HOUSEBUILTONSAND) },
+			{ TargetID.JordanCross, new("Jordan Cross", "Jordan", "JC", "club27_jordan_cross.jpg", MissionID.BANGKOK_CLUB27) },
+			{ TargetID.KenMorgan, new("Ken Morgan", "Ken", "KM", "club27_ken_morgan.jpg", MissionID.BANGKOK_CLUB27) },
+			{ TargetID.OybekNabazov, new("Oybek Nabazov", "Nabazov", "ON", "ws_zika_oybek_nabazov.jpg", MissionID.BANGKOK_THESOURCE) },
+			{ TargetID.SisterYulduz, new("Sister Yulduz", "Yulduz", "SY", "ws_zika_sister_yulduz.jpg", MissionID.BANGKOK_THESOURCE) },
+			{ TargetID.SeanRose, new("Sean Rose", "Sean", "SR", "freedom_fighters_sean_rose.jpg", MissionID.COLORADO_FREEDOMFIGHTERS) },
+			{ TargetID.PenelopeGraves, new("Penelope Graves", "Penelope", "PG", "freedom_fighters_penelope_graves.jpg", MissionID.COLORADO_FREEDOMFIGHTERS) },
+			{ TargetID.EzraBerg, new("Ezra Berg", "Ezra", "EB", "freedom_fighters_ezra_berg.jpg", MissionID.COLORADO_FREEDOMFIGHTERS) },
+			{ TargetID.MayaParvati, new("Maya Parvati", "Maya", "MP", "freedom_fighters_maya_parvati.jpg", MissionID.COLORADO_FREEDOMFIGHTERS) },
+			{ TargetID.ErichSoders, new("Erich Soders", "Soders", "ES", "snowcrane_erich_soders_briefing.jpg", MissionID.HOKKAIDO_SITUSINVERSUS) },
+			{ TargetID.YukiYamazaki, new("Yuki Yamazaki", "Yuki", "YY", "snowcrane_yuki_yamazaki_briefing.jpg", MissionID.HOKKAIDO_SITUSINVERSUS) },
+			{ TargetID.OwenCage, new("Owen Cage", "Owen", "OC", "ws_flu_owen_cage.jpg", MissionID.HOKKAIDO_PATIENTZERO) },
+			{ TargetID.KlausLiebleid, new("Klaus Liebleid", "Klaus", "KL", "ws_flu_klaus_leiblied.jpg", MissionID.HOKKAIDO_PATIENTZERO) },
+			{ TargetID.DmitriFedorov, new("Dmitri Fedorov", "Dmitri", "DF", "mamushi_dimitri-fedorov.jpg", MissionID.HOKKAIDO_SNOWFESTIVAL) },
+			{ TargetID.AlmaReynard, new("Alma Reynard", "Alma", "AR", "sheep_alma_reynard.jpg", MissionID.HAWKESBAY_NIGHTCALL) },
+			{ TargetID.SierraKnox, new("Sierra Knox", "Sierra", "SK", "flamingo_sierra_knox.jpg", MissionID.MIAMI_FINISHLINE) },
+			{ TargetID.RobertKnox, new("Robert Knox", "Robert", "RK", "flamingo_robert_knox.jpg", MissionID.MIAMI_FINISHLINE) },
+			{ TargetID.AjitKrish, new("Ajit \"AJ\" Krish", "AJ", "AJ", "cottonmouth_ajit_krish.jpg", MissionID.MIAMI_ASILVERTONGUE) },
+			{ TargetID.RicoDelgado, new("Rico Delgado", "Rico", "RD", "hippo_rico_delgado.jpg", MissionID.SANTAFORTUNA_THREEHEADEDSERPENT) },
+			{ TargetID.JorgeFranco, new("Jorge Franco", "Jorge", "JF", "hippo_jorge_franco.jpg", MissionID.SANTAFORTUNA_THREEHEADEDSERPENT) },
+			{ TargetID.AndreaMartinez, new("Andrea Martinez", "Andrea", "AM", "hippo_andrea_martinez.jpg", MissionID.SANTAFORTUNA_THREEHEADEDSERPENT) },
+			{ TargetID.BlairReddington, new("Blair Reddington", "Blair", "BR", "anaconda_blair_reddington_face.jpg", MissionID.SANTAFORTUNA_EMBRACEOFTHESERPENT) },
+			{ TargetID.WazirKale, new("Wazir Kale", "Wazir", "WK", "mongoose_wazir_kale_identified.jpg", MissionID.MUMBAI_CHASINGAGHOST) },
+			{ TargetID.VanyaShah, new("Vanya Shah", "Vanya", "VS", "mongoose_vanya_shah.jpg", MissionID.MUMBAI_CHASINGAGHOST) },
+			{ TargetID.DawoodRangan, new("Dawood Rangan", "Dawood", "DR", "mongoose_dawood_rangan.jpg", MissionID.MUMBAI_CHASINGAGHOST) },
+			{ TargetID.BasilCarnaby, new("Basil Carnaby", "Basil", "BC", "kingcobra_basil_carnaby_face.jpg", MissionID.MUMBAI_ILLUSIONSOFGRANDEUR) },
+			{ TargetID.Janus, new("Janus", "Janus", "J", "skunk_janus.jpg", MissionID.WHITTLETON_ANOTHERLIFE) },
+			{ TargetID.NolanCassidy, new("Nolan Cassidy", "Nolan", "NC", "skunk_nolan_cassidy.jpg", MissionID.WHITTLETON_ANOTHERLIFE) },
+			{ TargetID.GalenVholes, new("Galen Vholes", "Galen", "GV", "gartersnake_ghalen_vholes.jpg", MissionID.WHITTLETON_ABITTERPILL) },
+			{ TargetID.ZoeWashington, new("Zoe Washington", "Zoe", "ZW", "magpie_zoe_washington.jpg", MissionID.ISLEOFSGAIL_THEARKSOCIETY) },
+			{ TargetID.SophiaWashington, new("Sophia Washington", "Sophia", "sW", "magpie_serena_washington.jpg", MissionID.ISLEOFSGAIL_THEARKSOCIETY) },
+			{ TargetID.AthenaSavalas, new("Athena Savalas", "Athena", "AS", "racoon_athena_savalas.jpg", MissionID.NEWYORK_GOLDENHANDSHAKE) },
+			{ TargetID.TysonWilliams, new("Tyson Williams", "Tyson", "TW", "stingray_tyson_williams.jpg", MissionID.HAVEN_THELASTRESORT) },
+			{ TargetID.StevenBradley, new("Steven Bradley", "Steven", "SB", "stingray_steven_bradley.jpg", MissionID.HAVEN_THELASTRESORT) },
+			{ TargetID.LjudmilaVetrova, new("Ljudmila Vetrova", "Ljudmila", "LV", "stingray_ljudmila_vetrova.jpg", MissionID.HAVEN_THELASTRESORT) },
+			{ TargetID.CarlIngram, new("Carl Ingram", "Carl", "CI", "golden_carl_ingram.jpg", MissionID.DUBAI_ONTOPOFTHEWORLD) },
+			{ TargetID.MarcusStuyvesant, new("Marcus Stuyvesant", "Marcus", "MS", "golden_marcus_stuyvesant.jpg", MissionID.DUBAI_ONTOPOFTHEWORLD) },
+			{ TargetID.AlexaCarlisle, new("Alexa Carlisle", "Alexa", "AC", "ancestral_alexa_carlisle.jpg", MissionID.DARTMOOR_DEATHINTHEFAMILY) },
+			{ TargetID.Agent1, new("ICA Agent #1", "1", "1", "fox_pickup_earpiece.jpg", MissionID.BERLIN_APEXPREDATOR) },
+			{ TargetID.Agent2, new("ICA Agent #2", "2", "2", "fox_pickup_earpiece.jpg", MissionID.BERLIN_APEXPREDATOR) },
+			{ TargetID.Agent3, new("ICA Agent #3", "3", "3", "fox_pickup_earpiece.jpg", MissionID.BERLIN_APEXPREDATOR) },
+			{ TargetID.Agent4, new("ICA Agent #4", "4", "4", "fox_pickup_earpiece.jpg", MissionID.BERLIN_APEXPREDATOR) },
+			{ TargetID.Agent5, new("ICA Agent #5", "5", "5", "fox_pickup_earpiece.jpg", MissionID.BERLIN_APEXPREDATOR) },
+			{ TargetID.Agent6, new("ICA Agent #6", "6", "6", "fox_pickup_earpiece.jpg", MissionID.BERLIN_APEXPREDATOR) },
+			{ TargetID.Agent7, new("ICA Agent #7", "7", "7", "fox_pickup_earpiece.jpg", MissionID.BERLIN_APEXPREDATOR) },
+			{ TargetID.Agent8, new("ICA Agent #8", "8", "8", "fox_pickup_earpiece.jpg", MissionID.BERLIN_APEXPREDATOR) },
+			{ TargetID.Agent9, new("ICA Agent #9", "9", "9", "fox_pickup_earpiece.jpg", MissionID.BERLIN_APEXPREDATOR) },
+			{ TargetID.Agent10, new("ICA Agent #10", "10", "10", "fox_pickup_earpiece.jpg", MissionID.BERLIN_APEXPREDATOR) },
+			{ TargetID.Agent11, new("ICA Agent #11", "11", "11", "fox_pickup_earpiece.jpg", MissionID.BERLIN_APEXPREDATOR) },
+			{ TargetID.Hush, new("Hush", "Hush", "H", "wet_hush.jpg", MissionID.CHONGQING_ENDOFANERA) },
+			{ TargetID.ImogenRoyce, new("Imogen Royce", "Imogen", "IR", "wet_imogen_royce.jpg", MissionID.CHONGQING_ENDOFANERA) },
+			{ TargetID.DonArchibaldYates, new("Don Archibald Yates", "Don", "DY", "elegant_yates.jpg", MissionID.MENDOZA_THEFAREWELL) },
+			{ TargetID.TamaraVidal, new("Tamara Vidal", "Tamara", "TV", "elegant_vidal.jpg", MissionID.MENDOZA_THEFAREWELL) },
+			{ TargetID.ArthurEdwards, new("Arthur Edwards", "Arthur", "AE", "trapped_arthur_edwards.jpg", MissionID.CARPATHIAN_UNTOUCHABLE) },
+			{ TargetID.NoelCrest, new("Noel Crest", "Noel", "NC", "rocky_noel_crest.jpg", MissionID.AMBROSE_SHADOWSINTHEWATER) },
+			{ TargetID.SinhiAkkaVenthan, new("Sinhi \"Akka\" Venthan", "Akka", "SV", "rocky_sinhi_akka_venthan.jpg", MissionID.AMBROSE_SHADOWSINTHEWATER) },
+			{ TargetID.Target1, new("Target #1", "1", "1st", "default_target_briefing.dds", MissionID.NONE) },
+			{ TargetID.Target2, new("Target #2", "2", "2nd", "default_target_briefing.dds", MissionID.NONE) },
+			{ TargetID.Target3, new("Target #3", "3", "3rd", "default_target_briefing.dds", MissionID.NONE) },
+			{ TargetID.Target4, new("Target #4", "4", "4th", "default_target_briefing.dds", MissionID.NONE) },
+			{ TargetID.Target5, new("Target #5", "5", "5th", "default_target_briefing.dds", MissionID.NONE) },
+			{ TargetID.Target6, new("Target #6", "6", "6th", "default_target_briefing.dds", MissionID.NONE) },
+			{ TargetID.Target7, new("Target #7", "7", "7th", "default_target_briefing.dds", MissionID.NONE) },
+			{ TargetID.Target8, new("Target #8", "8", "8th", "default_target_briefing.dds", MissionID.NONE) },
+			{ TargetID.Target9, new("Target #9", "9", "9th", "default_target_briefing.dds", MissionID.NONE) },
+			{ TargetID.Target10, new("Target #10", "10", "10th", "default_target_briefing.dds", MissionID.NONE) },
+			{ TargetID.Unknown, new("Unknown", "Unknown", "?", "mongoose_unknown_man.png", MissionID.NONE) },
+		};
 		static public readonly Dictionary<string, Target> Targets = new() {
-			{"KR", new Target() {
-				Name = "Kalvin Ritter",
-				Image = "polarbear2_sparrow.jpg",
-				ShortName = "Kalvin",
-				Mission = MissionID.ICAFACILITY_FREEFORM,
+			{"KR", new Target(TargetID.KalvinRitter) {
 				MethodTags = [
 					new(StandardKillMethod.Electrocution, [MethodTag.Impossible]),
 					new(StandardKillMethod.Fire, [MethodTag.Impossible]),
@@ -106,11 +291,7 @@ namespace Croupier
 					new(impactExplosiveTest, [ MethodTag.BannedInRR, MethodTag.Impossible ]),
 				]
 			}},
-			{"JK", new Target() {
-				Name = "Jasper Knight",
-				ShortName = "Jasper",
-				Image = "polarbear5.jpg",
-				Mission = MissionID.ICAFACILITY_FINALTEST,
+			{"JK", new Target(TargetID.JasperKnight) {
 				MethodTags = [
 					new(StandardKillMethod.Electrocution, [MethodTag.Impossible]),
 					new(StandardKillMethod.Fire, [MethodTag.Impossible]),
@@ -123,99 +304,54 @@ namespace Croupier
 				],
 				Rules = []
 			}},
-			{"VN", new Target() {
-				Name = "Viktor Novikov",
-				ShortName = "Viktor",
-				Image = "showstopper_viktor_novikov.jpg",
-				Mission = MissionID.PARIS_SHOWSTOPPER,
+			{"VN", new Target(TargetID.ViktorNovikov) {
 				MethodTags = [
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Extreme, MethodTag.DuplicateOnlySameDisguise]),
 				],
 			}},
-			{"DM", new Target() {
-				Name = "Dalia Margolis",
-				ShortName = "Dalia",
-				Image = "showstopper_dahlia_margolis.jpg",
-				Mission = MissionID.PARIS_SHOWSTOPPER,
+			{"DM", new Target(TargetID.DaliaMargolis) {
 				MethodTags = [
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Extreme, MethodTag.DuplicateOnlySameDisguise]),
 				],
 			}},
-			{"HSB", new Target() {
-				Name = "Harry \"Smokey\" Bagnato",
-				ShortName = "Smokey",
-				Image = "noel_harry_bagnato.jpg",
-				Mission = MissionID.PARIS_HOLIDAYHOARDERS,
+			{"HSB", new Target(TargetID.HarrySmokeyBagnato) {
 				MethodTags = [
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Extreme, MethodTag.DuplicateOnlySameDisguise]),
 				],
 			}},
-			{"MSG", new Target() {
-				Name = "Marv \"Slick\" Gonif",
-				ShortName = "Slick",
-				Image = "noel_marv_gonif.jpg",
-				Mission = MissionID.PARIS_HOLIDAYHOARDERS,
+			{"MSG", new Target(TargetID.MarvSlickGonif) {
 				MethodTags = [
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Extreme, MethodTag.DuplicateOnlySameDisguise]),
 				],
 			}},
-			{"SC", new Target() {
-				Name = "Silvio Caruso",
-				ShortName = "Silvio",
-				Image = "world_of_tomorrow_silvio_caruso.jpg",
-				Mission = MissionID.SAPIENZA_WORLDOFTOMORROW,
+			{"SC", new Target(TargetID.SilvioCaruso) {
 				MethodTags = [
 					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Buggy]),
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Impossible]),
 				],
 			}},
-			{"FDS", new Target() {
-				Name = "Francesca De Santis",
-				ShortName = "Francesca",
-				Image = "world_of_tomorrow_francesca_de_santis.jpg",
-				Mission = MissionID.SAPIENZA_WORLDOFTOMORROW,
+			{"FDS", new Target(TargetID.FrancescaDeSantis) {
 				MethodTags = [
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Impossible]),
 				],
 			}},
-			{"DB", new Target() {
-				Name = "Dino Bosco",
-				ShortName = "Dino",
-				Image = "copperhead_roman_strauss_levine.jpg",
-				Mission = MissionID.SAPIENZA_THEICON,
-			}},
-			{"MA", new Target() {
-				Name = "Marco Abiatti",
-				ShortName = "Marco",
-				Image = "mamba_marco_abiatti.jpg",
-				Mission = MissionID.SAPIENZA_LANDSLIDE,
+			{"DB", new Target(TargetID.DinoBosco)},
+			{"MA", new Target(TargetID.MarcoAbiatti) {
 				MethodTags = [
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Impossible]),
 				],
 			}},
-			{"CB", new Target() {
-				Name = "Craig Black",
-				ShortName = "Craig",
-				Image = "ws_ebola_craig_black.jpg",
-				Mission = MissionID.SAPIENZA_THEAUTHOR,
+			{"CB", new Target(TargetID.CraigBlack) {
 				MethodTags = [
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Impossible]),
 				],
 			}},
-			{"BA", new Target() {
-				Name = "Brother Akram",
-				ShortName = "Akram",
-				Image = "ws_ebola_brother_akram.jpg",
-				Mission = MissionID.SAPIENZA_THEAUTHOR,
+			{"BA", new Target(TargetID.BrotherAkram) {
 				MethodTags = [
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Impossible]),
 				],
 			}},
-			{"CHS", new Target() {
-				Name = "Claus Hugo Strandberg",
-				ShortName = "Claus",
-				Image = "tobigforjail_claus_hugo_stranberg.jpg",
-				Mission = MissionID.MARRAKESH_GILDEDCAGE,
+			{"CHS", new Target(TargetID.ClausHugoStrandberg) {
 				MethodTags = [
 					new(StandardKillMethod.FallingObject, [MethodTag.BannedInRR, MethodTag.Extreme]),
 				],
@@ -226,33 +362,20 @@ namespace Croupier
 					}, [MethodTag.BannedInRR, MethodTag.Hard]),
 				},
 			}},
-			{"RZ", new Target() {
-				Name = "Reza Zaydan",
-				ShortName = "Reza",
-				Image = "tobigforjail_general_zaydan.jpg",
-				Mission = MissionID.MARRAKESH_GILDEDCAGE,
+			{"RZ", new Target(TargetID.RezaZaydan) {
 				MethodTags = [
 					new(StandardKillMethod.Drowning, [MethodTag.BannedInRR, MethodTag.Extreme]),
 					new(StandardKillMethod.Electrocution, [MethodTag.BannedInRR, MethodTag.Extreme]),
 				],
 			}},
-			{"KTK", new Target() {
-				Name = "Kong Tuo-Kwang",
-				ShortName = "Kong",
-				Image = "python_kong_tou_kwang_briefing.jpg",
-				Mission = MissionID.MARRAKESH_HOUSEBUILTONSAND,
-			}},
-			{"MM", new Target() {
+			{"KTK", new Target(TargetID.KongTuoKwang)},
+			{"MM", new Target(TargetID.MatthieuMendola) {
 				Name = "Matthieu Mendola",
 				ShortName = "Matthieu",
 				Image = "python_matthieu_mendola_briefing.jpg",
 				Mission = MissionID.MARRAKESH_HOUSEBUILTONSAND,
 			}},
-			{"JC", new Target() {
-				Name = "Jordan Cross",
-				ShortName = "Jordan",
-				Image = "club27_jordan_cross.jpg",
-				Mission = MissionID.BANGKOK_CLUB27,
+			{"JC", new Target(TargetID.JordanCross) {
 				MethodTags = [
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Extreme]),
 				],
@@ -260,11 +383,7 @@ namespace Croupier
 					new(stalkerRemoteTest, [MethodTag.BannedInRR, MethodTag.Hard])
 				},
 			}},
-			{"KM", new Target() {
-				Name = "Ken Morgan",
-				ShortName = "Ken",
-				Image = "club27_ken_morgan.jpg",
-				Mission = MissionID.BANGKOK_CLUB27,
+			{"KM", new Target(TargetID.KenMorgan) {
 				MethodTags = [
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Extreme]),
 				],
@@ -272,29 +391,17 @@ namespace Croupier
 					new(stalkerRemoteTest, [MethodTag.BannedInRR, MethodTag.Hard])
 				],
 			}},
-			{"ON", new Target() {
-				Name = "Oybek Nabazov",
-				ShortName = "Nabazov",
-				Image = "ws_zika_oybek_nabazov.jpg",
-				Mission = MissionID.BANGKOK_THESOURCE,
+			{"ON", new Target(TargetID.OybekNabazov) {
 				MethodTags = [
 					new(StandardKillMethod.FallingObject, [MethodTag.BannedInRR, MethodTag.Extreme]),
 				],
 			}},
-			{"SY", new Target() {
-				Name = "Sister Yulduz",
-				ShortName = "Yulduz",
-				Image = "ws_zika_sister_yulduz.jpg",
-				Mission = MissionID.BANGKOK_THESOURCE,
+			{"SY", new Target(TargetID.SisterYulduz) {
 				MethodTags = [
 					new(StandardKillMethod.FallingObject, [MethodTag.BannedInRR, MethodTag.Extreme]),
 				],
 			}},
-			{"SR", new Target() {
-				Name = "Sean Rose",
-				ShortName = "Sean",
-				Image = "freedom_fighters_sean_rose.jpg",
-				Mission = MissionID.COLORADO_FREEDOMFIGHTERS,
+			{"SR", new Target(TargetID.SeanRose) {
 				MethodTags = [
 					new(StandardKillMethod.Drowning, [ MethodTag.BannedInRR, MethodTag.Extreme ]),
 					new(StandardKillMethod.ConsumedPoison, [ MethodTag.BannedInRR, MethodTag.Impossible ]),
@@ -303,11 +410,7 @@ namespace Croupier
 					new(loudLiveTest, [ MethodTag.BannedInRR, MethodTag.Hard ])
 				]
 			}},
-			{"PG", new Target() {
-				Name = "Penelope Graves",
-				ShortName = "Penelope",
-				Image = "freedom_fighters_penelope_graves.jpg",
-				Mission = MissionID.COLORADO_FREEDOMFIGHTERS,
+			{"PG", new Target(TargetID.PenelopeGraves) {
 				MethodTags = [
 					new(StandardKillMethod.Drowning, [MethodTag.BannedInRR, MethodTag.Extreme]),
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Hard]),
@@ -316,133 +419,69 @@ namespace Croupier
 					new(loudLiveTest, [MethodTag.BannedInRR, MethodTag.Hard])
 				],
 			}},
-			{"EB", new Target() {
-				Name = "Ezra Berg",
-				ShortName = "Ezra",
-				Image = "freedom_fighters_ezra_berg.jpg",
-				Mission = MissionID.COLORADO_FREEDOMFIGHTERS,
+			{"EB", new Target(TargetID.EzraBerg) {
 				MethodTags = [
 					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Impossible]),
 					new(StandardKillMethod.Drowning, [MethodTag.BannedInRR, MethodTag.Extreme]),
 					new(StandardKillMethod.Electrocution, [MethodTag.BannedInRR, MethodTag.Extreme]),
 				],
 			}},
-			{"MP", new Target() {
-				Name = "Maya Parvati",
-				ShortName = "Maya",
-				Image = "freedom_fighters_maya_parvati.jpg",
-				Mission = MissionID.COLORADO_FREEDOMFIGHTERS,
+			{"MP", new Target(TargetID.MayaParvati) {
 				MethodTags = [
 					new(StandardKillMethod.Drowning, [MethodTag.BannedInRR, MethodTag.Extreme]),
 				],
 			}},
-			{"ES", new Target() {
-				Name = "Erich Soders",
-				ShortName = "Soders",
-				Image = "snowcrane_erich_soders_briefing.jpg",
-				Mission = MissionID.HOKKAIDO_SITUSINVERSUS,
+			{"ES", new Target(TargetID.ErichSoders) {
 				Type = TargetType.Soders,
 			}},
-			{"YY", new Target() {
-				Name = "Yuki Yamazaki",
-				ShortName = "Yuki",
-				Image = "snowcrane_yuki_yamazaki_briefing.jpg",
-				Mission = MissionID.HOKKAIDO_SITUSINVERSUS,
+			{"YY", new Target(TargetID.YukiYamazaki) {
 				MethodTags = [
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR]),
 				],
 			}},
-			{"OC", new Target() {
-				Name = "Owen Cage",
-				ShortName = "Owen",
-				Image = "ws_flu_owen_cage.jpg",
-				Mission = MissionID.HOKKAIDO_PATIENTZERO,
+			{"OC", new Target(TargetID.OwenCage) {
 				MethodTags = [
 					new(StandardKillMethod.Drowning, [MethodTag.BannedInRR, MethodTag.Extreme]),
 				],
 			}},
-			{"KL", new Target() {
-				Name = "Klaus Liebleid",
-				ShortName = "Klaus",
-				Image = "ws_flu_klaus_leiblied.jpg",
-				Mission = MissionID.HOKKAIDO_PATIENTZERO,
-			}},
-			{"DF", new Target() {
-				Name = "Dmitri Fedorov",
-				ShortName = "Dmitri",
-				Image = "mamushi_dimitri-fedorov.jpg",
-				Mission = MissionID.HOKKAIDO_SNOWFESTIVAL,
-			}},
-			{"AR", new Target() {
-				Name = "Alma Reynard",
-				ShortName = "Alma",
-				Image = "sheep_alma_reynard.jpg",
-				Mission = MissionID.HAWKESBAY_NIGHTCALL,
+			{"KL", new Target(TargetID.KlausLiebleid)},
+			{"DF", new Target(TargetID.DmitriFedorov)},
+			{"AR", new Target(TargetID.AlmaReynard) {
 				MethodTags = [
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Impossible]),
 					new(StandardKillMethod.FallingObject, [MethodTag.BannedInRR, MethodTag.Impossible]),
 				],
 			}},
-			{"SK", new Target() {
-				Name = "Sierra Knox",
-				ShortName = "Sierra",
-				Image = "flamingo_sierra_knox.jpg",
-				Mission = MissionID.MIAMI_FINISHLINE,
-			}},
-			{"RK", new Target() {
-				Name = "Robert Knox",
-				ShortName = "Robert",
-				Image = "flamingo_robert_knox.jpg",
-				Mission = MissionID.MIAMI_FINISHLINE,
+			{"SK", new Target(TargetID.SierraKnox)},
+			{"RK", new Target(TargetID.RobertKnox) {
 				MethodTags = [
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Extreme]),
 				],
 			}},
-			{"AJ", new Target() {
+			{"AJ", new Target(TargetID.AjitKrish) {
 				Name = "Ajit \"AJ\" Krish",
 				ShortName = "AJ",
 				Image = "cottonmouth_ajit_krish.jpg",
 				Mission = MissionID.MIAMI_ASILVERTONGUE,
 			}},
-			{"RD", new Target() {
-				Name = "Rico Delgado",
-				ShortName = "Rico",
-				Image = "hippo_rico_delgado.jpg",
-				Mission = MissionID.SANTAFORTUNA_THREEHEADEDSERPENT,
+			{"RD", new Target(TargetID.RicoDelgado) {
 				MethodTags = [
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Extreme]),
 					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Extreme]),
 				],
 			}},
-			{"JF", new Target() {
-				Name = "Jorge Franco",
-				ShortName = "Jorge",
-				Image = "hippo_jorge_franco.jpg",
-				Mission = MissionID.SANTAFORTUNA_THREEHEADEDSERPENT,
+			{"JF", new Target(TargetID.JorgeFranco) {
 				MethodTags = [
 					new(StandardKillMethod.FallingObject, [MethodTag.BannedInRR, MethodTag.Impossible]),
 				],
 			}},
-			{"AM", new Target() {
-				Name = "Andrea Martinez",
-				ShortName = "Andrea",
-				Image = "hippo_andrea_martinez.jpg",
-				Mission = MissionID.SANTAFORTUNA_THREEHEADEDSERPENT,
+			{"AM", new Target(TargetID.AndreaMartinez) {
 				MethodTags = [
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Extreme]),
 				],
 			}},
-			{"BR", new Target() {
-				Name = "Blair Reddington",
-				ShortName = "Blair",
-				Image = "anaconda_blair_reddington_face.jpg",
-				Mission = MissionID.SANTAFORTUNA_EMBRACEOFTHESERPENT,
-			}},
-			{"WK", new Target() {
-				Name = "Wazir Kale",
-				ShortName = "Wazir",
-				Image = "mongoose_wazir_kale_identified.jpg",
-				Mission = MissionID.MUMBAI_CHASINGAGHOST,
+			{"BR", new Target(TargetID.BlairReddington)},
+			{"WK", new Target(TargetID.WazirKale) {
 				MethodTags = [
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Extreme]),
 					new(StandardKillMethod.Drowning, [MethodTag.BannedInRR, MethodTag.Extreme]),
@@ -451,11 +490,7 @@ namespace Croupier
 					new(loudLiveTest, [MethodTag.BannedInRR, MethodTag.Extreme]),
 				],
 			}},
-			{"VS", new Target() {
-				Name = "Vanya Shah",
-				ShortName = "Vanya",
-				Image = "mongoose_vanya_shah.jpg",
-				Mission = MissionID.MUMBAI_CHASINGAGHOST,
+			{"VS", new Target(TargetID.VanyaShah) {
 				MethodTags = [
 					new(StandardKillMethod.Drowning, [MethodTag.BannedInRR, MethodTag.Extreme]),
 					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Extreme]),
@@ -464,11 +499,7 @@ namespace Croupier
 					new(loudLiveTest, [MethodTag.BannedInRR, MethodTag.Extreme]),
 				],
 			}},
-			{"DR", new Target() {
-				Name = "Dawood Rangan",
-				ShortName = "Dawood",
-				Image = "mongoose_dawood_rangan.jpg",
-				Mission = MissionID.MUMBAI_CHASINGAGHOST,
+			{"DR", new Target(TargetID.DawoodRangan) {
 				MethodTags = [
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Extreme]),
 					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Extreme]),
@@ -477,17 +508,8 @@ namespace Croupier
 					new MethodRule(loudLiveTest, [MethodTag.BannedInRR, MethodTag.Hard]),
 				},
 			}},
-			{"BC", new Target() {
-				Name = "Basil Carnaby",
-				ShortName = "Basil",
-				Image = "kingcobra_basil_carnaby_face.jpg",
-				Mission = MissionID.MUMBAI_ILLUSIONSOFGRANDEUR,
-			}},
-			{"J", new Target() {
-				Name = "Janus",
-				ShortName = "Janus",
-				Image = "skunk_janus.jpg",
-				Mission = MissionID.WHITTLETON_ANOTHERLIFE,
+			{"BC", new Target(TargetID.BasilCarnaby)},
+			{"J", new Target(TargetID.Janus) {
 				MethodTags = [
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Impossible]),
 					new(StandardKillMethod.FallingObject, [MethodTag.BannedInRR, MethodTag.Impossible]),
@@ -495,28 +517,15 @@ namespace Croupier
 					new(SpecificKillMethod.BeakStaff, [MethodTag.BannedInRR, MethodTag.Extreme]),
 				],
 			}},
-			{"NC", new Target() {
-				Name = "Nolan Cassidy",
-				ShortName = "Nolan",
-				Image = "skunk_nolan_cassidy.jpg",
-				Mission = MissionID.WHITTLETON_ANOTHERLIFE,
+			{"NC", new Target(TargetID.NolanCassidy) {
 				MethodTags = [
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Impossible]),
 					new(SpecificKillMethod.BattleAxe, [MethodTag.BannedInRR, MethodTag.Extreme]),
 					new(SpecificKillMethod.BeakStaff, [MethodTag.BannedInRR, MethodTag.Extreme]),
 				],
 			}},
-			{"GV", new Target() {
-				Name = "Galen Vholes",
-				ShortName = "Galen",
-				Image = "gartersnake_ghalen_vholes.jpg",
-				Mission = MissionID.WHITTLETON_ABITTERPILL,
-			}},
-			{"ZW", new Target() {
-				Name = "Zoe Washington",
-				ShortName = "Zoe",
-				Image = "magpie_zoe_washington.jpg",
-				Mission = MissionID.ISLEOFSGAIL_THEARKSOCIETY,
+			{"GV", new Target(TargetID.GalenVholes)},
+			{"ZW", new Target(TargetID.ZoeWashington) {
 				MethodTags = [
 					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Impossible]),
 				],
@@ -524,11 +533,7 @@ namespace Croupier
 					new(knightsArmourTrapTest, [MethodTag.BannedInRR, MethodTag.Extreme])
 				},
 			}},
-			{"SW", new Target() {
-				Name = "Sophia Washington",
-				ShortName = "Sophia",
-				Image = "magpie_serena_washington.jpg",
-				Mission = MissionID.ISLEOFSGAIL_THEARKSOCIETY,
+			{"SW", new Target(TargetID.SophiaWashington) {
 				MethodTags = [
 					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Extreme]),
 					new(StandardKillMethod.Drowning, [MethodTag.BannedInRR, MethodTag.Hard]),
@@ -538,7 +543,7 @@ namespace Croupier
 					new(knightsArmourTrapTest, [MethodTag.BannedInRR, MethodTag.Extreme])
 				],
 			}},
-			{"AS", new Target() {
+			{"AS", new Target(TargetID.AthenaSavalas) {
 				Name = "Athena Savalas",
 				ShortName = "Athena",
 				Image = "racoon_athena_savalas.jpg",
@@ -547,100 +552,53 @@ namespace Croupier
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Impossible]),
 				],
 			}},
-			{"TW", new Target() {
-				Name = "Tyson Williams",
-				ShortName = "Tyson",
-				Image = "stingray_tyson_williams.jpg",
-				Mission = MissionID.HAVEN_THELASTRESORT,
+			{"TW", new Target(TargetID.TysonWilliams) {
 				MethodTags = [
 					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Extreme]),
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Impossible]),
 				],
 			}},
-			{"SB", new Target() {
-				Name = "Steven Bradley",
-				ShortName = "Steven",
-				Image = "stingray_steven_bradley.jpg",
-				Mission = MissionID.HAVEN_THELASTRESORT,
+			{"SB", new Target(TargetID.StevenBradley) {
 				MethodTags = [
 					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Impossible]),
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Impossible]),
 				],
 			}},
-			{"LV", new Target() {
-				Name = "Ljudmila Vetrova",
-				ShortName = "Ljudmila",
-				Image = "stingray_ljudmila_vetrova.jpg",
-				Mission = MissionID.HAVEN_THELASTRESORT,
+			{"LV", new Target(TargetID.LjudmilaVetrova) {
 				MethodTags = [
 					new(StandardKillMethod.FallingObject, [MethodTag.BannedInRR, MethodTag.Hard]),
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Impossible]),
 				],
 			}},
-			{"CI", new Target() {
-				Name = "Carl Ingram",
-				ShortName = "Carl",
-				Image = "golden_carl_ingram.jpg",
-				Mission = MissionID.DUBAI_ONTOPOFTHEWORLD,
+			{"CI", new Target(TargetID.CarlIngram) {
 				MethodTags = [
 					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Buggy]),
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Extreme]),
 				],
 			}},
-			{"MS", new Target() {
-				Name = "Marcus Stuyvesant",
-				ShortName = "Marcus",
-				Image = "golden_marcus_stuyvesant.jpg",
-				Mission = MissionID.DUBAI_ONTOPOFTHEWORLD,
+			{"MS", new Target(TargetID.MarcusStuyvesant) {
 				MethodTags = [
 					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Extreme]),
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Extreme]),
 				],
 			}},
-			{"AC", new Target() {
-				Name = "Alexa Carlisle",
-				ShortName = "Alexa",
-				Image = "ancestral_alexa_carlisle.jpg",
-				Mission = MissionID.DARTMOOR_DEATHINTHEFAMILY,
+			{"AC", new Target(TargetID.AlexaCarlisle) {
 				MethodTags = [
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Impossible]),
 				],
 			}},
-			{"1", new Target() {
-				Name = "ICA Agent #1",
-				ShortName = "1",
-				Image = "fox_pickup_earpiece.jpg",
-				Mission = MissionID.BERLIN_APEXPREDATOR,
-			}},
-			{"2", new Target() {
-				Name = "ICA Agent #2",
-				ShortName = "2",
-				Image = "fox_pickup_earpiece.jpg",
-				Mission = MissionID.BERLIN_APEXPREDATOR,
-			}},
-			{"3", new Target() {
-				Name = "ICA Agent #3",
-				ShortName = "3",
-				Image = "fox_pickup_earpiece.jpg",
-				Mission = MissionID.BERLIN_APEXPREDATOR,
-			}},
-			{"4", new Target() {
-				Name = "ICA Agent #4",
-				ShortName = "4",
-				Image = "fox_pickup_earpiece.jpg",
-				Mission = MissionID.BERLIN_APEXPREDATOR,
-			}},
-			{"5", new Target() {
-				Name = "ICA Agent #5",
-				ShortName = "5",
-				Image = "fox_pickup_earpiece.jpg",
-				Mission = MissionID.BERLIN_APEXPREDATOR,
-			}},
-			{"H", new Target() {
-				Name = "Hush",
-				ShortName = "Hush",
-				Image = "wet_hush.jpg",
-				Mission = MissionID.CHONGQING_ENDOFANERA,
+			{"1", new Target(TargetID.Agent1)},
+			{"2", new Target(TargetID.Agent2)},
+			{"3", new Target(TargetID.Agent3)},
+			{"4", new Target(TargetID.Agent4)},
+			{"5", new Target(TargetID.Agent5)},
+			{"6", new Target(TargetID.Agent6)},
+			{"7", new Target(TargetID.Agent7)},
+			{"8", new Target(TargetID.Agent8)},
+			{"9", new Target(TargetID.Agent9)},
+			{"10", new Target(TargetID.Agent10)},
+			{"11", new Target(TargetID.Agent11)},
+			{"H", new Target(TargetID.Hush) {
 				MethodTags = [
 					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Extreme]),
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Extreme]),
@@ -649,43 +607,27 @@ namespace Croupier
 					new(loudLiveTest, [MethodTag.BannedInRR, MethodTag.Hard]),
 				],
 			}},
-			{"IR", new Target() {
-				Name = "Imogen Royce",
-				ShortName = "Imogen",
-				Image = "wet_imogen_royce.jpg",
-				Mission = MissionID.CHONGQING_ENDOFANERA,
+			{"IR", new Target(TargetID.ImogenRoyce) {
 				MethodTags = [
 					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Hard]),
 					new(StandardKillMethod.FallingObject, [MethodTag.BannedInRR, MethodTag.Extreme]),
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Hard]),
 				],
 			}},
-			{"DY", new Target() {
-				Name = "Don Archibald Yates",
-				ShortName = "Don",
-				Image = "elegant_yates.jpg",
-				Mission = MissionID.MENDOZA_THEFAREWELL,
+			{"DY", new Target(TargetID.DonArchibaldYates) {
 				MethodTags = [
 					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Hard]),
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Extreme]),
 				],
 			}},
-			{"TV", new Target() {
-				Name = "Tamara Vidal",
-				ShortName = "Tamara",
-				Image = "elegant_vidal.jpg",
-				Mission = MissionID.MENDOZA_THEFAREWELL,
+			{"TV", new Target(TargetID.TamaraVidal) {
 				MethodTags = [
 					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Hard]),
 					new(StandardKillMethod.FallingObject, [MethodTag.BannedInRR, MethodTag.Hard]),
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Extreme]),
 				],
 			}},
-			{"AE", new Target() {
-				Name = "Arthur Edwards",
-				ShortName = "Arthur",
-				Image = "trapped_arthur_edwards.jpg",
-				Mission = MissionID.CARPATHIAN_UNTOUCHABLE,
+			{"AE", new Target(TargetID.ArthurEdwards) {
 				MethodTags = [
 					new(StandardKillMethod.Drowning, [MethodTag.BannedInRR, MethodTag.Impossible]),
 					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Impossible]),
@@ -700,18 +642,8 @@ namespace Croupier
 					new(impactExplosiveTest, [ MethodTag.BannedInRR, MethodTag.Impossible ]),
 				]
 			}},
-			{"NCR", new Target() {
-				Name = "Noel Crest",
-				ShortName = "Noel",
-				Image = "rocky_noel_crest.jpg",
-				Mission = MissionID.AMBROSE_SHADOWSINTHEWATER,
-			}},
-			{"SV", new Target() {
-				Name = "Sinhi \"Akka\" Venthan",
-				ShortName = "Akka",
-				Image = "rocky_sinhi_akka_venthan.jpg",
-				Mission = MissionID.AMBROSE_SHADOWSINTHEWATER,
-			}},
+			{"NCR", new Target(TargetID.NoelCrest)},
+			{"SV", new Target(TargetID.SinhiAkkaVenthan)},
 		};
 		static private readonly Dictionary<string, string> targetAliasDict = new() {
 			{"kalvinritter", "KR"},
@@ -785,7 +717,7 @@ namespace Croupier
 			{"sierraknox", "SK"},
 			{"sierra", "SK"},
 			{"robertknox", "RK"},
-			{"robert", "RK"}, {"bob", "RK"}, {"bobby", "RK"}, {"bobbyknox", "RK"}, {"bobert", "RK"},
+			{"robert", "RK"}, {"rob", "RK"}, {"bob", "RK"}, {"bobby", "RK"}, {"bobbyknox", "RK"}, {"bobert", "RK"},
 			{"ajitajkrish", "AJ"},
 			{"aak", "AJ"},
 			{"ak", "AJ"},
@@ -838,7 +770,7 @@ namespace Croupier
 			{"tamaravidal", "TV"},
 			{"tamara", "TV"}, {"tam", "TV"}, {"vidal", "vidal"},
 			{"arthuredwards", "AE"},
-			{"arthur", "AE"}, {"edwards", "AE"},
+			{"arthur", "AE"}, {"edwards", "AE"}, {"theconstant", "AE"}, {"constant", "AE"},
 			{"noelcrest", "NCR"},
 			{"noel", "NCR"}, {"crest", "NCR"},
 			{"sinhiakkaventhan", "SV"},
@@ -865,6 +797,20 @@ namespace Croupier
 			return Targets.TryGetValue(key.ToUpper(), out target);
 		}
 
+		public Target() { }
+		public Target(TargetID id)
+		{
+			var info = targetInfos.GetValueOrDefault(id);
+			_id = id;
+			Name = info.Name;
+			ShortName = info.ShortName;
+			Image = info.Image;
+			Mission = info.Mission;
+		}
+
+		private readonly TargetID _id = TargetID.Unknown;
+
+		public TargetID ID { get => _id; }
 		public string Name { get; set; }
 		public string ShortName { get; set; }
 		public MissionID Mission { get; set; }

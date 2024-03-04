@@ -22,6 +22,7 @@ namespace Croupier
 		public static event EventHandler<MissionID> AutoSpin;
 		public static event EventHandler<List<MissionID>> Missions;
 		public static event EventHandler<string> SpinData;
+		public static event EventHandler<string> KillValidation;
 		public static event EventHandler<int> Random;
 		public static event EventHandler<int> Prev;
 		public static event EventHandler<int> Next;
@@ -141,7 +142,8 @@ namespace Croupier
 				List<MissionID> missions = [];
 				if (rest.Length > 0) {
 					foreach (var token in rest.First().Split(",")) {
-						if (!Mission.GetMissionFromString(token, out var mission)) continue;
+						if (!Mission.GetMissionFromString(token, out var mission))
+							continue;
 						missions.Add(mission);
 					}
 				}
@@ -167,6 +169,10 @@ namespace Croupier
 			}
 			else if (cmd == "ToggleSpinLock") {
 				App.Current.Dispatcher.Invoke(new Action(() => ToggleSpinLock?.Invoke(null, 0)));
+				return;
+			}
+			else if (cmd == "KillValidation") {
+				App.Current.Dispatcher.Invoke(new Action(() => KillValidation?.Invoke(null, rest.First())));
 				return;
 			}
 		}

@@ -113,6 +113,19 @@
 					HorizontalAlignment="Center"
 					Stretch="UniformToFill"
 					/>
+				<Grid Margin="4">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="1*" />
+						<ColumnDefinition Width="3*" />
+					</Grid.ColumnDefinitions>
+					<Image
+						Grid.Column="0"
+						Source="{Binding KillStatusImagePath, UpdateSourceTrigger=PropertyChanged}"
+						Stretch="Uniform"
+						VerticalAlignment="Bottom"
+						HorizontalAlignment="Stretch"
+						/>
+				</Grid>
 				<Grid
 					Grid.Column="1"
 				>
@@ -129,6 +142,19 @@
 						HorizontalAlignment="Center"
 						VerticalAlignment="Center"
 						Stretch="UniformToFill" />
+					<Grid Margin="4">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="1*" />
+							<ColumnDefinition Width="3*" />
+						</Grid.ColumnDefinitions>
+						<Image
+							Grid.Column="0"
+							Source="{Binding MethodKillStatusImagePath, UpdateSourceTrigger=PropertyChanged}"
+							Stretch="Uniform"
+							VerticalAlignment="Bottom"
+							HorizontalAlignment="Stretch"
+							/>
+					</Grid>
 					<TextBlock
 						Grid.Column="1"
 						Text="{Binding MethodName}"
@@ -148,6 +174,19 @@
 						HorizontalAlignment="Center"
 						VerticalAlignment="Center"
 						Stretch="UniformToFill" />
+					<Grid Grid.Row="1" Margin="4">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="1*" />
+							<ColumnDefinition Width="3*" />
+						</Grid.ColumnDefinitions>
+						<Image
+							Grid.Column="0"
+							Source="{Binding DisguiseKillStatusImagePath, UpdateSourceTrigger=PropertyChanged}"
+							Stretch="Uniform"
+							VerticalAlignment="Bottom"
+							HorizontalAlignment="Stretch"
+							/>
+					</Grid>
 					<TextBlock
 						Grid.Column="1"
 						Grid.Row="1"
@@ -373,6 +412,12 @@
 					IsChecked="{Binding StaticSizeLHS, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 					IsCheckable="True"
 					IsEnabled="{Binding StaticSize, UpdateSourceTrigger=PropertyChanged}"
+				/>
+				<MenuItem
+					Header="Kill Confirmations"
+					IsChecked="{Binding KillValidations, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					IsCheckable="True"
+					ToolTip="Croupier will try to confirm kill method and disguise validity by tracking in-game (if connected via mod). Some methods of killing in-game may appear ambiguous and some conditions may come down to interpretation, so false results are possible. Croupier aims to give you the benefit of any doubt."
 				/>
 				<Separator />
 				<MenuItem

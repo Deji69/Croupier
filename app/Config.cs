@@ -38,6 +38,7 @@ namespace Croupier {
 		public bool StaticSize { get; set; } = false;
 		public bool StaticSizeLHS { get; set; } = false;
 		public bool VerticalDisplay { get; set; } = false;
+		public bool KillValidations { get; set; } = false;
 		public string TargetNameFormat { get; set; } = "";
 		
 		public double Width1Column { get; set; } = 0;

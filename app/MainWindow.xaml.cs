@@ -136,6 +136,7 @@ namespace Croupier
 		private bool _editMode = false;
 		private bool _staticSize = false;
 		private bool _staticSizeLHS = false;
+		private bool _killValidations = false;
 
 		public TargetNameFormat TargetNameFormat {
 			get { return _targetNameFormat; }
@@ -245,6 +246,22 @@ namespace Croupier
 				OnPropertyChanged(nameof(SpinGridHeight));
 				OnPropertyChanged(nameof(ContentGridFlowDir));
 				OnPropertyChanged(nameof(RightToLeftFlowDir));
+			}
+		}
+		public bool KillValidations {
+			get { return _killValidations; }
+			set {
+				if (value == _killValidations) return;
+				_killValidations = value;
+				if (value != Config.Default.KillValidations) {
+					Config.Default.KillValidations = value;
+					Config.Save();
+				}
+
+				foreach (var cond in conditions)
+					cond.ForceUpdate();
+
+				OnPropertyChanged(nameof(KillValidations));
 			}
 		}
 		public bool ShowSpinLabels {
@@ -458,6 +475,23 @@ namespace Croupier
 					disableClientUpdate = false;
 				}
 			};
+			CroupierSocketServer.KillValidation += (object sender, string data) => {
+				var validationStrings = data.Split(",");
+				foreach (var v in validationStrings) {
+					var segments = v.Split(":");
+					if (segments.Length != 3) return;
+					var kv = new KillValidation {
+						target = (TargetID)int.Parse(segments[0]),
+						killValidation = (KillValidationType)int.Parse(segments[1]),
+						disguiseValidation = int.Parse(segments[2]) != 0,
+					};
+					for (var i = 0; i < conditions.Count; ++i) {
+						var cond = conditions[i];
+						if (cond.Target.ID != kv.target) return;
+						cond.KillValidation = kv;
+					}
+				}
+			};
 			HitmapsSpinLink.ReceiveNewSpinData += (object sender, string data) => {
 				if (SpinParser.Parse(data, out var spin)) {
 					SetSpin(spin);
@@ -493,6 +527,7 @@ namespace Croupier
 			RightToLeft = Config.Default.RightToLeft;
 			StaticSize = Config.Default.StaticSize;
 			StaticSizeLHS = Config.Default.StaticSizeLHS;
+			KillValidations = Config.Default.KillValidations;
 			TargetNameFormat = TargetNameFormatMethods.FromString(Config.Default.TargetNameFormat);
 			LoadMissionPool();
 

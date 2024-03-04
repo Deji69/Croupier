@@ -18,7 +18,6 @@ namespace Croupier
 	}
 
 	public class EditSpinCondition : SpinCondition, INotifyPropertyChanged {
-		public event PropertyChangedEventHandler PropertyChanged;
 		private readonly List<MethodComboBoxItem> firearmKillTypes = [
 			new("Any") { KillType = KillType.Any },
 			new("Silenced") { KillType = KillType.Silenced },
@@ -229,10 +228,6 @@ namespace Croupier
 
 				return items;
 			}
-		}
-
-		public virtual void OnPropertyChanged(string propertyName) {
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 	}
 

@@ -1,6 +1,7 @@
 ﻿using Croupier.Properties;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -73,8 +74,16 @@ namespace Croupier
 		}
 	}
 
-	public class SpinCondition
-	{
+	public class SpinCondition : INotifyPropertyChanged {
+		private KillValidation killValidation = new();
+		public KillValidation KillValidation {
+			get => killValidation;
+			set {
+				killValidation = value;
+				ForceUpdate();
+			}
+		}
+
 		public Target Target { get; set; }
 
 		public KillMethod Method { get; set; }
@@ -90,6 +99,51 @@ namespace Croupier
 		public string DisguiseImage { get { return Disguise.Image; } }
 		
 		public Uri TargetImagePath { get { return Target.ImageUri; } }
+		
+		public Uri KillStatusImagePath {
+			get {
+				switch (killValidation.killValidation) {
+					case KillValidationType.Unknown:
+					case KillValidationType.Incomplete:
+						break;
+					case KillValidationType.Valid:
+						return new(Path.Combine(Environment.CurrentDirectory, "ui", killValidation.disguiseValidation ? "completed.png" : "failed.png"));
+					case KillValidationType.Invalid:
+						return new(Path.Combine(Environment.CurrentDirectory, "ui", "failed.png"));
+				}
+				return null;
+			}
+		}
+		
+		public Uri MethodKillStatusImagePath {
+			get {
+				switch (killValidation.killValidation) {
+					case KillValidationType.Unknown:
+					case KillValidationType.Incomplete:
+						break;
+					case KillValidationType.Valid:
+						return killValidation.disguiseValidation ? null : new(Path.Combine(Environment.CurrentDirectory, "ui", "completed.png"));
+					case KillValidationType.Invalid:
+						return new(Path.Combine(Environment.CurrentDirectory, "ui", "failed.png"));
+				}
+				return null;
+			}
+		}
+		
+		public Uri DisguiseKillStatusImagePath {
+			get {
+				switch (killValidation.killValidation) {
+					case KillValidationType.Unknown:
+					case KillValidationType.Incomplete:
+						break;
+					case KillValidationType.Valid:
+						return killValidation.disguiseValidation ? null : new(Path.Combine(Environment.CurrentDirectory, "ui", "failed.png"));
+					case KillValidationType.Invalid:
+						return killValidation.disguiseValidation ? new(Path.Combine(Environment.CurrentDirectory, "ui", "completed.png")) : new(Path.Combine(Environment.CurrentDirectory, "ui", "failed.png"));
+				}
+				return null;
+			}
+		}
 
 		public Uri DisguiseImagePath { get { return Disguise.ImageUri; } }
 
@@ -156,6 +210,21 @@ namespace Croupier
 				}
 			}
 			return false;
+		}
+
+		public void ForceUpdate()
+		{
+			OnPropertyChanged(nameof(KillValidation));
+			OnPropertyChanged(nameof(KillStatusImagePath));
+			OnPropertyChanged(nameof(DisguiseKillStatusImagePath));
+			OnPropertyChanged(nameof(MethodKillStatusImagePath));
+		}
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected virtual void OnPropertyChanged(string propertyName)
+		{
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 	}
 }
