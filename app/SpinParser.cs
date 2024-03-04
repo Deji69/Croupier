@@ -314,6 +314,8 @@ namespace Croupier {
 			{"guacho", "gaucho"},
 			{"somelier", "sommelier"},
 			{"sacraficial", "sacrificial"},
+			{"millitary", "military"},
+			{"prison", "prisoner"},
 		};
 		public static readonly List<ConditionKeywords> DisguiseKeywords = [
 			new([], new() { { "suit", "Suit" } }),
@@ -348,6 +350,7 @@ namespace Croupier {
 				{"cook", "Chef"},
 				{"bodyguard", "CICADA Bodyguard"},
 				{"cicada", "CICADA Bodyguard"},
+				{"cicadabodyguard", "CICADA Bodyguard"},
 				{"helmut", "Helmut Kruger"},
 				{"kruger", "Helmut Kruger"},
 				{"helmutkruger", "Helmut Kruger"},
@@ -364,6 +367,10 @@ namespace Croupier {
 				{"salman", "Sheikh Salman Al-Ghazali"},
 				{"alghazali", "Sheikh Salman Al-Ghazali"},
 				{"ghazali", "Sheikh Salman Al-Ghazali"},
+				{"sheikhsalman", "Sheikh Salman Al-Ghazali"},
+				{"sheikhsalmanal", "Sheikh Salman Al-Ghazali"},
+				{"sheikhsalmanalghazali", "Sheikh Salman Al-Ghazali"},
+				{"salmanalghazali", "Sheikh Salman Al-Ghazali"},
 				{"stylist", "Stylist"},
 				{"tech", "Tech Crew"},
 				{"techcrew", "Tech Crew"},
@@ -373,8 +380,6 @@ namespace Croupier {
 				{"vampiremagician", "Vampire Magician"},
 				{"vampire", "Vampire Magician"},
 				{"magician", "Vampire Magician"},
-				{"millitary", "military"},
-				{"prison", "prisoner"},
 			}),
 			new([MissionID.PARIS_HOLIDAYHOARDERS], new(){
 				{"santaclaus", "Santa"},
