@@ -10,6 +10,8 @@
 #include <variant>
 #include <winhttp.h>
 #include "Events.h"
+#include "KillConfirmation.h"
+#include "KillMethod.h"
 #include "SpinParser.h"
 #include "json.hpp"
 #include "util.h"
@@ -433,6 +435,17 @@ auto Croupier::SendRandom() -> void {
 	this->client->send(eClientMessage::Random);
 }
 
+auto Croupier::SendKillValidationUpdate() -> void {
+	auto data = ""s;
+	for (const auto& cond : spin.getConditions()) {
+		auto kc = this->sharedSpin.getTargetKillValidation(cond.target.get().getID());
+		if (!data.empty()) data += ",";
+
+		data += std::format("{}:{}:{}", static_cast<int>(cond.target.get().getID()), static_cast<int>(kc.correctMethod), kc.correctDisguise ? 1 : 0);
+	}
+	this->client->send(eClientMessage::KillValidation, { data });
+}
+
 auto Croupier::OnDrawMenu() -> void {
 	// Toggle our message when the user presses our button.
 	if (ImGui::Button(ICON_MD_CASINO " CROUPIER"))
@@ -582,11 +595,24 @@ auto Croupier::DrawSpinUI(bool focused) -> void {
 		ImGui::PushFont(SDK()->GetImGuiBoldFont());
 
 		auto elapsed = std::chrono::seconds::zero();
+		auto& conds = this->spin.getConditions();
 
-		auto const& conds = this->spin.getConditions();
 		elapsed = this->sharedSpin.getTimeElapsed();
-		for (auto& cond : conds) {
-			auto str = std::format("{}: {} / {}", cond.target.get().getName(), cond.methodName, cond.disguise.get().name);
+		for (auto i = 0; i < conds.size(); ++i) {
+			auto& cond = conds[i];
+			auto kc = this->sharedSpin.getTargetKillValidation(cond.target.get().getID());
+			//auto str = std::format("{}: {} / {}", cond.target.get().getName(), cond.methodName, cond.disguise.get().name);
+			auto validation = " - "s;
+			if (kc.correctMethod == eKillValidationType::Unknown)
+				validation += "Unknown, "s + (kc.correctDisguise ? "valid disguise" : "invalid disguise");
+			else if (kc.correctMethod == eKillValidationType::Invalid)
+				validation += kc.correctDisguise ? "Invalid, valid disguise" : "Invalid";
+			else if (kc.correctMethod == eKillValidationType::Valid)
+				validation += kc.correctDisguise ? "Done" : "Invalid disguise";
+			else if (kc.correctMethod == eKillValidationType::Incomplete)
+				validation = "";
+
+			auto str = std::format("{}: {} / {}{}", cond.target.get().getName(), cond.methodName, cond.disguise.get().name, validation);
 			ImGui::Text(str.c_str());
 		}
 
@@ -1032,8 +1058,18 @@ auto Croupier::LogSpin() -> void {
 
 auto Croupier::SetupEvents() -> void {
 	events.listen<Events::ContractStart>([this](auto& ev) {
+		this->sharedSpin.hasLoadedGame = false;
+		this->sharedSpin.resetKillValidations();
+
 		if (!this->sharedSpin.isPlaying || this->sharedSpin.isFinished)
 			this->sharedSpin.playerStart();
+
+		this->SendKillValidationUpdate();
+	});
+	events.listen<Events::ContractLoad>([this](auto& ev) {
+		this->sharedSpin.hasLoadedGame = true;
+		this->sharedSpin.resetKillValidations();
+		this->SendKillValidationUpdate();
 	});
 	events.listen<Events::ExitGate>([this](const ServerEvent<Events::ExitGate>& ev) {
 		this->sharedSpin.playerExit();
@@ -1050,12 +1086,199 @@ auto Croupier::SetupEvents() -> void {
 		if (conditions.empty()) return;
 
 		auto const& name = ev.Value.ActorName;
+		bool validationUpdated = false;
 
-		for (auto& cond : conditions) {
-			if (cond.target.get().getName() != name) continue;
+		for (auto i = 0; i < conditions.size(); ++i) {
+			auto& cond = conditions[i];
+			auto& target = cond.target.get();
+			if (target.getName() != name) continue;
+
+			auto& kc = this->sharedSpin.killValidations[i];
+			auto& reqDisguise = cond.disguise.get();
+			kc.target = cond.target.get().getID();
+
+			// Target already killed? Confusion. Turn an invalid kill valid, but don't invalidate previously validated kills.
+			if (kc.correctMethod == eKillValidationType::Valid) {
+				if (!kc.correctDisguise)
+					kc.correctDisguise = reqDisguise.suit ? ev.Value.OutfitIsHitmanSuit : reqDisguise.repoId == ev.Value.OutfitRepositoryId;
+				break;
+			}
+
+			kc.correctDisguise = reqDisguise.suit ? ev.Value.OutfitIsHitmanSuit : reqDisguise.repoId == ev.Value.OutfitRepositoryId;
+
+			if (cond.killMethod.method != eKillMethod::NONE)
+				kc.correctMethod = ValidateKillMethod(target.getID(), ev, cond.killMethod.method);
+			else if (cond.specificKillMethod.method != eMapKillMethod::NONE)
+				kc.correctMethod = ValidateKillMethod(target.getID(), ev, cond.specificKillMethod.method);
+
+			validationUpdated = true;
+			//cond.killComplication
+			//ev.Value.OutfitRepositoryId
+			//cond.disguise
+
 			Logger::Debug("Killed '{}'", name);
 		}
+
+		if (validationUpdated) this->SendKillValidationUpdate();
 	});
+	events.listen<Events::Level_Setup_Events>([this](const ServerEvent<Events::Level_Setup_Events>& ev) {
+		auto const& conditions = this->sharedSpin.spin.getConditions();
+		auto mission = this->sharedSpin.spin.getMission();
+		if (!mission || mission->getMission() != eMission::HOKKAIDO_SITUSINVERSUS) return;
+		if (ev.Value.Contract_Name_metricvalue != "SnowCrane") return;
+
+		bool validationUpdated = false;
+
+		for (auto i = 0; i < conditions.size(); ++i) {
+			auto& cond = conditions[i];
+			if (cond.target.get().getID() != eTargetID::ErichSoders) continue;
+
+			auto& kc = this->sharedSpin.killValidations[i];
+			kc.target = cond.target.get().getID();
+
+			validationUpdated = true;
+
+			if (cond.specificKillMethod.method != eMapKillMethod::NONE) {
+				if (ev.Value.Event_metricvalue == "Heart_Kill")
+					kc.correctMethod = cond.specificKillMethod.method == eMapKillMethod::Soders_TrashHeart
+						|| cond.specificKillMethod.method == eMapKillMethod::Soders_ShootHeart
+						? eKillValidationType::Valid : eKillValidationType::Invalid;
+				else if (ev.Value.Event_metricvalue == "Spidermachine_Kill")
+					kc.correctMethod = cond.specificKillMethod.method == eMapKillMethod::Soders_RobotArms ? eKillValidationType::Valid : eKillValidationType::Invalid;
+				else if (ev.Value.Event_metricvalue == "Soder_Electrocuted")
+					kc.correctMethod = cond.specificKillMethod.method == eMapKillMethod::Soders_Electrocution ? eKillValidationType::Valid : eKillValidationType::Invalid;
+				else if (ev.Value.Event_metricvalue == "Poison_Kill")
+					kc.correctMethod = cond.specificKillMethod.method == eMapKillMethod::Soders_PoisonStemCells ? eKillValidationType::Valid : eKillValidationType::Invalid;
+				else
+					validationUpdated = false;
+			}
+			else if (cond.killMethod.method != eKillMethod::NONE) {
+				if (ev.Value.Event_metricvalue == "Body_Kill")
+					kc.correctMethod = cond.killMethod.isGun || cond.killMethod.method == eKillMethod::Explosive ? eKillValidationType::Valid : eKillValidationType::Invalid;
+				else if (ev.Value.Event_metricvalue == "Heart_Kill")
+					kc.correctMethod = eKillValidationType::Invalid;
+				else if (ev.Value.Event_metricvalue == "Spidermachine_Kill")
+					kc.correctMethod = eKillValidationType::Invalid;
+				else if (ev.Value.Event_metricvalue == "Soder_Electrocuted")
+					kc.correctMethod = eKillValidationType::Invalid;
+				else if (ev.Value.Event_metricvalue == "Poison_Kill")
+					kc.correctMethod = eKillValidationType::Invalid;
+				else
+					validationUpdated = false;
+			}
+			else validationUpdated = false;
+		}
+
+		if (validationUpdated) this->SendKillValidationUpdate();
+	});
+}
+
+auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Kill>& ev, eKillMethod method) -> eKillValidationType {
+	auto const killType = ev.Value.KillType;
+	auto const& killClass = ev.Value.KillClass;
+	auto const& killMethodBroad = ev.Value.KillMethodBroad;
+	auto const& killMethodStrict = ev.Value.KillMethodStrict;
+	auto const killContext = ev.Value.KillContext;
+	auto const haveKillItem = !ev.Value.KillItemRepositoryId.empty();
+	auto const isKillClassUnknown = killClass == "unknown";
+	auto const isSilencedWeapon = ev.Value.WeaponSilenced;
+	auto const isAccident = ev.Value.Accident;
+	auto const isExplosive = ev.Value.Explosive;
+	auto const isSniper = ev.Value.Sniper;
+	auto const isProjectile = ev.Value.Projectile;
+	auto const haveKillMethod = !ev.Value.KillMethodBroad.empty() || !ev.Value.KillMethodStrict.empty();
+	auto const haveDamageEvents = !ev.Value.DamageEvents.empty();
+
+	if (target == eTargetID::SierraKnox) {
+		// If expecting injected poison, we can determine whether the proxy medic opportunity was used
+		if (method == eKillMethod::InjectedPoison
+			&& killContext == EDeathContext::eDC_ACCIDENT
+			&& killClass == "poison"
+			&& killMethodStrict == "")
+			// EKillType_ItemTakeOutFront (4)
+			return eKillValidationType::Valid;
+
+		// true for car kill
+		// EKillType_ItemTakeOutFront (4)
+		// KillClass == "unknown"
+		// killContext == eDC_HIDDEN (2)
+		// KillMethodBroad == ""
+		// KillMethodStrict == ""
+		auto const isContextKill = haveDamageEvents && ev.Value.DamageEvents[0] == "ContextKill";
+		if (method == eKillMethod::Explosion
+			&& isContextKill
+			&& isKillClassUnknown
+			&& killContext == EDeathContext::eDC_HIDDEN)
+			return eKillValidationType::Valid;
+	}
+
+	// ev.Value.KillMethodBroad == "close_combat_pistol_elimination"
+	switch (method) {
+	case eKillMethod::NeckSnap:
+		return killMethodBroad == "unarmed" ? eKillValidationType::Valid : eKillValidationType::Invalid;
+	case eKillMethod::Pistol:
+		return killMethodBroad == "pistol" || killMethodBroad == "close_combat_pistol_elimination" ? eKillValidationType::Valid : eKillValidationType::Invalid;
+	case eKillMethod::SMG:
+		return killMethodBroad == "smg" ? eKillValidationType::Valid : eKillValidationType::Invalid;
+	case eKillMethod::PistolElimination:
+		return killMethodBroad == "close_combat_pistol_elimination" ? eKillValidationType::Valid : eKillValidationType::Invalid;
+	case eKillMethod::Shotgun:
+		return killMethodBroad == "shotgun" ? eKillValidationType::Valid : eKillValidationType::Invalid;
+	case eKillMethod::AssaultRifle:
+		return killMethodBroad == "assaultrifle" ? eKillValidationType::Valid : eKillValidationType::Invalid;
+	case eKillMethod::Explosive:
+		return killMethodBroad == "explosive" ? eKillValidationType::Valid : eKillValidationType::Invalid;
+	case eKillMethod::FiberWire:
+		return killMethodBroad == "fiberwire" ? eKillValidationType::Valid : eKillValidationType::Invalid;
+	case eKillMethod::InjectedPoison:
+		// Validate ambiguous poisons that aren't "consumed" - includes medic proxy injected opportunity for Sierra Knox
+		if (killClass == "poison"
+			&& killMethodStrict == "")
+			// EKillType_ItemTakeOutFront (4)
+			return eKillValidationType::Valid;
+		return killMethodStrict == "injected_poison" ? eKillValidationType::Valid : eKillValidationType::Invalid;
+	case eKillMethod::ConsumedPoison:
+		// killItemCategory = poison
+		// killItemRepoId = id of poison item
+		// Validate ambiguous poisons that aren't "injected"
+		if (killClass == "poison"
+			&& killMethodStrict == "")
+			// EKillType_ItemTakeOutFront (4)
+			return eKillValidationType::Valid;
+		return killMethodStrict == "consumed_poison" ? eKillValidationType::Valid : eKillValidationType::Invalid;
+	case eKillMethod::Drowning:
+		// ev.Value.KillMethodBroad == "accident"
+		return killMethodStrict == "accident_drown" ? eKillValidationType::Valid : eKillValidationType::Invalid;
+	case eKillMethod::Explosion:
+		return killMethodStrict == "accident_explosion" ? eKillValidationType::Valid : eKillValidationType::Invalid;
+	case eKillMethod::Fall:
+		// If expecting fall kill and the cause of death is mysterious, we can assume it's correct based on some OOB kill indicators
+		if (killContext == EDeathContext::eDC_MURDER
+			&& killType == EKillType::EKillType_ItemTakeOutFront
+			&& isKillClassUnknown
+			&& !haveKillMethod
+			&& !haveDamageEvents
+			&& !haveKillItem)
+			return method == eKillMethod::Fall ? eKillValidationType::Valid : eKillValidationType::Unknown;
+
+		return killMethodStrict == "accident_push" ? eKillValidationType::Valid : eKillValidationType::Invalid;
+	case eKillMethod::FallingObject:
+		return killMethodStrict == "accident_suspended_object" ? eKillValidationType::Valid : eKillValidationType::Invalid;
+	case eKillMethod::Fire:
+		return killMethodStrict == "accident_burn" ? eKillValidationType::Valid : eKillValidationType::Invalid;
+	case eKillMethod::Electrocution:
+		return killMethodStrict == "accident_electric" ? eKillValidationType::Valid : eKillValidationType::Invalid;
+	}
+	return eKillValidationType::Unknown;
+}
+
+auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Kill>& ev, eMapKillMethod method) -> eKillValidationType {
+	if (!ev.Value.KillItemRepositoryId.empty()) {
+		auto it = specificKillMethodsByRepoId.find(ev.Value.KillItemRepositoryId);
+		if (it != end(specificKillMethodsByRepoId) && it->second == method)
+			return eKillValidationType::Valid;
+	}
+	return eKillValidationType::Invalid;
 }
 
 DEFINE_PLUGIN_DETOUR(Croupier, void, OnEventReceived, ZAchievementManagerSimple* th, const SOnlineEvent& event) {

@@ -10,7 +10,9 @@
 #include <Glacier/ZObject.h>
 #include <Glacier/ZString.h>
 #include "CroupierClient.h"
+#include "Events.h"
 #include "EventSystem.h"
+#include "KillConfirmation.h"
 #include "Roulette.h"
 
 struct RouletteSpinKill {
@@ -25,15 +27,26 @@ struct RouletteSpinKill {
 struct SharedRouletteSpin {
 	const RouletteSpin& spin;
 	std::vector<RouletteSpinKill> kills;
+	std::vector<KillConfirmation> killValidations;
 	std::chrono::steady_clock::time_point timeStarted;
 	std::chrono::seconds timeElapsed = std::chrono::seconds(0);
 	bool isPlaying = false;
 	bool isFinished = false;
+	bool hasLoadedGame = false;		// current play session is from a loaded game
 	LONG windowX = 0;
 	LONG windowY = 0;
 
 	SharedRouletteSpin(const RouletteSpin& spin) : spin(spin), timeElapsed(0) {
 		timeStarted = std::chrono::steady_clock().now();
+	}
+
+	auto getTargetKillValidation(eTargetID target) const -> KillConfirmation {
+		if (hasLoadedGame) return KillConfirmation(target, eKillValidationType::Unknown);
+		for (auto& kc : killValidations) {
+			if (kc.target == target)
+				return kc;
+		}
+		return KillConfirmation(target, eKillValidationType::Incomplete);
 	}
 
 	auto getTimeElapsed() const -> std::chrono::seconds {
@@ -49,6 +62,7 @@ struct SharedRouletteSpin {
 	}
 
 	auto playerStart() {
+		this->resetKillValidations();
 		this->kills.clear();
 		if (!this->isPlaying)
 			this->timeStarted = std::chrono::steady_clock().now();
@@ -60,6 +74,13 @@ struct SharedRouletteSpin {
 		this->timeElapsed = this->getTimeElapsed();
 		this->isPlaying = false;
 		this->isFinished = true;
+	}
+
+	auto resetKillValidations() -> void {
+		killValidations.resize(spin.getConditions().size());
+
+		for (auto& kv : killValidations)
+			kv = KillConfirmation {};
 	}
 };
 
@@ -113,10 +134,14 @@ public:
 	auto SendPrev() -> void;
 	auto SendRandom() -> void;
 	auto SendMissions() -> void;
+	auto SendKillValidationUpdate() -> void;
 	auto SendToggleSpinLock() -> void;
 
 	auto InstallHooks() -> void;
 	auto UninstallHooks() -> void;
+	auto ValidateKillMethod(eTargetID target, const ServerEvent<Events::Kill>& ev, eKillMethod method) -> eKillValidationType;
+	auto ValidateKillMethod(eTargetID target, const ServerEvent<Events::Kill>& ev, eMapKillMethod method) -> eKillValidationType;
+
 private:
 	static std::unordered_map<std::string, eMission> MissionContractIds;
 

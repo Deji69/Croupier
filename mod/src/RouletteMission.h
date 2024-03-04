@@ -5,6 +5,7 @@
 #include "Disguise.h"
 #include "Exception.h"
 #include "Target.h"
+#include "KillMethod.h"
 
 enum class eMission;
 enum class eMapKillMethod;
@@ -51,64 +52,6 @@ enum class eMission {
 	MENDOZA_THEFAREWELL,
 	CARPATHIAN_UNTOUCHABLE,
 	AMBROSE_SHADOWSINTHEWATER,
-};
-
-enum class eMapKillMethod {
-	NONE,
-	AmputationKnife,
-	AntiqueCurvedKnife,
-	BarberRazor,
-	BattleAxe,
-	BeakStaff,
-	Broadsword,
-	BurialKnife,
-	CircumcisionKnife,
-	CombatKnife,
-	ConcealableKnife,
-	Cleaver,
-	FireAxe,
-	FoldingKnife,
-	GardenFork,
-	GrapeKnife,
-	Hatchet,
-	HobbyKnife,
-	Hook,
-	Icicle,
-	JarlsPirateSaber,
-	Katana,
-	KitchenKnife,
-	KukriMachete,
-	LetterOpener,
-	Machete,
-	MeatFork,
-	OldAxe,
-	OrnateScimitar,
-	RustyScrewdriver,
-	Saber,
-	SacrificialKnife,
-	SappersAxe,
-	Scalpel,
-	Scissors,
-	ScrapSword,
-	Screwdriver,
-	Seashell,
-	Shears,
-	Shuriken,
-	Starfish,
-	Tanto,
-	UnicornHorn,
-	VikingAxe,
-
-	HolidayFireAxe,
-	XmasStar,
-
-	Soders_Electrocution,
-	Soders_Explosion,
-	Soders_PoisonStemCells,
-	Soders_RobotArms,
-	Soders_ShootHeart,
-	Soders_TrashHeart,
-	Yuki_SabotageCableCar,
 };
 
 struct MapKillMethod {
@@ -208,8 +151,8 @@ public:
 
 	auto getTargetByName(std::string_view name) const -> const RouletteTarget*;
 
-	auto& addTarget(std::string name, std::string image, eTargetType type = eTargetType::Normal) {
-		this->targets.emplace_back(name, image, type);
+	auto& addTarget(eTargetID id, std::string name, std::string image, eTargetType type = eTargetType::Normal) {
+		this->targets.emplace_back(id, name, image, type);
 		return this->targets.back();
 	}
 

@@ -133,6 +133,13 @@ struct KillEventValue : PacifyEventValue {
 	std::string KillItemRepositoryId;
 	std::string KillItemInstanceId;
 	std::string KillItemCategory;
+
+	KillEventValue(const nlohmann::json& json) : PacifyEventValue(json),
+		KillItemRepositoryId(json.value("KillItemRepositoryId", "")),
+		KillItemInstanceId(json.value("KillItemInstanceId", "")),
+		KillItemCategory(json.value("KillItemCategory", ""))
+	{
+	}
 };
 
 struct VoidEventValue {
@@ -253,6 +260,12 @@ struct Event<Events::ContractStart> {
 			EvergreenDifficulty = value.value("EvergreenDifficulty", 0);
 		}
 	};
+};
+
+template<>
+struct Event<Events::ContractLoad> {
+	static auto constexpr Name = "ContractLoad";
+	using EventValue = VoidEventValue;
 };
 
 template<>
@@ -660,8 +673,29 @@ struct Event<Events::Kill> {
 
 template<>
 struct Event<Events::OpportunityEvents> {
+	static auto constexpr Name = "OpportunityEvents";
+
 	struct EventValue {
 		std::string RepositoryId;
 		std::string Event;
+	};
+};
+
+template<>
+struct Event<Events::Level_Setup_Events> {
+	static auto constexpr Name = "Level_Setup_Events";
+
+	struct EventValue {
+		std::string Contract_Name_metricvalue;
+		std::string Location_MetricValue;
+		std::string Event_metricvalue;
+
+		EventValue(const nlohmann::json& json) :
+			Contract_Name_metricvalue(json.value("Contract_Name_metricvalue", "")),
+			Location_MetricValue(json.value("Location_MetricValue", "")),
+			Event_metricvalue(json.value("Event_metricvalue", ""))
+			//Ambient(json.value("Ambient", "")),
+		{
+		}
 	};
 };

@@ -19,6 +19,7 @@ enum class eClientMessage {
 	Missions,
 	SpinLock,
 	ToggleSpinLock,
+	KillValidation,
 };
 
 class ClientMessage {

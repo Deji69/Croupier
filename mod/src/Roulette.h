@@ -14,55 +14,11 @@
 #include <vector>
 #include "Disguise.h"
 #include "Exception.h"
+#include "KillMethod.h"
 #include "Target.h"
 #include "RouletteMission.h"
 #include "RouletteRuleset.h"
 #include "util.h"
-
-enum class eMethodType {
-	Map,
-	Gun,
-	Standard,
-};
-
-enum class eKillMethod {
-	NONE,
-	Pistol,
-	SMG,
-	Sniper,
-	Shotgun,
-	AssaultRifle,
-	Elimination,
-	PistolElimination,
-	SMGElimination,
-	Explosive,
-	Drowning,
-	FallingObject,
-	Fall,
-	Fire,
-	Electrocution,
-	Explosion,
-	ConsumedPoison,
-	InjectedPoison,
-	FiberWire,
-	NeckSnap,
-};
-
-enum class eKillType {
-	Any,
-	Silenced,
-	Loud,
-	Melee,
-	Thrown,
-	Remote,
-	Impact,
-	LoudRemote,
-};
-
-enum class eKillComplication {
-	None,
-	Live,
-};
 
 enum class eMethodTag {
 	BannedInRR,
@@ -209,9 +165,10 @@ private:
 class RouletteTarget
 {
 public:
-	RouletteTarget(std::string name, std::string image, eTargetType type = eTargetType::Normal) : name(name), image(image), type(type)
+	RouletteTarget(eTargetID id, std::string name, std::string image, eTargetType type = eTargetType::Normal) : id(id), name(name), image(image), type(type)
 	{}
 
+	auto getID() const { return this->id; }
 	auto& getName() const { return this->name; }
 	auto& getImage() const { return this->image; }
 	auto getType() const { return this->type; }
@@ -281,6 +238,7 @@ public:
 private:
 	static std::set<eMethodTag> emptyMethodTags;
 
+	eTargetID id = eTargetID::Unknown;
 	eTargetType type;
 	std::string name;
 	std::string image;
