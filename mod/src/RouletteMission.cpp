@@ -991,7 +991,7 @@ const std::unordered_map<eMission, std::vector<RouletteDisguise>> missionDisguis
 		RouletteDisguise{"Suit", "outfit_ea4230f3-03f7-46f1-a3f4-be2ff383b417_0.jpg", "ea4230f3-03f7-46f1-a3f4-be2ff383b417", true},
 		RouletteDisguise{"Boat Captain", "outfit_2817afb5-6dff-4496-bf56-4cd59b9abc9b_0.jpg", "2817afb5-6dff-4496-bf56-4cd59b9abc9b"},
 		RouletteDisguise{"Bodyguard", "outfit_95f2f02f-205b-422f-a315-875568f911da_0.jpg", "95f2f02f-205b-422f-a315-875568f911da"},
-		RouletteDisguise{"Butler", "haven-butler.png", "ade37780-23c2-4702-9b6d-d31d1c5f9c39"}, // TODO: check repo ID
+		RouletteDisguise{"Butler", "haven-butler.png", "fd4c537a-226f-448d-9635-941c6f09d388"},
 		RouletteDisguise{"Chef", "outfit_cfc19dda-bff1-4bd1-9b0c-b1a799ee011f_0.jpg", "cfc19dda-bff1-4bd1-9b0c-b1a799ee011f"},
 		RouletteDisguise{"Doctor", "outfit_f108122d-5b31-487a-857b-d5f1badf2220_0.jpg", "f108122d-5b31-487a-857b-d5f1badf2220"},
 		RouletteDisguise{"Gas Suit", "outfit_cbcfe485-f706-46a1-a14a-316f6dedf398_0.jpg", "cbcfe485-f706-46a1-a14a-316f6dedf398"},
