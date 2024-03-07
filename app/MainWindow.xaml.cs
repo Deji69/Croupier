@@ -476,7 +476,11 @@ namespace Croupier
 				}
 			};
 			CroupierSocketServer.KillValidation += (object sender, string data) => {
-				var validationStrings = data.Split(",");
+				if (data.Length == 0) return;
+
+				var firstLine = data.Split("\n")[0];
+				var validationStrings = firstLine.Split(",");
+
 				foreach (var v in validationStrings) {
 					var segments = v.Split(":");
 					if (segments.Length != 3) return;
