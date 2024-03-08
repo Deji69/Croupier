@@ -102,6 +102,8 @@ namespace Croupier
 		
 		public Uri KillStatusImagePath {
 			get {
+				if (!Config.Default.KillValidations)
+					return null;
 				switch (killValidation.killValidation) {
 					case KillValidationType.Unknown:
 					case KillValidationType.Incomplete:
@@ -117,6 +119,8 @@ namespace Croupier
 		
 		public Uri MethodKillStatusImagePath {
 			get {
+				if (!Config.Default.KillValidations)
+					return null;
 				switch (killValidation.killValidation) {
 					case KillValidationType.Unknown:
 					case KillValidationType.Incomplete:
@@ -132,6 +136,8 @@ namespace Croupier
 		
 		public Uri DisguiseKillStatusImagePath {
 			get {
+				if (!Config.Default.KillValidations)
+					return null;
 				switch (killValidation.killValidation) {
 					case KillValidationType.Unknown:
 					case KillValidationType.Incomplete:

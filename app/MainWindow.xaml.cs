@@ -258,10 +258,10 @@ namespace Croupier
 					Config.Save();
 				}
 
+				OnPropertyChanged(nameof(KillValidations));
+
 				foreach (var cond in conditions)
 					cond.ForceUpdate();
-
-				OnPropertyChanged(nameof(KillValidations));
 			}
 		}
 		public bool ShowSpinLabels {
