@@ -1308,6 +1308,7 @@ namespace Croupier {
 				{"dumplingcook", "Dumpling Cook"},
 				{"dumpling", "Dumpling Cook"},
 				{"cook", "Dumpling Cook"},
+				{"chef", "Dumpling Cook"},
 				{"dumplincook", "Dumpling Cook"},
 				{"facilityanalyst", "Facility Analyst"},
 				{"analyst", "Facility Analyst"},
