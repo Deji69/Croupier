@@ -842,7 +842,7 @@ const std::unordered_map<eMission, std::vector<RouletteDisguise>> missionDisguis
 		RouletteDisguise{"Street Soldier", "outfit_ab5a46a2-6e53-4b15-a48e-c336df1ef5ff_0.jpg", "ab5a46a2-6e53-4b15-a48e-c336df1ef5ff"},
 		RouletteDisguise{"Submarine Crew", "outfit_f86848e7-ca8c-48e0-94d1-2d925e96a3e7_0.jpg", "f86848e7-ca8c-48e0-94d1-2d925e96a3e7"},
 		RouletteDisguise{"Submarine Engineer", "outfit_dfaa8260-20af-4112-b1ca-88a98481127b_0.jpg", "dfaa8260-20af-4112-b1ca-88a98481127b"},
-		RouletteDisguise{"Tattoo Artist (P-Power)", "outfit_135073d8-ef7c-4f4d-b30b-cbf65de613cb_0.jpg", "135073d8-ef7c-4f4d-b30b-cbf65de613cb"},
+		RouletteDisguise{"Tattoo Artist (P-Power)", "outfit_bbc1dd7c-a0ef-41eb-9bef-a4c38fded3fa_0.jpg", "bbc1dd7c-a0ef-41eb-9bef-a4c38fded3fa"},
 	}},
 	{eMission::SANTAFORTUNA_EMBRACEOFTHESERPENT, {
 		RouletteDisguise{"Suit", "outfit_ac71f90e-a67d-4898-b2f0-43b605332dc8_0.jpg", "ac71f90e-a67d-4898-b2f0-43b605332dc8", true},
