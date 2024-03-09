@@ -1619,7 +1619,7 @@ namespace Croupier {
 			var processed = ProcessInput(input);
 
 			while (true) {
-				var context = contexts.Last<ParseContext>();
+				var context = contexts.Last();
 				var haveFullCondition = ParseCondition(processed, contexts.Last());
 				var mission = context.mission;
 				var nextIndex = context.nextIndex;
