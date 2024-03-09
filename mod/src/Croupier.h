@@ -15,18 +15,8 @@
 #include "KillConfirmation.h"
 #include "Roulette.h"
 
-struct RouletteSpinKill {
-	std::string targetName;
-	bool validMethod = true;
-	bool validDisguise = true;
-
-	RouletteSpinKill(std::string targetName) : targetName(targetName)
-	{ }
-};
-
 struct SharedRouletteSpin {
 	const RouletteSpin& spin;
-	std::vector<RouletteSpinKill> kills;
 	std::vector<KillConfirmation> killValidations;
 	std::chrono::steady_clock::time_point timeStarted;
 	std::chrono::seconds timeElapsed = std::chrono::seconds(0);
@@ -63,7 +53,6 @@ struct SharedRouletteSpin {
 
 	auto playerStart() {
 		this->resetKillValidations();
-		this->kills.clear();
 		if (!this->isPlaying)
 			this->timeStarted = std::chrono::steady_clock().now();
 		this->isPlaying = true;
