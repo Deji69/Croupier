@@ -1087,11 +1087,16 @@ auto Croupier::SetupEvents() -> void {
 
 		auto const& name = ev.Value.ActorName;
 		bool validationUpdated = false;
+		auto it = targetsByRepoId.find(ev.Value.RepositoryId);
+		auto targetId = it != end(targetsByRepoId) ? it->second : eTargetID::Unknown;
 
 		for (auto i = 0; i < conditions.size(); ++i) {
 			auto& cond = conditions[i];
 			auto& target = cond.target.get();
-			if (target.getName() != name) continue;
+
+			if (targetId != target.getID()) {
+				if (target.getName() != name) continue;
+			}
 
 			auto& kc = this->sharedSpin.killValidations[i];
 			auto& reqDisguise = cond.disguise.get();
@@ -1134,9 +1139,13 @@ auto Croupier::SetupEvents() -> void {
 			if (cond.target.get().getID() != eTargetID::ErichSoders) continue;
 
 			auto& kc = this->sharedSpin.killValidations[i];
+			auto& reqDisguise = cond.disguise.get();
 			kc.target = cond.target.get().getID();
 
 			validationUpdated = true;
+
+			// Target already killed? Confusion. Turn an invalid kill valid, but don't invalidate previously validated kills.
+			kc.correctDisguise = true;//reqDisguise.suit ? ev.Value.OutfitIsHitmanSuit : reqDisguise.repoId == ev.Value.OutfitRepositoryId;
 
 			if (cond.specificKillMethod.method != eMapKillMethod::NONE) {
 				if (ev.Value.Event_metricvalue == "Heart_Kill")
