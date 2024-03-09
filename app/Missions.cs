@@ -1177,7 +1177,7 @@ namespace Croupier
 					disguises.Add(new("Street Soldier", "outfit_ab5a46a2-6e53-4b15-a48e-c336df1ef5ff_0.jpg"));
 					disguises.Add(new("Submarine Crew", "outfit_f86848e7-ca8c-48e0-94d1-2d925e96a3e7_0.jpg"));
 					disguises.Add(new("Submarine Engineer", "outfit_dfaa8260-20af-4112-b1ca-88a98481127b_0.jpg"));
-					disguises.Add(new("Tattoo Artist (P-Power)", "outfit_135073d8-ef7c-4f4d-b30b-cbf65de613cb_0.jpg"));
+					disguises.Add(new("Tattoo Artist (P-Power)", "outfit_bbc1dd7c-a0ef-41eb-9bef-a4c38fded3fa_0.jpg"));
 					break;
 				case MissionID.MUMBAI_CHASINGAGHOST:
 				case MissionID.MUMBAI_ILLUSIONSOFGRANDEUR:
