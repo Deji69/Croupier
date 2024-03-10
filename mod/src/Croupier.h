@@ -144,8 +144,8 @@ public:
 	auto UninstallHooks() -> void;
 	auto ProcessSpinState() -> void;
 	auto ProcessClientMessages() -> void;
-	auto ValidateKillMethod(eTargetID target, const ServerEvent<Events::Kill>& ev, eKillMethod method) -> eKillValidationType;
-	auto ValidateKillMethod(eTargetID target, const ServerEvent<Events::Kill>& ev, eMapKillMethod method) -> eKillValidationType;
+	auto ValidateKillMethod(eTargetID target, const ServerEvent<Events::Kill>& ev, eKillMethod method, eKillType type) -> eKillValidationType;
+	auto ValidateKillMethod(eTargetID target, const ServerEvent<Events::Kill>& ev, eMapKillMethod method, eKillType type) -> eKillValidationType;
 
 private:
 	static std::unordered_map<std::string, eMission> MissionContractIds;

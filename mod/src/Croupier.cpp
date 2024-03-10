@@ -1182,9 +1182,9 @@ auto Croupier::SetupEvents() -> void {
 			if (cond.killComplication == eKillComplication::Live && kc.isPacified)
 				kc.correctMethod = eKillValidationType::Invalid;
 			else if (cond.killMethod.method != eKillMethod::NONE)
-				kc.correctMethod = ValidateKillMethod(target.getID(), ev, cond.killMethod.method);
+				kc.correctMethod = ValidateKillMethod(target.getID(), ev, cond.killMethod.method, cond.killType);
 			else if (cond.specificKillMethod.method != eMapKillMethod::NONE)
-				kc.correctMethod = ValidateKillMethod(target.getID(), ev, cond.specificKillMethod.method);
+				kc.correctMethod = ValidateKillMethod(target.getID(), ev, cond.specificKillMethod.method, cond.killType);
 
 			validationUpdated = true;
 
@@ -1279,7 +1279,7 @@ auto Croupier::SetupEvents() -> void {
 	});
 }
 
-auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Kill>& ev, eKillMethod method) -> eKillValidationType {
+auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Kill>& ev, eKillMethod method, eKillType type) -> eKillValidationType {
 	auto const killType = ev.Value.KillType;
 	auto const& killClass = ev.Value.KillClass;
 	auto const& killMethodBroad = ev.Value.KillMethodBroad;
@@ -1318,6 +1318,11 @@ auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Ki
 			return eKillValidationType::Valid;
 	}
 
+	if (type == eKillType::Silenced && !isSilencedWeapon)
+		return eKillValidationType::Invalid;
+	if (type == eKillType::Loud && isSilencedWeapon)
+		return eKillValidationType::Invalid;
+
 	// ev.Value.KillMethodBroad == "close_combat_pistol_elimination"
 	switch (method) {
 	case eKillMethod::NeckSnap:
@@ -1326,12 +1331,14 @@ auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Ki
 		return killMethodBroad == "pistol" || killMethodBroad == "close_combat_pistol_elimination" ? eKillValidationType::Valid : eKillValidationType::Invalid;
 	case eKillMethod::SMG:
 		return killMethodBroad == "smg" ? eKillValidationType::Valid : eKillValidationType::Invalid;
-	case eKillMethod::PistolElimination:
-		return killMethodBroad == "close_combat_pistol_elimination" ? eKillValidationType::Valid : eKillValidationType::Invalid;
 	case eKillMethod::Shotgun:
 		return killMethodBroad == "shotgun" ? eKillValidationType::Valid : eKillValidationType::Invalid;
 	case eKillMethod::AssaultRifle:
 		return killMethodBroad == "assaultrifle" ? eKillValidationType::Valid : eKillValidationType::Invalid;
+	case eKillMethod::PistolElimination:
+		return killMethodBroad == "close_combat_pistol_elimination" ? eKillValidationType::Valid : eKillValidationType::Invalid;
+	case eKillMethod::SMGElimination:
+		return killMethodBroad == "close_combat_smg_elimination" ? eKillValidationType::Valid : eKillValidationType::Invalid;
 	case eKillMethod::Explosive:
 		return killMethodBroad == "explosive" ? eKillValidationType::Valid : eKillValidationType::Invalid;
 	case eKillMethod::FiberWire:
@@ -1378,11 +1385,17 @@ auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Ki
 	return eKillValidationType::Unknown;
 }
 
-auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Kill>& ev, eMapKillMethod method) -> eKillValidationType {
+auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Kill>& ev, eMapKillMethod method, eKillType type) -> eKillValidationType {
 	if (!ev.Value.KillItemRepositoryId.empty()) {
+		if (type == eKillType::Thrown && ev.Value.KillMethodBroad != "throw")
+			return eKillValidationType::Invalid;
+		if (type == eKillType::Melee && ev.Value.KillMethodBroad != "melee_lethal")
+			return eKillValidationType::Invalid;
+
 		auto it = specificKillMethodsByRepoId.find(ev.Value.KillItemRepositoryId);
-		if (it != end(specificKillMethodsByRepoId) && it->second == method)
+		if (it != end(specificKillMethodsByRepoId) && it->second == method) {
 			return eKillValidationType::Valid;
+		}
 	}
 	return eKillValidationType::Invalid;
 }
