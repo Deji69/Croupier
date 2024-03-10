@@ -1,4 +1,5 @@
 #pragma once
+#include <string_view>
 #include "Target.h"
 
 enum class eKillValidationType
@@ -7,6 +8,15 @@ enum class eKillValidationType
 	Invalid = 1,
 	Valid = 2,
 	Incomplete = 3,
+};
+
+struct DisguiseChange
+{
+	std::string disguiseRepoId;
+	float timestamp;
+
+	DisguiseChange(std::string_view repoId, double timestamp) : disguiseRepoId(toLowerCase(repoId)), timestamp(timestamp)
+	{ }
 };
 
 struct KillConfirmation

@@ -17,6 +17,7 @@
 
 struct SharedRouletteSpin {
 	const RouletteSpin& spin;
+	std::vector<DisguiseChange> disguiseChanges;
 	std::vector<KillConfirmation> killValidations;
 	std::chrono::steady_clock::time_point timeStarted;
 	std::chrono::seconds timeElapsed = std::chrono::seconds(0);
@@ -37,6 +38,18 @@ struct SharedRouletteSpin {
 				return kc;
 		}
 		return KillConfirmation(target, eKillValidationType::Incomplete);
+	}
+
+	auto getLastDisguiseChangeAtTimestamp(float timestamp) const -> const DisguiseChange* {
+		for (auto i = disguiseChanges.size(); i > 0; --i) {
+			if (disguiseChanges[i - 1].timestamp < timestamp)
+				return &disguiseChanges[i - 1];
+		}
+		return nullptr;
+	}
+
+	auto getLastDisguiseChange() const -> const DisguiseChange* {
+		return disguiseChanges.empty() ? nullptr : &disguiseChanges.back();
 	}
 
 	auto getTimeElapsed() const -> std::chrono::seconds {
@@ -67,6 +80,7 @@ struct SharedRouletteSpin {
 
 	auto resetKillValidations() -> void {
 		killValidations.resize(spin.getConditions().size());
+		disguiseChanges.clear();
 
 		for (auto& kv : killValidations)
 			kv = KillConfirmation {};

@@ -1115,9 +1115,17 @@ auto Croupier::SetupEvents() -> void {
 	events.listen<Events::ExitGate>([this](const ServerEvent<Events::ExitGate>& ev) {
 		this->sharedSpin.playerExit();
 	});
-	events.listen<Events::ContractEnd>([this](const ServerEvent<Events::ContractEnd>& ev){
+	events.listen<Events::ContractEnd>([this](const ServerEvent<Events::ContractEnd>& ev) {
 		this->spinCompleted = true;
 		this->OnFinishMission();
+	});
+	events.listen<Events::StartingSuit>([this](const ServerEvent<Events::StartingSuit>& ev) {
+		if (this->spinCompleted) return;
+		this->sharedSpin.disguiseChanges.emplace_back(ev.Value.value, ev.Timestamp);
+	});
+	events.listen<Events::Disguise>([this](const ServerEvent<Events::Disguise>& ev) {
+		if (this->spinCompleted) return;
+		this->sharedSpin.disguiseChanges.emplace_back(ev.Value.value, ev.Timestamp);
 	});
 	events.listen<Events::Pacify>([this](const ServerEvent<Events::Pacify>& ev) {
 		if (!ev.Value.IsTarget) return;
@@ -1203,8 +1211,38 @@ auto Croupier::SetupEvents() -> void {
 
 			validationUpdated = true;
 
-			// Target already killed? Confusion. Turn an invalid kill valid, but don't invalidate previously validated kills.
-			kc.correctDisguise = true;//reqDisguise.suit ? ev.Value.OutfitIsHitmanSuit : reqDisguise.repoId == ev.Value.OutfitRepositoryId;
+			auto getSodersKillDelay = [](std::string_view kill) -> double {
+				if (kill == "Body_Kill") return 4;
+				if (kill == "Soder_Electrocuted") return 8;
+				if (kill == "Poison_Kill") return 12;
+				if (kill == "Spidermachine_Kill") return 13;
+				return 0;
+			};
+			auto getSodersKillTriggerDisguiseChange = [this, getSodersKillDelay](std::string_view kill, double timestamp) -> const DisguiseChange* {
+				auto const delay = getSodersKillDelay(kill);
+				return this->sharedSpin.getLastDisguiseChangeAtTimestamp(timestamp - delay);
+			};
+
+			auto const triggerDisguiseChange = getSodersKillTriggerDisguiseChange(ev.Value.Event_metricvalue, ev.Timestamp);
+
+			// There should be at least one disguise. If in doubt, trust the player...
+			if (!triggerDisguiseChange)
+				kc.correctDisguise = true;
+			// If we're not looking for a suit, just compare repo IDs
+			else if (!reqDisguise.suit)
+				kc.correctDisguise = toLowerCase(triggerDisguiseChange->disguiseRepoId) == reqDisguise.repoId;
+			// If it is suit, just check the repo ID does not match any non-suit disguises in the level (player-unlocked suit IDs are vast)
+			else {
+				auto isNotInSuit = false;
+				for (auto const& disguise : mission->getDisguises()) {
+					if (disguise.suit) continue;
+					if (disguise.repoId != triggerDisguiseChange->disguiseRepoId) continue;
+					isNotInSuit = true;
+					break;
+				}
+
+				kc.correctDisguise = !isNotInSuit;
+			}
 
 			if (cond.specificKillMethod.method != eMapKillMethod::NONE) {
 				if (ev.Value.Event_metricvalue == "Heart_Kill")
@@ -1228,9 +1266,9 @@ auto Croupier::SetupEvents() -> void {
 				else if (ev.Value.Event_metricvalue == "Spidermachine_Kill")
 					kc.correctMethod = eKillValidationType::Invalid;
 				else if (ev.Value.Event_metricvalue == "Soder_Electrocuted")
-					kc.correctMethod = eKillValidationType::Invalid;
+					kc.correctMethod = cond.killMethod.method == eKillMethod::Electrocution ? eKillValidationType::Valid : eKillValidationType::Invalid;
 				else if (ev.Value.Event_metricvalue == "Poison_Kill")
-					kc.correctMethod = eKillValidationType::Invalid;
+					kc.correctMethod = cond.killMethod.method == eKillMethod::ConsumedPoison ? eKillValidationType::Valid : eKillValidationType::Invalid;
 				else
 					validationUpdated = false;
 			}
