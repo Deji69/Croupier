@@ -3,6 +3,7 @@
 #include <IconsMaterialDesign.h>
 #include <Globals.h>
 #include <Glacier/SOnlineEvent.h>
+#include <Glacier/ZActor.h>
 #include <Glacier/ZGameLoopManager.h>
 #include <Glacier/ZScene.h>
 #include <Glacier/ZString.h>
@@ -298,7 +299,7 @@ auto Croupier::InstallHooks() -> void {
 	if (this->hooksInstalled) return;
 
 	const ZMemberDelegate<Croupier, void(const SGameUpdateEvent&)> frameUpdateDelegate(this, &Croupier::OnFrameUpdate);
-	Globals::GameLoopManager->RegisterFrameUpdate(frameUpdateDelegate, 1, EUpdateMode::eUpdateAlways);
+	Globals::GameLoopManager->RegisterFrameUpdate(frameUpdateDelegate, 0, EUpdateMode::eUpdatePlayMode);
 
 	Hooks::ZAchievementManagerSimple_OnEventReceived->AddDetour(this, &Croupier::OnEventReceived);
 	Hooks::ZAchievementManagerSimple_OnEventSent->AddDetour(this, &Croupier::OnEventSent);
@@ -311,7 +312,7 @@ auto Croupier::UninstallHooks() -> void {
 	if (!this->hooksInstalled) return;
 
 	const ZMemberDelegate<Croupier, void(const SGameUpdateEvent&)> frameUpdateDelegate(this, &Croupier::OnFrameUpdate);
-	Globals::GameLoopManager->UnregisterFrameUpdate(frameUpdateDelegate, 1, EUpdateMode::eUpdatePlayMode);
+	Globals::GameLoopManager->UnregisterFrameUpdate(frameUpdateDelegate, 0, EUpdateMode::eUpdatePlayMode);
 
 	Hooks::ZAchievementManagerSimple_OnEventReceived->RemoveDetour(&Croupier::OnEventReceived);
 	Hooks::ZAchievementManagerSimple_OnEventSent->RemoveDetour(&Croupier::OnEventSent);
@@ -321,6 +322,46 @@ auto Croupier::UninstallHooks() -> void {
 }
 
 auto Croupier::OnFrameUpdate(const SGameUpdateEvent&) -> void {
+	this->ProcessSpinState();
+	this->ProcessClientMessages();
+}
+
+auto Croupier::ProcessSpinState() -> void {
+	if (this->spinCompleted) return;
+	if (this->sharedSpin.hasLoadedGame) return;
+	if (this->sharedSpin.spin.getConditions().empty()) return;
+
+	for (int i = 0; i < *Globals::NextActorId; ++i) {
+		auto const& actorRef = Globals::ActorManager->m_aActiveActors[i]; 
+		if (!actorRef.m_pInterfaceRef) continue;
+
+		auto& actor = *actorRef.m_pInterfaceRef;
+
+		auto repoEntity = actorRef.m_ref.QueryInterface<ZRepositoryItemEntity>();
+		auto repoId = std::string{repoEntity->m_sId.ToString()};
+
+		if (!actor.m_bUnk16) continue; // m_bUnk16 = is target (and still alive)
+		
+		auto targetId = GetTargetByRepoID(repoId);
+		auto const& conditions = this->sharedSpin.spin.getConditions();
+
+		for (auto i = 0; i < conditions.size() && i < this->sharedSpin.killValidations.size(); ++i) {
+			auto& cond = conditions[i];
+			auto& target = cond.target.get();
+			if (targetId != target.getID()) continue;
+			auto& kc = this->sharedSpin.killValidations[i];
+			if (!kc.isPacified) break;
+
+			auto isPacified = actor.IsPacified();
+			auto isDead = actor.IsDead();
+
+			if (!actor.IsPacified() && !actor.IsDead())
+				kc.isPacified = false;
+		}
+	}
+}
+
+auto Croupier::ProcessClientMessages() -> void {
 	ClientMessage message;
 	if (this->client->tryTakeMessage(message)) {
 		switch (message.type) {
@@ -1078,6 +1119,27 @@ auto Croupier::SetupEvents() -> void {
 		this->spinCompleted = true;
 		this->OnFinishMission();
 	});
+	events.listen<Events::Pacify>([this](const ServerEvent<Events::Pacify>& ev) {
+		if (!ev.Value.IsTarget) return;
+		if (this->spinCompleted) return;
+
+		auto const& conditions = this->sharedSpin.spin.getConditions();
+		if (conditions.empty()) return;
+
+		auto targetId = GetTargetByRepoID(ev.Value.RepositoryId);
+
+		for (auto i = 0; i < conditions.size(); ++i) {
+			auto& cond = conditions[i];
+			auto& target = cond.target.get();
+
+			if (targetId != target.getID() && target.getName() != ev.Value.ActorName)
+				continue;
+
+			auto& kc = this->sharedSpin.killValidations[i];
+			kc.target = target.getID();
+			kc.isPacified = true;
+		}
+	});
 	events.listen<Events::Kill>([this](const ServerEvent<Events::Kill>& ev) {
 		if (!ev.Value.IsTarget) return;
 		if (this->spinCompleted) return;
@@ -1085,7 +1147,6 @@ auto Croupier::SetupEvents() -> void {
 		auto const& conditions = this->sharedSpin.spin.getConditions();
 		if (conditions.empty()) return;
 
-		auto const& name = ev.Value.ActorName;
 		bool validationUpdated = false;
 		auto it = targetsByRepoId.find(ev.Value.RepositoryId);
 		auto targetId = it != end(targetsByRepoId) ? it->second : eTargetID::Unknown;
@@ -1094,13 +1155,12 @@ auto Croupier::SetupEvents() -> void {
 			auto& cond = conditions[i];
 			auto& target = cond.target.get();
 
-			if (targetId != target.getID()) {
-				if (target.getName() != name) continue;
-			}
+			if (targetId != target.getID() && target.getName() != ev.Value.ActorName)
+				continue;
 
 			auto& kc = this->sharedSpin.killValidations[i];
 			auto& reqDisguise = cond.disguise.get();
-			kc.target = cond.target.get().getID();
+			kc.target = target.getID();
 
 			// Target already killed? Confusion. Turn an invalid kill valid, but don't invalidate previously validated kills.
 			if (kc.correctMethod == eKillValidationType::Valid) {
@@ -1111,17 +1171,16 @@ auto Croupier::SetupEvents() -> void {
 
 			kc.correctDisguise = reqDisguise.suit ? ev.Value.OutfitIsHitmanSuit : reqDisguise.repoId == ev.Value.OutfitRepositoryId;
 
-			if (cond.killMethod.method != eKillMethod::NONE)
+			if (cond.killComplication == eKillComplication::Live && kc.isPacified)
+				kc.correctMethod = eKillValidationType::Invalid;
+			else if (cond.killMethod.method != eKillMethod::NONE)
 				kc.correctMethod = ValidateKillMethod(target.getID(), ev, cond.killMethod.method);
 			else if (cond.specificKillMethod.method != eMapKillMethod::NONE)
 				kc.correctMethod = ValidateKillMethod(target.getID(), ev, cond.specificKillMethod.method);
 
 			validationUpdated = true;
-			//cond.killComplication
-			//ev.Value.OutfitRepositoryId
-			//cond.disguise
 
-			Logger::Debug("Killed '{}'", name);
+			Logger::Debug("Killed '{}'", ev.Value.ActorName);
 		}
 
 		if (validationUpdated) this->SendKillValidationUpdate();

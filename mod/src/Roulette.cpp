@@ -1,5 +1,6 @@
 #include "Roulette.h"
 #include "Target.h"
+#include "util.h"
 #include <string>
 #include <string_view>
 #include <variant>
@@ -205,7 +206,7 @@ std::unordered_map<std::string, eMission> targetMissionMap = {
 	{"Noel Crest", eMission::AMBROSE_SHADOWSINTHEWATER},
 	{"Sinhi \"Akka\" Venthan", eMission::AMBROSE_SHADOWSINTHEWATER},
 };
-std::map<std::string, eTargetID> targetsByRepoId = {
+std::map<std::string, eTargetID, InsensitiveCompareLexicographic> targetsByRepoId = {
 	{"3d25ee6c-61fa-4ba5-8f19-fedd905fd8fb", eTargetID::KalvinRitter},
 	{"579f2544-1970-4865-afa3-ad4566e5f98d", eTargetID::JasperKnight},
 	{"052434e7-f451-462f-a9d7-13657cb047c0", eTargetID::ViktorNovikov},

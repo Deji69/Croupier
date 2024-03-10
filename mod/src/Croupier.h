@@ -128,6 +128,8 @@ public:
 
 	auto InstallHooks() -> void;
 	auto UninstallHooks() -> void;
+	auto ProcessSpinState() -> void;
+	auto ProcessClientMessages() -> void;
 	auto ValidateKillMethod(eTargetID target, const ServerEvent<Events::Kill>& ev, eKillMethod method) -> eKillValidationType;
 	auto ValidateKillMethod(eTargetID target, const ServerEvent<Events::Kill>& ev, eMapKillMethod method) -> eKillValidationType;
 

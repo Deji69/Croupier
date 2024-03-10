@@ -1,6 +1,8 @@
 #pragma once
 #include <map>
 #include <string>
+#include <string_view>
+#include "util.h"
 
 enum class eTargetType {
 	Normal,
@@ -104,4 +106,9 @@ enum class eTargetID {
 	SinhiAkkaVenthan,
 };
 
-extern std::map<std::string, eTargetID> targetsByRepoId;
+extern std::map<std::string, eTargetID, InsensitiveCompareLexicographic> targetsByRepoId;
+
+inline auto GetTargetByRepoID(const std::string& repoId) -> eTargetID {
+	auto it = targetsByRepoId.find(repoId);
+	return it != end(targetsByRepoId) ? it->second : eTargetID::Unknown;
+}

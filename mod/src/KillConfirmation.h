@@ -14,6 +14,7 @@ struct KillConfirmation
 	eTargetID target = eTargetID::Unknown;
 	bool correctDisguise = false;
 	eKillValidationType correctMethod = eKillValidationType::Incomplete;
+	bool isPacified = false;
 
 	KillConfirmation() = default;
 	KillConfirmation(eTargetID target, eKillValidationType validation = eKillValidationType::Incomplete) : target(target), correctMethod(validation)
