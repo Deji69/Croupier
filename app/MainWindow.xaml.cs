@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PuppeteerSharp;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -483,11 +484,12 @@ namespace Croupier
 
 				foreach (var v in validationStrings) {
 					var segments = v.Split(":");
-					if (segments.Length != 3) return;
+					if (segments.Length != 4) return;
 					var kv = new KillValidation {
 						target = (TargetID)int.Parse(segments[0]),
 						killValidation = (KillValidationType)int.Parse(segments[1]),
 						disguiseValidation = int.Parse(segments[2]) != 0,
+						specificTarget = (TargetID)int.Parse(segments[3]),
 					};
 					for (var i = 0; i < conditions.Count; ++i) {
 						var cond = conditions[i];

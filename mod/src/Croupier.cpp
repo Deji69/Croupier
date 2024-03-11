@@ -482,7 +482,13 @@ auto Croupier::SendKillValidationUpdate() -> void {
 		auto kc = this->sharedSpin.getTargetKillValidation(cond.target.get().getID());
 		if (!data.empty()) data += ",";
 
-		data += std::format("{}:{}:{}", static_cast<int>(cond.target.get().getID()), static_cast<int>(kc.correctMethod), kc.correctDisguise ? 1 : 0);
+		data += std::format(
+			"{}:{}:{}:{}",
+			static_cast<int>(cond.target.get().getID()),
+			static_cast<int>(kc.correctMethod),
+			kc.correctDisguise ? 1 : 0,
+			static_cast<int>(kc.specificTarget)
+		);
 	}
 	this->client->send(eClientMessage::KillValidation, { data });
 }
@@ -1097,6 +1103,8 @@ auto Croupier::LogSpin() -> void {
 	Logger::Info("Croupier: {}", spinText);
 }
 
+auto lastThrownItem = ""s;
+
 auto Croupier::SetupEvents() -> void {
 	events.listen<Events::ContractStart>([this](auto& ev) {
 		this->sharedSpin.hasLoadedGame = false;
@@ -1114,6 +1122,15 @@ auto Croupier::SetupEvents() -> void {
 	});
 	events.listen<Events::ExitGate>([this](const ServerEvent<Events::ExitGate>& ev) {
 		this->sharedSpin.playerExit();
+
+		// Mark any unfulfilled kill methods as invalid (never killed a Berlin agent with correct requirements, destroyed heart instead of killing Soders or vice-versa, etc.)
+		auto const& conds = spin.getConditions();
+		for (auto& kv : this->sharedSpin.killValidations) {
+			if (kv.correctMethod == eKillValidationType::Incomplete)
+				kv.correctMethod = eKillValidationType::Invalid;
+		}
+
+		this->SendKillValidationUpdate();
 	});
 	events.listen<Events::ContractEnd>([this](const ServerEvent<Events::ContractEnd>& ev) {
 		this->spinCompleted = true;
@@ -1126,6 +1143,9 @@ auto Croupier::SetupEvents() -> void {
 	events.listen<Events::Disguise>([this](const ServerEvent<Events::Disguise>& ev) {
 		if (this->spinCompleted) return;
 		this->sharedSpin.disguiseChanges.emplace_back(ev.Value.value, ev.Timestamp);
+	});
+	events.listen<Events::ItemThrown>([this](const ServerEvent<Events::ItemThrown>& ev) {
+		lastThrownItem = ev.Value.RepositoryId;
 	});
 	events.listen<Events::Pacify>([this](const ServerEvent<Events::Pacify>& ev) {
 		if (!ev.Value.IsTarget) return;
@@ -1143,12 +1163,47 @@ auto Croupier::SetupEvents() -> void {
 			if (targetId != target.getID() && target.getName() != ev.Value.ActorName)
 				continue;
 
+			// If this pacification is a throw and the last thrown item is an impact explosive, ignore
+			// this as a pacification so lethal throws with impact explosives pass the 'live' condition.
+			if (ev.Value.KillMethodBroad == "throw" && cond.killType == eKillType::Impact) {
+				if (checkExplosiveKillType(lastThrownItem, eKillType::Impact)) return;
+			}
+
 			auto& kc = this->sharedSpin.killValidations[i];
 			kc.target = target.getID();
 			kc.isPacified = true;
 		}
 	});
 	events.listen<Events::Kill>([this](const ServerEvent<Events::Kill>& ev) {
+		static auto isBerlinAgent = [](eTargetID id) -> bool {
+			switch (id) {
+			case eTargetID::Agent1:
+			case eTargetID::Agent2:
+			case eTargetID::Agent3:
+			case eTargetID::Agent4:
+			case eTargetID::Agent5:
+			case eTargetID::Agent6:
+			case eTargetID::Agent7:
+			case eTargetID::Agent8:
+			case eTargetID::Agent9:
+			case eTargetID::Agent10:
+			case eTargetID::Agent11:
+			case eTargetID::AgentBanner:
+			case eTargetID::AgentChamberlin:
+			case eTargetID::AgentDavenport:
+			case eTargetID::AgentGreen:
+			case eTargetID::AgentLowenthal:
+			case eTargetID::AgentMontgomery:
+			case eTargetID::AgentPrice:
+			case eTargetID::AgentRhodes:
+			case eTargetID::AgentSwan:
+			case eTargetID::AgentThames:
+			case eTargetID::AgentTremaine:
+				return true;
+			}
+			return false;
+		};
+
 		if (!ev.Value.IsTarget) return;
 		if (this->spinCompleted) return;
 
@@ -1160,24 +1215,31 @@ auto Croupier::SetupEvents() -> void {
 		auto targetId = it != end(targetsByRepoId) ? it->second : eTargetID::Unknown;
 
 		for (auto i = 0; i < conditions.size(); ++i) {
-			auto& cond = conditions[i];
-			auto& target = cond.target.get();
+			auto const& cond = conditions[i];
+			auto const& target = cond.target.get();
+			bool isApexPrey = isBerlinAgent(target.getID()) && isBerlinAgent(targetId);
+			auto& kc = this->sharedSpin.killValidations[i];
 
-			if (targetId != target.getID() && target.getName() != ev.Value.ActorName)
+			if (isApexPrey) {
+				if (kc.correctMethod != eKillValidationType::Incomplete)
+					continue;
+			}
+			else if (targetId != target.getID() && target.getName() != ev.Value.ActorName)
 				continue;
 
-			auto& kc = this->sharedSpin.killValidations[i];
+			auto disguiseRepoId = ev.Value.OutfitIsHitmanSuit ? ev.Value.OutfitRepositoryId : transformDisguiseVariantRepoId(ev.Value.OutfitRepositoryId);
 			auto& reqDisguise = cond.disguise.get();
+			auto correctDisguise = false;
 			kc.target = target.getID();
 
 			// Target already killed? Confusion. Turn an invalid kill valid, but don't invalidate previously validated kills.
 			if (kc.correctMethod == eKillValidationType::Valid) {
 				if (!kc.correctDisguise)
-					kc.correctDisguise = reqDisguise.suit ? ev.Value.OutfitIsHitmanSuit : reqDisguise.repoId == ev.Value.OutfitRepositoryId;
+					kc.correctDisguise = reqDisguise.suit ? ev.Value.OutfitIsHitmanSuit : reqDisguise.repoId == disguiseRepoId;
 				break;
 			}
 
-			kc.correctDisguise = reqDisguise.suit ? ev.Value.OutfitIsHitmanSuit : reqDisguise.repoId == ev.Value.OutfitRepositoryId;
+			kc.correctDisguise = reqDisguise.suit ? ev.Value.OutfitIsHitmanSuit : reqDisguise.repoId == disguiseRepoId;
 
 			if (cond.killComplication == eKillComplication::Live && kc.isPacified)
 				kc.correctMethod = eKillValidationType::Invalid;
@@ -1185,6 +1247,17 @@ auto Croupier::SetupEvents() -> void {
 				kc.correctMethod = ValidateKillMethod(target.getID(), ev, cond.killMethod.method, cond.killType);
 			else if (cond.specificKillMethod.method != eMapKillMethod::NONE)
 				kc.correctMethod = ValidateKillMethod(target.getID(), ev, cond.specificKillMethod.method, cond.killType);
+
+			if (isApexPrey) {
+				// If we're in an unspecified target mode, replace invalidations with incompletes
+				if (!kc.correctDisguise || kc.correctMethod == eKillValidationType::Invalid) {
+					kc.correctMethod = eKillValidationType::Incomplete;
+					continue;
+				}
+
+				// Fill in the info of the specific target killed
+				kc.specificTarget = targetId;
+			}
 
 			validationUpdated = true;
 
@@ -1296,7 +1369,7 @@ auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Ki
 	auto const haveDamageEvents = !ev.Value.DamageEvents.empty();
 
 	if (target == eTargetID::SierraKnox) {
-		// If expecting injected poison, we can determine whether the proxy medic opportunity was used
+		// If expecting injected poison, determine whether the proxy medic opportunity was used
 		if (method == eKillMethod::InjectedPoison
 			&& killContext == EDeathContext::eDC_ACCIDENT
 			&& killClass == "poison"
@@ -1340,7 +1413,9 @@ auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Ki
 	case eKillMethod::SMGElimination:
 		return killMethodBroad == "close_combat_smg_elimination" ? eKillValidationType::Valid : eKillValidationType::Invalid;
 	case eKillMethod::Explosive:
-		return killMethodBroad == "explosive" ? eKillValidationType::Valid : eKillValidationType::Invalid;
+		return killMethodBroad == "explosive"
+			&& checkExplosiveKillType(ev.Value.KillItemRepositoryId, type)
+			? eKillValidationType::Valid : eKillValidationType::Invalid;
 	case eKillMethod::FiberWire:
 		return killMethodBroad == "fiberwire" ? eKillValidationType::Valid : eKillValidationType::Invalid;
 	case eKillMethod::InjectedPoison:

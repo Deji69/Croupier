@@ -1,6 +1,7 @@
 #pragma once
-#include <string_view>
 #include "Target.h"
+#include <string>
+#include <string_view>
 
 enum class eKillValidationType
 {
@@ -22,6 +23,7 @@ struct DisguiseChange
 struct KillConfirmation
 {
 	eTargetID target = eTargetID::Unknown;
+	eTargetID specificTarget = eTargetID::Unknown;
 	bool correctDisguise = false;
 	eKillValidationType correctMethod = eKillValidationType::Incomplete;
 	bool isPacified = false;

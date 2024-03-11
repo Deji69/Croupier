@@ -54,7 +54,6 @@ namespace Croupier
 		}
 
 		public static bool Parse(string str, out Spin spin) {
-			List<SpinCondition> conds = [];
 			SpinParseContext context = new();
 			var tokens = str.Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 			for (var i = 0; i < tokens.Length; ++i) {
@@ -98,7 +97,17 @@ namespace Croupier
 		public string DisguiseName { get { return Disguise.Name; } }
 		public string DisguiseImage { get { return Disguise.Image; } }
 		
-		public Uri TargetImagePath { get { return Target.ImageUri; } }
+		public Uri TargetImagePath {
+			get {
+				if (Config.Default.KillValidations) {
+					if (killValidation.specificTarget != TargetID.Unknown) {
+						if (Target.targetInfos.TryGetValue(killValidation.specificTarget, out var info))
+							return new Uri(Path.Combine(Environment.CurrentDirectory, "actors", info.Image));
+					}
+				}
+				return Target.ImageUri;
+			}
+		}
 		
 		public Uri KillStatusImagePath {
 			get {
@@ -224,6 +233,7 @@ namespace Croupier
 			OnPropertyChanged(nameof(KillStatusImagePath));
 			OnPropertyChanged(nameof(DisguiseKillStatusImagePath));
 			OnPropertyChanged(nameof(MethodKillStatusImagePath));
+			OnPropertyChanged(nameof(TargetImagePath));
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

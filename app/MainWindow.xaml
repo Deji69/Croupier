@@ -107,7 +107,7 @@
 					<ColumnDefinition Width="2*" />
 				</Grid.ColumnDefinitions>
 				<Image
-					Source="{Binding TargetImagePath}"
+					Source="{Binding TargetImagePath, UpdateSourceTrigger=PropertyChanged}"
 					Margin="0 0 0 0"
 					VerticalAlignment="Center"
 					HorizontalAlignment="Center"

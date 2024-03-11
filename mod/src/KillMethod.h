@@ -1,5 +1,8 @@
 #pragma once
+#include "util.h"
 #include <map>
+#include <set>
+#include <string>
 
 enum class eMethodType {
 	Map,
@@ -103,6 +106,36 @@ enum class eMapKillMethod {
 	Soders_TrashHeart,
 	Yuki_SabotageCableCar,
 };
+
+inline static const std::set<std::string, InsensitiveCompareLexicographic> nonLoudExplosives = {
+	"fc715a9a-3bf1-4768-bd67-0def61b92551", // Remote Breaching Charge
+	"9d5daae3-10c8-4f03-a85d-9bd92861a672", // Breaching Charge Mk II
+	"293af6cc-dd8d-4641-b650-14cdfd00f1de" // Breaching Charge Mk III
+};
+
+inline static const std::set<std::string, InsensitiveCompareLexicographic> impactExplosives = {
+	"8b7c3ec6-c072-4a21-a323-0f8751028052", // Explosive Baseball
+	"485f8902-b7e3-4916-8b90-ea7cebb305de", // Explosive Golf Ball 1
+	"c95c55aa-34e5-42bd-bf27-32be3978b269", // Explosive Golf Ball 2
+	"2a493cf9-7cb1-4aad-b892-17abf8b329f4", // ICA Impact Explosive
+	"c82fefa7-febe-46c8-90ec-c945fbef0cb4", // Kronstadt Octane Booster
+	"a83349bf-3d9c-43ec-92ee-c8c98cbeabc1", // Molotov Cocktail
+	"af8a7b6c-692c-4a76-b9bc-2b91ce32bcbc", // Nitroglycerin
+};
+
+inline static auto checkExplosiveKillType(std::string repoId, eKillType kt) -> bool {
+	switch (kt) {
+	case eKillType::Loud:
+		return !nonLoudExplosives.contains(repoId);
+	case eKillType::Remote:
+		return !impactExplosives.contains(repoId);
+	case eKillType::Impact:
+		return impactExplosives.contains(repoId);
+	case eKillType::LoudRemote:
+		return !nonLoudExplosives.contains(repoId) && !impactExplosives.contains(repoId);
+	}
+	return false;
+}
 
 inline static const std::unordered_map<std::string, eMapKillMethod> specificKillMethodsByRepoId = {
 	{"62c2ac2e-329e-4648-822a-e45a29a93cd0", eMapKillMethod::AmputationKnife},

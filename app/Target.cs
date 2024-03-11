@@ -274,6 +274,19 @@ namespace Croupier
 			{ TargetID.Target8, new("Target #8", "8", "8th", "default_target_briefing.dds", MissionID.NONE) },
 			{ TargetID.Target9, new("Target #9", "9", "9th", "default_target_briefing.dds", MissionID.NONE) },
 			{ TargetID.Target10, new("Target #10", "10", "10th", "default_target_briefing.dds", MissionID.NONE) },
+
+			{ TargetID.AgentMontgomery, new("Agent Montgomery", "Montgomery", "MON", "AgentMontgomery.png", MissionID.BERLIN_APEXPREDATOR) },
+			{ TargetID.AgentChamberlin, new("Agent Chamberlin", "Chamberlin", "CHA", "AgentChamberlin.png", MissionID.BERLIN_APEXPREDATOR) },
+			{ TargetID.AgentDavenport, new("Agent Davenport", "Davenport", "DAV", "AgentDavenport.png", MissionID.BERLIN_APEXPREDATOR) },
+			{ TargetID.AgentLowenthal, new("Agent Lowenthal", "Lowenthal", "LOW", "AgentLowenthal.png", MissionID.BERLIN_APEXPREDATOR) },
+			{ TargetID.AgentThames, new("Agent Thames", "Thames", "THA", "AgentThames.png", MissionID.BERLIN_APEXPREDATOR) },
+			{ TargetID.AgentTremaine, new("Agent Tremaine", "Tremaine", "TRE", "AgentTremaine.png", MissionID.BERLIN_APEXPREDATOR) },
+			{ TargetID.AgentBanner, new("Agent Banner", "Banner", "BAN", "AgentBanner.png", MissionID.BERLIN_APEXPREDATOR) },
+			{ TargetID.AgentSwan, new("Agent Swan", "Swan", "SWA", "AgentSwan.png", MissionID.BERLIN_APEXPREDATOR) },
+			{ TargetID.AgentRhodes, new("Agent Rhodes", "Rhodes", "RHO", "AgentRhodes.png", MissionID.BERLIN_APEXPREDATOR) },
+			{ TargetID.AgentGreen, new("Agent Green", "Green", "GRE", "AgentGreen.png", MissionID.BERLIN_APEXPREDATOR) },
+			{ TargetID.AgentPrice, new("Agent Price", "Price", "PRI", "AgentPrice.png", MissionID.BERLIN_APEXPREDATOR) },
+
 			{ TargetID.Unknown, new("Unknown", "Unknown", "?", "mongoose_unknown_man.png", MissionID.NONE) },
 		};
 		static public readonly Dictionary<string, Target> Targets = new() {

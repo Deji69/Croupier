@@ -1,7 +1,9 @@
 #pragma once
-#include <filesystem>
-#include <stack>
-#include <unordered_map>
+#include "CroupierClient.h"
+#include "Events.h"
+#include "EventSystem.h"
+#include "KillConfirmation.h"
+#include "Roulette.h"
 #include <IPluginInterface.h>
 #include <Glacier/Enums.h>
 #include <Glacier/SGameUpdateEvent.h>
@@ -9,11 +11,9 @@
 #include <Glacier/ZGameUIManager.h>
 #include <Glacier/ZObject.h>
 #include <Glacier/ZString.h>
-#include "CroupierClient.h"
-#include "Events.h"
-#include "EventSystem.h"
-#include "KillConfirmation.h"
-#include "Roulette.h"
+#include <filesystem>
+#include <stack>
+#include <unordered_map>
 
 struct SharedRouletteSpin {
 	const RouletteSpin& spin;

@@ -267,6 +267,24 @@ std::map<std::string, eTargetID, InsensitiveCompareLexicographic> targetsByRepoI
 	{"f133d999-a93b-450a-b236-a7ed404a38e2", eTargetID::ArthurEdwards},
 	{"4f80ca40-a8f3-4a5e-9add-4c74d3bb5bcc", eTargetID::NoelCrest},
 	{"666521d2-1efe-4d0a-b7f7-2afeb08262b6", eTargetID::SinhiAkkaVenthan},
+
+	{"05966483-af64-47a6-9e3b-e639fe23206d", eTargetID::AgentChamberlin},
+	{"107c35d7-7300-417c-832a-4f36cd3071b9", eTargetID::AgentThames},
+	{"28cb7e91-bf9c-46ee-a371-1bd1448f1994", eTargetID::AgentThames},
+	{"1305c2e4-6394-4cfa-b873-22adbd0c9702", eTargetID::AgentChamberlin},
+	{"252428ca-3f8e-4477-b2b9-58f18cff3e44", eTargetID::AgentTremaine},
+	{"2ab07903-e958-4af6-b01c-b62058745ce1", eTargetID::AgentLowenthal},
+	{"5fd9b187-0745-492a-88a0-afcc51f90c46", eTargetID::AgentMontgomery},
+	{"633398ac-c4b4-4441-852d-ae6460172025", eTargetID::AgentGreen},
+	{"88fd409e-6570-4a42-94f7-e5d362a8d960", eTargetID::AgentThames},
+	{"8b29da09-461f-44d7-9042-d4fde829b9f2", eTargetID::AgentMontgomery},
+	{"8b7c3ec6-c072-4a21-a323-0f8751028052", eTargetID::AgentGreen},
+	{"922deccd-7fb4-45d9-ae3d-2cf11915c403", eTargetID::AgentSwan},
+	{"abd1c0e7-e406-43bd-9185-419029c5bf3d", eTargetID::AgentBanner},
+	{"b8e7e65b-587e-471b-894d-282cda6614d4", eTargetID::AgentDavenport},
+	{"daf89737-dd98-4850-a218-2435e99a378c", eTargetID::AgentSwan},
+	{"eb024a5e-9580-49dc-a519-bb92c886f3b1", eTargetID::AgentRhodes},
+	{"f83376a4-6e56-4f2a-8122-151b272108fd", eTargetID::AgentPrice},
 };
 
 std::vector<Keyword> Keyword::keywords = {

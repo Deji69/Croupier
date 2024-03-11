@@ -10,5 +10,6 @@
 		public TargetID target;
 		public KillValidationType killValidation = KillValidationType.Incomplete;
 		public bool disguiseValidation = false;
+		public TargetID specificTarget = TargetID.Unknown;
 	}
 }
