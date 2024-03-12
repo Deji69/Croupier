@@ -330,6 +330,58 @@
 					Content="{materialIcons:MaterialIconExt Kind=RotateClockwise}" />
 			</WrapPanel>
 		</Grid>
+		<Grid Name="StatusGrid" DockPanel.Dock="Top">
+			<Grid Name="TimerGrid" UseLayoutRounding="True">
+				<TextBlock
+					Name="Timer"
+					FontSize="{Binding SpinFontSize}"
+					Background="{StaticResource BackgroundOverlayBrush}"
+					Text="0:00"
+					Foreground="White"
+					Padding="14,0,12,2"
+					TextAlignment="Center"
+					VerticalAlignment="Center">
+					<TextBlock.Style>
+						<Style TargetType="TextBlock">
+							<Setter Property="TextBlock.HorizontalAlignment" Value="Right" />
+							<Style.Triggers>
+								<DataTrigger Binding="{Binding StatusAlignLeft, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Value="True">
+									<Setter Property="TextBlock.HorizontalAlignment" Value="Left" />
+								</DataTrigger>
+							</Style.Triggers>
+						</Style>
+					</TextBlock.Style>
+					<TextBlock.ContextMenu>
+						<ContextMenu Name="TimerContextMenu" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+							<MenuItem
+								Header="Reset"
+								Command="{x:Static local:MainWindow.ResetTimerCommand}"
+							/>
+						</ContextMenu>
+					</TextBlock.ContextMenu>
+				</TextBlock>
+				<Grid.Style>
+					<Style TargetType="Grid">
+						<Setter Property="Grid.Visibility" Value="Collapsed" />
+						<Style.Triggers>
+							<DataTrigger Binding="{Binding ShowStatusBar, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Value="True">
+								<Setter Property="Grid.Visibility" Value="Visible"/>
+							</DataTrigger>
+						</Style.Triggers>
+					</Style>
+				</Grid.Style>
+			</Grid>
+			<Grid.Style>
+				<Style TargetType="Grid">
+					<Setter Property="Grid.Visibility" Value="Collapsed" />
+					<Style.Triggers>
+						<DataTrigger Binding="{Binding ShowStatusBar, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Value="True">
+							<Setter Property="Grid.Visibility" Value="Visible"/>
+						</DataTrigger>
+					</Style.Triggers>
+				</Style>
+			</Grid.Style>
+		</Grid>
 		<UniformGrid
 			Name="ContentGrid"
 			Background="{DynamicResource BackgroundBrush}"
@@ -376,6 +428,19 @@
 					Command="{x:Static local:MainWindow.PasteSpinCommand}"
 				/>
 				<Separator />
+				<MenuItem
+					Header="Timer"
+					IsChecked="{Binding ShowTimer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					IsCheckable="True"
+					ToolTip="Show an RTA spin timer in the Croupier window. If connected to mod, this will automatically stop when you reach an exit."
+				/>
+				<MenuItem
+					Header="Kill Confirmations"
+					IsChecked="{Binding KillValidations, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					IsCheckable="True"
+					ToolTip="Croupier will try to confirm kill method and disguise validity by tracking in-game (if connected via mod).&#x0a;Some methods of killing in-game may appear ambiguous and some conditions may come down to interpretation, so false results are possible.&#x0a;Croupier aims to give you the benefit of any doubt."
+				/>
+				<Separator />
 				<MenuItem Name="ContextMenuTargetNameFormat" Header="Target Name Format" StaysOpenOnClick="True">
 					<MenuItem.ItemContainerStyle>
 						<Style TargetType="MenuItem">
@@ -412,12 +477,6 @@
 					IsChecked="{Binding StaticSizeLHS, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 					IsCheckable="True"
 					IsEnabled="{Binding StaticSize, UpdateSourceTrigger=PropertyChanged}"
-				/>
-				<MenuItem
-					Header="Kill Confirmations"
-					IsChecked="{Binding KillValidations, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-					IsCheckable="True"
-					ToolTip="Croupier will try to confirm kill method and disguise validity by tracking in-game (if connected via mod). Some methods of killing in-game may appear ambiguous and some conditions may come down to interpretation, so false results are possible. Croupier aims to give you the benefit of any doubt."
 				/>
 				<Separator />
 				<MenuItem

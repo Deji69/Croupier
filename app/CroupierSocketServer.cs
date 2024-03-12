@@ -27,6 +27,7 @@ namespace Croupier
 		public static event EventHandler<int> Prev;
 		public static event EventHandler<int> Next;
 		public static event EventHandler<int> ToggleSpinLock;
+		public static event EventHandler<int> MissionComplete;
 		public static event EventHandler<int> Connected;
 		private static bool keepAlive = true;
 		private static readonly BlockingCollection<ClientMessage> clientMessages = [];
@@ -165,6 +166,10 @@ namespace Croupier
 			}
 			else if (cmd == "SpinData") {
 				App.Current.Dispatcher.Invoke(new Action(() => SpinData?.Invoke(null, rest.First())));
+				return;
+			}
+			else if (cmd == "MissionComplete") {
+				App.Current.Dispatcher.Invoke(new Action(() => MissionComplete?.Invoke(null, 0)));
 				return;
 			}
 			else if (cmd == "ToggleSpinLock") {

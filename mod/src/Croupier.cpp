@@ -476,6 +476,10 @@ auto Croupier::SendRandom() -> void {
 	this->client->send(eClientMessage::Random);
 }
 
+auto Croupier::SendMissionComplete() -> void {
+	this->client->send(eClientMessage::MissionComplete);
+}
+
 auto Croupier::SendKillValidationUpdate() -> void {
 	auto data = ""s;
 	for (const auto& cond : spin.getConditions()) {
@@ -1131,6 +1135,7 @@ auto Croupier::SetupEvents() -> void {
 		}
 
 		this->SendKillValidationUpdate();
+		this->SendMissionComplete();
 	});
 	events.listen<Events::ContractEnd>([this](const ServerEvent<Events::ContractEnd>& ev) {
 		this->spinCompleted = true;

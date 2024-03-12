@@ -9,7 +9,7 @@
 		<properties:Settings x:Key="Settings" />
 
 		<SolidColorBrush x:Key="BackgroundBrush" Color="#FF000000"/>
-
+		<SolidColorBrush x:Key="BackgroundOverlayBrush" Color="#55000000"/>
 
 		<SolidColorBrush x:Key="NormalFGBrush" Color="#DDD" />
 		<SolidColorBrush x:Key="NormalBGBrush" Color="#222" />

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace Croupier
 {
@@ -119,6 +120,9 @@ namespace Croupier
 		public static readonly RoutedUICommand RespinCommand = new("Respin", "Respin", typeof(MainWindow), [
 			new KeyGesture(Key.R, ModifierKeys.Control),
 		]);
+		public static readonly RoutedUICommand ResetTimerCommand = new("Reset Timer", "ResetTimer", typeof(MainWindow), [
+			new KeyGesture(Key.T, ModifierKeys.Control),
+		]);
 
 		private static readonly Random random = new();
 		private static readonly List<Spin> spinHistory = [];
@@ -138,6 +142,7 @@ namespace Croupier
 		private bool _staticSize = false;
 		private bool _staticSizeLHS = false;
 		private bool _killValidations = false;
+		private bool _showTimer = false;
 
 		public TargetNameFormat TargetNameFormat {
 			get { return _targetNameFormat; }
@@ -211,6 +216,7 @@ namespace Croupier
 				OnPropertyChanged(nameof(RightToLeftFlowDir));
 				OnPropertyChanged(nameof(ContentGridFlowDir));
 				OnPropertyChanged(nameof(SpinTextAlignment));
+				OnPropertyChanged(nameof(StatusAlignLeft));
 			}
 		}
 		public bool StaticSize {
@@ -229,6 +235,7 @@ namespace Croupier
 				OnPropertyChanged(nameof(SpinGridHeight));
 				OnPropertyChanged(nameof(ContentGridFlowDir));
 				OnPropertyChanged(nameof(RightToLeftFlowDir));
+				OnPropertyChanged(nameof(StatusAlignLeft));
 			}
 		}
 		public bool StaticSizeLHS {
@@ -247,6 +254,7 @@ namespace Croupier
 				OnPropertyChanged(nameof(SpinGridHeight));
 				OnPropertyChanged(nameof(ContentGridFlowDir));
 				OnPropertyChanged(nameof(RightToLeftFlowDir));
+				OnPropertyChanged(nameof(StatusAlignLeft));
 			}
 		}
 		public bool KillValidations {
@@ -275,6 +283,25 @@ namespace Croupier
 				_editMode = value;
 				OnPropertyChanged(nameof(EditMode));
 				OnPropertyChanged(nameof(ShowSpinLabels));
+			}
+		}
+		public bool ShowStatusBar {
+			get {
+				return ShowTimer;
+			}
+		}
+		public bool ShowTimer {
+			get {
+				return _showTimer;
+			}
+			set {
+				_showTimer = value;
+				if (value != Config.Default.Timer) {
+					Config.Default.Timer = value;
+					Config.Save();
+				}
+				OnPropertyChanged(nameof(ShowStatusBar));
+				OnPropertyChanged(nameof(ShowTimer));
 			}
 		}
 		public FlowDirection RightToLeftFlowDir {
@@ -309,6 +336,11 @@ namespace Croupier
 				return StaticSizeLHS ? HorizontalAlignment.Left : HorizontalAlignment.Right;
 			}
 		}
+		public bool StatusAlignLeft {
+			get {
+				return StaticSize ? StaticSizeLHS : !RightToLeft;
+			}
+		}
 		public double SpinGridWidth {
 			get {
 				if (!StaticSize) return double.NaN;
@@ -319,7 +351,7 @@ namespace Croupier
 			get {
 				if (!StaticSize)
 					return double.NaN;
-				return SpinGridWidth * 0.32;
+				return SpinGridWidth * 0.33;
 			}
 		}
 
@@ -385,6 +417,9 @@ namespace Croupier
 		private readonly List<MissionID> missionPool = [];
 		private Mission currentMission = null;
 		private bool disableClientUpdate = false;
+		private DateTime timerStart = DateTime.Now;
+		private DateTime? timerEnd = null;
+		private Spin spin = null;
 		
 		private ObservableCollection<MissionComboBoxItem> MissionListItems {
 			get {
@@ -440,6 +475,16 @@ namespace Croupier
 			LoadSettings();
 
 			PropertyChanged += MainWindow_PropertyChanged;
+
+			var timer = new DispatcherTimer {
+				Interval = TimeSpan.FromMilliseconds(1)
+			};
+			timer.Tick += (object sender, EventArgs e) => {
+				var end = timerEnd ?? DateTime.Now;
+				Timer.Text = (end - timerStart).ToString(@"mm\:ss\.ff");
+			};
+			timer.Start();
+
 			CroupierSocketServer.Connected += (object sender, int _) => {
 				SendMissionsToClient();
 				SendSpinToClient();
@@ -450,6 +495,9 @@ namespace Croupier
 			CroupierSocketServer.Random += (object sender, int _) => Shuffle();
 			CroupierSocketServer.ToggleSpinLock += (object sender, int _) => {
 				SpinLock = !SpinLock;
+			};
+			CroupierSocketServer.MissionComplete += (object sender, int _) => {
+				timerEnd = DateTime.Now;
 			};
 			CroupierSocketServer.Missions += (object sender, List<MissionID> missions) => {
 				missionPool.Clear();
@@ -533,6 +581,7 @@ namespace Croupier
 			RightToLeft = Config.Default.RightToLeft;
 			StaticSize = Config.Default.StaticSize;
 			StaticSizeLHS = Config.Default.StaticSizeLHS;
+			ShowTimer = Config.Default.Timer;
 			KillValidations = Config.Default.KillValidations;
 			TargetNameFormat = TargetNameFormatMethods.FromString(Config.Default.TargetNameFormat);
 			LoadMissionPool();
@@ -621,7 +670,8 @@ namespace Croupier
 			if (!SetMission(id)) return;
 
 			Generator gen = new(rules, currentMission);
-			var spin = gen.GenerateSpin();
+			spin = gen.GenerateSpin();
+			timerStart = DateTime.Now;
 			SetSpin(spin);
 			spinHistoryIndex = 1;
 			PushCurrentSpinToHistory();
@@ -1126,6 +1176,11 @@ namespace Croupier
 		private void ShuffleCommand_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
 			Shuffle();
+		}
+
+		private void ResetTimerCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			timerStart = DateTime.Now;
 		}
 
 		private void ShuffleCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)

@@ -137,8 +137,9 @@ public:
 	auto SendPrev() -> void;
 	auto SendRandom() -> void;
 	auto SendMissions() -> void;
-	auto SendKillValidationUpdate() -> void;
 	auto SendToggleSpinLock() -> void;
+	auto SendMissionComplete() -> void;
+	auto SendKillValidationUpdate() -> void;
 
 	auto InstallHooks() -> void;
 	auto UninstallHooks() -> void;
