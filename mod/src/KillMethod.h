@@ -125,6 +125,8 @@ inline static const std::set<std::string, InsensitiveCompareLexicographic> impac
 
 inline static auto checkExplosiveKillType(std::string repoId, eKillType kt) -> bool {
 	switch (kt) {
+	case eKillType::Any:
+		return true;
 	case eKillType::Loud:
 		return !nonLoudExplosives.contains(repoId);
 	case eKillType::Remote:
