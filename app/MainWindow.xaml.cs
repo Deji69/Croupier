@@ -302,6 +302,7 @@ namespace Croupier
 				}
 				OnPropertyChanged(nameof(ShowStatusBar));
 				OnPropertyChanged(nameof(ShowTimer));
+				RefitWindow();
 			}
 		}
 		public FlowDirection RightToLeftFlowDir {
@@ -976,9 +977,10 @@ namespace Croupier
 
 		private void RefitWindow(bool keepSize = false) {
 			if (StaticSize) {
+				var h = SpinGridHeight * GetNumRows() + 53 + (Config.Default.Timer ? 26 : 0);
 				SizeToContent = SizeToContent.Manual;
-				MinHeight = SpinGridHeight * GetNumRows() + 53;
-				MaxHeight = SpinGridHeight * GetNumRows() + 53;
+				MinHeight = h;
+				MaxHeight = h;
 				double v = (Width / 50) * 1.1;
 				SpinFontSize = Math.Max(11.5, v);
 				OnPropertyChanged(nameof(SpinGridWidth));
@@ -1002,7 +1004,7 @@ namespace Croupier
 			var scale = GetContentScale();
 			//double rowScaling = Math.Ceiling((double)numItems / numColumns);
 			double contentHeight = width / scale;
-			contentHeight += HeaderGrid.ActualHeight;
+			contentHeight += HeaderGrid.ActualHeight + StatusGrid.ActualHeight + 2;
 			MinHeight = contentHeight;
 			MaxHeight = contentHeight;
 			SizeToContent = SizeToContent.Manual;
