@@ -31,6 +31,7 @@
 		<CommandBinding Command="{x:Static local:MainWindow.NextSpinCommand}" CanExecute="NextSpinCommand_CanExecute" Executed="NextSpinCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.ShuffleCommand}" CanExecute="ShuffleCommand_CanExecute" Executed="ShuffleCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.RespinCommand}" CanExecute="Command_AlwaysCanExecute" Executed="RespinCommand_Executed" />
+		<CommandBinding Command="{x:Static local:MainWindow.ResetTimerCommand}" CanExecute="Command_AlwaysCanExecute" Executed="ResetTimerCommand_Executed" />
 	</Window.CommandBindings>
 	<Window.Resources>
 		<BooleanToVisibilityConverter x:Key="VisibilityOfBool" />
@@ -103,7 +104,7 @@
 				FlowDirection="{Binding DataContext.RightToLeftFlowDir, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=UniformGrid}}"
 			>
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width=".9*" />
+					<ColumnDefinition Width=".95*" />
 					<ColumnDefinition Width="2*" />
 				</Grid.ColumnDefinitions>
 				<Image
@@ -134,7 +135,7 @@
 						<RowDefinition Height="1*" />
 					</Grid.RowDefinitions>
 					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="1*" />
+						<ColumnDefinition Width=".95*" />
 						<ColumnDefinition Width="2*" />
 					</Grid.ColumnDefinitions>
 					<Image
