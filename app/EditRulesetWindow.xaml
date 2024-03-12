@@ -199,9 +199,9 @@
 						Foreground="White"
 						FontWeight="Bold"
 						VerticalContentAlignment="Top"
-						IsChecked="{Binding RemoteExplosiveKillTypes}">
+						IsChecked="{Binding AnyExplosiveKillTypes}">
 						<TextBlock TextWrapping="Wrap">
-							'Remote' Explosive Kill Types
+							'Any' Explosive Kill Types
 						</TextBlock>
 					</CheckBox>
 					<TextBlock
@@ -212,10 +212,32 @@
 						TextWrapping="WrapWithOverflow"
 						FontWeight="Normal"
 						VerticalAlignment="Top">
-						Enable generation of 'Remote' as a potential 'kill type' for explosives.
+						Enable generation of explosive weapon kills of unspecified kill types.
 					</TextBlock>
 					<CheckBox
 						Grid.Row="7"
+						Grid.Column="0"
+						Margin="0,0,10,0"
+						Foreground="White"
+						FontWeight="Bold"
+						VerticalContentAlignment="Top"
+						IsChecked="{Binding RemoteExplosiveKillTypes}">
+						<TextBlock TextWrapping="Wrap">
+							'Remote' Explosive Kill Types
+						</TextBlock>
+					</CheckBox>
+					<TextBlock
+						Grid.Row="7"
+						Grid.Column="1"
+						Foreground="White"
+						Margin="5,0,0,0"
+						TextWrapping="WrapWithOverflow"
+						FontWeight="Normal"
+						VerticalAlignment="Top">
+						Enable generation of 'Remote' as a potential 'kill type' for explosives.
+					</TextBlock>
+					<CheckBox
+						Grid.Row="8"
 						Grid.Column="0"
 						Margin="0,0,10,0"
 						Foreground="White"
@@ -227,7 +249,7 @@
 						</TextBlock>
 					</CheckBox>
 					<TextBlock
-						Grid.Row="7"
+						Grid.Row="8"
 						Grid.Column="1"
 						Foreground="White"
 						Margin="5,0,0,0"
@@ -237,7 +259,7 @@
 						Enable generation of 'Impact' as a potential 'kill type' for explosives.
 					</TextBlock>
 					<CheckBox
-						Grid.Row="8"
+						Grid.Row="9"
 						Grid.Column="0"
 						Margin="0,0,10,0"
 						Foreground="White"
@@ -249,7 +271,7 @@
 						</TextBlock>
 					</CheckBox>
 					<TextBlock
-						Grid.Row="8"
+						Grid.Row="9"
 						Grid.Column="1"
 						Foreground="White"
 						Margin="5,0,0,0"

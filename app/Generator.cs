@@ -72,11 +72,11 @@ namespace Croupier
 				case KillMethodType.Firearm:
 					method.Firearm = KillMethod.WeaponList[random.Next(KillMethod.WeaponList.Count)];
 
-					if (!shouldGenerateKillType)
-						break;
-
 					// Randomly apply kill types to explosive
 					if (method.Firearm == FirearmKillMethod.Explosive) {
+						if (!shouldGenerateKillType && ruleset.enableAnyExplosives)
+							break;
+
 						List<KillType> explosiveKillTypes = [ KillType.Loud ];
 						if (ruleset.enableImpactExplosives)
 							explosiveKillTypes.Add(KillType.Impact);
@@ -87,6 +87,9 @@ namespace Croupier
 						method.KillType = explosiveKillTypes[random.Next(explosiveKillTypes.Count)];
 					}
 					else {
+						if (!shouldGenerateKillType)
+							break;
+
 						// Randomly apply loud or silenced to other firearms
 						method.KillType = (new[]{ KillType.Loud, KillType.Silenced })[random.Next(2)];
 					}

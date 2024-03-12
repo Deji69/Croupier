@@ -35,6 +35,7 @@ namespace Croupier
 					enableEasterEggConditions = false;
 					enableImpactExplosives = true;
 					enableRemoteExplosives = true;
+					enableAnyExplosives = false;
 					liveComplications = true;
 					liveComplicationsExcludeStandard = true;
 					liveComplicationChance = 25;
@@ -44,6 +45,7 @@ namespace Croupier
 					meleeKillTypes = false;
 					thrownKillTypes = false;
 					enableEasterEggConditions = true;
+					enableAnyExplosives = true;
 					liveComplications = true;
 					liveComplicationsExcludeStandard = true;
 					liveComplicationChance = 25;
@@ -53,6 +55,7 @@ namespace Croupier
 					meleeKillTypes = false;
 					thrownKillTypes = false;
 					enableEasterEggConditions = true;
+					enableAnyExplosives = true;
 					liveComplications = true;
 					liveComplicationsExcludeStandard = true;
 					liveComplicationChance = 20;
@@ -62,12 +65,14 @@ namespace Croupier
 					meleeKillTypes = true;
 					thrownKillTypes = true;
 					enableEasterEggConditions = true;
+					enableAnyExplosives = true;
 					break;
 				case RulesetPreset.Croupier:
 					genericEliminations = false;
 					liveComplications = true;
 					liveComplicationChance = 25;
 					enableEasterEggConditions = false;
+					enableAnyExplosives = true;
 					enableMedium = true;
 					break;
 			}
@@ -88,6 +93,7 @@ namespace Croupier
 		public bool suitOnlyMode = false;
 		public int liveComplicationChance = 30;
 
+		public bool enableAnyExplosives = true;
 		public bool enableImpactExplosives = false;
 		public bool enableRemoteExplosives = false;
 		public bool enableLoudRemoteExplosives = false;

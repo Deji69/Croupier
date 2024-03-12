@@ -27,6 +27,7 @@ namespace Croupier {
 		public bool Ruleset_BannedImpossible { get; set; } = false;
 		public bool Ruleset_BannedBuggy { get; set; } = false;
 		public bool Ruleset_BannedEasterEgg { get; set; } = false;
+		public bool Ruleset_AnyExplosiveKillTypes { get; set; } = false;
 		public bool Ruleset_RemoteExplosiveKillTypes { get; set; } = false;
 		public bool Ruleset_LoudRemoteExplosiveKillTypes { get; set; } = false;
 		public bool Ruleset_ImpactExplosiveKillTypes { get; set; } = false;

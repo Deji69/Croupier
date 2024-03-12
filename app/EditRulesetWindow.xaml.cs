@@ -82,6 +82,16 @@ namespace Croupier
 				OnPropertyChanged(nameof(ThrownKillTypes));
 			}
 		}
+		public bool AnyExplosiveKillTypes {
+			get {
+				return Ruleset.enableAnyExplosives;
+			}
+			set {
+				Ruleset.enableAnyExplosives = value;
+				CustomRulesetChanged();
+				OnPropertyChanged(nameof(AnyExplosiveKillTypes));
+			}
+		}
 		public bool RemoteExplosiveKillTypes {
 			get {
 				return Ruleset.enableRemoteExplosives;
@@ -240,6 +250,7 @@ namespace Croupier
 				customRuleset.liveComplicationsExcludeStandard = Config.Default.Ruleset_LiveComplicationsExcludeStandard;
 				customRuleset.meleeKillTypes = Config.Default.Ruleset_MeleeKillTypes;
 				customRuleset.thrownKillTypes = Config.Default.Ruleset_ThrownKillTypes;
+				customRuleset.enableAnyExplosives = Config.Default.Ruleset_AnyExplosiveKillTypes;
 				customRuleset.enableRemoteExplosives = Config.Default.Ruleset_RemoteExplosiveKillTypes;
 				customRuleset.enableLoudRemoteExplosives = Config.Default.Ruleset_LoudRemoteExplosiveKillTypes;
 				customRuleset.enableImpactExplosives = Config.Default.Ruleset_ImpactExplosiveKillTypes;
@@ -297,6 +308,7 @@ namespace Croupier
 					Config.Default.Ruleset_GenericEliminations = Ruleset.genericEliminations;
 					Config.Default.Ruleset_MeleeKillTypes = Ruleset.meleeKillTypes;
 					Config.Default.Ruleset_ThrownKillTypes = Ruleset.thrownKillTypes;
+					Config.Default.Ruleset_AnyExplosiveKillTypes = Ruleset.enableAnyExplosives;
 					Config.Default.Ruleset_RemoteExplosiveKillTypes = Ruleset.enableRemoteExplosives;
 					Config.Default.Ruleset_ImpactExplosiveKillTypes = Ruleset.enableImpactExplosives;
 					Config.Default.Ruleset_LoudRemoteExplosiveKillTypes = Ruleset.enableLoudRemoteExplosives;
