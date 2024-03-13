@@ -29,6 +29,7 @@ struct SharedRouletteSpin {
 
 	SharedRouletteSpin(const RouletteSpin& spin) : spin(spin), timeElapsed(0) {
 		timeStarted = std::chrono::steady_clock().now();
+		this->resetKillValidations();
 	}
 
 	auto getTargetKillValidation(eTargetID target) const -> KillConfirmation {
@@ -38,6 +39,13 @@ struct SharedRouletteSpin {
 				return kc;
 		}
 		return KillConfirmation(target, eKillValidationType::Incomplete);
+	}
+
+	auto getKillConfirmation(size_t idx) -> KillConfirmation& {
+		if (killValidations.size() < spin.getConditions().size())
+			this->resetKillValidations();
+		if (idx > killValidations.size()) throw std::exception("Invalid kill confirmation index.");
+		return killValidations[idx];
 	}
 
 	auto getLastDisguiseChangeAtTimestamp(float timestamp) const -> const DisguiseChange* {

@@ -349,7 +349,7 @@ auto Croupier::ProcessSpinState() -> void {
 			auto& cond = conditions[i];
 			auto& target = cond.target.get();
 			if (targetId != target.getID()) continue;
-			auto& kc = this->sharedSpin.killValidations[i];
+			auto& kc = this->sharedSpin.getKillConfirmation(i);
 			if (!kc.isPacified) break;
 
 			auto isPacified = actor.IsPacified();
@@ -1174,7 +1174,7 @@ auto Croupier::SetupEvents() -> void {
 				if (checkExplosiveKillType(lastThrownItem, eKillType::Impact)) return;
 			}
 
-			auto& kc = this->sharedSpin.killValidations[i];
+			auto& kc = this->sharedSpin.getKillConfirmation(i);
 			kc.target = target.getID();
 			kc.isPacified = true;
 		}
@@ -1223,7 +1223,7 @@ auto Croupier::SetupEvents() -> void {
 			auto const& cond = conditions[i];
 			auto const& target = cond.target.get();
 			bool isApexPrey = isBerlinAgent(target.getID()) && isBerlinAgent(targetId);
-			auto& kc = this->sharedSpin.killValidations[i];
+			auto& kc = this->sharedSpin.getKillConfirmation(i);
 
 			if (isApexPrey) {
 				if (kc.correctMethod != eKillValidationType::Incomplete)
@@ -1283,7 +1283,7 @@ auto Croupier::SetupEvents() -> void {
 			auto& cond = conditions[i];
 			if (cond.target.get().getID() != eTargetID::ErichSoders) continue;
 
-			auto& kc = this->sharedSpin.killValidations[i];
+			auto& kc = this->sharedSpin.getKillConfirmation(i);
 			auto& reqDisguise = cond.disguise.get();
 			kc.target = cond.target.get().getID();
 
