@@ -978,7 +978,7 @@ const std::unordered_map<eMission, std::vector<RouletteDisguise>> missionDisguis
 	{eMission::NEWYORK_GOLDENHANDSHAKE, {
 		RouletteDisguise{"Suit", "outfit_84f2e067-70c3-4d79-aa90-53b46b727505_0.jpg", "84f2e067-70c3-4d79-aa90-53b46b727505", true},
 		RouletteDisguise{"Bank Robber", "outfit_6b22a1db-861c-42fd-ae2d-a4a7bcda72ab_0.jpg", "6b22a1db-861c-42fd-ae2d-a4a7bcda72ab"},
-		RouletteDisguise{"Bank Teller", "outfit_d3c1c97f-84d8-4e68-8d72-e2ce7564aaba_0.jpg", "d3c1c97f-84d8-4e68-8d72-e2ce7564aaba"},
+		RouletteDisguise{"Bank Teller", "outfit_589d5082-92e5-4136-922d-786646fb781a_0.jpg", "589d5082-92e5-4136-922d-786646fb781a"},
 		RouletteDisguise{"Fired Banker", "outfit_c105fd1e-a017-42e5-8a0c-2996363352eb_0.jpg", "c105fd1e-a017-42e5-8a0c-2996363352eb"},
 		RouletteDisguise{"High Security Guard", "outfit_513c0da0-1cb0-4029-85c9-ad9e9522818d_0.jpg", "513c0da0-1cb0-4029-85c9-ad9e9522818d"},
 		RouletteDisguise{"Investment Banker", "outfit_e2f6fbfb-0237-477d-b93f-2374b02f0354_0.jpg", "e2f6fbfb-0237-477d-b93f-2374b02f0354"},
