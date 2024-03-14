@@ -28,6 +28,9 @@ namespace Croupier
 		public static event EventHandler<int> Next;
 		public static event EventHandler<int> ToggleSpinLock;
 		public static event EventHandler<int> MissionComplete;
+		public static event EventHandler<int> ResetTimer;
+		public static event EventHandler<bool> PauseTimer;
+		public static event EventHandler<bool> ToggleTimer;
 		public static event EventHandler<int> Connected;
 		private static bool keepAlive = true;
 		private static readonly BlockingCollection<ClientMessage> clientMessages = [];
@@ -174,6 +177,22 @@ namespace Croupier
 			}
 			else if (cmd == "ToggleSpinLock") {
 				App.Current.Dispatcher.Invoke(new Action(() => ToggleSpinLock?.Invoke(null, 0)));
+				return;
+			}
+			else if (cmd == "ResetTimer") {
+				App.Current.Dispatcher.Invoke(new Action(() => ResetTimer?.Invoke(null, 0)));
+				return;
+			}
+			else if (cmd == "PauseTimer") {
+				var data = rest.First();
+				var pause = data.Length > 0 && data[0] != '0';
+				App.Current.Dispatcher.Invoke(new Action(() => PauseTimer?.Invoke(null, pause)));
+				return;
+			}
+			else if (cmd == "ToggleTimer") {
+				var data = rest.First();
+				var enable = data.Length > 0 && data[0] != '0';
+				App.Current.Dispatcher.Invoke(new Action(() => ToggleTimer?.Invoke(null, enable)));
 				return;
 			}
 			else if (cmd == "KillValidation") {

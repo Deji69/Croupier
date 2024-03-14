@@ -19,8 +19,12 @@ enum class eClientMessage {
 	Missions,
 	SpinLock,
 	ToggleSpinLock,
+	ToggleTimer,
 	KillValidation,
 	MissionComplete,
+	ResetTimer,
+	StartTimer,
+	StopTimer,
 };
 
 class ClientMessage {

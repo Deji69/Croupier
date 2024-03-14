@@ -148,6 +148,8 @@ public:
 	auto SendToggleSpinLock() -> void;
 	auto SendMissionComplete() -> void;
 	auto SendKillValidationUpdate() -> void;
+	auto SendResetTimer() -> void;
+	auto SendToggleTimer(bool enable) -> void;
 
 	auto InstallHooks() -> void;
 	auto UninstallHooks() -> void;
@@ -189,6 +191,7 @@ private:
 	bool showCustomRulesetUI = false;
 	bool spinCompleted = false;
 	bool spinLocked = false;
+	bool appTimerEnable = false;
 	bool hooksInstalled = false;
 	Configuration config;
 };

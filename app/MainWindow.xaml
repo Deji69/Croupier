@@ -32,6 +32,8 @@
 		<CommandBinding Command="{x:Static local:MainWindow.ShuffleCommand}" CanExecute="ShuffleCommand_CanExecute" Executed="ShuffleCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.RespinCommand}" CanExecute="Command_AlwaysCanExecute" Executed="RespinCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.ResetTimerCommand}" CanExecute="Command_AlwaysCanExecute" Executed="ResetTimerCommand_Executed" />
+		<CommandBinding Command="{x:Static local:MainWindow.StartTimerCommand}" CanExecute="StartTimerCommand_CanExecute" Executed="StartTimerCommand_Executed" />
+		<CommandBinding Command="{x:Static local:MainWindow.StopTimerCommand}" CanExecute="StopTimerCommand_CanExecute" Executed="StopTimerCommand_Executed" />
 	</Window.CommandBindings>
 	<Window.Resources>
 		<BooleanToVisibilityConverter x:Key="VisibilityOfBool" />
@@ -331,7 +333,7 @@
 					Content="{materialIcons:MaterialIconExt Kind=RotateClockwise}" />
 			</WrapPanel>
 		</Grid>
-		<Grid Name="StatusGrid" DockPanel.Dock="Top">
+		<Grid Name="StatusGrid" DockPanel.Dock="Bottom">
 			<Grid Name="TimerGrid" UseLayoutRounding="True">
 				<TextBlock
 					Name="Timer"
@@ -357,6 +359,25 @@
 							<MenuItem
 								Header="Reset"
 								Command="{x:Static local:MainWindow.ResetTimerCommand}"
+							/>
+							<MenuItem
+								Header="Start"
+								Command="{x:Static local:MainWindow.StartTimerCommand}"
+							/>
+							<MenuItem
+								Header="Stop"
+								Command="{x:Static local:MainWindow.StopTimerCommand}"
+							/>
+							<MenuItem
+								Header="Show Fractions"
+								IsChecked="{Binding TimerFractions, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+								IsCheckable="True"
+							/>
+							<MenuItem
+								Header="Multi-Spin Mode"
+								IsChecked="{Binding TimerMultiSpin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+								IsCheckable="True"
+								ToolTip="Disable automatic resetting of timer when new spins are generated, instead accumulating times of multiple spins (e.g. for full game runs)."
 							/>
 						</ContextMenu>
 					</TextBlock.ContextMenu>

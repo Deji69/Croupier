@@ -23,8 +23,12 @@ std::map<eClientMessage, std::string> clientMessageTypeMap = {
 	{eClientMessage::Missions, "Missions"},
 	{eClientMessage::SpinLock, "SpinLock"},
 	{eClientMessage::ToggleSpinLock, "ToggleSpinLock"},
+	{eClientMessage::ToggleTimer, "ToggleTimer"},
 	{eClientMessage::KillValidation, "KillValidation"},
 	{eClientMessage::MissionComplete, "MissionComplete"},
+	{eClientMessage::ResetTimer, "ResetTimer"},
+	{eClientMessage::StartTimer, "StartTimer"},
+	{eClientMessage::StopTimer, "StopTimer"},
 };
 std::map<std::string, eClientMessage> clientMessageTypeMapRev = {
 	{"Respin", eClientMessage::Respin},
@@ -37,8 +41,12 @@ std::map<std::string, eClientMessage> clientMessageTypeMapRev = {
 	{"Missions", eClientMessage::Missions},
 	{"SpinLock", eClientMessage::SpinLock},
 	{"ToggleSpinLock", eClientMessage::ToggleSpinLock},
+	{"ToggleTimer", eClientMessage::ToggleTimer},
 	{"KillValidation", eClientMessage::KillValidation},
 	{"MissionComplete", eClientMessage::MissionComplete},
+	{"ResetTimer", eClientMessage::ResetTimer},
+	{"StartTimer", eClientMessage::StartTimer},
+	{"StopTimer", eClientMessage::StopTimer},
 };
 
 auto ClientMessage::toString() const -> std::string {

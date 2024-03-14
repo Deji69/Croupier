@@ -426,6 +426,14 @@ auto Croupier::SendToggleSpinLock() -> void {
 	this->client->send(eClientMessage::ToggleSpinLock);
 }
 
+auto Croupier::SendToggleTimer(bool enable) -> void {
+	this->client->send(eClientMessage::ToggleTimer, {enable ? "1" : "0"});
+}
+
+auto Croupier::SendResetTimer() -> void {
+	this->client->send(eClientMessage::ResetTimer);
+}
+
 auto Croupier::SendSpinData() -> void {
 	std::string data;
 	std::string prefixes;
@@ -522,15 +530,34 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 
 		ImGui::PushFont(SDK()->GetImGuiRegularFont());
 
-		if (ImGui::Checkbox("Timer", &this->config.timer)) {
-			this->SaveConfiguration();
-		}
+		if (!connected) {
+			// Legacy timer
+			if (ImGui::Checkbox("Timer", &this->config.timer)) {
+				this->SaveConfiguration();
+			}
 
-		if (this->config.timer) {
-			ImGui::SameLine();
-			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 40.0);
-			if (ImGui::Button("Reset")) {
-				this->sharedSpin.timeStarted = std::chrono::steady_clock::now();
+			if (this->config.timer) {
+				ImGui::SameLine();
+				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 40.0);
+				if (ImGui::Button("Reset")) {
+					this->SendResetTimer();
+					this->sharedSpin.timeStarted = std::chrono::steady_clock::now();
+				}
+			}
+		} else {
+			// In-App Timer
+			if (ImGui::Checkbox("Timer", &this->config.timer)) {
+				this->SaveConfiguration();
+				this->SendToggleTimer(this->config.timer);
+			}
+
+			if (this->config.timer) {
+				ImGui::SameLine();
+				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 40.0);
+				if (ImGui::Button("Reset")) {
+					this->SendResetTimer();
+					this->sharedSpin.timeStarted = std::chrono::steady_clock::now();
+				}
 			}
 		}
 
