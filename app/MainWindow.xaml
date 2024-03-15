@@ -25,6 +25,7 @@
 		<CommandBinding Command="{x:Static local:MainWindow.PasteSpinCommand}" CanExecute="PasteSpinCommand_CanExecute" Executed="PasteSpinCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.EditSpinCommand}" CanExecute="Command_AlwaysCanExecute" Executed="EditSpinCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.ShowHitmapsWindowCommand}" CanExecute="Command_AlwaysCanExecute" Executed="ShowHitmapsWindowCommand_Executed" />
+		<CommandBinding Command="{x:Static local:MainWindow.ShowLiveSplitWindowCommand}" CanExecute="Command_AlwaysCanExecute" Executed="ShowLiveSplitWindowCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.EditMapPoolCommand}" CanExecute="Command_AlwaysCanExecute" Executed="EditMapPoolCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.EditRulesetsCommand}" CanExecute="Command_AlwaysCanExecute" Executed="EditRulesetsCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.PrevSpinCommand}" CanExecute="PrevSpinCommand_CanExecute" Executed="PrevSpinCommand_Executed" />
@@ -504,6 +505,10 @@
 				<MenuItem
 					Header="Hitmaps/Web Link"
 					Command="{x:Static local:MainWindow.ShowHitmapsWindowCommand}"
+				/>
+				<MenuItem
+					Header="_LiveSplit"
+					Command="{x:Static local:MainWindow.ShowLiveSplitWindowCommand}"
 				/>
 				<MenuItem
 					Header="_Map Pool"

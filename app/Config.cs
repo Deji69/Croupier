@@ -48,6 +48,10 @@ namespace Croupier {
 		public double Width1Column { get; set; } = 0;
 		public double Width2Column { get; set; } = 0;
 
+		public bool LiveSplitEnabled { get; set; } = false;
+		public string LiveSplitIP { get; set; } = "127.0.0.1";
+		public int LiveSplitPort { get; set; } = 16834;
+
 		static public bool Load()
 		{
 			try {

@@ -7,18 +7,18 @@ using System.Windows.Threading;
 
 namespace Croupier
 {
-	/// <summary>
-	/// Interaction logic for App.xaml
-	/// </summary>
 	public partial class App : Application
 	{
 		public readonly HitmapsSpinLink HitmapsSpinLink = new();
+		public readonly LiveSplitClient LiveSplitClient = new();
 
 		public WindowPlace WindowPlace { get; } = new WindowPlace("app.config");
 
 		public App() : base() {
 			Config.Load();
 			CroupierSocketServer.Start();
+			if (Config.Default.LiveSplitEnabled)
+				_ = LiveSplitClient.Start();
 		} 
 
 		private void Application_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
