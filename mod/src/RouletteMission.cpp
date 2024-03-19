@@ -28,8 +28,9 @@ const std::vector<eMission> defaultMissionPool = {
 
 const std::unordered_map<std::string, eMission> missionsByCodename = {
 	{"FREEFORM", eMission::ICAFACILITY_FREEFORM},
-	{"POLARBEAR", eMission::ICAFACILITY_FINALTEST},
+	{"POLARBEAR", eMission::ICAFACILITY_FREEFORM},
 	{"FINALTEST", eMission::ICAFACILITY_FINALTEST},
+	{"GRADUATION", eMission::ICAFACILITY_FINALTEST},
 	{"PEACOCK", eMission::PARIS_SHOWSTOPPER},
 	{"PARISNOEL", eMission::PARIS_HOLIDAYHOARDERS},
 	{"OCTOPUS", eMission::SAPIENZA_WORLDOFTOMORROW},
@@ -568,7 +569,7 @@ const std::unordered_map<eMission, std::vector<RouletteDisguise>> missionDisguis
 		RouletteDisguise{"Dr. Oscar Lafayette", "outfit_fbf69e85-da3c-423b-bef9-da1b64f35f6b_0.jpg", "fbf69e85-da3c-423b-bef9-da1b64f35f6b"},
 		RouletteDisguise{"Gardener", "outfit_d788ff58-8a7a-4a85-acdd-c0e5693525f0_0.jpg", "d788ff58-8a7a-4a85-acdd-c0e5693525f0"},
 		RouletteDisguise{"Green Plumber", "outfit_844680e8-ae40-4fec-92b7-69c7619feb82_0.jpg", "844680e8-ae40-4fec-92b7-69c7619feb82"},
-		RouletteDisguise{"Hazmat Suit", "outfit_98e839aa-7bee-46d7-9963-6190cd310a37_0.jpg", "98e839aa-7bee-46d7-9963-6190cd310a37"},
+		RouletteDisguise{"Hazmat Suit", "outfit_92c30801-1782-44c5-88a0-d2020d6d4ff5_0.jpg", "92c30801-1782-44c5-88a0-d2020d6d4ff5"},
 		RouletteDisguise{"Housekeeper", "outfit_a6c81663-684d-4506-abc0-65b35c4d8b63_0.jpg", "a6c81663-684d-4506-abc0-65b35c4d8b63"},
 		RouletteDisguise{"Kitchen Assistant", "outfit_10601c6b-1f65-44ed-92a1-bf843f023d3f_0.jpg", "10601c6b-1f65-44ed-92a1-bf843f023d3f"},
 		RouletteDisguise{"Lab Technician", "outfit_2894c92d-b780-412f-a48f-5c5ddf0dafc8_0.jpg", "2894c92d-b780-412f-a48f-5c5ddf0dafc8"},

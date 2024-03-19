@@ -25,6 +25,9 @@ enum class eClientMessage {
 	ResetTimer,
 	StartTimer,
 	StopTimer,
+	PauseTimer,
+	LoadStarted,
+	LoadFinished,
 };
 
 class ClientMessage {

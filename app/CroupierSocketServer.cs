@@ -31,6 +31,8 @@ namespace Croupier
 		public static event EventHandler<int> ResetTimer;
 		public static event EventHandler<bool> PauseTimer;
 		public static event EventHandler<bool> ToggleTimer;
+		public static event EventHandler<int> LoadStarted;
+		public static event EventHandler<int> LoadFinished;
 		public static event EventHandler<int> Connected;
 		private static bool keepAlive = true;
 		private static readonly BlockingCollection<ClientMessage> clientMessages = [];
@@ -193,6 +195,14 @@ namespace Croupier
 				var data = rest.First();
 				var enable = data.Length > 0 && data[0] != '0';
 				App.Current.Dispatcher.Invoke(new Action(() => ToggleTimer?.Invoke(null, enable)));
+				return;
+			}
+			else if (cmd == "LoadStarted") {
+				App.Current.Dispatcher.Invoke(new Action(() => LoadStarted?.Invoke(null, 0)));
+				return;
+			}
+			else if (cmd == "LoadFinished") {
+				App.Current.Dispatcher.Invoke(new Action(() => LoadFinished?.Invoke(null, 0)));
 				return;
 			}
 			else if (cmd == "KillValidation") {

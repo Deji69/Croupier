@@ -5,12 +5,14 @@
 #include <Glacier/SOnlineEvent.h>
 #include <Glacier/ZActor.h>
 #include <Glacier/ZGameLoopManager.h>
+#include <Glacier/ZInputActionManager.h>
 #include <Glacier/ZScene.h>
 #include <Glacier/ZString.h>
 #include <chrono>
 #include <variant>
 #include <winhttp.h>
 #include "Events.h"
+#include "InputUtil.h"
 #include "KillConfirmation.h"
 #include "KillMethod.h"
 #include "SpinParser.h"
@@ -32,7 +34,7 @@ static auto randomVectorElement(const std::vector<T>& vec) -> const T&
 	return vec[dist(gen)];
 }
 
-Croupier::Croupier() : sharedSpin(spin) {
+Croupier::Croupier() : sharedSpin(spin), respinAction("Respin"), shuffleAction("Shuffle") {
 	this->SetupEvents();
 	this->rules = makeRouletteRuleset(this->ruleset);
 
@@ -47,6 +49,20 @@ Croupier::~Croupier() {
 }
 
 auto Croupier::LoadConfiguration() -> void {
+	/*auto binds = std::format("CroupierInput={"
+			"Respin=tap("
+		"};");
+	auto respinKey1 = GetSetting("general", "respin_hotkey1", "");
+	auto respinKey2 = GetSetting("general", "respin_hotkey2", "");
+	auto shuffleKey1 = GetSetting("general", "shuffle_hotkey1", "");
+	auto shuffleKey2 = GetSetting("general", "shuffle_hotkey2", "");
+	respinKeyBind.key1 = respinKey1.size() ? KeyBind(respinKey1.c_str()) : KeyBind();
+	respinKeyBind.key2 = respinKey2.size() ? KeyBind(respinKey2.c_str()) : KeyBind();
+	shuffleKeyBind.key1 = shuffleKey1.size() ? KeyBind(shuffleKey1.c_str()) : KeyBind();
+	shuffleKeyBind.key2 = shuffleKey2.size() ? KeyBind(shuffleKey2.c_str()) : KeyBind();
+	if (!ZInputActionManager::AddBindings(binds.c_str()))
+		Logger::Error("Failed to add input bindings for Croupier.");*/
+
 	if (this->file.is_open()) return;
 
 	const auto filepath = this->modulePath / "mods" / "Croupier" / "croupier.txt";
@@ -299,8 +315,9 @@ auto Croupier::InstallHooks() -> void {
 	if (this->hooksInstalled) return;
 
 	const ZMemberDelegate<Croupier, void(const SGameUpdateEvent&)> frameUpdateDelegate(this, &Croupier::OnFrameUpdate);
-	Globals::GameLoopManager->RegisterFrameUpdate(frameUpdateDelegate, 0, EUpdateMode::eUpdatePlayMode);
+	Globals::GameLoopManager->RegisterFrameUpdate(frameUpdateDelegate, 0, EUpdateMode::eUpdateAlways);
 
+	Hooks::ZLoadingScreenVideo_ActivateLoadingScreen->AddDetour(this, &Croupier::OnLoadingScreenActivated);
 	Hooks::ZAchievementManagerSimple_OnEventReceived->AddDetour(this, &Croupier::OnEventReceived);
 	Hooks::ZAchievementManagerSimple_OnEventSent->AddDetour(this, &Croupier::OnEventSent);
 	Hooks::Http_WinHttpCallback->AddDetour(this, &Croupier::OnWinHttpCallback);
@@ -312,8 +329,9 @@ auto Croupier::UninstallHooks() -> void {
 	if (!this->hooksInstalled) return;
 
 	const ZMemberDelegate<Croupier, void(const SGameUpdateEvent&)> frameUpdateDelegate(this, &Croupier::OnFrameUpdate);
-	Globals::GameLoopManager->UnregisterFrameUpdate(frameUpdateDelegate, 0, EUpdateMode::eUpdatePlayMode);
+	Globals::GameLoopManager->UnregisterFrameUpdate(frameUpdateDelegate, 0, EUpdateMode::eUpdateAlways);
 
+	Hooks::ZLoadingScreenVideo_ActivateLoadingScreen->RemoveDetour(&Croupier::OnLoadingScreenActivated);
 	Hooks::ZAchievementManagerSimple_OnEventReceived->RemoveDetour(&Croupier::OnEventReceived);
 	Hooks::ZAchievementManagerSimple_OnEventSent->RemoveDetour(&Croupier::OnEventSent);
 	Hooks::Http_WinHttpCallback->RemoveDetour(&Croupier::OnWinHttpCallback);
@@ -321,9 +339,35 @@ auto Croupier::UninstallHooks() -> void {
 	this->hooksInstalled = false;
 }
 
-auto Croupier::OnFrameUpdate(const SGameUpdateEvent&) -> void {
+auto Croupier::OnFrameUpdate(const SGameUpdateEvent& ev) -> void {
 	this->ProcessSpinState();
 	this->ProcessClientMessages();
+	this->ProcessLoadRemoval();
+	this->ProcessHotkeys();
+}
+
+auto Croupier::ProcessHotkeys() -> void {
+	/*if (Functions::ZInputAction_Digital->Call(&respinAction, -1))
+		Respin(false);
+	if (Functions::ZInputAction_Digital->Call(&shuffleAction, -1))
+		Random();
+
+	auto respinKey1Pressed = !respinKeyBind.key1.isSet() || respinKeyBind.key1.isDown();
+	auto respinKey2Pressed = !respinKeyBind.key2.isSet() || respinKeyBind.key2.isDown();
+	auto shuffleKey1Pressed = !shuffleKeyBind.key1.isSet() || shuffleKeyBind.key1.isDown();
+	auto shuffleKey2Pressed = !shuffleKeyBind.key2.isSet() || shuffleKeyBind.key2.isDown();
+	auto respinKeybindIsPressed = (respinKeyBind.key1.isSet() || respinKeyBind.key2.isSet()) && respinKey1Pressed && respinKey2Pressed;
+	auto shuffleKeybindIsPressed = (shuffleKeyBind.key1.isSet() || shuffleKeyBind.key2.isSet())
+		&& (!shuffleKeyBind.key1.isSet() || shuffleKeyBind.key1.isDown())
+		&& (!shuffleKeyBind.key2.isSet() || shuffleKeyBind.key2.isDown());
+
+	if (respinKeybindIsPressed && !respinKeybindWasPressed)
+		Respin();
+	else if (shuffleKeybindIsPressed && !shuffleKeybindWasPressed)
+		Random();
+
+	respinKeybindWasPressed = respinKeybindIsPressed;
+	shuffleKeybindWasPressed = shuffleKeybindIsPressed;*/
 }
 
 auto Croupier::ProcessSpinState() -> void {
@@ -373,6 +417,51 @@ auto Croupier::ProcessClientMessages() -> void {
 				if (message.args.size() < 1) break;
 				this->spinLocked = message.args[0] == '1';
 				return;
+		}
+	}
+}
+
+auto Croupier::ProcessLoadRemoval() -> void {
+	class ZRenderManager {
+	public:
+		virtual ~ZRenderManager() = default;
+		virtual bool ZRenderManager_unk1() = 0;
+		virtual bool ZRenderManager_unk2() = 0;
+		virtual bool ZRenderManager_unk3() = 0;
+		virtual bool ZRenderManager_unk4() = 0; //
+		virtual bool ZRenderManager_unk5() = 0; // gracefully freezes the game??
+		virtual bool IsLoadingScreenActive() = 0;
+
+	public:
+		PAD(0x14178);
+		ZRenderDevice* m_pDevice; // 0x14180, look for ZRenderDevice constructor
+		PAD(0xF8); // 0x14188
+		ZRenderContext* m_pRenderContext; // 0x14280, look for "ZRenderManager::RenderThread" string, first thing being constructed and assigned
+	};
+
+	static_assert(offsetof(ZRenderManager, m_pDevice) == 0x14180);
+	static_assert(offsetof(ZRenderManager, m_pRenderContext) == 0x14280);
+
+	auto ptr = Globals::RenderManager;
+	auto renderManager = reinterpret_cast<ZRenderManager*>(Globals::RenderManager);
+	if (!renderManager) return;
+
+	auto isLoadingScreenActive = renderManager->IsLoadingScreenActive();
+
+	if ((isLoadingScreenActive || loadingScreenActivated) && !loadRemovalActive) {
+		SendLoadStarted();
+		loadRemovalActive = true;
+	}
+
+	if (isLoadingScreenActive)
+		isLoadingScreenCheckHasBeenTrue = true;
+	else if (isLoadingScreenCheckHasBeenTrue) {
+		loadingScreenActivated = false;
+		isLoadingScreenCheckHasBeenTrue = false;
+
+		if (loadRemovalActive) {
+			SendLoadFinished();
+			loadRemovalActive = false;
 		}
 	}
 }
@@ -430,8 +519,24 @@ auto Croupier::SendToggleTimer(bool enable) -> void {
 	this->client->send(eClientMessage::ToggleTimer, {enable ? "1" : "0"});
 }
 
+auto Croupier::SendLoadStarted() -> void {
+	this->client->send(eClientMessage::LoadStarted);
+}
+
+auto Croupier::SendLoadFinished() -> void {
+	this->client->send(eClientMessage::LoadFinished);
+}
+
 auto Croupier::SendResetTimer() -> void {
 	this->client->send(eClientMessage::ResetTimer);
+}
+
+auto Croupier::SendStartTimer() -> void {
+	this->client->send(eClientMessage::StartTimer);
+}
+
+auto Croupier::SendPauseTimer(bool pause) -> void {
+	this->client->send(eClientMessage::PauseTimer);
 }
 
 auto Croupier::SendSpinData() -> void {
@@ -511,11 +616,61 @@ auto Croupier::OnDrawMenu() -> void {
 		this->showUI = !this->showUI;
 }
 
+static bool ImGuiHotkey(const char* label, KeyBindAssign& bind, float samelineOffset = 0.0f, const ImVec2& size = { 100.0f, 0.0f }) noexcept {
+	ImGui::TextUnformatted(label);
+	ImGui::SameLine(samelineOffset);
+
+	if (bind.assigning1) {
+		ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetColorU32(ImGuiCol_ButtonActive));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImGui::GetColorU32(ImGuiCol_ButtonActive));
+		ImGui::Button("...", size);
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+
+		if (!ImGui::IsItemHovered() && ImGui::GetIO().MouseClicked[0]) {
+			bind.assigning1 = false;
+			return false;
+		}
+		if (bind.key1.setToPressedKey()) {
+			bind.assigning1 = false;
+			return true;
+		}
+	}
+	else if (ImGui::Button(bind.key1.toString(), size) && !bind.assigning2)
+		bind.assigning1 = true;
+
+	ImGui::SameLine();
+
+	if (bind.assigning2) {
+		ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetColorU32(ImGuiCol_ButtonActive));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImGui::GetColorU32(ImGuiCol_ButtonActive));
+		ImGui::Button("...", size);
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+
+		if (!ImGui::IsItemHovered() && ImGui::GetIO().MouseClicked[0]) {
+			bind.assigning2 = false;
+			return false;
+		}
+		if (bind.key2.setToPressedKey()) {
+			bind.assigning2 = false;
+			return true;
+		}
+	}
+	else if (ImGui::Button(bind.key2.toString(), size) && !bind.assigning1)
+		bind.assigning2 = true;
+	return false;
+}
+
 auto Croupier::OnDrawUI(bool focused) -> void {
 	this->DrawSpinUI(focused);
+
+	if (!focused) return;
+
 	this->DrawEditSpinUI(focused);
 	this->DrawCustomRulesetUI(focused);
 	this->DrawEditMissionPoolUI(focused);
+	this->DrawEditHotkeysUI(focused);
 
 	if (!this->showUI) return;
 
@@ -558,11 +713,23 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 					this->SendResetTimer();
 					this->sharedSpin.timeStarted = std::chrono::steady_clock::now();
 				}
+				ImGui::SameLine();
+				if (ImGui::Button("Start")) {
+					this->SendPauseTimer(false);
+					this->sharedSpin.timeStarted = std::chrono::steady_clock::now();
+				}
 			}
 		}
 
 		if (ImGui::Checkbox("Overlay", &this->config.spinOverlay))
 			this->SaveConfiguration();
+
+		/*if (connected) {
+			ImGui::SameLine();
+			ImGui::SetCursorPosX(165.0);
+			if (ImGui::Button("Hotkeys"))
+				this->showEditHotkeysUI = !this->showEditHotkeysUI;
+		}*/
 
 		{
 			// Ruleset select
@@ -657,6 +824,30 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 			if (ImGui::Button("Previous"))
 				this->PreviousSpin();
 		}
+		ImGui::PopFont();
+	}
+
+	ImGui::End();
+	ImGui::PopFont();
+}
+
+auto Croupier::DrawEditHotkeysUI(bool focused) -> void {
+	if (!showEditHotkeysUI) return;
+
+	ImGui::PushFont(SDK()->GetImGuiBlackFont());
+
+	if (ImGui::Begin(ICON_MD_CASINO " CROUPIER - HOTKEYS", &showEditHotkeysUI, ImGuiWindowFlags_AlwaysAutoResize)) {
+		ImGui::PushFont(SDK()->GetImGuiBoldFont());
+
+		if (ImGuiHotkey("Respin Hotkey", respinKeyBind)) {
+			SetSetting("general", "respin_hotkey1", respinKeyBind.key1.toString());
+			SetSetting("general", "respin_hotkey2", respinKeyBind.key2.toString());
+		}
+		if (ImGuiHotkey("Shuffle Hotkey", shuffleKeyBind)) {
+			SetSetting("general", "shuffle_hotkey1", shuffleKeyBind.key1.toString());
+			SetSetting("general", "shuffle_hotkey2", shuffleKeyBind.key2.toString());
+		}
+
 		ImGui::PopFont();
 	}
 
@@ -1509,6 +1700,15 @@ auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Ki
 		}
 	}
 	return eKillValidationType::Invalid;
+}
+
+DEFINE_PLUGIN_DETOUR(Croupier, void*, OnLoadingScreenActivated, void* th, void* a1) {
+	loadingScreenActivated = true;
+	if (!loadRemovalActive) {
+		SendLoadStarted();
+		loadRemovalActive = true;
+	}
+	return HookResult<void*>(HookAction::Continue());
 }
 
 DEFINE_PLUGIN_DETOUR(Croupier, void, OnEventReceived, ZAchievementManagerSimple* th, const SOnlineEvent& event) {

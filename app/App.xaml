@@ -193,6 +193,24 @@
 				<TextBlock Text="{Binding Path=Name}"/>
 			</StackPanel>
 		</DataTemplate>
+		<DataTemplate x:Key="MissionComboBoxNoImageTemplate">
+			<StackPanel
+				Orientation="Horizontal"
+				Margin="0"
+			>
+				<TextBlock Text="{Binding Path=Location}" FontWeight="SemiBold" />
+				<TextBlock Text=": " />
+				<TextBlock Text="{Binding Path=Name}"/>
+			</StackPanel>
+		</DataTemplate>
+		<DataTemplate x:Key="MissionComboBoxNoLocationTemplate">
+			<StackPanel
+				Orientation="Horizontal"
+				Margin="0"
+			>
+				<TextBlock Text="{Binding Path=Name}"/>
+			</StackPanel>
+		</DataTemplate>
 		<DataTemplate x:Key="MissionComboBoxSeparatorTemplate">
 			<TextBlock Grid.Column="1" Text="{Binding Path=Name}" FontWeight="Bold" Foreground="#999" Margin="0,1,0,2" />
 		</DataTemplate>

@@ -43,7 +43,10 @@ namespace Croupier {
 		public bool Timer { get; set; } = false;
 		public bool TimerMultiSpin { get; set; } = false;
 		public bool TimerFractions { get; set; } = false;
+		public MissionID TimerResetMission { get; set; } = MissionID.NONE;
+
 		public string TargetNameFormat { get; set; } = "";
+		public int AutoSpinCountdown { get; set; } = 0;
 		
 		public double Width1Column { get; set; } = 0;
 		public double Width2Column { get; set; } = 0;

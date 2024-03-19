@@ -8,14 +8,14 @@
 		mc:Ignorable="d"
 		Title="LiveSplit - Croupier"
 		WindowStyle="SingleBorderWindow"
-		Width="600"
-		Height="320"
-		MaxHeight="320"
+		Width="640"
+		Height="350"
+		MaxHeight="350"
 		MinHeight="320"
 		MinWidth="500"
 		MaxWidth="720"
 		Icon="/CroupierLogoIconsFlatLg.png">
-	<StackPanel UseLayoutRounding="True" Margin="0" Background="Black">
+	<ScrollViewer UseLayoutRounding="True" Margin="0" Background="Black">
 		<StackPanel Orientation="Vertical">
 			<TextBlock
 				Text="LiveSplit Integration"
@@ -30,12 +30,12 @@
 				Margin="5,2"
 				/>
 			<TextBlock
-				Text="Enter the port into the port field below (16834 by default). If connecting over network, you should also enter the host IP address."
+				Text="Enter the port into the port field below (16834 by default). If connecting over network, you should also enter the host IP address, otherwise use 'localhost' or '127.0.0.1'."
 				Foreground="White"
 				TextWrapping="WrapWithOverflow"
 				Margin="5,2"
 				/>
-			<Grid Margin="5,10">
+			<Grid Margin="5,10" HorizontalAlignment="Stretch">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="100" />
 					<ColumnDefinition Width="*" />
@@ -99,6 +99,7 @@
 					MinWidth="100"
 					Text="{Binding StatusText}"
 					Foreground="{Binding StatusColour}"
+					TextWrapping="WrapWithOverflow"
 					/>
 			</Grid>
 			<StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Center">
@@ -106,5 +107,5 @@
 				<Button Margin="5,0" Padding="10,3" Content="Cancel" Click="CancelButton_Click" />
 			</StackPanel>
 		</StackPanel>
-	</StackPanel>
+	</ScrollViewer>
 </Window>

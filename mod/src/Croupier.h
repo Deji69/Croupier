@@ -2,6 +2,7 @@
 #include "CroupierClient.h"
 #include "Events.h"
 #include "EventSystem.h"
+#include "InputUtil.h"
 #include "KillConfirmation.h"
 #include "Roulette.h"
 #include <IPluginInterface.h>
@@ -9,11 +10,19 @@
 #include <Glacier/SGameUpdateEvent.h>
 #include <Glacier/SOnlineEvent.h>
 #include <Glacier/ZGameUIManager.h>
+#include <Glacier/ZInput.h>
 #include <Glacier/ZObject.h>
 #include <Glacier/ZString.h>
 #include <filesystem>
 #include <stack>
 #include <unordered_map>
+
+struct KeyBindAssign {
+	KeyBind key1;
+	KeyBind key2;
+	bool assigning1 = false;
+	bool assigning2 = false;
+};
 
 struct SharedRouletteSpin {
 	const RouletteSpin& spin;
@@ -131,6 +140,7 @@ public:
 	auto DrawEditSpinUI(bool focused) -> void;
 	auto DrawCustomRulesetUI(bool focused) -> void;
 	auto DrawEditMissionPoolUI(bool focused) -> void;
+	auto DrawEditHotkeysUI(bool focused) -> void;
 	auto DrawSpinUI(bool focused) -> void;
 	auto Random() -> void;
 	auto Respin(bool isAuto = true) -> void;
@@ -149,7 +159,11 @@ public:
 	auto SendMissionComplete() -> void;
 	auto SendKillValidationUpdate() -> void;
 	auto SendResetTimer() -> void;
+	auto SendStartTimer() -> void;
 	auto SendToggleTimer(bool enable) -> void;
+	auto SendPauseTimer(bool pause) -> void;
+	auto SendLoadStarted() -> void;
+	auto SendLoadFinished() -> void;
 
 	auto InstallHooks() -> void;
 	auto UninstallHooks() -> void;
@@ -163,10 +177,14 @@ private:
 
 	auto LogSpin() -> void;
 	auto SetupEvents() -> void;
+	auto ProcessHotkeys() -> void;
 	auto ProcessMissionsMessage(const ClientMessage& message) -> void;
 	auto ProcessSpinDataMessage(const ClientMessage& message) -> void;
+	auto ProcessLoadRemoval() -> void;
 	auto ParseSpin(std::string_view str) -> std::optional<RouletteSpin>;
 
+	DECLARE_PLUGIN_DETOUR(Croupier, void*, OnZLevelManagerStateCondition, void* th, __int64 a2);
+	DECLARE_PLUGIN_DETOUR(Croupier, void*, OnLoadingScreenActivated, void* th, void* a1);
 	DECLARE_PLUGIN_DETOUR(Croupier, void, OnEventReceived, ZAchievementManagerSimple* th, const SOnlineEvent& event);
 	DECLARE_PLUGIN_DETOUR(Croupier, void, OnEventSent, ZAchievementManagerSimple* th, uint32_t eventIndex, const ZDynamicObject& event);
 	DECLARE_PLUGIN_DETOUR(Croupier, void, OnWinHttpCallback, void* dwContext, void* hInternet, void* param_3, int dwInternetStatus, void* param_5, int param_6);
@@ -189,10 +207,20 @@ private:
 	bool showManualModeUI = false;
 	bool showEditMissionPoolUI = false;
 	bool showCustomRulesetUI = false;
+	bool showEditHotkeysUI = false;
 	bool spinCompleted = false;
 	bool spinLocked = false;
 	bool appTimerEnable = false;
 	bool hooksInstalled = false;
+	bool loadRemovalActive = false;
+	bool isLoadingScreenCheckHasBeenTrue = false;
+	bool loadingScreenActivated = false;
+	bool respinKeybindWasPressed = false;
+	bool shuffleKeybindWasPressed = false;
+	KeyBindAssign respinKeyBind;
+	KeyBindAssign shuffleKeyBind;
+	ZInputAction respinAction;
+	ZInputAction shuffleAction;
 	Configuration config;
 };
 

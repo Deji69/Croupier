@@ -1,8 +1,5 @@
 ﻿using System.Net.Sockets;
-using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using System;
 using System.Text;
 
@@ -19,7 +16,7 @@ namespace Croupier {
 			get => status;
 		}
 
-		public async Task Start() {
+		public async Task StartAsync() {
 			if (!Config.Default.LiveSplitEnabled)
 				return;
 			if (started)
@@ -30,42 +27,45 @@ namespace Croupier {
 
 			socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
 
-			await Task.Run(() => {
-				Status("Connecting...");
-				var attempts = 1;
+			Status("Connecting...");
 
-				while (!needToStop) {
-					var task = socket.ConnectAsync(Config.Default.LiveSplitIP, Config.Default.LiveSplitPort);
-
-					try {
-						while (!task.Wait(1000));
-					} catch (SocketException e) {
-						Status($"{e.Message}. Reattempting (attempts: {attempts}).");
-						System.Diagnostics.Debug.WriteLine("[LIVESPLIT] " + e.Message);
-						break;
-					}
-
-					if (!socket.Connected)
-						continue;
-
-					Status("Connected.");
-					connected = true;
-
-					while (socket.Connected && !needToStop)
-						Thread.Sleep(2000);
-
-					if (needToStop)
-						break;
-
-					connected = false;
+			while (!needToStop) {
+				try {
+					await socket.ConnectAsync(Config.Default.LiveSplitIP, Config.Default.LiveSplitPort).WaitAsync(TimeSpan.FromSeconds(5));
+				} catch (SocketException e) {
+					if (needToStop) break;
+					Status($"{e.Message}\nCheck LiveSplit Server is running (Control > Start Server) and that the IP and Port are correct.");
+					System.Diagnostics.Debug.WriteLine("[LIVESPLIT] " + e.Message);
 				}
 
-				if (connected)
+				if (!socket.Connected)
+					continue;
+
+				Status("Connected.");
+				connected = true;
+
+				try {
+					while (socket.Connected && !needToStop) {
+						Send("ping");
+						await Task.Delay(2000);
+					}
+				} catch (SocketException e) {
+					Status($"Disconnected: {e.Message}");
 					socket.Disconnect(true);
+					await Task.Delay(5000);
+				}
+
+				if (needToStop)
+					break;
 
 				connected = false;
-				started = false;
-			});
+			}
+
+			if (connected)
+				socket.Disconnect(true);
+
+			connected = false;
+			started = false;
 			
 			Status("Stopped.");
 			needToStop = false;
@@ -75,7 +75,7 @@ namespace Croupier {
 			return Task.Run(() => {
 				if (!started) return;
 				needToStop = true;
-				while (started) Thread.Sleep(500);
+				while (started) Task.Delay(500);
 			});
 		}
 
@@ -108,6 +108,10 @@ namespace Croupier {
 
 		public bool Pause() {
 			return Send("pause");
+		}
+
+		public bool Resume() {
+			return Send("resume");
 		}
 
 		public bool Reset() {

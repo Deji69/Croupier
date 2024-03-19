@@ -85,7 +85,7 @@ namespace Croupier {
 			Config.Save();
 
 			if (Config.Default.LiveSplitEnabled)
-				_ = ((App)App.Current).LiveSplitClient.Start();
+				_ = ((App)App.Current).LiveSplitClient.StartAsync();
 			else
 				((App)App.Current).LiveSplitClient.Stop();
 		}

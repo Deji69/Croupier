@@ -29,6 +29,9 @@ std::map<eClientMessage, std::string> clientMessageTypeMap = {
 	{eClientMessage::ResetTimer, "ResetTimer"},
 	{eClientMessage::StartTimer, "StartTimer"},
 	{eClientMessage::StopTimer, "StopTimer"},
+	{eClientMessage::PauseTimer, "PauseTimer"},
+	{eClientMessage::LoadStarted, "LoadStarted"},
+	{eClientMessage::LoadFinished, "LoadFinished"},
 };
 std::map<std::string, eClientMessage> clientMessageTypeMapRev = {
 	{"Respin", eClientMessage::Respin},
@@ -47,6 +50,9 @@ std::map<std::string, eClientMessage> clientMessageTypeMapRev = {
 	{"ResetTimer", eClientMessage::ResetTimer},
 	{"StartTimer", eClientMessage::StartTimer},
 	{"StopTimer", eClientMessage::StopTimer},
+	{"PauseTimer", eClientMessage::PauseTimer},
+	{"LoadStarted", eClientMessage::LoadStarted},
+	{"LoadFinished", eClientMessage::LoadFinished},
 };
 
 auto ClientMessage::toString() const -> std::string {

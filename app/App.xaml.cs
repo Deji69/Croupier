@@ -18,7 +18,7 @@ namespace Croupier
 			Config.Load();
 			CroupierSocketServer.Start();
 			if (Config.Default.LiveSplitEnabled)
-				_ = LiveSplitClient.Start();
+				_ = LiveSplitClient.StartAsync();
 		} 
 
 		private void Application_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
@@ -29,6 +29,7 @@ namespace Croupier
 
 		protected override void OnExit(ExitEventArgs e)
 		{
+			LiveSplitClient.Stop();
 			HitmapsSpinLink.ForceStop();
 			base.OnExit(e);
 			Config.Save();

@@ -1,0 +1,146 @@
+﻿<Window x:Class="Croupier.TimerSettingsWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:local="clr-namespace:Croupier"
+		d:DataContext="{d:DesignInstance Type=local:TimerSettingsWindowViewModel}"
+		mc:Ignorable="d"
+		Title="Timer - Croupier"
+		WindowStyle="SingleBorderWindow"
+		Width="640"
+		Height="350"
+		MaxHeight="350"
+		MinHeight="320"
+		MinWidth="500"
+		MaxWidth="720"
+		Icon="/CroupierLogoIconsFlatLg.png">
+	<Window.Resources>
+		<DataTemplate x:Key="ResetMissionSelectTemplate" DataType="{x:Type local:MissionComboBoxItem}">
+			<ContentPresenter Content="{Binding}" HorizontalAlignment="Stretch">
+				<ContentPresenter.Style>
+					<Style TargetType="{x:Type ContentPresenter}">
+						<Setter Property="ContentTemplate" Value="{StaticResource MissionComboBoxNoImageTemplate}" />
+						<Style.Triggers>
+							<DataTrigger Binding="{Binding IsSeparator}" Value="True">
+								<Setter Property="ContentTemplate" Value="{StaticResource MissionComboBoxSeparatorTemplate}" />
+							</DataTrigger>
+							<DataTrigger Binding="{Binding Location}" Value="">
+								<Setter Property="ContentTemplate" Value="{StaticResource MissionComboBoxNoLocationTemplate}" />
+							</DataTrigger>
+						</Style.Triggers>
+					</Style>
+				</ContentPresenter.Style>
+			</ContentPresenter>
+		</DataTemplate>
+	</Window.Resources>
+	<ScrollViewer UseLayoutRounding="True" Margin="0" Background="Black">
+		<StackPanel Orientation="Vertical">
+			<TextBlock
+				Text="Timer Setup"
+				FontWeight="Bold"
+				Foreground="White"
+				Margin="5,2"
+				/>
+			<TextBlock
+				Text="Customise the behaviour of integrated and LiveSplit timing features."
+				Foreground="White"
+				TextWrapping="WrapWithOverflow"
+				Margin="5,2"
+				/>
+			<Grid Margin="5">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="1.3*" MinWidth="200" MaxWidth="250" />
+					<ColumnDefinition Width="2*" />
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+				<StackPanel Orientation="Vertical" Margin="5,0,5,8">
+					<TextBlock
+						Text="Reset On Mission Select"
+						Foreground="White"
+						FontWeight="Bold"
+						/>
+					<ComboBox Name="ResetMissionSelect"
+						ItemTemplate="{StaticResource ResetMissionSelectTemplate}"
+						SelectionChanged="ResetOnMissionSelect_SelectionChanged"
+					>
+						<ComboBox.ItemContainerStyle>
+							<Style TargetType="ComboBoxItem">
+								<Style.Triggers>
+									<DataTrigger Binding="{Binding IsSeparator}" Value="True">
+										<Setter Property="HorizontalAlignment" Value="Center" />
+										<Setter Property="IsEnabled" Value="False"/>
+									</DataTrigger>
+								</Style.Triggers>
+							</Style>
+						</ComboBox.ItemContainerStyle>
+					</ComboBox>
+				</StackPanel>
+				<TextBlock
+					Grid.Row="0"
+					Grid.Column="1"
+					Foreground="White"
+					Margin="5,0,0,5"
+					TextWrapping="WrapWithOverflow"
+					FontWeight="Normal"
+					VerticalAlignment="Top">
+					Choose a mission to have Croupier reset timers when a new spin is generated for it.
+				</TextBlock>
+
+				<StackPanel
+					Grid.Row="1"
+					Orientation="Vertical"
+					Margin="5,0,5,8">
+					<TextBlock
+						Text="Auto-Spin Countdown"
+						Foreground="White"
+						FontWeight="Bold"
+						/>
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="1*" />
+							<ColumnDefinition Width="32" />
+						</Grid.ColumnDefinitions>
+						<Slider
+							Name="AutoSpinCountdownSlider" 
+							Foreground="White"
+							TickFrequency="1"
+							IsSnapToTickEnabled="True"
+							Minimum="0"
+							Value="{Binding AutoSpinCountdown}"
+							Maximum="30"
+							SmallChange="1"
+							LargeChange="10"
+							MaxWidth="200"
+							/>
+						<TextBox
+							Grid.Column="1"
+							Text="{Binding ElementName=AutoSpinCountdownSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}"
+							Width="26"
+						/>
+					</Grid>
+				</StackPanel>
+				<TextBlock
+					Grid.Row="1"
+					Grid.Column="1"
+					Foreground="White"
+					Margin="5,0,0,5"
+					TextWrapping="WrapWithOverflow"
+					FontWeight="Normal"
+					Text="{Binding AutoSpinCountdownStatus, UpdateSourceTrigger=PropertyChanged}"
+					VerticalAlignment="Top" />
+			</Grid>
+		</StackPanel>
+	</ScrollViewer>
+</Window>

@@ -28,6 +28,7 @@
 		<CommandBinding Command="{x:Static local:MainWindow.ShowLiveSplitWindowCommand}" CanExecute="Command_AlwaysCanExecute" Executed="ShowLiveSplitWindowCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.EditMapPoolCommand}" CanExecute="Command_AlwaysCanExecute" Executed="EditMapPoolCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.EditRulesetsCommand}" CanExecute="Command_AlwaysCanExecute" Executed="EditRulesetsCommand_Executed" />
+		<CommandBinding Command="{x:Static local:MainWindow.TimerSettingsCommand}" CanExecute="Command_AlwaysCanExecute" Executed="TimerSettingsCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.PrevSpinCommand}" CanExecute="PrevSpinCommand_CanExecute" Executed="PrevSpinCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.NextSpinCommand}" CanExecute="NextSpinCommand_CanExecute" Executed="NextSpinCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.ShuffleCommand}" CanExecute="ShuffleCommand_CanExecute" Executed="ShuffleCommand_Executed" />
@@ -357,6 +358,10 @@
 					</TextBlock.Style>
 					<TextBlock.ContextMenu>
 						<ContextMenu Name="TimerContextMenu" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+							<MenuItem
+								Header="Settings"
+								Command="{x:Static local:MainWindow.TimerSettingsCommand}"
+							/>
 							<MenuItem
 								Header="Reset"
 								Command="{x:Static local:MainWindow.ResetTimerCommand}"
