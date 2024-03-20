@@ -536,7 +536,7 @@ auto Croupier::SendStartTimer() -> void {
 }
 
 auto Croupier::SendPauseTimer(bool pause) -> void {
-	this->client->send(eClientMessage::PauseTimer);
+	this->client->send(eClientMessage::PauseTimer, {pause ? "1" : "0"});
 }
 
 auto Croupier::SendSpinData() -> void {

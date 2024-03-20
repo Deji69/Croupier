@@ -186,13 +186,13 @@ namespace Croupier
 				return;
 			}
 			else if (cmd == "PauseTimer") {
-				var data = rest.First();
+				var data = rest.Length > 0 ? rest.First() : "";
 				var pause = data.Length > 0 && data[0] != '0';
 				App.Current.Dispatcher.Invoke(new Action(() => PauseTimer?.Invoke(null, pause)));
 				return;
 			}
 			else if (cmd == "ToggleTimer") {
-				var data = rest.First();
+				var data = rest.Length > 0 ? rest.First() : "";
 				var enable = data.Length > 0 && data[0] != '0';
 				App.Current.Dispatcher.Invoke(new Action(() => ToggleTimer?.Invoke(null, enable)));
 				return;
