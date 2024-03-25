@@ -448,7 +448,7 @@ namespace Croupier {
 		{
 			method = TokenCharacterRegex.Replace(input, "").ToLower() switch {
 				"ar" or "assaultrifle" => FirearmKillMethod.AssaultRifle,
-				"bomb" or "explosiveweapon" or "explosive" => FirearmKillMethod.Explosive,
+				"bomb" or "explosiveweapon" or "explosive" or "expl" or "exp" => FirearmKillMethod.Explosive,
 				"pistol" => FirearmKillMethod.Pistol,
 				"shotgun" or "shotty" => FirearmKillMethod.Shotgun,
 				"smg" => FirearmKillMethod.SMG,
