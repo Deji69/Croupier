@@ -164,7 +164,7 @@ inline static const std::unordered_map<std::string, eMapKillMethod> specificKill
 	{"e17172cc-bf70-4df6-9828-d9856b1a24fd", eMapKillMethod::KitchenKnife},
 	{"c61fea13-aaf0-4173-8fd0-9c34b43638ae", eMapKillMethod::KukriMachete},
 	{"f1f89faf-a441-4492-b442-9a923b5ecfd1", eMapKillMethod::LetterOpener},
-	{"21152383-6d79-436c-b359-0f8b4f5ed4a0", eMapKillMethod::Machete},
+	{"3e3819ca-4d19-4e0a-a238-4bd16c730e61", eMapKillMethod::Machete},
 	{"66024572-7838-42d3-8c7b-c651e259438e", eMapKillMethod::MeatFork},
 	{"369c68f7-cbef-4e45-83c7-8acd0dc2d237", eMapKillMethod::OldAxe},
 	{"b4d4ed1a-0687-48a9-a731-0e3b99494eb6", eMapKillMethod::OrnateScimitar},
