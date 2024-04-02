@@ -64,7 +64,7 @@ namespace Croupier
 			);
 
 			// Pick a random method of the generated type
-			var shouldGenerateKillType = random.Next(1) != 0;
+			var shouldGenerateKillType = random.Next(2) != 0;
 			switch (method.Type) {
 				case KillMethodType.Standard:
 					method.Standard = KillMethod.StandardList[random.Next(KillMethod.StandardList.Count)];
@@ -132,7 +132,7 @@ namespace Croupier
 			var types = new KillMethodType[] { KillMethodType.Firearm, KillMethodType.Specific };
 			KillMethod method = new((KillMethodType)types.GetValue(random.Next(types.Length)));
 			
-			var shouldGenerateKillType = random.Next(1) != 0;
+			var shouldGenerateKillType = random.Next(2) != 0;
 
 			// Pick a random method of the generated type
 			switch (method.Type) {
