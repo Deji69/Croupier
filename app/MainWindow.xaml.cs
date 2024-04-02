@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Security.Policy;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -754,6 +755,18 @@ namespace Croupier
 
 			var idx = MissionListItems.ToList().FindIndex(item => item.ID == currentMission.ID);
 			MissionSelect.SelectedIndex = idx;
+
+			UpdateChecker.CheckForUpdateAsync().ContinueWith(task => {
+				if (task.Result == null) return;
+
+				var result = MessageBox.Show(
+					$"Click Yes to download {task.Result.name}. Click No to update later.",
+					"Update Available - Croupier",
+					MessageBoxButton.YesNo
+				);
+				if (result == MessageBoxResult.Yes)
+					UpdateChecker.OpenUrl(task.Result.url);
+			});
 		}
 
 		public void Spin(MissionID id = MissionID.NONE) {
