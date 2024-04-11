@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Croupier
@@ -889,6 +890,13 @@ namespace Croupier
 
 		public static List<Disguise> GetDisguises(MissionID mission)
 		{
+			return GetDisguisesSub(mission)
+				.Prepend(new("Any Disguise", "condition_disguise_any.jpg", false, true))
+				.ToList();
+		}
+
+		private static List<Disguise> GetDisguisesSub(MissionID mission)
+		{
 			List<Disguise> disguises = [];
 			switch (mission) {
 				case MissionID.ICAFACILITY_GUIDED:
@@ -1370,6 +1378,7 @@ namespace Croupier
 			}
 			return disguises;
 		}
+		
 		public static Disguise GetDisguiseByName(MissionID mission, string name)
 		{
 			var disguises = GetDisguises(mission);
@@ -1391,6 +1400,15 @@ namespace Croupier
 			var disguises = GetDisguises(mission);
 			foreach (var item in disguises) {
 				if (item.Suit) return item;
+			}
+			return null;
+		}
+
+		public static Disguise GetAnyDisguise(MissionID mission)
+		{
+			var disguises = GetDisguises(mission);
+			foreach (var item in disguises) {
+				if (item.Any) return item;
 			}
 			return null;
 		}

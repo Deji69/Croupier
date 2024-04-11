@@ -91,6 +91,7 @@ namespace Croupier
 		public bool allowDuplicateDisguise = false;
 		public bool allowDuplicateMethod = false;
 		public bool suitOnlyMode = false;
+		public bool enableAnyDisguise = false;
 		public int liveComplicationChance = 30;
 
 		public bool enableAnyExplosives = true;

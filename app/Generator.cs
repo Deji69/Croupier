@@ -48,6 +48,12 @@ namespace Croupier
 		}
 
 		public Disguise GenerateDisguise() {
+			if (Config.Default.Ruleset_EnableAnyDisguise) {
+				var disguises = new List<Disguise>(mission.Disguises) {
+					new("Any", "condition_disguise_any.jpg", false, true)
+				};
+				return disguises[random.Next(disguises.Count)];
+			}
 			return mission.Disguises[random.Next(mission.Disguises.Count)];
 		}
 

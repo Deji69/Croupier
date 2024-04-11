@@ -31,6 +31,9 @@ namespace Croupier {
 		public bool Ruleset_RemoteExplosiveKillTypes { get; set; } = false;
 		public bool Ruleset_LoudRemoteExplosiveKillTypes { get; set; } = false;
 		public bool Ruleset_ImpactExplosiveKillTypes { get; set; } = false;
+		public bool Ruleset_SuitOnlyMode { get; set; } = false;
+		public bool Ruleset_AllowDuplicateDisguises { get; set; } = false;
+		public bool Ruleset_EnableAnyDisguise { get; set; } = false;
 		public List<string> SpinHistory { get; set; } = [];
 		public List<string> Bookmarks { get; set; } = [];
 

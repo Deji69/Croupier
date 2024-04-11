@@ -1,19 +1,9 @@
-﻿using Croupier.Properties;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Croupier
 {
@@ -193,6 +183,16 @@ namespace Croupier
 				OnPropertyChanged(nameof(SuitOnlyMode));
 			}
 		}
+		public bool EnableAnyDisguise {
+			get {
+				return Ruleset.enableAnyDisguise;
+			}
+			set {
+				Ruleset.enableAnyDisguise = value;
+				CustomRulesetChanged();
+				OnPropertyChanged(nameof(EnableAnyDisguise));
+			}
+		}
 		public bool AllowDuplicateDisguises {
 			get {
 				return Ruleset.allowDuplicateDisguise;
@@ -225,6 +225,9 @@ namespace Croupier
 				OnPropertyChanged(nameof(BuggyConditions));
 				OnPropertyChanged(nameof(ImpossibleConditions));
 				OnPropertyChanged(nameof(EasterEggConditions));
+				OnPropertyChanged(nameof(SuitOnlyMode));
+				OnPropertyChanged(nameof(EnableAnyDisguise));
+				OnPropertyChanged(nameof(AllowDuplicateDisguises));
 			}
 		}
 		private readonly ObservableCollection<Ruleset> Rulesets;
@@ -254,6 +257,9 @@ namespace Croupier
 				customRuleset.enableRemoteExplosives = Config.Default.Ruleset_RemoteExplosiveKillTypes;
 				customRuleset.enableLoudRemoteExplosives = Config.Default.Ruleset_LoudRemoteExplosiveKillTypes;
 				customRuleset.enableImpactExplosives = Config.Default.Ruleset_ImpactExplosiveKillTypes;
+				customRuleset.suitOnlyMode = Config.Default.Ruleset_SuitOnlyMode;
+				customRuleset.allowDuplicateDisguise = Config.Default.Ruleset_AllowDuplicateDisguises;
+				customRuleset.enableAnyDisguise = Config.Default.Ruleset_EnableAnyDisguise;
 			}
 
 			var ruleset = Rulesets.FirstOrDefault(r => r.Name == Config.Default.Ruleset);
@@ -318,6 +324,9 @@ namespace Croupier
 					Config.Default.Ruleset_BannedImpossible = Ruleset.enableImpossible;
 					Config.Default.Ruleset_BannedBuggy = Ruleset.enableBuggy;
 					Config.Default.Ruleset_BannedEasterEgg = Ruleset.enableEasterEggConditions;
+					Config.Default.Ruleset_AllowDuplicateDisguises = Ruleset.allowDuplicateDisguise;
+					Config.Default.Ruleset_SuitOnlyMode = Ruleset.suitOnlyMode;
+					Config.Default.Ruleset_EnableAnyDisguise = Ruleset.enableAnyDisguise;
 					Config.Save();
 				}
 				else ApplyRuleset?.Invoke(this, Ruleset);

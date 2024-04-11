@@ -468,6 +468,25 @@
 							VerticalAlignment="Top">
 							Allow multiple targets to have the same disguise generated.
 						</TextBlock>
+						<CheckBox
+							Grid.Row="2"
+							Grid.Column="0"
+							Margin="0,0,10,0"
+							Content="Enable 'Any' disguise"
+							Foreground="White"
+							VerticalContentAlignment="Top"
+							IsChecked="{Binding EnableAnyDisguise}"
+							/>
+						<TextBlock
+							Grid.Row="2"
+							Grid.Column="1"
+							Foreground="White"
+							Margin="5,0,0,8"
+							TextWrapping="WrapWithOverflow"
+							FontWeight="Normal"
+							VerticalAlignment="Top">
+							Allow spins to have 'Any' as the disguise, allowing the kill to be done in any disguise.
+						</TextBlock>
 					</Grid>
 				</Expander>
 			</StackPanel>

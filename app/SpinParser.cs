@@ -318,7 +318,11 @@ namespace Croupier {
 			{"prison", "prisoner"},
 		};
 		public static readonly List<ConditionKeywords> DisguiseKeywords = [
-			new([], new() { { "suit", "Suit" } }),
+			new([], new() {
+				{ "suit", "Suit" },
+				{ "anydisg", "Any Disguise" },
+				{ "anydisguise", "Any Disguise" },
+			}),
 			new([MissionID.ICAFACILITY_GUIDED, MissionID.ICAFACILITY_FREEFORM], new(){
 				{"bodyguard", "Bodyguard"},
 				{"guard", "Bodyguard"},
@@ -1604,6 +1608,7 @@ namespace Croupier {
 					: contexts.Find(ctx => ctx.target == target.Name);
 				if (context == null) return false;
 				var disguise = Mission.GetDisguiseByName(context.mission, context.disguise)
+				            ?? (Config.Default.Ruleset_EnableAnyDisguise ? Mission.GetAnyDisguise(context.mission) : null)
 				            ?? Mission.GetSuitDisguise(context.mission);
 				if (disguise == null) return false;
 				if (!context.HaveKillMethod) context.standardKillMethod = StandardKillMethod.NeckSnap;
