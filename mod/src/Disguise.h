@@ -5,7 +5,7 @@
 
 struct RouletteDisguise {
 public:
-	RouletteDisguise(std::string name, std::string image, std::string repoId, bool suit = false) : name(name), image(image), repoId(repoId), suit(suit)
+	RouletteDisguise(std::string name, std::string image, std::string repoId, bool suit = false, bool any = false) : name(name), image(image), repoId(repoId), suit(suit), any(any)
 	{}
 
 public:
@@ -13,6 +13,7 @@ public:
 	std::string image;
 	std::string repoId;
 	bool suit = false;
+	bool any = false;
 };
 
 inline static std::map<std::string, std::string, InsensitiveCompareLexicographic> disguiseVariants = {

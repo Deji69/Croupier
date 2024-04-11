@@ -505,6 +505,7 @@ const std::unordered_map<eMission, std::vector<MapKillMethod>> missionMethods = 
 		eMapKillMethod::Starfish,
 	}},
 };
+const RouletteDisguise anyDisguise{"Any Disguise", "condition_disguise_any.jpg", "", false, true};
 const std::unordered_map<eMission, std::vector<RouletteDisguise>> missionDisguises = {
 	{eMission::ICAFACILITY_GUIDED, {
 		RouletteDisguise{"Suit", "outfit_22725852-7989-463a-822a-5848b1b2c6cf_0.jpg", "22725852-7989-463a-822a-5848b1b2c6cf", true},

@@ -127,7 +127,11 @@ const std::unordered_map<std::string, std::string> keywordKeywords = {
 	{"prison", "prisoner"},
 };
 const std::vector<DisguiseKeywords> disguiseKeywords = {
-	DisguiseKeywords{{}, {{"suit", "Suit"}}},
+	DisguiseKeywords{{}, {
+		{"suit", "Suit"},
+		{"anydisg", "Any Disguise"},
+		{"anydisguise", "Any Disguise"},
+	}},
 	DisguiseKeywords{{eMission::ICAFACILITY_GUIDED, eMission::ICAFACILITY_FREEFORM}, {
 		{"bodyguard", "Bodyguard"},
 		{"guard", "Bodyguard"},

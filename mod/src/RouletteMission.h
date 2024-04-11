@@ -84,6 +84,7 @@ extern const std::unordered_map<std::string, eMission> missionsByContractId;
 extern const std::unordered_map<eMission, std::vector<MapKillMethod>> missionMethods;
 extern const std::unordered_map<eMission, std::vector<RouletteDisguise>> missionDisguises;
 extern const std::vector<MissionInfo> missionInfos;
+extern const RouletteDisguise anyDisguise;
 
 inline auto& getMissionMethods(eMission mission) {
 	static const std::vector<MapKillMethod> emptyMissionMethods;
@@ -137,6 +138,7 @@ public:
 	}
 
 	auto getDisguiseByName(std::string_view name) const {
+		if (name == "Any Disguise") return &anyDisguise;
 		auto it = find_if(cbegin(this->disguises), cend(this->disguises), [name](const RouletteDisguise& disguise) {
 			return disguise.name == name;
 		});

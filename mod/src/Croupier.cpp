@@ -1458,11 +1458,11 @@ auto Croupier::SetupEvents() -> void {
 			// Target already killed? Confusion. Turn an invalid kill valid, but don't invalidate previously validated kills.
 			if (kc.correctMethod == eKillValidationType::Valid) {
 				if (!kc.correctDisguise)
-					kc.correctDisguise = reqDisguise.suit ? ev.Value.OutfitIsHitmanSuit : reqDisguise.repoId == disguiseRepoId;
+					kc.correctDisguise = reqDisguise.any || (reqDisguise.suit ? ev.Value.OutfitIsHitmanSuit : reqDisguise.repoId == disguiseRepoId);
 				break;
 			}
 
-			kc.correctDisguise = reqDisguise.suit ? ev.Value.OutfitIsHitmanSuit : reqDisguise.repoId == disguiseRepoId;
+			kc.correctDisguise = reqDisguise.any || (reqDisguise.suit ? ev.Value.OutfitIsHitmanSuit : reqDisguise.repoId == disguiseRepoId);
 
 			if (cond.killComplication == eKillComplication::Live && kc.isPacified)
 				kc.correctMethod = eKillValidationType::Invalid;
