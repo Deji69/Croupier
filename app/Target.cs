@@ -366,7 +366,7 @@ namespace Croupier
 			}},
 			{"CHS", new Target(TargetID.ClausHugoStrandberg) {
 				MethodTags = [
-					new(StandardKillMethod.FallingObject, [MethodTag.BannedInRR, MethodTag.Extreme]),
+					new(StandardKillMethod.FallingObject, [MethodTag.Hard]),
 				],
 				Rules = {
 					new((Disguise disguise, KillMethod method) => {
@@ -449,7 +449,7 @@ namespace Croupier
 			}},
 			{"YY", new Target(TargetID.YukiYamazaki) {
 				MethodTags = [
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR]),
+					new(StandardKillMethod.Fire, []),
 				],
 			}},
 			{"OC", new Target(TargetID.OwenCage) {
@@ -479,7 +479,7 @@ namespace Croupier
 			}},
 			{"RD", new Target(TargetID.RicoDelgado) {
 				MethodTags = [
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Extreme]),
+					new(StandardKillMethod.Fire, []),
 					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Extreme]),
 				],
 			}},
