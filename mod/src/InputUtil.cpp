@@ -166,7 +166,7 @@ bool KeyBind::isPressed() const noexcept
 	if (keyCode >= 1 && keyCode <= 5)
 		return ImGui::IsMouseClicked(keyCode - 1);
 
-	return ImGui::IsKeyPressed(keyCode, false);
+	return ImGui::IsKeyPressed(static_cast<ImGuiKey>(keyCode), false);
 }
 
 bool KeyBind::isDown() const noexcept
@@ -180,12 +180,12 @@ bool KeyBind::isDown() const noexcept
 	if (TestModifierKey(keyCode))
 		return true;
 
-	return ImGui::IsKeyDown(keyCode);
+	return ImGui::IsKeyDown(static_cast<ImGuiKey>(keyCode));
 }
 
 bool KeyBind::setToPressedKey() noexcept
 {
-	if (ImGui::IsKeyPressed(ImGui::GetIO().KeyMap[ImGuiKey_Escape])) {
+	if (ImGui::IsKeyPressed(ImGuiKey_Escape)) {
 		keyCode = -1;
 		return true;
 	}
@@ -210,13 +210,13 @@ bool KeyBind::setToPressedKey() noexcept
 	}
 
 	for (int i = 0; i < IM_ARRAYSIZE(ImGui::GetIO().KeysDown); ++i) {
-		if (!ImGui::IsKeyPressed(i))
+		if (!ImGui::IsKeyPressed(static_cast<ImGuiKey>(i)))
 			continue;
 
 		if (const auto it = std::ranges::find(keyMap, i, &Key::code); it != keyMap.end()) {
 			keyCode = it->code;
 			// Treat AltGr as RALT
-			if (keyCode == VK_LCONTROL && ImGui::IsKeyPressed(VK_RMENU))
+			if (keyCode == VK_LCONTROL && ImGui::IsKeyPressed(static_cast<ImGuiKey>(VK_RMENU)))
 				keyCode = VK_RMENU;
 			return true;
 		}
