@@ -890,9 +890,7 @@ namespace Croupier
 
 		public static List<Disguise> GetDisguises(MissionID mission)
 		{
-			return GetDisguisesSub(mission)
-				.Prepend(new("Any Disguise", "condition_disguise_any.jpg", false, true))
-				.ToList();
+			return GetDisguisesSub(mission);
 		}
 
 		private static List<Disguise> GetDisguisesSub(MissionID mission)
