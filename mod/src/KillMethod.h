@@ -132,6 +132,7 @@ inline static auto checkExplosiveKillType(std::string repoId, eKillType kt) -> b
 	case eKillType::Remote:
 		return !impactExplosives.contains(repoId);
 	case eKillType::Impact:
+		if (repoId.empty()) return true;
 		return impactExplosives.contains(repoId);
 	case eKillType::LoudRemote:
 		return !nonLoudExplosives.contains(repoId) && !impactExplosives.contains(repoId);
