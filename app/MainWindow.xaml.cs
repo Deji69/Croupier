@@ -445,9 +445,9 @@ namespace Croupier
 			new Mission(MissionID.CARPATHIAN_UNTOUCHABLE),
 			new Mission(MissionID.AMBROSE_SHADOWSINTHEWATER),
 		];
-		private Ruleset rules = new("current", RulesetPreset.RR13);
+		private Ruleset rules = new("current", RulesetPreset.RR14);
 		private readonly ObservableCollection<Ruleset> rulesets = [
-			new("RR13", RulesetPreset.RR13),
+			new("RR14", RulesetPreset.RR14),
 			new("RRWC 2023", RulesetPreset.RRWC2023),
 			new("RR12", RulesetPreset.RR12),
 			new("RR11", RulesetPreset.RR11),

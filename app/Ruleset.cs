@@ -8,7 +8,7 @@ namespace Croupier
 {
 	public enum RulesetPreset {
 		Custom,
-		RR13,
+		RR14,
 		RRWC2023,
 		RR12,
 		RR11,
@@ -28,7 +28,7 @@ namespace Croupier
 
 		public void ApplyPresetDefaults() {
 			switch (Preset) {
-				case RulesetPreset.RR13:
+				case RulesetPreset.RR14:
 					genericEliminations = false;
 					meleeKillTypes = false;
 					thrownKillTypes = false;

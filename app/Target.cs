@@ -274,7 +274,6 @@ namespace Croupier
 			{ TargetID.Target8, new("Target #8", "8", "8th", "default_target_briefing.dds", MissionID.NONE) },
 			{ TargetID.Target9, new("Target #9", "9", "9th", "default_target_briefing.dds", MissionID.NONE) },
 			{ TargetID.Target10, new("Target #10", "10", "10th", "default_target_briefing.dds", MissionID.NONE) },
-
 			{ TargetID.AgentMontgomery, new("Agent Montgomery", "Montgomery", "MON", "AgentMontgomery.jpg", MissionID.BERLIN_APEXPREDATOR) },
 			{ TargetID.AgentChamberlin, new("Agent Chamberlin", "Chamberlin", "CHA", "AgentChamberlin.jpg", MissionID.BERLIN_APEXPREDATOR) },
 			{ TargetID.AgentDavenport, new("Agent Davenport", "Davenport", "DAV", "AgentDavenport.jpg", MissionID.BERLIN_APEXPREDATOR) },
