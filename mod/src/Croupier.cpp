@@ -1464,10 +1464,22 @@ auto Croupier::SetupEvents() -> void {
 
 			kc.correctDisguise = reqDisguise.any || (reqDisguise.suit ? ev.Value.OutfitIsHitmanSuit : reqDisguise.repoId == disguiseRepoId);
 
-			if (cond.killComplication == eKillComplication::Live && kc.isPacified)
+			if (!kc.correctDisguise && !reqDisguise.suit) {
+				Logger::Info("Invalid disguise '{}' (expected: '{}')", disguiseRepoId, reqDisguise.repoId);
+			}
+
+			if (cond.killComplication == eKillComplication::Live && kc.isPacified) {
 				kc.correctMethod = eKillValidationType::Invalid;
-			else if (cond.killMethod.method != eKillMethod::NONE)
+
+				Logger::Info("Invalid kill, target was KO'd on death");
+			}
+			else if (cond.killMethod.method != eKillMethod::NONE) {
 				kc.correctMethod = ValidateKillMethod(target.getID(), ev, cond.killMethod.method, cond.killType);
+				if (kc.correctMethod != eKillValidationType::Valid) {
+					Logger::Info("Invalid kill '{}' (type: {})", cond.killMethod.name, static_cast<int>(cond.killType));
+					Logger::Info("{}", ev.json.dump());
+				}
+			}
 			else if (cond.specificKillMethod.method != eMapKillMethod::NONE)
 				kc.correctMethod = ValidateKillMethod(target.getID(), ev, cond.specificKillMethod.method, cond.killType);
 
@@ -1538,6 +1550,10 @@ auto Croupier::SetupEvents() -> void {
 				}
 
 				kc.correctDisguise = !isNotInSuit;
+			}
+
+			if (!kc.correctDisguise && !reqDisguise.suit) {
+				Logger::Info("Invalid disguise '{}' (expected: '{}')", triggerDisguiseChange->disguiseRepoId, reqDisguise.repoId);
 			}
 
 			if (cond.specificKillMethod.method != eMapKillMethod::NONE) {
@@ -1689,15 +1705,27 @@ auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Ki
 
 auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Kill>& ev, eMapKillMethod method, eKillType type) -> eKillValidationType {
 	if (!ev.Value.KillItemRepositoryId.empty()) {
-		if (type == eKillType::Thrown && ev.Value.KillMethodBroad != "throw")
+		if (type == eKillType::Thrown && ev.Value.KillMethodBroad != "throw") {
+			Logger::Info("Kill validation failed. Expected 'throw', got '{}'.", ev.Value.KillMethodBroad);
+			Logger::Info("{}", ev.json.dump());
 			return eKillValidationType::Invalid;
-		if (type == eKillType::Melee && ev.Value.KillMethodBroad != "melee_lethal")
+		}
+		if (type == eKillType::Melee && ev.Value.KillMethodBroad != "melee_lethal") {
+			Logger::Info("Kill validation failed. Expected 'melee_lethal', got '{}'.", ev.Value.KillMethodBroad);
+			Logger::Info("{}", ev.json.dump());
 			return eKillValidationType::Invalid;
+		}
 
 		auto it = specificKillMethodsByRepoId.find(ev.Value.KillItemRepositoryId);
 		if (it != end(specificKillMethodsByRepoId) && it->second == method) {
 			return eKillValidationType::Valid;
 		}
+
+		if (it == end(specificKillMethodsByRepoId))
+			Logger::Info("Invalid kill '{}'. Repo ID unknown.", ev.Value.KillItemRepositoryId);
+		else
+			Logger::Info("Invalid kill '{}'. Repo ID kill method mismatch (expected {}, got {}).", ev.Value.KillItemRepositoryId, static_cast<int>(method), static_cast<int>(it->second));
+		Logger::Info("{}", ev.json.dump());
 	}
 	return eKillValidationType::Invalid;
 }
