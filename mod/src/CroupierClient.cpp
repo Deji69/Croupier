@@ -99,7 +99,7 @@ auto CroupierClient::reconnect() -> bool {
 				break;
 			closesocket(this->sock);
 			this->sock = INVALID_SOCKET;
-			Logger::Error("Error connecting to socket");
+			//Logger::Error("Error connecting to socket");
 		}
 
 		this->connected = this->sock != INVALID_SOCKET;
