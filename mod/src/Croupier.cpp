@@ -104,6 +104,13 @@ auto Croupier::LoadConfiguration() -> void {
 	auto cmds = std::map<std::string, std::function<void (std::string_view val)>> {
 		{"timer", [this, parseBool](std::string_view val) { this->config.timer = parseBool(val, this->config.timer); }},
 		{"spin_overlay", [this, parseBool](std::string_view val) { this->config.spinOverlay = parseBool(val, this->config.spinOverlay); }},
+		{"spin_overlay_dock", [this](std::string_view val) {
+			if (val == "topleft") this->config.overlayDockMode = DockMode::TopLeft;
+			else if (val == "topright") this->config.overlayDockMode = DockMode::TopRight;
+			else if (val == "bottomleft") this->config.overlayDockMode = DockMode::BottomLeft;
+			else if (val == "bottomright") this->config.overlayDockMode = DockMode::BottomRight;
+			else this->config.overlayDockMode = DockMode::None;
+		}},
 		{"ruleset", [this](std::string_view val) { this->config.ruleset = getRulesetByName(val).value_or(this->config.ruleset); }},
 		{"ruleset_medium", [this, parseBool](std::string_view val) { this->config.customRules.enableMedium = parseBool(val, this->config.customRules.enableMedium); }},
 		{"ruleset_hard", [this, parseBool](std::string_view val) { this->config.customRules.enableHard = parseBool(val, this->config.customRules.enableHard); }},
@@ -169,8 +176,25 @@ auto Croupier::SaveConfiguration() -> void {
 
 	this->file.open(filepath, std::ios::out | std::ios::trunc);
 
+	auto spinOverlayDock = "none";
+	switch (this->config.overlayDockMode) {
+	case DockMode::TopLeft:
+		spinOverlayDock = "topleft";
+		break;
+	case DockMode::TopRight:
+		spinOverlayDock = "topright";
+		break;
+	case DockMode::BottomLeft:
+		spinOverlayDock = "bottomleft";
+		break;
+	case DockMode::BottomRight:
+		spinOverlayDock = "bottomright";
+		break;
+	}
+
 	std::println(this->file, "timer {}", this->config.timer ? "true" : "false");
 	std::println(this->file, "spin_overlay {}", this->config.spinOverlay ? "true" : "false");
+	std::println(this->file, "spin_overlay_dock {}", spinOverlayDock);
 	const auto rulesetName = getRulesetName(this->config.ruleset);
 	if (rulesetName) std::println(this->file, "ruleset {}", rulesetName.value());
 	std::println(this->file, "ruleset_medium {}", this->config.customRules.enableMedium ? "true" : "false");
@@ -724,6 +748,53 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 		if (ImGui::Checkbox("Overlay", &this->config.spinOverlay))
 			this->SaveConfiguration();
 
+		ImGui::SameLine();
+
+		auto selectedOverlayDockName = "Undocked";
+
+		switch (this->config.overlayDockMode) {
+			case DockMode::TopLeft:
+				selectedOverlayDockName = "Top Left";
+				break;
+			case DockMode::TopRight:
+				selectedOverlayDockName = "Top Right";
+				break;
+			case DockMode::BottomLeft:
+				selectedOverlayDockName = "Bottom Left";
+				break;
+			case DockMode::BottomRight:
+				selectedOverlayDockName = "Bottom Right";
+				break;
+		}
+
+		if (ImGui::BeginCombo("##OverlayDock", selectedOverlayDockName, ImGuiComboFlags_HeightLarge)) {
+			if (ImGui::Selectable("Top Left", this->config.overlayDockMode == DockMode::TopLeft, 0)) {
+				this->config.overlayDockMode = DockMode::TopLeft;
+				this->SaveConfiguration();
+			}
+			if (this->config.overlayDockMode == DockMode::TopLeft) ImGui::SetItemDefaultFocus();
+
+			if (ImGui::Selectable("Top Right", this->config.overlayDockMode == DockMode::TopRight, 0)) {
+				this->config.overlayDockMode = DockMode::TopRight;
+				this->SaveConfiguration();
+			}
+			if (this->config.overlayDockMode == DockMode::TopRight) ImGui::SetItemDefaultFocus();
+
+			if (ImGui::Selectable("Bottom Left", this->config.overlayDockMode == DockMode::BottomLeft, 0)) {
+				this->config.overlayDockMode = DockMode::BottomLeft;
+				this->SaveConfiguration();
+			}
+			if (this->config.overlayDockMode == DockMode::BottomLeft) ImGui::SetItemDefaultFocus();
+
+			if (ImGui::Selectable("Bottom Right", this->config.overlayDockMode == DockMode::BottomRight, 0)) {
+				this->config.overlayDockMode = DockMode::BottomRight;
+				this->SaveConfiguration();
+			}
+			if (this->config.overlayDockMode == DockMode::BottomRight) ImGui::SetItemDefaultFocus();
+
+			ImGui::EndCombo();
+		}
+
 		/*if (connected) {
 			ImGui::SameLine();
 			ImGui::SetCursorPosX(165.0);
@@ -860,7 +931,30 @@ auto Croupier::DrawSpinUI(bool focused) -> void {
 
 	ImGui::PushFont(SDK()->GetImGuiBlackFont());
 
-	if (ImGui::Begin(ICON_MD_CASINO " CROUPIER - SPIN", &this->config.spinOverlay, ImGuiWindowFlags_AlwaysAutoResize)) {
+	auto viewportSize = ImGui::GetMainViewport()->Size;
+	auto flags = static_cast<ImGuiWindowFlags>(ImGuiWindowFlags_AlwaysAutoResize);
+
+	if (this->config.overlayDockMode != DockMode::None)
+		flags |= ImGuiWindowFlags_NoTitleBar;
+
+	switch (this->config.overlayDockMode) {
+		case DockMode::TopLeft:
+			ImGui::SetNextWindowPos({0, 0});
+			break;
+		case DockMode::TopRight:
+			ImGui::SetNextWindowPos({viewportSize.x - this->overlaySize.x, 0});
+			break;
+		case DockMode::BottomLeft:
+			ImGui::SetNextWindowPos({0, viewportSize.y - this->overlaySize.y});
+			break;
+		case DockMode::BottomRight:
+			ImGui::SetNextWindowPos({viewportSize.x - this->overlaySize.x, viewportSize.y - this->overlaySize.y});
+			break;
+	}
+
+	if (ImGui::Begin(ICON_MD_CASINO " CROUPIER - SPIN", &this->config.spinOverlay, flags)) {
+		this->overlaySize = ImGui::GetWindowSize();
+
 		ImGui::PushFont(SDK()->GetImGuiBoldFont());
 
 		auto elapsed = std::chrono::seconds::zero();

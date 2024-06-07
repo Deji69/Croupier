@@ -17,6 +17,14 @@
 #include <stack>
 #include <unordered_map>
 
+enum class DockMode {
+	None,
+	TopLeft,
+	TopRight,
+	BottomLeft,
+	BottomRight,
+};
+
 struct KeyBindAssign {
 	KeyBind key1;
 	KeyBind key2;
@@ -117,6 +125,7 @@ struct SerializedSpin {
 struct Configuration {
 	bool spinOverlay = false;
 	bool timer = false;
+	DockMode overlayDockMode = DockMode::None;
 	RouletteRuleset customRules;
 	eRouletteRuleset ruleset = eRouletteRuleset::Default;
 	std::vector<eMission> missionPool;
@@ -201,6 +210,7 @@ private:
 	EventSystem events;
 	std::fstream file;
 	std::filesystem::path modulePath;
+	ImVec2 overlaySize = {};
 	int uiMissionSelectIndex = 0;
 	bool currentSpinSaved = true;
 	bool showUI = false;
