@@ -123,8 +123,9 @@ struct SerializedSpin {
 };
 
 struct Configuration {
-	bool spinOverlay = false;
 	bool timer = false;
+	bool spinOverlay = false;
+	bool overlayKillConfirmations = true;
 	DockMode overlayDockMode = DockMode::None;
 	RouletteRuleset customRules;
 	eRouletteRuleset ruleset = eRouletteRuleset::Default;

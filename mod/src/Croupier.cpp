@@ -111,6 +111,7 @@ auto Croupier::LoadConfiguration() -> void {
 			else if (val == "bottomright") this->config.overlayDockMode = DockMode::BottomRight;
 			else this->config.overlayDockMode = DockMode::None;
 		}},
+		{"spin_overlay_confirmations", [this, parseBool](std::string_view val) { this->config.overlayKillConfirmations = parseBool(val, this->config.overlayKillConfirmations); }},
 		{"ruleset", [this](std::string_view val) { this->config.ruleset = getRulesetByName(val).value_or(this->config.ruleset); }},
 		{"ruleset_medium", [this, parseBool](std::string_view val) { this->config.customRules.enableMedium = parseBool(val, this->config.customRules.enableMedium); }},
 		{"ruleset_hard", [this, parseBool](std::string_view val) { this->config.customRules.enableHard = parseBool(val, this->config.customRules.enableHard); }},
@@ -195,6 +196,7 @@ auto Croupier::SaveConfiguration() -> void {
 	std::println(this->file, "timer {}", this->config.timer ? "true" : "false");
 	std::println(this->file, "spin_overlay {}", this->config.spinOverlay ? "true" : "false");
 	std::println(this->file, "spin_overlay_dock {}", spinOverlayDock);
+	std::println(this->file, "spin_overlay_confirmations {}", this->config.overlayKillConfirmations ? "true" : "false");
 	const auto rulesetName = getRulesetName(this->config.ruleset);
 	if (rulesetName) std::println(this->file, "ruleset {}", rulesetName.value());
 	std::println(this->file, "ruleset_medium {}", this->config.customRules.enableMedium ? "true" : "false");
@@ -795,6 +797,9 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 			ImGui::EndCombo();
 		}
 
+		if (ImGui::Checkbox("Overlay Kill Confirmations", &this->config.overlayKillConfirmations))
+			this->SaveConfiguration();
+
 		/*if (connected) {
 			ImGui::SameLine();
 			ImGui::SetCursorPosX(165.0);
@@ -964,16 +969,19 @@ auto Croupier::DrawSpinUI(bool focused) -> void {
 		for (auto i = 0; i < conds.size(); ++i) {
 			auto& cond = conds[i];
 			auto kc = this->sharedSpin.getTargetKillValidation(cond.target.get().getID());
-			//auto str = std::format("{}: {} / {}", cond.target.get().getName(), cond.methodName, cond.disguise.get().name);
 			auto validation = " - "s;
-			if (kc.correctMethod == eKillValidationType::Unknown)
-				validation += "Unknown, "s + (kc.correctDisguise ? "valid disguise" : "invalid disguise");
-			else if (kc.correctMethod == eKillValidationType::Invalid)
-				validation += kc.correctDisguise ? "Invalid, valid disguise" : "Invalid";
-			else if (kc.correctMethod == eKillValidationType::Valid)
-				validation += kc.correctDisguise ? "Done" : "Invalid disguise";
-			else if (kc.correctMethod == eKillValidationType::Incomplete)
-				validation = "";
+
+			if (this->config.overlayKillConfirmations) {
+				if (kc.correctMethod == eKillValidationType::Unknown)
+					validation += "Unknown"s;
+				else if (kc.correctMethod == eKillValidationType::Invalid)
+					validation += kc.correctDisguise ? "Wrong method" : "Wrong";
+				else if (kc.correctMethod == eKillValidationType::Valid)
+					validation += kc.correctDisguise ? "Done" : "Wrong disguise";
+				else if (kc.correctMethod == eKillValidationType::Incomplete)
+					validation = "";
+			}
+			else validation = "";
 
 			auto str = std::format("{}: {} / {}{}", cond.target.get().getName(), cond.methodName, cond.disguise.get().name, validation);
 			ImGui::Text(str.c_str());
