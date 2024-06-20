@@ -1846,16 +1846,51 @@ DEFINE_PLUGIN_DETOUR(Croupier, void, OnEventReceived, ZAchievementManagerSimple*
 	return HookResult<void>(HookAction::Continue());
 }
 
-DEFINE_PLUGIN_DETOUR(Croupier, void, OnEventSent, ZAchievementManagerSimple* th, uint32_t eventIndex, const ZDynamicObject& ev) {
-	ZString eventData;
-	Functions::ZDynamicObject_ToString->Call(const_cast<ZDynamicObject*>(&ev), &eventData);
+// Wrapper for Functions::ZDynamicObject_ToString that attempts to prevent invalid JSON output.
+static auto ZDynamicObjectToString(ZDynamicObject& obj) -> ZString {
+	// Handle the main object structure so we can invoke ourselves for individual entries.
+	if (obj.Is<TArray<SDynamicObjectKeyValuePair>>()) {
+		auto arr = obj.As<TArray<SDynamicObjectKeyValuePair>>();
+		auto first = true;
+		auto str = std::ostringstream();
+		str << "{";
 
-	auto eventDataSV = std::string_view(eventData.c_str(), eventData.size());
-	auto fixedEventDataStr = std::string(eventData.size(), '\0');
-	std::remove_copy(eventDataSV.cbegin(), eventDataSV.cend(), fixedEventDataStr.begin(), '\n');
+		for (auto& entry : *arr) {
+			if (!first) str << ",";
+			first = false;
+
+			auto objStr = ZDynamicObjectToString(entry.value);
+
+			// Key should never contain quotes but we'll do quoted to be on the safe side + it's neater.
+			str << std::quoted(entry.sKey.c_str()) << ":" << objStr.c_str();
+		}
+
+		str << "}";
+		return ZString(str.str());
+	}
+
+	if (obj.Is<ZString>()) {
+		// Remove null terminator from strings.
+		auto res = obj.As<ZString>();
+		auto resSV = std::string_view(res->c_str(), res->size());
+		auto fixedStr = std::string(resSV.size(), '\0');
+		std::remove_copy(resSV.cbegin(), resSV.cend(), fixedStr.begin(), '\n');
+
+		// Quote the string.
+		return (std::ostringstream() << std::quoted(fixedStr.c_str())).str();
+	}
+
+	// Use the game method for anything we don't need to handle.
+	ZString res;
+	Functions::ZDynamicObject_ToString->Call(const_cast<ZDynamicObject*>(&obj), &res);
+	return res;
+}
+
+DEFINE_PLUGIN_DETOUR(Croupier, void, OnEventSent, ZAchievementManagerSimple* th, uint32_t eventIndex, const ZDynamicObject& ev) {
+	ZString eventData = ZDynamicObjectToString(const_cast<ZDynamicObject&>(ev));
 
 	try {
-		auto json = nlohmann::json::parse(fixedEventDataStr.c_str(), fixedEventDataStr.c_str() + fixedEventDataStr.size());
+		auto json = nlohmann::json::parse(eventData.c_str(), eventData.c_str() + eventData.size());
 		auto const eventName = json.value("Name", "");
 		auto const timestamp = json.value("Timestamp", 0.0);
 
