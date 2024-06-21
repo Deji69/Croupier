@@ -1216,7 +1216,7 @@ namespace Croupier
 
 		private void RefitWindow(bool keepSize = false) {
 			if (StaticSize) {
-				var h = SpinGridHeight * GetNumRows() + 53 + (Config.Default.Timer ? 26 : 0);
+				var h = SpinGridHeight * GetNumRows() + 53 + (ShowStatusBar ? StatusGrid.ActualHeight : 0);
 				SizeToContent = SizeToContent.Manual;
 				MinHeight = h;
 				MaxHeight = h;
