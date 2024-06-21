@@ -27,8 +27,10 @@ namespace Croupier
 		public static event EventHandler<int> Prev;
 		public static event EventHandler<int> Next;
 		public static event EventHandler<int> ToggleSpinLock;
-		public static event EventHandler<int> MissionComplete;
+		public static event EventHandler<bool> MissionComplete;
+		public static event EventHandler<int> MissionFailed;
 		public static event EventHandler<int> ResetTimer;
+		public static event EventHandler<int> ResetStreak;
 		public static event EventHandler<bool> PauseTimer;
 		public static event EventHandler<bool> ToggleTimer;
 		public static event EventHandler<int> LoadStarted;
@@ -174,11 +176,19 @@ namespace Croupier
 				return;
 			}
 			else if (cmd == "MissionComplete") {
-				App.Current.Dispatcher.Invoke(new Action(() => MissionComplete?.Invoke(null, 0)));
+				App.Current.Dispatcher.Invoke(new Action(() => MissionComplete?.Invoke(null, int.Parse(rest.First()) == 1)));
+				return;
+			}
+			else if (cmd == "MissionFailed") {
+				App.Current.Dispatcher.Invoke(new Action(() => MissionFailed?.Invoke(null, 0)));
 				return;
 			}
 			else if (cmd == "ToggleSpinLock") {
 				App.Current.Dispatcher.Invoke(new Action(() => ToggleSpinLock?.Invoke(null, 0)));
+				return;
+			}
+			else if (cmd == "ResetStreak") {
+				App.Current.Dispatcher.Invoke(new Action(() => ResetStreak?.Invoke(null, 0)));
 				return;
 			}
 			else if (cmd == "ResetTimer") {

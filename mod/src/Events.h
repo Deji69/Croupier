@@ -286,6 +286,12 @@ struct Event<Events::ContractEnd> {
 };
 
 template<>
+struct Event<Events::ContractFailed> {
+	static auto constexpr Name = "ContractFailed";
+	using EventValue = StringEventValue;
+};
+
+template<>
 struct Event<Events::IntroCutEnd> {
 	static auto constexpr Name = "IntroCutEnd";
 	using EventValue = VoidEventValue;

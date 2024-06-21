@@ -28,6 +28,8 @@
 		<CommandBinding Command="{x:Static local:MainWindow.ShowLiveSplitWindowCommand}" CanExecute="Command_AlwaysCanExecute" Executed="ShowLiveSplitWindowCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.EditMapPoolCommand}" CanExecute="Command_AlwaysCanExecute" Executed="EditMapPoolCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.EditRulesetsCommand}" CanExecute="Command_AlwaysCanExecute" Executed="EditRulesetsCommand_Executed" />
+		<CommandBinding Command="{x:Static local:MainWindow.StreakSettingsCommand}" CanExecute="Command_AlwaysCanExecute" Executed="StreakSettingsCommand_Executed" />
+		<CommandBinding Command="{x:Static local:MainWindow.ResetStreakCommand}" CanExecute="Command_AlwaysCanExecute" Executed="ResetStreakCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.TimerSettingsCommand}" CanExecute="Command_AlwaysCanExecute" Executed="TimerSettingsCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.PrevSpinCommand}" CanExecute="PrevSpinCommand_CanExecute" Executed="PrevSpinCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.NextSpinCommand}" CanExecute="NextSpinCommand_CanExecute" Executed="NextSpinCommand_Executed" />
@@ -336,69 +338,130 @@
 			</WrapPanel>
 		</Grid>
 		<Grid Name="StatusGrid" DockPanel.Dock="Bottom">
-			<Grid Name="TimerGrid" UseLayoutRounding="True">
-				<TextBlock
-					Name="Timer"
-					FontSize="{Binding SpinFontSize}"
-					Background="{StaticResource BackgroundOverlayBrush}"
-					Text="0:00"
-					Foreground="White"
-					Padding="14,0,12,2"
-					TextAlignment="Center"
-					VerticalAlignment="Center">
-					<TextBlock.Style>
-						<Style TargetType="TextBlock">
-							<Setter Property="TextBlock.HorizontalAlignment" Value="Right" />
-							<Style.Triggers>
-								<DataTrigger Binding="{Binding StatusAlignLeft, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Value="True">
-									<Setter Property="TextBlock.HorizontalAlignment" Value="Left" />
-								</DataTrigger>
-							</Style.Triggers>
-						</Style>
-					</TextBlock.Style>
-					<TextBlock.ContextMenu>
-						<ContextMenu Name="TimerContextMenu" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
-							<MenuItem
-								Header="Settings"
-								Command="{x:Static local:MainWindow.TimerSettingsCommand}"
-							/>
-							<MenuItem
-								Header="Reset"
-								Command="{x:Static local:MainWindow.ResetTimerCommand}"
-							/>
-							<MenuItem
-								Header="Start"
-								Command="{x:Static local:MainWindow.StartTimerCommand}"
-							/>
-							<MenuItem
-								Header="Stop"
-								Command="{x:Static local:MainWindow.StopTimerCommand}"
-							/>
-							<MenuItem
-								Header="Show Fractions"
-								IsChecked="{Binding TimerFractions, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-								IsCheckable="True"
-							/>
-							<MenuItem
-								Header="Multi-Spin Mode"
-								IsChecked="{Binding TimerMultiSpin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-								IsCheckable="True"
-								ToolTip="Disable automatic resetting of timer when new spins are generated, instead accumulating times of multiple spins (e.g. for full game runs)."
-							/>
-						</ContextMenu>
-					</TextBlock.ContextMenu>
-				</TextBlock>
-				<Grid.Style>
-					<Style TargetType="Grid">
-						<Setter Property="Grid.Visibility" Value="Collapsed" />
+			<StackPanel Orientation="Horizontal">
+				<StackPanel.Style>
+					<Style TargetType="StackPanel">
+						<Setter Property="TextBlock.HorizontalAlignment" Value="Right" />
 						<Style.Triggers>
-							<DataTrigger Binding="{Binding ShowStatusBar, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Value="True">
-								<Setter Property="Grid.Visibility" Value="Visible"/>
+							<DataTrigger Binding="{Binding StatusAlignLeft, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Value="True">
+								<Setter Property="TextBlock.HorizontalAlignment" Value="Left" />
 							</DataTrigger>
 						</Style.Triggers>
 					</Style>
-				</Grid.Style>
-			</Grid>
+				</StackPanel.Style>
+				<Grid Name="TimerGrid" UseLayoutRounding="True" Grid.Column="1">
+					<TextBlock
+						Name="Timer"
+						FontSize="{Binding SpinFontSize}"
+						Background="{StaticResource BackgroundOverlayBrush}"
+						Text="0:00"
+						Foreground="White"
+						Padding="14,0,12,2"
+						TextAlignment="Center"
+						VerticalAlignment="Center">
+						<TextBlock.Style>
+							<Style TargetType="TextBlock">
+								<Setter Property="TextBlock.HorizontalAlignment" Value="Right" />
+								<Style.Triggers>
+									<DataTrigger Binding="{Binding StatusAlignLeft, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Value="True">
+										<Setter Property="TextBlock.HorizontalAlignment" Value="Left" />
+									</DataTrigger>
+								</Style.Triggers>
+							</Style>
+						</TextBlock.Style>
+						<TextBlock.ContextMenu>
+							<ContextMenu Name="TimerContextMenu" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+								<MenuItem
+									Header="Timer Settings"
+									Command="{x:Static local:MainWindow.TimerSettingsCommand}"
+								/>
+								<MenuItem
+									Header="Reset"
+									Command="{x:Static local:MainWindow.ResetTimerCommand}"
+								/>
+								<MenuItem
+									Header="Start"
+									Command="{x:Static local:MainWindow.StartTimerCommand}"
+								/>
+								<MenuItem
+									Header="Stop"
+									Command="{x:Static local:MainWindow.StopTimerCommand}"
+								/>
+								<MenuItem
+									Header="Show Fractions"
+									IsChecked="{Binding TimerFractions, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+									IsCheckable="True"
+								/>
+								<MenuItem
+									Header="Multi-Spin Mode"
+									IsChecked="{Binding TimerMultiSpin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+									IsCheckable="True"
+									ToolTip="Disable automatic resetting of timer when new spins are generated, instead accumulating times of multiple spins (e.g. for full game runs)."
+								/>
+							</ContextMenu>
+						</TextBlock.ContextMenu>
+					</TextBlock>
+					<Grid.Style>
+						<Style TargetType="Grid">
+							<Setter Property="Grid.Visibility" Value="Collapsed" />
+							<Style.Triggers>
+								<DataTrigger Binding="{Binding ShowTimer, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Value="True">
+									<Setter Property="Grid.Visibility" Value="Visible"/>
+								</DataTrigger>
+							</Style.Triggers>
+						</Style>
+					</Grid.Style>
+				</Grid>
+				<Grid Name="StreakGrid" UseLayoutRounding="True" Grid.Column="0">
+					<TextBlock
+						Name="Streak"
+						FontSize="{Binding SpinFontSize}"
+						Background="{StaticResource BackgroundOverlayBrush}"
+						Text="Streak: 0"
+						Foreground="White"
+						Padding="14,0,12,2"
+						TextAlignment="Center"
+						VerticalAlignment="Center">
+						<TextBlock.Style>
+							<Style TargetType="TextBlock">
+								<Setter Property="TextBlock.HorizontalAlignment" Value="Right" />
+								<Style.Triggers>
+									<DataTrigger Binding="{Binding StatusAlignLeft, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Value="True">
+										<Setter Property="TextBlock.HorizontalAlignment" Value="Left" />
+									</DataTrigger>
+								</Style.Triggers>
+							</Style>
+						</TextBlock.Style>
+						<TextBlock.ContextMenu>
+							<ContextMenu Name="StreakContextMenu" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+								<MenuItem
+									Header="Streak Settings &amp; Statistics"
+									Command="{x:Static local:MainWindow.StreakSettingsCommand}"
+								/>
+								<MenuItem
+									Header="Show Personal Best"
+									IsChecked="{Binding ShowStreakPB, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+									IsCheckable="True"
+								/>
+								<MenuItem
+									Header="Reset"
+									Command="{x:Static local:MainWindow.ResetStreakCommand}"
+								/>
+							</ContextMenu>
+						</TextBlock.ContextMenu>
+					</TextBlock>
+					<Grid.Style>
+						<Style TargetType="Grid">
+							<Setter Property="Grid.Visibility" Value="Collapsed" />
+							<Style.Triggers>
+								<DataTrigger Binding="{Binding ShowStreak, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Value="True">
+									<Setter Property="Grid.Visibility" Value="Visible"/>
+								</DataTrigger>
+							</Style.Triggers>
+						</Style>
+					</Grid.Style>
+				</Grid>
+			</StackPanel>
 			<Grid.Style>
 				<Style TargetType="Grid">
 					<Setter Property="Grid.Visibility" Value="Collapsed" />
@@ -461,6 +524,12 @@
 					IsChecked="{Binding ShowTimer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 					IsCheckable="True"
 					ToolTip="Show an RTA spin timer in the Croupier window. If connected to mod, this will automatically stop when you reach an exit."
+				/>
+				<MenuItem
+					Header="Streak"
+					IsChecked="{Binding ShowStreak, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					IsCheckable="True"
+					ToolTip="Show a tracker of SA spin completion streaks in the Croupier window. Must be connected with mod to work."
 				/>
 				<MenuItem
 					Header="Kill Confirmations"

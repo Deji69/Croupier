@@ -75,6 +75,9 @@
 			<AutoGen>True</AutoGen>
 			<DependentUpon>Settings.settings</DependentUpon>
 		</Compile>
+		<Compile Update="StreakSettingsWindow.xaml.cs">
+		  <SubType>Code</SubType>
+		</Compile>
 	</ItemGroup>
 	<ItemGroup>
 		<None Update="Properties\Settings.settings">

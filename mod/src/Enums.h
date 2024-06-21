@@ -35,6 +35,7 @@ enum class Events {
 	ContractStart,
 	ContractLoad,
 	ContractEnd,
+	ContractFailed,
 	CrowdNPC_Died,
 	Dart_Hit,
 	DeadBodySeen,

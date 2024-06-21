@@ -103,6 +103,8 @@ auto Croupier::LoadConfiguration() -> void {
 	bool inHistorySection = false;
 	auto cmds = std::map<std::string, std::function<void (std::string_view val)>> {
 		{"timer", [this, parseBool](std::string_view val) { this->config.timer = parseBool(val, this->config.timer); }},
+		{"streak", [this, parseBool](std::string_view val) { this->config.streak = parseBool(val, this->config.streak); }},
+		{"streak_current", [this, parseInt](std::string_view val) { this->config.streakCurrent = parseInt(val, this->config.streakCurrent); }},
 		{"spin_overlay", [this, parseBool](std::string_view val) { this->config.spinOverlay = parseBool(val, this->config.spinOverlay); }},
 		{"spin_overlay_dock", [this](std::string_view val) {
 			if (val == "topleft") this->config.overlayDockMode = DockMode::TopLeft;
@@ -194,6 +196,8 @@ auto Croupier::SaveConfiguration() -> void {
 	}
 
 	std::println(this->file, "timer {}", this->config.timer ? "true" : "false");
+	std::println(this->file, "streak {}", this->config.streak ? "true" : "false");
+	std::println(this->file, "streak_current {}", this->config.streakCurrent);
 	std::println(this->file, "spin_overlay {}", this->config.spinOverlay ? "true" : "false");
 	std::println(this->file, "spin_overlay_dock {}", spinOverlayDock);
 	std::println(this->file, "spin_overlay_confirmations {}", this->config.overlayKillConfirmations ? "true" : "false");
@@ -443,6 +447,10 @@ auto Croupier::ProcessClientMessages() -> void {
 				if (message.args.size() < 1) break;
 				this->spinLocked = message.args[0] == '1';
 				return;
+			case eClientMessage::Streak:
+				if (message.args.size() < 1) break;
+				std::from_chars(message.args.c_str(), message.args.c_str() + message.args.size(), this->config.streakCurrent);
+				return;
 		}
 	}
 }
@@ -553,6 +561,10 @@ auto Croupier::SendLoadFinished() -> void {
 	this->client->send(eClientMessage::LoadFinished);
 }
 
+auto Croupier::SendResetStreak() -> void {
+	this->client->send(eClientMessage::ResetStreak);
+}
+
 auto Croupier::SendResetTimer() -> void {
 	this->client->send(eClientMessage::ResetTimer);
 }
@@ -615,8 +627,12 @@ auto Croupier::SendRandom() -> void {
 	this->client->send(eClientMessage::Random);
 }
 
+auto Croupier::SendMissionFailed() -> void {
+	this->client->send(eClientMessage::MissionFailed);
+}
+
 auto Croupier::SendMissionComplete() -> void {
-	this->client->send(eClientMessage::MissionComplete);
+	this->client->send(eClientMessage::MissionComplete, {this->sharedSpin.isSA ? "1" : "0"});
 }
 
 auto Croupier::SendKillValidationUpdate() -> void {
@@ -720,10 +736,8 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 			if (this->config.timer) {
 				ImGui::SameLine();
 				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 40.0);
-				if (ImGui::Button("Reset")) {
-					this->SendResetTimer();
+				if (ImGui::Button("Reset"))
 					this->sharedSpin.timeStarted = std::chrono::steady_clock::now();
-				}
 			}
 		} else {
 			// In-App Timer
@@ -733,12 +747,13 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 			}
 
 			if (this->config.timer) {
-				ImGui::SameLine();
-				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 40.0);
+				ImGui::SameLine(150.0);
+
 				if (ImGui::Button("Reset")) {
 					this->SendResetTimer();
 					this->sharedSpin.timeStarted = std::chrono::steady_clock::now();
 				}
+
 				ImGui::SameLine();
 				if (ImGui::Button("Start")) {
 					this->SendPauseTimer(false);
@@ -747,10 +762,24 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 			}
 		}
 
+		if (connected) {
+			// Streak Tracking
+			if (ImGui::Checkbox("Streak", &this->config.streak))
+				this->SaveConfiguration();
+
+			ImGui::SameLine(150.0);
+
+			if (ImGui::Button("Reset##Streak")) {
+				this->config.streakCurrent = 0;
+				this->SendResetStreak();
+			}
+		}
+
+
 		if (ImGui::Checkbox("Overlay", &this->config.spinOverlay))
 			this->SaveConfiguration();
 
-		ImGui::SameLine();
+		ImGui::SameLine(150.0);
 
 		auto selectedOverlayDockName = "Undocked";
 
@@ -807,7 +836,7 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 				this->showEditHotkeysUI = !this->showEditHotkeysUI;
 		}*/
 
-		{
+		if (!connected) {
 			// Ruleset select
 			auto const rulesetName = getRulesetName(this->ruleset);
 			if (ImGui::BeginCombo("##Ruleset", rulesetName.value_or("").data(), ImGuiComboFlags_HeightLarge)) {
@@ -897,7 +926,7 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 		if (!connected && !this->spinHistory.empty()) {
 			ImGui::SameLine();
 
-			if (ImGui::Button("Previous"))
+			if (ImGui::Button(ICON_MD_ARROW_LEFT))
 				this->PreviousSpin();
 		}
 		ImGui::PopFont();
@@ -987,15 +1016,27 @@ auto Croupier::DrawSpinUI(bool focused) -> void {
 			ImGui::Text(str.c_str());
 		}
 
+		auto text = std::string();
+
 		if (this->config.timer) {
+			if (!text.empty()) text += " - ";
 			auto timeFormat = std::string();
 			auto const includeHr = std::chrono::duration_cast<std::chrono::hours>(elapsed).count() >= 1;
 			auto const time = includeHr ? std::format("{:%H:%M:%S}", elapsed) : std::format("{:%M:%S}", elapsed);
+			text += time;
+		}
+
+		if (this->config.streak) {
+			if (!text.empty()) text += " - ";
+			text += std::format("Streak: {}", this->config.streakCurrent);
+		}
+
+		if (!text.empty()) {
 			auto windowWidth = ImGui::GetWindowSize().x;
-			auto textWidth = ImGui::CalcTextSize(time.c_str()).x;
+			auto textWidth = ImGui::CalcTextSize(text.c_str()).x;
 
 			ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
-			ImGui::Text(time.c_str());
+			ImGui::Text(text.c_str());
 		}
 
 		ImGui::PopFont();
@@ -1308,9 +1349,9 @@ auto Croupier::OnRulesetSelect(eRouletteRuleset ruleset) -> void {
 }
 
 auto Croupier::OnMissionSelect(eMission mission, bool isAuto) -> void {
+	this->sharedSpin.playerSelectMission();
 	auto currentMission = this->spin.getMission();
 	if (currentMission && mission == currentMission->getMission() && !this->spinCompleted) return;
-	this->sharedSpin.playerSelectMission();
 	this->spinCompleted = false;
 
 	try {
@@ -1458,8 +1499,25 @@ auto Croupier::SetupEvents() -> void {
 		this->SendMissionComplete();
 	});
 	events.listen<Events::ContractEnd>([this](const ServerEvent<Events::ContractEnd>& ev) {
+		if (!this->sharedSpin.isFinished) {
+			this->sharedSpin.playerExit();
+
+			// Mark any unfulfilled kill methods as invalid (never killed a Berlin agent with correct requirements, destroyed heart instead of killing Soders or vice-versa, etc.)
+			auto const& conds = spin.getConditions();
+			for (auto& kv : this->sharedSpin.killValidations) {
+				if (kv.correctMethod == eKillValidationType::Incomplete)
+					kv.correctMethod = eKillValidationType::Invalid;
+			}
+
+			this->SendMissionComplete();
+		}
+
 		this->spinCompleted = true;
 		this->OnFinishMission();
+	});
+	events.listen<Events::ContractFailed>([this](const ServerEvent<Events::ContractFailed>& ev) {
+		this->SendMissionFailed();
+		Logger::Info("ContractFailed: {}", ev.Value.value);
 	});
 	events.listen<Events::StartingSuit>([this](const ServerEvent<Events::StartingSuit>& ev) {
 		if (this->spinCompleted) return;
@@ -1529,8 +1587,16 @@ auto Croupier::SetupEvents() -> void {
 			return false;
 		};
 
-		if (!ev.Value.IsTarget) return;
 		if (this->spinCompleted) return;
+
+		this->sharedSpin.killed.insert(ev.Value.RepositoryId);
+		this->sharedSpin.spottedNotKilled.erase(ev.Value.RepositoryId);
+
+		if (!ev.Value.IsTarget) {
+			if (ev.Value.KillContext != EDeathContext::eDC_NOT_HERO)
+				this->sharedSpin.voidSA();
+			return;
+		}
 
 		auto const& conditions = this->sharedSpin.spin.getConditions();
 		if (conditions.empty()) return;
@@ -1690,6 +1756,33 @@ auto Croupier::SetupEvents() -> void {
 		}
 
 		if (validationUpdated) this->SendKillValidationUpdate();
+	});
+
+	// SA Tracking
+	events.listen<Events::MurderedBodySeen>([this](const ServerEvent<Events::MurderedBodySeen>& ev) {
+		if (ev.Value.IsWitnessTarget) return;
+		this->sharedSpin.voidSA();
+	});
+	events.listen<Events::Spotted>([this](const ServerEvent<Events::Spotted>& ev) {
+		for (auto const& id : ev.Value.value) {
+			if (!this->sharedSpin.killed.contains(id))
+				this->sharedSpin.spottedNotKilled.insert(id);
+		}
+	});
+	events.listen<Events::SecuritySystemRecorder>([this](const ServerEvent<Events::SecuritySystemRecorder>& ev) {
+		switch (ev.Value.event) {
+			case SecuritySystemRecorderEvent::Spotted:
+				if (this->sharedSpin.isCamsDestroyed) return;
+				this->sharedSpin.isCaughtOnCams = true;
+				break;
+			case SecuritySystemRecorderEvent::Destroyed:
+				this->sharedSpin.isCamsDestroyed = true;
+				this->sharedSpin.isCaughtOnCams = false;
+				break;
+			case SecuritySystemRecorderEvent::Erased:
+				this->sharedSpin.isCaughtOnCams = false;
+				break;
+		}
 	});
 }
 

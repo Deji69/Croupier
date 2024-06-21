@@ -34,10 +34,15 @@ struct KeyBindAssign {
 
 struct SharedRouletteSpin {
 	const RouletteSpin& spin;
+	std::set<std::string, InsensitiveCompareLexicographic> killed;
+	std::set<std::string, InsensitiveCompareLexicographic> spottedNotKilled;
 	std::vector<DisguiseChange> disguiseChanges;
 	std::vector<KillConfirmation> killValidations;
 	std::chrono::steady_clock::time_point timeStarted;
 	std::chrono::seconds timeElapsed = std::chrono::seconds(0);
+	bool isSA = true;
+	bool isCaughtOnCams = false;
+	bool isCamsDestroyed = false;
 	bool isPlaying = false;
 	bool isFinished = false;
 	bool hasLoadedGame = false;		// current play session is from a loaded game
@@ -84,6 +89,11 @@ struct SharedRouletteSpin {
 		return this->isFinished ? this->timeElapsed : std::chrono::seconds::zero();
 	}
 
+	auto voidSA() {
+		if (this->isFinished) return;
+		this->isSA = false;
+	}
+
 	auto playerSelectMission() {
 		this->isPlaying = false;
 		this->isFinished = false;
@@ -93,6 +103,12 @@ struct SharedRouletteSpin {
 		this->resetKillValidations();
 		if (!this->isPlaying)
 			this->timeStarted = std::chrono::steady_clock().now();
+
+		this->spottedNotKilled.clear();
+		this->killed.clear();
+		this->isSA = true;
+		this->isCaughtOnCams = false;
+		this->isCamsDestroyed = false;
 		this->isPlaying = true;
 		this->isFinished = false;
 	}
@@ -101,6 +117,10 @@ struct SharedRouletteSpin {
 		this->timeElapsed = this->getTimeElapsed();
 		this->isPlaying = false;
 		this->isFinished = true;
+		if (this->spottedNotKilled.size() > 0)
+			this->isSA = false;
+		this->isSA = this->isSA && !this->isCaughtOnCams && !this->hasLoadedGame;
+		this->spottedNotKilled.clear();
 	}
 
 	auto resetKillValidations() -> void {
@@ -124,6 +144,8 @@ struct SerializedSpin {
 
 struct Configuration {
 	bool timer = false;
+	bool streak = false;
+	int streakCurrent = 0;
 	bool spinOverlay = false;
 	bool overlayKillConfirmations = true;
 	DockMode overlayDockMode = DockMode::None;
@@ -166,8 +188,10 @@ public:
 	auto SendRandom() -> void;
 	auto SendMissions() -> void;
 	auto SendToggleSpinLock() -> void;
+	auto SendMissionFailed() -> void;
 	auto SendMissionComplete() -> void;
 	auto SendKillValidationUpdate() -> void;
+	auto SendResetStreak() -> void;
 	auto SendResetTimer() -> void;
 	auto SendStartTimer() -> void;
 	auto SendToggleTimer(bool enable) -> void;

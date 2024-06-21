@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Security.Policy;
 using System.Windows;
 using System.Windows.Controls;
@@ -109,6 +110,12 @@ namespace Croupier
 		public static readonly RoutedUICommand EditRulesetsCommand = new("Edit Rulesets", "EditRulesets", typeof(MainWindow), [
 			new KeyGesture(Key.R, ModifierKeys.Alt),
 		]);
+		public static readonly RoutedUICommand StreakSettingsCommand = new("Streak Settings", "StreakSettings", typeof(MainWindow), [
+			new KeyGesture(Key.S, ModifierKeys.Alt),
+		]);
+		public static readonly RoutedUICommand ResetStreakCommand = new("Reset Streak", "ResetStreak", typeof(MainWindow), [
+			new KeyGesture(Key.S, ModifierKeys.Control),
+		]);
 		public static readonly RoutedUICommand TimerSettingsCommand = new("Timer Settings", "TimerSettings", typeof(MainWindow), [
 			new KeyGesture(Key.T, ModifierKeys.Alt),
 		]);
@@ -140,6 +147,7 @@ namespace Croupier
 		private EditMapPoolWindow EditMapPoolWindowInst;
 		private EditRulesetWindow EditRulesetWindowInst;
 		private TimerSettingsWindow TimerSettingsWindowInst;
+		private StreakSettingsWindow StreakSettingsWindowInst;
 		private EditSpinWindow EditSpinWindowInst;
 		private HitmapsWindow HitmapsWindowInst;
 		private LiveSplitWindow LiveSplitWindowInst;
@@ -153,6 +161,8 @@ namespace Croupier
 		private bool _staticSize = false;
 		private bool _staticSizeLHS = false;
 		private bool _killValidations = false;
+		private bool _showStreak = false;
+		private bool _showStreakPB = false;
 		private bool _showTimer = false;
 		private bool _timerMultiSpin = false;
 		private bool _timerFractions = true;
@@ -300,9 +310,7 @@ namespace Croupier
 			}
 		}
 		public bool ShowStatusBar {
-			get {
-				return ShowTimer;
-			}
+			get => ShowTimer || ShowStreak;
 		}
 		public bool ShowTimer {
 			get {
@@ -319,10 +327,33 @@ namespace Croupier
 				RefitWindow();
 			}
 		}
-		public bool TimerMultiSpin {
-			get {
-				return _timerMultiSpin;
+		public bool ShowStreak {
+			get => _showStreak;
+			set {
+				_showStreak = value;
+				if (value != Config.Default.Streak) {
+					Config.Default.Streak = value;
+					Config.Save();
+				}
+				OnPropertyChanged(nameof(ShowStatusBar));
+				OnPropertyChanged(nameof(ShowStreak));
+				RefitWindow();
 			}
+		}
+		public bool ShowStreakPB {
+			get => _showStreakPB;
+			set {
+				_showStreakPB = value;
+				if (value != Config.Default.ShowStreakPB) {
+					Config.Default.ShowStreakPB = value;
+					Config.Save();
+				}
+				OnPropertyChanged(nameof(ShowStreakPB));
+				UpdateStreakStatus();
+			}
+		}
+		public bool TimerMultiSpin {
+			get => _timerMultiSpin;
 			set {
 				_timerMultiSpin = value;
 				if (value != Config.Default.TimerMultiSpin) {
@@ -462,6 +493,7 @@ namespace Croupier
 		private bool timerManuallyStopped = false;
 		private DateTime timerStart = DateTime.Now;
 		private TimeSpan? timeElapsed = null;
+		private int streak = 3;
 		private Spin spin = null;
 		private bool spinCompleted = false;
 		private DateTime? autoSpinSchedule = null;
@@ -551,6 +583,7 @@ namespace Croupier
 				SendMissionsToClient();
 				SendSpinToClient();
 				SendSpinLockToClient();
+				SendStreakToClient();
 			};
 			CroupierSocketServer.Respin += (object sender, MissionID id) => Spin(id);
 			CroupierSocketServer.AutoSpin += (object sender, MissionID id) => {
@@ -577,10 +610,18 @@ namespace Croupier
 				StopTimer();
 				ResetTimer();
 			};
-			CroupierSocketServer.MissionComplete += (object sender, int _) => {
+			CroupierSocketServer.ResetStreak += (object sender, int _) => {
+				ResetStreak();
+			};
+			CroupierSocketServer.MissionComplete += (object sender, bool sa) => {
 				spinCompleted = true;
+				if (sa) IncrementStreak();
+				else ResetStreak();
 				liveSplit.Split();
 				StopTimer();
+			};
+			CroupierSocketServer.MissionFailed += (object sender, int _) => {
+				ResetStreak();
 			};
 			CroupierSocketServer.Missions += (object sender, List<MissionID> missions) => {
 				missionPool.Clear();
@@ -672,11 +713,14 @@ namespace Croupier
 			StaticSize = Config.Default.StaticSize;
 			StaticSizeLHS = Config.Default.StaticSizeLHS;
 			ShowTimer = Config.Default.Timer;
+			ShowStreak = Config.Default.Streak;
+			streak = Config.Default.StreakCurrent;
 			TimerMultiSpin = Config.Default.TimerMultiSpin;
 			TimerFractions = Config.Default.TimerFractions;
 			KillValidations = Config.Default.KillValidations;
 			TargetNameFormat = TargetNameFormatMethods.FromString(Config.Default.TargetNameFormat);
 			LoadMissionPool();
+			UpdateStreakStatus();
 
 			foreach (var bookmark in Config.Default.Bookmarks) {
 				BookmarkEntries.Add(new(bookmark, BookmarkEntries.Count));
@@ -772,6 +816,9 @@ namespace Croupier
 		public void Spin(MissionID id = MissionID.NONE) {
 			if (id == MissionID.NONE) id = currentMission.ID;
 			if (!SetMission(id)) return;
+
+			if (!spinCompleted)
+				ResetStreak();
 
 			autoSpinSchedule = null;
 
@@ -902,6 +949,30 @@ namespace Croupier
 			RefitWindow();
 		}
 
+		private void UpdateStreakStatus() {
+			SendStreakToClient();
+
+			Config.Default.StreakCurrent = streak;
+			
+			if (streak > Config.Default.StreakPB)
+				Config.Default.StreakPB = streak;
+
+			if (Config.Default.ShowStreakPB)
+				Streak.Text = "Streak: " + streak + " (PB: " + Config.Default.StreakPB + ")";
+			else
+				Streak.Text = "Streak: " + streak;
+		}
+
+		private void IncrementStreak() {
+			++streak;
+			UpdateStreakStatus();
+		}
+
+		private void ResetStreak() {
+			streak = 0;
+			UpdateStreakStatus();
+		}
+
 		private void StartTimer(bool overrideManual = false) {
 			if (!overrideManual && timerManuallyStopped) return;
 			else timerManuallyStopped = false;
@@ -971,6 +1042,12 @@ namespace Croupier
 				missions += missions.Length > 0 ? $",{name}" : name;
 			});
 			CroupierSocketServer.Send("Missions:" + missions);
+		}
+
+		public void SendStreakToClient()
+		{
+			if (disableClientUpdate) return;
+			CroupierSocketServer.Send($"Streak:{streak}");
 		}
 
 		private void OnMouseDown(object sender, MouseButtonEventArgs e)
@@ -1267,6 +1344,25 @@ namespace Croupier
 				EditRulesetWindowInst = null;
 			};
 			EditRulesetWindowInst.Show();
+		}
+
+		private void ResetStreakCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
+			ResetStreak();
+		}
+
+		private void StreakSettingsCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
+			if (StreakSettingsWindowInst != null) {
+				StreakSettingsWindowInst.Activate();
+				return;
+			}
+			StreakSettingsWindowInst = new() {
+				Owner = this,
+				WindowStartupLocation = WindowStartupLocation.CenterOwner
+			};
+			StreakSettingsWindowInst.Closed += (object sender, EventArgs e) => {
+				StreakSettingsWindowInst = null;
+			};
+			StreakSettingsWindowInst.Show();
 		}
 
 		private void TimerSettingsCommand_Executed(object sender, ExecutedRoutedEventArgs e)

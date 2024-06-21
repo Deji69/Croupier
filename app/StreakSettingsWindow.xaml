@@ -1,0 +1,114 @@
+﻿<Window x:Class="Croupier.StreakSettingsWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:local="clr-namespace:Croupier"
+		d:DataContext="{d:DesignInstance Type=local:StreakSettingsWindowViewModel}"
+		mc:Ignorable="d"
+		Title="Streaks &amp; Stats - Croupier"
+		WindowStyle="SingleBorderWindow"
+		Width="640"
+		Height="350"
+		MaxHeight="350"
+		MinHeight="320"
+		MinWidth="500"
+		MaxWidth="720"
+		Icon="/CroupierLogoIconsFlatLg.png">
+	<ScrollViewer UseLayoutRounding="True" Margin="0" Background="Black">
+		<StackPanel Orientation="Vertical">
+			<TextBlock
+				Text="Streaks"
+				FontWeight="Bold"
+				Foreground="White"
+				Margin="5,2"
+				/>
+			<TextBlock
+				Text="Your current streak status and overall statistics."
+				Foreground="White"
+				TextWrapping="WrapWithOverflow"
+				Margin="5,2"
+				/>
+			<TextBlock
+				Text="Streak is incremented when Croupier detects you exiting with Silent Assassin. Streak is broken if you start a spin and respin without finishing or if you exit without SA. Requires connection to mod in order to operate."
+				Foreground="White"
+				TextWrapping="WrapWithOverflow"
+				Margin="5,2"
+				/>
+			<Grid Margin="5" MaxWidth="300" HorizontalAlignment="Left">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="50" />
+					<ColumnDefinition Width="1*" />
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+				<TextBlock
+					Grid.Row="0"
+					Grid.Column="0"
+					Foreground="White"
+					Margin="5,0,15,5"
+					TextWrapping="WrapWithOverflow"
+					FontWeight="Bold"
+					VerticalAlignment="Top">
+					Current Streak
+				</TextBlock>
+				<TextBlock
+					Grid.Row="0"
+					Grid.Column="1"
+					Foreground="White"
+					Margin="5,0,0,5"
+					TextWrapping="WrapWithOverflow"
+					FontWeight="Normal"
+					VerticalAlignment="Top"
+					Text="{Binding StreakCurrent}" />
+				<Button
+					Grid.Row="0"
+					Grid.Column="2"
+					Content="Reset"
+					Width="50"
+					Margin="0,0,0,5"
+					Click="ResetCurrentStreak_Click"
+					/>
+
+				<TextBlock
+					Grid.Row="1"
+					Grid.Column="0"
+					Foreground="White"
+					Margin="5,0,0,5"
+					TextWrapping="WrapWithOverflow"
+					FontWeight="Bold"
+					VerticalAlignment="Top">
+					Personal Best
+				</TextBlock>
+				<TextBlock
+					Grid.Row="1"
+					Grid.Column="1"
+					Foreground="White"
+					Margin="5,0,0,5"
+					TextWrapping="WrapWithOverflow"
+					FontWeight="Normal"
+					VerticalAlignment="Top"
+					Text="{Binding StreakPB}" />
+				<Button
+					Grid.Row="1"
+					Grid.Column="2"
+					Content="Reset"
+					Width="50"
+					Margin="0,0,0,5"
+					Click="ResetStreakPB_Click"
+					/>
+
+				<StackPanel
+					Grid.Row="1"
+					Orientation="Vertical"
+					Margin="5,0,5,8">
+
+				</StackPanel>
+			</Grid>
+		</StackPanel>
+	</ScrollViewer>
+</Window>

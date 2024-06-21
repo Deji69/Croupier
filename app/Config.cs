@@ -48,6 +48,11 @@ namespace Croupier {
 		public bool TimerFractions { get; set; } = false;
 		public MissionID TimerResetMission { get; set; } = MissionID.NONE;
 
+		public bool Streak { get; set; } = false;
+		public bool ShowStreakPB { get; set; } = false;
+		public int StreakCurrent { get; set; } = 0;
+		public int StreakPB { get; set; } = 0;
+
 		public string TargetNameFormat { get; set; } = "";
 		public int AutoSpinCountdown { get; set; } = 0;
 		
