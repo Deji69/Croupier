@@ -1,11 +1,10 @@
-﻿using PuppeteerSharp;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.Security.Policy;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -248,10 +247,12 @@ namespace Croupier
 			set {
 				if (value == _staticSize) return;
 				_staticSize = value;
+
 				if (value != Config.Default.StaticSize) {
 					Config.Default.StaticSize = value;
 					Config.Save();
 				}
+
 				OnPropertyChanged(nameof(ContentGridAlign));
 				OnPropertyChanged(nameof(StaticSize));
 				OnPropertyChanged(nameof(SpinAlignHorz));
@@ -696,6 +697,7 @@ namespace Croupier
 			if (e.PropertyName == nameof(VerticalDisplay)
 				|| e.PropertyName == nameof(StaticSize)) {
 				RefitWindow();
+				Task.Delay(10).ContinueWith(task => RefitWindow(), TaskScheduler.FromCurrentSynchronizationContext());
 				return;
 			}
 		}
@@ -716,6 +718,7 @@ namespace Croupier
 			StaticSizeLHS = Config.Default.StaticSizeLHS;
 			ShowTimer = Config.Default.Timer;
 			ShowStreak = Config.Default.Streak;
+			ShowStreakPB = Config.Default.ShowStreakPB;
 			streak = Config.Default.StreakCurrent;
 			TimerMultiSpin = Config.Default.TimerMultiSpin;
 			TimerFractions = Config.Default.TimerFractions;
