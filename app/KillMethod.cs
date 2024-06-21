@@ -176,8 +176,10 @@ namespace Croupier {
 		public string Serialized {
 			get {
 				string str = "";
-				if (Complication != null)
-					str = string.Join("", GetComplicationName((KillComplication)Complication).Split("")) + " ";
+				if (Complication != null) {
+					str = string.Join("", GetComplicationName((KillComplication)Complication).Split(""));
+					if (str.Length > 0) str += " ";
+				}
 				if (KillType != KillType.Any)
 					str += string.Join("", GetKillTypeName(KillType).Split("")) + " ";
 				str += new string(Name.Where(c => Char.IsLetterOrDigit(c) || c == ' ').ToArray());
