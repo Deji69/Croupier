@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Windows;
 
 namespace Croupier {
@@ -21,6 +22,8 @@ namespace Croupier {
 	}
 	
 	public partial class StreakSettingsWindow : Window {
+		public event EventHandler<int> ResetStreak;
+		public event EventHandler<int> ResetStreakPB;
 		private readonly StreakSettingsWindowViewModel viewModel = new();
 
 		public StreakSettingsWindow() {
@@ -40,10 +43,12 @@ namespace Croupier {
 
 		private void ResetCurrentStreak_Click(object sender, RoutedEventArgs e) {
 			viewModel.StreakCurrent = 0;
+			ResetStreak?.Invoke(this, 0);
 		}
 
 		private void ResetStreakPB_Click(object sender, RoutedEventArgs e) {
 			viewModel.StreakPB = 0;
+			ResetStreakPB?.Invoke(this, 0);
 		}
 	}
 }

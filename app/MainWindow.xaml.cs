@@ -1361,6 +1361,8 @@ namespace Croupier
 				Owner = this,
 				WindowStartupLocation = WindowStartupLocation.CenterOwner
 			};
+			StreakSettingsWindowInst.ResetStreak += (object sender, int _) => ResetStreak();
+			StreakSettingsWindowInst.ResetStreakPB += (object sender, int _) => UpdateStreakStatus();
 			StreakSettingsWindowInst.Closed += (object sender, EventArgs e) => {
 				StreakSettingsWindowInst = null;
 			};
