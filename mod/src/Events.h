@@ -153,6 +153,13 @@ struct StringEventValue {
 	{ }
 };
 
+struct RawEventValue {
+	const nlohmann::json value;
+
+	RawEventValue(const nlohmann::json& json) : value(json)
+	{ }
+};
+
 struct StringArrayEventValue {
 	std::vector<std::string> value;
 
@@ -288,7 +295,7 @@ struct Event<Events::ContractEnd> {
 template<>
 struct Event<Events::ContractFailed> {
 	static auto constexpr Name = "ContractFailed";
-	using EventValue = StringEventValue;
+	using EventValue = RawEventValue;
 };
 
 template<>

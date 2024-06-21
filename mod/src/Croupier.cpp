@@ -1519,7 +1519,7 @@ auto Croupier::SetupEvents() -> void {
 	});
 	events.listen<Events::ContractFailed>([this](const ServerEvent<Events::ContractFailed>& ev) {
 		this->SendMissionFailed();
-		Logger::Info("ContractFailed: {}", ev.Value.value);
+		Logger::Info("Croupier: ContractFailed {}", ev.Value.value.dump());
 	});
 	events.listen<Events::StartingSuit>([this](const ServerEvent<Events::StartingSuit>& ev) {
 		if (this->spinCompleted) return;
@@ -1937,7 +1937,6 @@ DEFINE_PLUGIN_DETOUR(Croupier, void*, OnLoadingScreenActivated, void* th, void* 
 }
 
 DEFINE_PLUGIN_DETOUR(Croupier, void, OnEventReceived, ZAchievementManagerSimple* th, const SOnlineEvent& event) {
-	Logger::Info("OnEventReceived: {}", event.sName);
 	return HookResult<void>(HookAction::Continue());
 }
 
@@ -1981,18 +1980,162 @@ static auto ZDynamicObjectToString(ZDynamicObject& obj) -> ZString {
 	return res;
 }
 
+static std::set<std::string> eventsNotToPrint = {
+	// Map-specific Perma Shortcut Events
+	"Bulldog_Ladder_A_Open",
+	"Bulldog_Ladder_B_Open",
+	"Dugong_Ladder_A_Down",
+	"Dugong_Ladder_B_Down",
+	"Edgy_Ladder_A_Down",
+	"Gecko_Ladder_A_Down",
+	"Gecko_Ladder_B_Down",
+	"Gecko_Ladder_C_Down",
+	"Rat_Ladder_A_Open",
+	// Freelancer Objectives
+	"Activate_BlindGuard",
+	"Activate_BlindTarget",
+	"Activate_Camera_Caught",
+	"Activate_Camera_DestroyRecorder",
+	"Activate_DartGun_Target",
+	"Activate_DisguiseBlown",
+	"Activate_Distract_Target",
+	"Activate_DontTakeDamage",
+	"Activate_EliminationPayout",
+	"Activate_HideTargetBodies",
+	"Activate_KillGuard_Sniper",
+	"Activate_KillGuard_SubMachineGun",
+	"Activate_KillMethod_Poison",
+	"Activate_KillMethod_Sniper",
+	"Activate_KillMethod_UnSilenced_Pistol",
+	"Activate_LimitedDisguise",
+	"Activate_No_Firearms",
+	"Activate_No_Witnesses",
+	"Activate_NoCombat",
+	"Activate_NoMissedShots",
+	"Activate_NoBodyFound",
+	"Activate_NotSpotted",
+	"Activate_PacifyGuard_Explosive",
+	"Activate_PoisonGuard_Any",
+	"Activate_PoisonGuard_Syringe",
+	"Activate_PoisonTarget_Emetic",
+	"Activate_PoisonTarget_Sedative",
+	"Activate_SA",
+	"Activate_SASO",
+	"Activate_SilentTakedown_3",
+	"Activate_Timed_SilientTakedown",
+	"DrActivate_EliminationPayout",
+	// Misc. Freelancer Events
+	"AddAssassin_Event",
+	"AddLookout_Event",
+	"AddSuspectGlow",
+	"CompleteEvergreenPrimaryObj",
+	"Evergreen_EvaluateChallenge",
+	"Evergreen_Mastery_Level",
+	"Evergreen_Merces_Data",
+	"Evergreen_MissionCompleted_Hot",
+	"Evergreen_MissionPayout",
+	"Evergreen_Payout_Data",
+	"Evergreen_Safehouse_Stash_ItemChosen",
+	"Evergreen_SecurityCameraDestroyed",
+	"Evergreen_Stash_ItemChosen",
+	"Evergreen_Suspect_Looks",
+	"EvergreenExitTriggered",
+	"EvergreenExitTriggeredOrWounded",
+	"EvergreenMissionEnd",
+	"GearSlotsTotal",
+	"GearSlotsTutorialised",
+	"GearSlotsUsed",
+	"MildMissionCompleted_Africa_Event",
+	"MildMissionCompleted_Asia_Event",
+	"MildMissionCompleted_Event",
+	"MissionCompleted_Event",
+	"NoTargetsLeft",
+	"NumberOfTargets",
+	"PayoutObjective_Completed",
+	"ScoringScreenEndState_CampaignCompletedBonusXP_Professional",
+	"ScoringScreenEndState_CampaignCompletedBonusXP_Hard",
+	"ScoringScreenEndState_MildCompleted",
+	"SetPayout",
+	"Setup_TargetName",
+	"TravelDestination",
+	"Leader_In_Meeting",
+	"LeaderDeadEscaping_Event",
+	"LeaderEscaping",
+	"LeaderPacifiedEscaping_Event",
+	"RemoveSuspectGlow",
+	"SupplierVisited",
+	"TargetPickedConfirm",
+	// Freelancer Challenge Events
+	"CollectorUpdate",
+	"GunmasterComplete",
+	"GunslingerUpdate",
+	"LetsGoHuntingUpdate",
+	"OneShotOneKillUpdate",
+	"SprayAndPrayUpdate",
+	"ThisIsMyRifleUpdate",
+	"UpCloseAndPersonalUpdate",
+	// Gameplay Events
+	"AccidentBodyFound",
+	"Actorsick",
+	"Agility_Start",
+	"AmbientChanged",
+	"BodyBagged",
+	"BodyFound",
+	"Dart_Hit",
+	"DeadBodySeen",
+	"Disguise",
+	"DrainPipe_climbed",
+	"Drain_Pipe_Climbed",
+	"ExitInventory",
+	"FirstMissedShot",
+	"FirstNonHeadshot",
+	"HeroSpawn_Location",
+	"HoldingIllegalWeapon",
+	"Investigate_Curious",
+	"IntroCutEnd",
+	"ItemDropped",
+	"ItemPickedUp",
+	"ItemRemovedFromInventory",
+	"ItemThrown",
+	"Noticed_Pacified",
+	"MurderedBodySeen",
+	"ObjectiveCompleted",
+	"OpportunityEvents",
+	"OpportunityStageEvent",
+	"SecuritySystemRecorder",
+	"setpieces",
+	"SituationContained",
+	"StartingSuit",
+	"Trespassing",
+	"Unnoticed_Pacified",
+	"Unnoticed_Kill",
+	"Witnesses",
+	// Misc. Events
+	"ChallengeCompleted",
+	"ContractSessionMarker",
+	"CpdSet",
+	"Hero_Health",
+	"LeaderboardUpdated",
+	"Progression_XPGain",
+	"SegmentClosing",
+	"StartCpd",
+};
+
 DEFINE_PLUGIN_DETOUR(Croupier, void, OnEventSent, ZAchievementManagerSimple* th, uint32_t eventIndex, const ZDynamicObject& ev) {
 	ZString eventData = ZDynamicObjectToString(const_cast<ZDynamicObject&>(ev));
 
 	try {
 		auto json = nlohmann::json::parse(eventData.c_str(), eventData.c_str() + eventData.size());
 		auto const eventName = json.value("Name", "");
-		auto const timestamp = json.value("Timestamp", 0.0);
+		auto const dontPrint = eventsNotToPrint.contains(eventName);
 
-		if (!this->events.handle(eventName, json))
-			Logger::Info("Unhandled Event Sent: {}", eventData);
+		if (!dontPrint)
+			Logger::Info("Croupier: event {}", eventData);
+
+		this->events.handle(eventName, json);
 	}
 	catch (const nlohmann::json::exception& ex) {
+		Logger::Info("Error handling event: {}", eventData);
 		Logger::Error("{}", eventData);
 		Logger::Error("JSON exception: {}", ex.what());
 	}
