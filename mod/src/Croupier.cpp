@@ -1511,6 +1511,7 @@ auto Croupier::SetupEvents() -> void {
 					kv.correctMethod = eKillValidationType::Invalid;
 			}
 
+			this->SendKillValidationUpdate();
 			this->SendMissionComplete();
 		}
 
