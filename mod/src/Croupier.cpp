@@ -799,6 +799,12 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 		}
 
 		if (ImGui::BeginCombo("##OverlayDock", selectedOverlayDockName, ImGuiComboFlags_HeightLarge)) {
+			if (ImGui::Selectable("Undocked", this->config.overlayDockMode == DockMode::None, 0)) {
+				this->config.overlayDockMode = DockMode::None;
+				this->SaveConfiguration();
+			}
+			if (this->config.overlayDockMode == DockMode::None) ImGui::SetItemDefaultFocus();
+
 			if (ImGui::Selectable("Top Left", this->config.overlayDockMode == DockMode::TopLeft, 0)) {
 				this->config.overlayDockMode = DockMode::TopLeft;
 				this->SaveConfiguration();
