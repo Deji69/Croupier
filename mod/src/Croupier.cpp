@@ -1474,17 +1474,11 @@ auto lastThrownItem = ""s;
 
 auto Croupier::SetupEvents() -> void {
 	events.listen<Events::ContractStart>([this](auto& ev) {
-		this->sharedSpin.hasLoadedGame = false;
-		this->sharedSpin.resetKillValidations();
-
-		if (!this->sharedSpin.isPlaying || this->sharedSpin.isFinished)
-			this->sharedSpin.playerStart();
-
+		this->sharedSpin.playerStart();
 		this->SendKillValidationUpdate();
 	});
 	events.listen<Events::ContractLoad>([this](auto& ev) {
-		this->sharedSpin.hasLoadedGame = true;
-		this->sharedSpin.resetKillValidations();
+		this->sharedSpin.playerLoad();
 		this->SendKillValidationUpdate();
 	});
 	events.listen<Events::ExitGate>([this](const ServerEvent<Events::ExitGate>& ev) {

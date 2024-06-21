@@ -101,16 +101,25 @@ struct SharedRouletteSpin {
 
 	auto playerStart() {
 		this->resetKillValidations();
-		if (!this->isPlaying)
-			this->timeStarted = std::chrono::steady_clock().now();
 
-		this->spottedNotKilled.clear();
+		if (!this->isPlaying) {
+			this->isPlaying = true;
+			this->timeStarted = std::chrono::steady_clock().now();
+			this->isFinished = false;
+		}
+
 		this->killed.clear();
+		this->spottedNotKilled.clear();
 		this->isSA = true;
 		this->isCaughtOnCams = false;
 		this->isCamsDestroyed = false;
+		this->hasLoadedGame = false;
+	}
+
+	auto playerLoad() {
 		this->isPlaying = true;
-		this->isFinished = false;
+		this->hasLoadedGame = true;
+		this->resetKillValidations();
 	}
 
 	auto playerExit() {
@@ -120,6 +129,7 @@ struct SharedRouletteSpin {
 		if (this->spottedNotKilled.size() > 0)
 			this->isSA = false;
 		this->isSA = this->isSA && !this->isCaughtOnCams && !this->hasLoadedGame;
+		this->killed.clear();
 		this->spottedNotKilled.clear();
 	}
 
