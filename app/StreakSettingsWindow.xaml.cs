@@ -3,8 +3,6 @@ using System.Windows;
 
 namespace Croupier {
 	public class StreakSettingsWindowViewModel : ViewModel {
-		private int autoSpinCountdown = 0;
-
 		public int StreakCurrent {
 			get => Config.Default.StreakCurrent;
 			set {
@@ -18,13 +16,6 @@ namespace Croupier {
 			set {
 				Config.Default.StreakPB = 0;
 				UpdateProperty(nameof(StreakPB));
-			}
-		}
-
-		public int AutoSpinCountdown {
-			get => autoSpinCountdown;
-			set {
-				SetProperty(ref autoSpinCountdown, value);
 			}
 		}
 	}
