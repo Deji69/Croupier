@@ -1510,7 +1510,6 @@ auto Croupier::SetupEvents() -> void {
 		}
 
 		this->spinCompleted = true;
-		this->OnFinishMission();
 	});
 	events.listen<Events::ContractFailed>([this](const ServerEvent<Events::ContractFailed>& ev) {
 		this->SendMissionFailed();
@@ -2073,14 +2072,19 @@ static std::set<std::string> eventsNotToPrint = {
 	"AccidentBodyFound",
 	"Actorsick",
 	"Agility_Start",
+	"AllBodiesHidden",
 	"AmbientChanged",
+	"BlueEgg",
 	"BodyBagged",
 	"BodyFound",
+	"BodyHidden",
 	"Dart_Hit",
 	"DeadBodySeen",
 	"Disguise",
+	"Door_Unlocked",
 	"DrainPipe_climbed",
 	"Drain_Pipe_Climbed",
+	"EvidenceHidden",
 	"ExitInventory",
 	"FirstMissedShot",
 	"FirstNonHeadshot",
@@ -2097,6 +2101,7 @@ static std::set<std::string> eventsNotToPrint = {
 	"ObjectiveCompleted",
 	"OpportunityEvents",
 	"OpportunityStageEvent",
+	"PlayingPianoChanged",
 	"SecuritySystemRecorder",
 	"setpieces",
 	"SituationContained",
@@ -2104,6 +2109,7 @@ static std::set<std::string> eventsNotToPrint = {
 	"Trespassing",
 	"Unnoticed_Pacified",
 	"Unnoticed_Kill",
+	"VirusDestroyed",
 	"Witnesses",
 	// Misc. Events
 	"ChallengeCompleted",
