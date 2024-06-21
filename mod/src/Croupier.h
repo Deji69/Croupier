@@ -152,7 +152,6 @@ struct Configuration {
 	RouletteRuleset customRules;
 	eRouletteRuleset ruleset = eRouletteRuleset::Default;
 	std::vector<eMission> missionPool;
-
 	std::vector<SerializedSpin> spinHistory;
 };
 

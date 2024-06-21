@@ -719,7 +719,7 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 	ImGui::PushFont(SDK()->GetImGuiBlackFont());
 	ImGui::SetNextWindowContentSize(ImVec2(400, 0));
 
-	if (ImGui::Begin(ICON_MD_SETTINGS " CROUPIER", &this->showUI)) {
+	if (ImGui::Begin(ICON_MD_SETTINGS " CROUPIER", &this->showUI, ImGuiWindowFlags_AlwaysAutoResize)) {
 		auto connected = this->client->isConnected();
 		ImGui::PushStyleColor(ImGuiCol_Text, connected ? IM_COL32(0, 255, 0, 255) : IM_COL32(255, 0, 0, 255));
 		ImGui::TextUnformatted(connected ? "Connected" : "Disconnected");
