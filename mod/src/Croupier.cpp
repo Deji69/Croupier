@@ -974,7 +974,7 @@ auto Croupier::DrawSpinUI(bool focused) -> void {
 	auto viewportSize = ImGui::GetMainViewport()->Size;
 	auto flags = static_cast<ImGuiWindowFlags>(ImGuiWindowFlags_AlwaysAutoResize);
 
-	if (this->config.overlayDockMode != DockMode::None)
+	if (this->config.overlayDockMode != DockMode::None || !focused)
 		flags |= ImGuiWindowFlags_NoTitleBar;
 
 	switch (this->config.overlayDockMode) {
