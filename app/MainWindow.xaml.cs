@@ -489,7 +489,7 @@ namespace Croupier
 		private bool timerManuallyStopped = false;
 		private DateTime timerStart = DateTime.Now;
 		private TimeSpan? timeElapsed = null;
-		private int streak = 3;
+		private int streak = 0;
 		private Spin spin = null;
 		private bool spinCompleted = false;
 		private DateTime? autoSpinSchedule = null;
