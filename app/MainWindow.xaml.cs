@@ -228,7 +228,7 @@ namespace Croupier
 		}
 		public bool HorizontalSpinDisplay { get; set; } = false;
 		public bool RightToLeft {
-			get { return _rightToLeft; }
+			get => _rightToLeft;
 			set {
 				if (value == _rightToLeft) return;
 				_rightToLeft = value;
@@ -244,7 +244,7 @@ namespace Croupier
 			}
 		}
 		public bool StaticSize {
-			get { return _staticSize; }
+			get => _staticSize;
 			set {
 				if (value == _staticSize) return;
 				_staticSize = value;
@@ -263,7 +263,7 @@ namespace Croupier
 			}
 		}
 		public bool StaticSizeLHS {
-			get { return _staticSizeLHS; }
+			get => _staticSizeLHS;
 			set {
 				if (value == _staticSizeLHS) return;
 				_staticSizeLHS = value;
@@ -282,7 +282,7 @@ namespace Croupier
 			}
 		}
 		public bool KillValidations {
-			get { return _killValidations; }
+			get => _killValidations;
 			set {
 				if (value == _killValidations) return;
 				_killValidations = value;
@@ -298,10 +298,10 @@ namespace Croupier
 			}
 		}
 		public bool ShowSpinLabels {
-			get { return !_editMode; }
+			get => !_editMode;
 		}
 		public bool EditMode {
-			get { return _editMode; }
+			get => _editMode;
 			set {
 				if (value == _editMode) return;
 				_editMode = value;
@@ -313,9 +313,7 @@ namespace Croupier
 			get => ShowTimer || ShowStreak;
 		}
 		public bool ShowTimer {
-			get {
-				return _showTimer;
-			}
+			get => _showTimer;
 			set {
 				_showTimer = value;
 				if (value != Config.Default.Timer) {
@@ -364,9 +362,7 @@ namespace Croupier
 			}
 		}
 		public bool TimerFractions {
-			get {
-				return _timerFractions;
-			}
+			get => _timerFractions;
 			set {
 				_timerFractions = value;
 				if (value != Config.Default.TimerFractions) {
