@@ -205,8 +205,8 @@ namespace Croupier
 			{ TargetID.MarcoAbiatti, new("Marco Abiatti", "Marco", "MA", "mamba_marco_abiatti.jpg", MissionID.SAPIENZA_LANDSLIDE) },
 			{ TargetID.CraigBlack, new("Craig Black", "Craig", "CB", "ws_ebola_craig_black.jpg", MissionID.SAPIENZA_THEAUTHOR) },
 			{ TargetID.BrotherAkram, new("Brother Akram", "Akram", "BA", "ws_ebola_brother_akram.jpg", MissionID.SAPIENZA_THEAUTHOR) },
-			{ TargetID.ClausHugoStrandberg, new("Claus Hugo Strandberg", "Claus", "CHS", "tobigforjail_claus_hugo_stranberg.jpg", MissionID.MARRAKESH_GILDEDCAGE) },
 			{ TargetID.RezaZaydan, new("Reza Zaydan", "Reza", "RZ", "tobigforjail_general_zaydan.jpg", MissionID.MARRAKESH_GILDEDCAGE) },
+			{ TargetID.ClausHugoStrandberg, new("Claus Hugo Strandberg", "Claus", "CHS", "tobigforjail_claus_hugo_stranberg.jpg", MissionID.MARRAKESH_GILDEDCAGE) },
 			{ TargetID.KongTuoKwang, new("Kong Tuo-Kwang", "Kong", "KTK", "python_kong_tou_kwang_briefing.jpg", MissionID.MARRAKESH_HOUSEBUILTONSAND) },
 			{ TargetID.MatthieuMendola, new("Matthieu Mendola", "Matthieu", "MM", "python_matthieu_mendola_briefing.jpg", MissionID.MARRAKESH_HOUSEBUILTONSAND) },
 			{ TargetID.JordanCross, new("Jordan Cross", "Jordan", "JC", "club27_jordan_cross.jpg", MissionID.BANGKOK_CLUB27) },
@@ -363,6 +363,12 @@ namespace Croupier
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Impossible]),
 				],
 			}},
+			{"RZ", new Target(TargetID.RezaZaydan) {
+				MethodTags = [
+					new(StandardKillMethod.Drowning, [MethodTag.BannedInRR, MethodTag.Extreme]),
+					new(StandardKillMethod.Electrocution, [MethodTag.BannedInRR, MethodTag.Extreme]),
+				],
+			}},
 			{"CHS", new Target(TargetID.ClausHugoStrandberg) {
 				MethodTags = [
 					new(StandardKillMethod.FallingObject, [MethodTag.Hard]),
@@ -373,12 +379,6 @@ namespace Croupier
 						return !method.IsRemote;
 					}, [MethodTag.BannedInRR, MethodTag.Hard]),
 				},
-			}},
-			{"RZ", new Target(TargetID.RezaZaydan) {
-				MethodTags = [
-					new(StandardKillMethod.Drowning, [MethodTag.BannedInRR, MethodTag.Extreme]),
-					new(StandardKillMethod.Electrocution, [MethodTag.BannedInRR, MethodTag.Extreme]),
-				],
 			}},
 			{"KTK", new Target(TargetID.KongTuoKwang)},
 			{"MM", new Target(TargetID.MatthieuMendola) {
@@ -688,11 +688,11 @@ namespace Croupier
 			{"craig", "CB"}, {"black", "CB"},
 			{"brotherakram", "BA"},
 			{"brother", "BA"}, {"akram", "BA"},
+			{"rezazaydan", "RZ"},
+			{"reza", "RZ"}, {"rez", "RZ"}, {"zaydan", "RZ"}, {"general", "RZ"}, {"generalrezazaydan", "RZ"}, {"generalzaydan", "RZ"},
 			{"claushugostrandberg", "CHS"},
 			{"hugo", "CHS"}, {"claus", "CHS"}, {"strandberg", "CHS"}, {"stranberg", "CHS"},
 			{"claustrandberg", "CHS"}, {"clausstranberg", "CHS"}, {"claushugostranberg", "CHS"},
-			{"rezazaydan", "RZ"},
-			{"reza", "RZ"}, {"rez", "RZ"}, {"zaydan", "RZ"}, {"general", "RZ"}, {"generalrezazaydan", "RZ"}, {"generalzaydan", "RZ"},
 			{"kongtuokwang", "KTK"},
 			{"kk", "KTK"}, {"kong", "KTK"}, {"tuo", "KTK"}, {"kwang", "KTK"},
 			{"tuokwang", "KTK"}, {"kongkwang", "KTK"},

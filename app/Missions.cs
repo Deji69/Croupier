@@ -1432,7 +1432,7 @@ namespace Croupier
 				MissionID.SAPIENZA_THEICON => [Target.Targets["DB"]],
 				MissionID.SAPIENZA_LANDSLIDE => [Target.Targets["MA"]],
 				MissionID.SAPIENZA_THEAUTHOR => [Target.Targets["CB"], Target.Targets["BA"]],
-				MissionID.MARRAKESH_GILDEDCAGE => [Target.Targets["CHS"], Target.Targets["RZ"]],
+				MissionID.MARRAKESH_GILDEDCAGE => [Target.Targets["RZ"], Target.Targets["CHS"]],
 				MissionID.MARRAKESH_HOUSEBUILTONSAND => [Target.Targets["KTK"], Target.Targets["MM"]],
 				MissionID.BANGKOK_CLUB27 => [Target.Targets["JC"], Target.Targets["KM"]],
 				MissionID.BANGKOK_THESOURCE => [Target.Targets["ON"], Target.Targets["SY"]],
