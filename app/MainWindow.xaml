@@ -240,7 +240,7 @@
 					<ColumnDefinition Width="34" />
 					<ColumnDefinition Width="1*" />
 				</Grid.ColumnDefinitions>
-				<Image Source="/Resources/CroupierLogoIconsFlatLg.png" ToolTip="Croupier v2.0" />
+				<Image Name="Logo" Source="/Resources/CroupierLogoIconsFlatLg.png" ToolTip="Croupier v2.0" />
 				<ComboBox Name="MissionSelect"
 					Style="{StaticResource ComboBoxFlatStyle}"
 					Height="34"

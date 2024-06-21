@@ -534,6 +534,12 @@ namespace Croupier
 			((App)Application.Current).WindowPlace.Register(this);
 			Focus();
 
+			var logoVer = Version.Parse(Assembly.GetExecutingAssembly().GetName().Version.ToString());
+			var logoVerStr = logoVer.Major + "." + logoVer.Minor;
+			if (logoVer.Build != 0)
+				logoVerStr += "." + logoVer.Build;
+			Logo.ToolTip = "Croupier v" + logoVerStr;
+
 			if (Config.Default.SpinHistory.Count > 0) {
 				string[] history = new string[Config.Default.SpinHistory.Count];
 				Config.Default.SpinHistory.CopyTo(history, 0);
