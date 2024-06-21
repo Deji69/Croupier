@@ -727,55 +727,6 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 
 		ImGui::PushFont(SDK()->GetImGuiRegularFont());
 
-		if (!connected) {
-			// Legacy timer
-			if (ImGui::Checkbox("Timer", &this->config.timer)) {
-				this->SaveConfiguration();
-			}
-
-			if (this->config.timer) {
-				ImGui::SameLine();
-				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 40.0);
-				if (ImGui::Button("Reset"))
-					this->sharedSpin.timeStarted = std::chrono::steady_clock::now();
-			}
-		} else {
-			// In-App Timer
-			if (ImGui::Checkbox("Timer", &this->config.timer)) {
-				this->SaveConfiguration();
-				this->SendToggleTimer(this->config.timer);
-			}
-
-			if (this->config.timer) {
-				ImGui::SameLine(150.0);
-
-				if (ImGui::Button("Reset")) {
-					this->SendResetTimer();
-					this->sharedSpin.timeStarted = std::chrono::steady_clock::now();
-				}
-
-				ImGui::SameLine();
-				if (ImGui::Button("Start")) {
-					this->SendPauseTimer(false);
-					this->sharedSpin.timeStarted = std::chrono::steady_clock::now();
-				}
-			}
-		}
-
-		if (connected) {
-			// Streak Tracking
-			if (ImGui::Checkbox("Streak", &this->config.streak))
-				this->SaveConfiguration();
-
-			ImGui::SameLine(150.0);
-
-			if (ImGui::Button("Reset##Streak")) {
-				this->config.streakCurrent = 0;
-				this->SendResetStreak();
-			}
-		}
-
-
 		if (ImGui::Checkbox("Overlay", &this->config.spinOverlay))
 			this->SaveConfiguration();
 
@@ -834,6 +785,51 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 
 		if (ImGui::Checkbox("Overlay Kill Confirmations", &this->config.overlayKillConfirmations))
 			this->SaveConfiguration();
+
+		if (!connected) {
+			// Legacy timer
+			if (ImGui::Checkbox("Timer", &this->config.timer))
+				this->SaveConfiguration();
+
+			if (this->config.timer) {
+				ImGui::SameLine();
+				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 40.0);
+				if (ImGui::Button("Reset"))
+					this->sharedSpin.timeStarted = std::chrono::steady_clock::now();
+			}
+		} else {
+			// In-App Timer
+			if (ImGui::Checkbox("Timer", &this->config.timer))
+				this->SaveConfiguration();
+
+			if (this->config.timer) {
+				ImGui::SameLine(150.0);
+
+				if (ImGui::Button("Reset")) {
+					this->SendResetTimer();
+					this->sharedSpin.timeStarted = std::chrono::steady_clock::now();
+				}
+
+				ImGui::SameLine();
+				if (ImGui::Button("Start")) {
+					this->SendPauseTimer(false);
+					this->sharedSpin.timeStarted = std::chrono::steady_clock::now();
+				}
+			}
+		}
+
+		if (connected) {
+			// Streak Tracking
+			if (ImGui::Checkbox("Streak", &this->config.streak))
+				this->SaveConfiguration();
+
+			ImGui::SameLine(150.0);
+
+			if (ImGui::Button("Reset##Streak")) {
+				this->config.streakCurrent = 0;
+				this->SendResetStreak();
+			}
+		}
 
 		/*if (connected) {
 			ImGui::SameLine();
