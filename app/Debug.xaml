@@ -17,24 +17,40 @@
 		Icon="/CroupierLogoIconsFlatLg.png">
 	<ScrollViewer UseLayoutRounding="True" Margin="0" Background="Black">
 		<StackPanel Orientation="Vertical">
-			<StackPanel Orientation="Horizontal">
+			<StackPanel Orientation="Horizontal" Margin="5,5">
 				<Button
 					Content="Auto Spin"
-					Width="50"
-					Margin="0,0,0,5"
+					Width="70"
+					Margin="0,0,5,0"
 					Click="AutoSpin_Click"
 					/>
 				<Button
 					Content="RIP Spin"
-					Width="50"
-					Margin="0,0,0,5"
+					Width="70"
+					Height="24"
+					Margin="0,0,5,0"
 					Click="RIPSpin_Click"
 					/>
 				<Button
 					Content="Win Spin"
-					Width="50"
-					Margin="0,0,0,5"
+					Width="70"
+					Margin="0,0,5,0"
 					Click="WinSpin_Click"
+					/>
+			</StackPanel>
+			<StackPanel Orientation="Horizontal" Margin="5,5">
+				<Button
+					Content="Start Load"
+					Width="70"
+					Margin="0,0,5,0"
+					Click="StartLoad_Click"
+					/>
+				<Button
+					Content="Stop Load"
+					Width="70"
+					Height="24"
+					Margin="0,0,5,0"
+					Click="StopLoad_Click"
 					/>
 			</StackPanel>
 		</StackPanel>

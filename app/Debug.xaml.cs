@@ -26,6 +26,14 @@ namespace Croupier {
 			Config.Save();
 		}
 
+		private void StartLoad_Click(object sender, RoutedEventArgs e) {
+			CroupierSocketServer.SpoofMessage("LoadStarted:0");
+		}
+
+		private void StopLoad_Click(object sender, RoutedEventArgs e) {
+			CroupierSocketServer.SpoofMessage("LoadFinished:0");
+		}
+
 		private void WinSpin_Click(object sender, RoutedEventArgs e) {
 			CroupierSocketServer.SpoofMessage("MissionComplete:1");
 		}
@@ -35,7 +43,8 @@ namespace Croupier {
 		}
 
 		private void AutoSpin_Click(object sender, RoutedEventArgs e) {
-			CroupierSocketServer.SpoofMessage($"AutoSpin:{Mission.GetRandomMainMissionID()}");
+			if (Mission.GetMissionCodename(Mission.GetRandomMainMissionID(), out var codename))
+				CroupierSocketServer.SpoofMessage($"AutoSpin:{codename}");
 		}
 	}
 }
