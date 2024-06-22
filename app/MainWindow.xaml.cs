@@ -618,6 +618,7 @@ namespace Croupier
 				ResetStreak();
 			};
 			CroupierSocketServer.MissionComplete += (object sender, bool sa) => {
+				if (spinCompleted) return;
 				spinCompleted = true;
 				if (sa) IncrementStreak();
 				else ResetStreak();
@@ -625,6 +626,8 @@ namespace Croupier
 				StopTimer();
 			};
 			CroupierSocketServer.MissionFailed += (object sender, int _) => {
+				if (spinCompleted) return;
+
 				if (hasRestartedSinceSpin || (DateTime.Now - timerStart).TotalSeconds > Config.Default.StreakReplanWindow)
 					ResetStreak();
 
