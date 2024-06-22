@@ -52,6 +52,7 @@ namespace Croupier {
 		public bool ShowStreakPB { get; set; } = false;
 		public int StreakCurrent { get; set; } = 0;
 		public int StreakPB { get; set; } = 0;
+		public int StreakReplanWindow { get; set; } = 60;
 
 		public string TargetNameFormat { get; set; } = "";
 		public int AutoSpinCountdown { get; set; } = 0;

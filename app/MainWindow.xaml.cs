@@ -493,6 +493,7 @@ namespace Croupier
 		private int streak = 0;
 		private Spin spin = null;
 		private bool spinCompleted = false;
+		private bool hasRestartedSinceSpin = false;
 		private DateTime? autoSpinSchedule = null;
 		private MissionID autoSpinMission = MissionID.NONE;
 		private readonly LiveSplitClient liveSplit;
@@ -624,7 +625,10 @@ namespace Croupier
 				StopTimer();
 			};
 			CroupierSocketServer.MissionFailed += (object sender, int _) => {
-				ResetStreak();
+				if (hasRestartedSinceSpin || (DateTime.Now - timerStart).TotalSeconds > Config.Default.StreakReplanWindow)
+					ResetStreak();
+
+				hasRestartedSinceSpin = true;
 			};
 			CroupierSocketServer.Missions += (object sender, List<MissionID> missions) => {
 				missionPool.Clear();
@@ -834,12 +838,13 @@ namespace Croupier
 			PushCurrentSpinToHistory();
 			PostConditionUpdate();
 
-			if ((!TimerMultiSpin && !spinCompleted) || Config.Default.TimerResetMission == id) {
+			if (!TimerMultiSpin || Config.Default.TimerResetMission == id) {
 				ResetTimer();
 				StopTimer();
 			}
 
 			spinCompleted = false;
+			hasRestartedSinceSpin = false;
 			StartTimer();
 		}
 

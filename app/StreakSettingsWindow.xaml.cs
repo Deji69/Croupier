@@ -19,6 +19,14 @@ namespace Croupier {
 				UpdateProperty(nameof(StreakPB));
 			}
 		}
+
+		public int ReplanWindow {
+			get => Config.Default.StreakReplanWindow;
+			set {
+				Config.Default.StreakReplanWindow = value;
+				UpdateProperty(nameof(ReplanWindow));
+			}
+		}
 	}
 	
 	public partial class StreakSettingsWindow : Window {

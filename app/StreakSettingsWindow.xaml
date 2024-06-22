@@ -37,7 +37,7 @@
 				/>
 			<Grid Margin="5" MaxWidth="300" HorizontalAlignment="Left">
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="120" />
 					<ColumnDefinition Width="50" />
 					<ColumnDefinition Width="1*" />
 				</Grid.ColumnDefinitions>
@@ -101,13 +101,58 @@
 					Margin="0,0,0,5"
 					Click="ResetStreakPB_Click"
 					/>
-
-				<StackPanel
-					Grid.Row="1"
-					Orientation="Vertical"
-					Margin="5,0,5,8">
-
-				</StackPanel>
+			</Grid>
+			<Grid Margin="5">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="120" />
+					<ColumnDefinition Width="1*" />
+					<ColumnDefinition Width="1.3*" />
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+				<TextBlock
+					Grid.Column="0"
+					Grid.ColumnSpan="2"
+					Foreground="White"
+					Margin="5,0,0,5"
+					TextWrapping="WrapWithOverflow"
+					FontWeight="Bold"
+					VerticalAlignment="Top">
+					Replan Window
+				</TextBlock>
+				<Grid Width="Auto" Margin="0,0,10,0" Grid.Column="1">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="1*" />
+						<ColumnDefinition Width="32" />
+					</Grid.ColumnDefinitions>
+					<Slider
+						Grid.Column="0"
+						Name="ReplanWindowSlider" 
+						Foreground="White"
+						TickFrequency="1"
+						IsSnapToTickEnabled="True"
+						Minimum="0"
+						Value="{Binding ReplanWindow}"
+						Maximum="90"
+						SmallChange="5"
+						LargeChange="15"
+						MaxWidth="200"
+						/>
+					<TextBox
+						Grid.Column="1"
+						Text="{Binding ElementName=ReplanWindowSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}"
+						Width="26"
+						VerticalAlignment="Top"
+					/>
+				</Grid>
+				<TextBlock
+					Grid.Column="2"
+					Text="Set a grace period in seconds after spin, during which you are allowed 1 replan/restart."
+					Foreground="White"
+					TextWrapping="WrapWithOverflow"
+					/>
 			</Grid>
 		</StackPanel>
 	</ScrollViewer>
