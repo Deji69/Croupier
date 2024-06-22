@@ -38,6 +38,7 @@
 		<CommandBinding Command="{x:Static local:MainWindow.ResetTimerCommand}" CanExecute="Command_AlwaysCanExecute" Executed="ResetTimerCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.StartTimerCommand}" CanExecute="StartTimerCommand_CanExecute" Executed="StartTimerCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.StopTimerCommand}" CanExecute="StopTimerCommand_CanExecute" Executed="StopTimerCommand_Executed" />
+		<CommandBinding Command="{x:Static local:MainWindow.DebugWindowCommand}" CanExecute="DebugWindowCommand_CanExecute" Executed="DebugWindowCommand_Executed" />
 	</Window.CommandBindings>
 	<Window.Resources>
 		<BooleanToVisibilityConverter x:Key="VisibilityOfBool" />

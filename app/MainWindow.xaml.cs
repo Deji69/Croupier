@@ -106,6 +106,9 @@ namespace Croupier
 		public static readonly RoutedUICommand ShowLiveSplitWindowCommand = new("Show LiveSplit Window", "ShowLiveSplitWindow", typeof(MainWindow), [
 			new KeyGesture(Key.L, ModifierKeys.Alt),
 		]);
+		public static readonly RoutedUICommand DebugWindowCommand = new("Debug Window", "DebugWindow", typeof(MainWindow), [
+			new KeyGesture(Key.D, ModifierKeys.Alt),
+		]);
 		public static readonly RoutedUICommand EditRulesetsCommand = new("Edit Rulesets", "EditRulesets", typeof(MainWindow), [
 			new KeyGesture(Key.R, ModifierKeys.Alt),
 		]);
@@ -143,6 +146,7 @@ namespace Croupier
 		private static readonly List<Spin> spinHistory = [];
 		private static int spinHistoryIndex = 1;
 
+		private DebugWindow DebugWindowInst;
 		private EditMapPoolWindow EditMapPoolWindowInst;
 		private EditRulesetWindow EditRulesetWindowInst;
 		private TimerSettingsWindow TimerSettingsWindowInst;
@@ -1394,6 +1398,27 @@ namespace Croupier
 				TimerSettingsWindowInst = null;
 			};
 			TimerSettingsWindowInst.Show();
+		}
+
+		private void DebugWindowCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
+#if DEBUG
+			e.CanExecute = true;
+#endif
+		}
+
+		private void DebugWindowCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
+			if (DebugWindowInst != null) {
+				DebugWindowInst.Activate();
+				return;
+			}
+			DebugWindowInst = new(this) {
+				Owner = this,
+				WindowStartupLocation = WindowStartupLocation.CenterOwner
+			};
+			DebugWindowInst.Closed += (object sender, EventArgs e) => {
+				DebugWindowInst = null;
+			};
+			DebugWindowInst.Show();
 		}
 
 		private void ShowHitmapsWindowCommand_Executed(object sender, ExecutedRoutedEventArgs e)

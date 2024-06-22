@@ -132,6 +132,10 @@ namespace Croupier
 			Console.WriteLine("[SOCKET] Client disconnected.");
 		}
 
+		public static void SpoofMessage(string msg) {
+			ProcessReceivedMessage(msg);
+		}
+
 		private static void ProcessReceivedMessage(string msg) {
 			var firstSplit = msg.Split(":", 2);
 			var cmd = firstSplit.First();

@@ -836,6 +836,21 @@ namespace Croupier
 			{"shadowsonthewater", MissionID.AMBROSE_SHADOWSINTHEWATER},
 		};
 
+		private static readonly Random random = new();
+
+		public static MissionID GetRandomMissionID() {
+			var missionIDs = Enum.GetValues(typeof(MissionID));
+			return (MissionID)missionIDs.GetValue(random.Next(missionIDs.Length));
+		}
+
+		public static MissionID GetRandomMainMissionID() {
+			while (true) {
+				var id = GetRandomMissionID();
+				if ((new Mission(id)).IsMainMap)
+					return id;
+			}
+		}
+
 		public static bool GetMissionFromString(string name, out MissionID mission)
 		{
 			return missionDict.TryGetValue(TokenCharacterRegex.Replace(name.RemoveDiacritics(), "").ToLower(), out mission);
