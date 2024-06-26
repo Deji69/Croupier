@@ -1881,7 +1881,7 @@ auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Ki
 			&& !haveKillMethod
 			&& !haveDamageEvents
 			&& !haveKillItem)
-			return method == eKillMethod::Fall ? eKillValidationType::Valid : eKillValidationType::Unknown;
+			return eKillValidationType::Valid;
 
 		return killMethodStrict == "accident_push" ? eKillValidationType::Valid : eKillValidationType::Invalid;
 	case eKillMethod::FallingObject:
@@ -2096,14 +2096,14 @@ static std::set<std::string> eventsNotToPrint = {
 	"ItemPickedUp",
 	"ItemRemovedFromInventory",
 	"ItemThrown",
-	"Noticed_Pacified",
 	"MurderedBodySeen",
+	"Noticed_Pacified",
+	"NPC_Distracted",
 	"ObjectiveCompleted",
 	"OpportunityEvents",
 	"OpportunityStageEvent",
 	"PlayingPianoChanged",
 	"SecuritySystemRecorder",
-	"setpieces",
 	"SituationContained",
 	"StartingSuit",
 	"Trespassing",
