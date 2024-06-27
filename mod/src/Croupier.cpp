@@ -1753,6 +1753,16 @@ auto Croupier::SetupEvents() -> void {
 
 		if (validationUpdated) this->SendKillValidationUpdate();
 	});
+	events.listen<Events::setpieces>([this](const ServerEvent<Events::setpieces>& ev) {
+		if (this->spinCompleted) return;
+
+		KillSetpieceEvent data{};
+		data.id = ev.Value.RepositoryId;
+		data.name = ev.Value.name_metricvalue;
+		data.type = ev.Value.setpieceType_metricvalue;
+		data.timestamp = ev.Timestamp;
+		this->sharedSpin.killSetpieceEvents.push_back(std::move(data));
+	});
 
 	// SA Tracking
 	events.listen<Events::MurderedBodySeen>([this](const ServerEvent<Events::MurderedBodySeen>& ev) {
@@ -1887,6 +1897,22 @@ auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Ki
 	case eKillMethod::FallingObject:
 		return killMethodStrict == "accident_suspended_object" ? eKillValidationType::Valid : eKillValidationType::Invalid;
 	case eKillMethod::Fire:
+		{
+			// Validate incinerator fire kills (this may also pass for garden shredder kills)
+			auto fireSetpieceEv = this->sharedSpin.getSetpieceEventAtTimestamp(ev.Timestamp);
+			if (killMethodStrict == ""
+				&& killType == EKillType::EKillType_ItemTakeOutFront
+				&& isKillClassUnknown
+				&& !haveKillMethod
+				&& !haveKillItem
+				&& !ev.Value.DamageEvents.empty()
+				&& std::find(ev.Value.DamageEvents.cbegin(), ev.Value.DamageEvents.cend(), "InCloset") != ev.Value.DamageEvents.cend()
+				&& fireSetpieceEv
+				&& isIncineratorSetpiece(fireSetpieceEv->id)
+				&& fireSetpieceEv->name == "BodyFlushed")
+				return eKillValidationType::Valid;
+		}
+		// Handle typical fire kills.
 		return killMethodStrict == "accident_burn" ? eKillValidationType::Valid : eKillValidationType::Invalid;
 	case eKillMethod::Electrocution:
 		return killMethodStrict == "accident_electric" ? eKillValidationType::Valid : eKillValidationType::Invalid;

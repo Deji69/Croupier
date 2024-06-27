@@ -123,6 +123,17 @@ inline static const std::set<std::string, InsensitiveCompareLexicographic> impac
 	"af8a7b6c-692c-4a76-b9bc-2b91ce32bcbc", // Nitroglycerin
 };
 
+inline static std::set<std::string, InsensitiveCompareLexicographic> incineratorSetpieces = {
+	"93767116-a765-4e97-b51c-c45879457e71", // default ID (Hokkaido Morgue)
+	"2c4efdd7-8554-46e7-a713-e57eec068f92", // Berlin incinerator
+	"57d69808-1233-4aa6-9bda-c38fe0122c80", // Whittleton Creek Incinerator
+	"f02251c0-4ae8-419d-acfb-6bf70009924e", // Whittleton Creek Incinerator 2 ???
+};
+
+inline static auto isIncineratorSetpiece(const std::string& id) -> bool {
+	return incineratorSetpieces.contains(id);
+}
+
 inline static auto checkExplosiveKillType(std::string repoId, eKillType kt) -> bool {
 	switch (kt) {
 	case eKillType::Any:

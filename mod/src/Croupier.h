@@ -32,12 +32,20 @@ struct KeyBindAssign {
 	bool assigning2 = false;
 };
 
+struct KillSetpieceEvent {
+	std::string id;
+	std::string name;
+	std::string type;
+	double timestamp;
+};
+
 struct SharedRouletteSpin {
 	const RouletteSpin& spin;
 	std::set<std::string, InsensitiveCompareLexicographic> killed;
 	std::set<std::string, InsensitiveCompareLexicographic> spottedNotKilled;
 	std::vector<DisguiseChange> disguiseChanges;
 	std::vector<KillConfirmation> killValidations;
+	std::vector<KillSetpieceEvent> killSetpieceEvents;
 	std::chrono::steady_clock::time_point timeStarted;
 	std::chrono::seconds timeElapsed = std::chrono::seconds(0);
 	bool isSA = true;
@@ -74,6 +82,14 @@ struct SharedRouletteSpin {
 		for (auto i = disguiseChanges.size(); i > 0; --i) {
 			if (disguiseChanges[i - 1].timestamp < timestamp)
 				return &disguiseChanges[i - 1];
+		}
+		return nullptr;
+	}
+
+	auto getSetpieceEventAtTimestamp(double timestamp) const -> const KillSetpieceEvent* {
+		for (auto i = killSetpieceEvents.size(); i > 0; --i) {
+			if (std::abs(killSetpieceEvents[i - 1].timestamp - timestamp) < 0.1)
+				return &killSetpieceEvents[i - 1];
 		}
 		return nullptr;
 	}
@@ -136,6 +152,7 @@ struct SharedRouletteSpin {
 	auto resetKillValidations() -> void {
 		killValidations.resize(spin.getConditions().size());
 		disguiseChanges.clear();
+		killSetpieceEvents.clear();
 
 		for (auto& kv : killValidations)
 			kv = KillConfirmation {};
