@@ -239,7 +239,6 @@ namespace Croupier {
 					switch (Firearm) {
 						case FirearmKillMethod.Shotgun:
 						case FirearmKillMethod.AssaultRifle:
-						case FirearmKillMethod.SMG:
 						case FirearmKillMethod.Sniper:
 							return true;
 					}
