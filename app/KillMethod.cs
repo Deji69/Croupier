@@ -239,11 +239,9 @@ namespace Croupier {
 					switch (Firearm) {
 						case FirearmKillMethod.Shotgun:
 						case FirearmKillMethod.AssaultRifle:
+						case FirearmKillMethod.SMG:
 						case FirearmKillMethod.Sniper:
 							return true;
-						case FirearmKillMethod.SMG:
-							// Brine SMG cannot be brought in concealed weapon slot
-							return KillType == KillType.Loud;
 					}
 				}
 				return false;
