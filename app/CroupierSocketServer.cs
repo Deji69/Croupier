@@ -38,7 +38,6 @@ namespace Croupier
 		public static event EventHandler<int> Connected;
 		private static bool keepAlive = true;
 		private static readonly BlockingCollection<ClientMessage> clientMessages = [];
-		private static readonly Mutex sendMessageMutex = new();
 
 		private const int PORT = 8898;
 
