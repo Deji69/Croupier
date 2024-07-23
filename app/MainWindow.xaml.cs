@@ -537,8 +537,7 @@ namespace Croupier
 			}
 		}
 
-		public MainWindow()
-		{
+		public MainWindow() {
 			liveSplit = ((App)Application.Current).LiveSplitClient;
 			DataContext = this;
 			InitializeComponent();
@@ -714,8 +713,7 @@ namespace Croupier
 			SendSpinToClient();
 		}
 
-		private void MainWindow_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
+		private void MainWindow_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == nameof(VerticalDisplay)
 				|| e.PropertyName == nameof(StaticSize)) {
 				RefitWindow();
@@ -724,8 +722,7 @@ namespace Croupier
 			}
 		}
 
-		private void LoadSettings()
-		{
+		private void LoadSettings() {
 			if (!Enum.IsDefined(typeof(MissionPoolPresetID), Config.Default.MissionPool))
 				Config.Default.MissionPool = MissionPoolPresetID.MainMissions;
 
@@ -754,13 +751,11 @@ namespace Croupier
 			}
 		}
 
-		private void EditRulesetWindow_ApplyRuleset(object sender, Ruleset ruleset)
-		{
+		private void EditRulesetWindow_ApplyRuleset(object sender, Ruleset ruleset) {
 			rules = ruleset;
 		}
 
-		private void EditSpinWindow_SetCondition(object _sender, SpinCondition condition)
-		{
+		private void EditSpinWindow_SetCondition(object _sender, SpinCondition condition) {
 			if (currentMission.ID != condition.Target.Mission) return;
 			for (var i = 0; i < conditions.Count; i++) {
 				if (conditions[i].Target != condition.Target) continue;
@@ -772,8 +767,7 @@ namespace Croupier
 			PostConditionUpdate();
 		}
 
-		private void EditMapPoolWindow_AddMissionToPool(object sender, MissionID e)
-		{
+		private void EditMapPoolWindow_AddMissionToPool(object sender, MissionID e) {
 			if (missionPool.Contains(e)) return;
 			missionPool.Add(e);
 			SendMissionsToClient();
@@ -781,16 +775,14 @@ namespace Croupier
 			SaveCustomMissionPool();
 		}
 
-		private void EditMapPoolWindow_RemoveMissionFromPool(object sender, MissionID e)
-		{
+		private void EditMapPoolWindow_RemoveMissionFromPool(object sender, MissionID e) {
 			missionPool.Remove(e);
 			SendMissionsToClient();
 			OnPropertyChanged(nameof(ShuffleButtonEnabled));
 			SaveCustomMissionPool();
 		}
 
-		private void SaveCustomMissionPool()
-		{
+		private void SaveCustomMissionPool() {
 			if (Config.Default.MissionPool != MissionPoolPresetID.Custom)
 				return;
 			
@@ -1035,8 +1027,7 @@ namespace Croupier
 			timerStart = DateTime.Now;
 		}
 
-		public void SendSpinLockToClient()
-		{
+		public void SendSpinLockToClient() {
 			if (disableClientUpdate) return;
 			CroupierSocketServer.Send("SpinLock:" + (SpinLock ? "1" : "0"));
 		} 
@@ -1051,8 +1042,7 @@ namespace Croupier
 			CroupierSocketServer.Send("SpinData:" + spinData);
 		}
 
-		public void SendMissionsToClient()
-		{
+		public void SendMissionsToClient() {
 			if (disableClientUpdate) return;
 			var missions = "";
 			missionPool.ForEach(mission => {
@@ -1063,28 +1053,24 @@ namespace Croupier
 			CroupierSocketServer.Send("Missions:" + missions);
 		}
 
-		public void SendStreakToClient()
-		{
+		public void SendStreakToClient() {
 			if (disableClientUpdate) return;
 			CroupierSocketServer.Send($"Streak:{streak}");
 		}
 
-		private void OnMouseDown(object sender, MouseButtonEventArgs e)
-		{
+		private void OnMouseDown(object sender, MouseButtonEventArgs e) {
 			if (e.ChangedButton == MouseButton.Left)
 				this.DragMove();
 		}
 
-		private void MissionSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
+		private void MissionSelect_SelectionChanged(object sender, SelectionChangedEventArgs e) {
 			if (e.AddedItems.Count == 0) return;
 			var item = (MissionComboBoxItem)e.AddedItems[0];
 			if (currentMission == null || currentMission.ID != item.ID)
 				Spin(item.ID);
 		}
 
-		private void Shuffle()
-		{
+		private void Shuffle() {
 			if (missionPool.Count == 0) return;
 			Spin(missionPool[random.Next(missionPool.Count)]);
 		}
@@ -1111,15 +1097,13 @@ namespace Croupier
 			}
 		}
 
-		private void HistoryEntrySelected(object param)
-		{
+		private void HistoryEntrySelected(object param) {
 			var index = param as int?;
 			if (index == null || index < 0 || index >= spinHistory.Count) return;
 			SetSpinHistory(Math.Abs(index.Value - spinHistory.Count));
 		}
 
-		private void BookmarkEntrySelected(object param)
-		{
+		private void BookmarkEntrySelected(object param) {
 			var index = param as int?;
 			if (index == null || index < 0 || index >= BookmarkEntries.Count) return;
 			if (index == 0) {
@@ -1145,27 +1129,23 @@ namespace Croupier
 			}
 		}
 
-		private void TargetNameFormatSelected(object param)
-		{
+		private void TargetNameFormatSelected(object param) {
 			var index = param as int?;
 			if (index == null || index < 0 || index >= TargetNameFormatEntries.Count)
 				return;
 			TargetNameFormat = TargetNameFormatEntries[index.Value].ID;
 		}
 
-		private void ContextMenu_Exit(object sender, RoutedEventArgs e)
-		{
+		private void ContextMenu_Exit(object sender, RoutedEventArgs e) {
 			Application.Current.Shutdown();
 		}
 
-		private void Window_Deactivated(object sender, EventArgs e)
-		{
+		private void Window_Deactivated(object sender, EventArgs e) {
 			Window window = (Window)sender;
 			window.Topmost = TopmostEnabled;
 		}
 
-		private void OnSizeChange(object sender, SizeChangedEventArgs e)
-		{
+		private void OnSizeChange(object sender, SizeChangedEventArgs e) {
 			if (e.WidthChanged) {
 				var numColumns = GetNumColumns();
 				if (!StaticSize) {
@@ -1183,13 +1163,11 @@ namespace Croupier
 			}
 		}
 
-		protected virtual void OnPropertyChanged(string propertyName)
-		{
+		protected virtual void OnPropertyChanged(string propertyName) {
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
-		private void Window_Loaded(object sender, RoutedEventArgs e)
-		{
+		private void Window_Loaded(object sender, RoutedEventArgs e) {
 			RefitWindow();
 		}
 
@@ -1264,8 +1242,7 @@ namespace Croupier
 			ScaleFonts(width);
 		}
 
-		private double GetContentScale()
-		{
+		private double GetContentScale() {
 			if (VerticalDisplay) {
 				return conditions.Count switch {
 					1 => 2.75,
@@ -1283,8 +1260,7 @@ namespace Croupier
 			};
 		}
 
-		private void ScaleFonts(double width)
-		{
+		private void ScaleFonts(double width) {
 			var numColumns = GetNumColumns();
 			// Scale fonts (poorly)
 			double w = width;
@@ -1293,12 +1269,10 @@ namespace Croupier
 			SpinFontSize = Math.Max(10, v);
 		}
 
-		private void Window_Closing(object sender, CancelEventArgs e)
-		{
+		private void Window_Closing(object sender, CancelEventArgs e) {
 		}
 
-		private void CopySpinCommand_Executed(object sender, ExecutedRoutedEventArgs e)
-		{
+		private void CopySpinCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
 			// Have a few attempts at accessing the clipboard. In Windows this is usually a data race vs. other processes.
 			for (var i = 0; i < 10; ++i) {
 				try {
@@ -1316,8 +1290,7 @@ namespace Croupier
 			);
 		}
 
-		private void PasteSpinCommand_Executed(object sender, ExecutedRoutedEventArgs e)
-		{
+		private void PasteSpinCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
 			var text = Clipboard.GetText();
 			//if (Croupier.Spin.Parse(text, out var spin)) {
 			if (SpinParser.Parse(text, out var spin)) {
@@ -1329,8 +1302,7 @@ namespace Croupier
 			}
 		}
 
-		private void EditMapPoolCommand_Executed(object sender, ExecutedRoutedEventArgs e)
-		{
+		private void EditMapPoolCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
 			if (EditMapPoolWindowInst != null) {
 				EditMapPoolWindowInst.Activate();
 				return;
@@ -1348,8 +1320,7 @@ namespace Croupier
 			EditMapPoolWindowInst.Show();
 		}
 
-		private void EditRulesetsCommand_Executed(object sender, ExecutedRoutedEventArgs e)
-		{
+		private void EditRulesetsCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
 			if (EditRulesetWindowInst != null) {
 				EditRulesetWindowInst.Activate();
 				return;
@@ -1386,8 +1357,7 @@ namespace Croupier
 			StreakSettingsWindowInst.Show();
 		}
 
-		private void TimerSettingsCommand_Executed(object sender, ExecutedRoutedEventArgs e)
-		{
+		private void TimerSettingsCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
 			if (TimerSettingsWindowInst != null) {
 				TimerSettingsWindowInst.Activate();
 				return;
@@ -1423,8 +1393,7 @@ namespace Croupier
 			DebugWindowInst.Show();
 		}
 
-		private void ShowHitmapsWindowCommand_Executed(object sender, ExecutedRoutedEventArgs e)
-		{
+		private void ShowHitmapsWindowCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
 			if (HitmapsWindowInst != null) {
 				HitmapsWindowInst.Activate();
 				return;
@@ -1454,8 +1423,7 @@ namespace Croupier
 			LiveSplitWindowInst.Show();
 		}
 
-		private void EditSpinCommand_Executed(object sender, ExecutedRoutedEventArgs e)
-		{
+		private void EditSpinCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
 			if (EditSpinWindowInst != null) {
 				EditSpinWindowInst.Activate();
 				return;
@@ -1471,72 +1439,59 @@ namespace Croupier
 			EditSpinWindowInst.Show();
 		}
 
-		private void PrevSpinCommand_Executed(object sender, ExecutedRoutedEventArgs e)
-		{
+		private void PrevSpinCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
 			PreviousSpin();
 		}
 
-		private void PrevSpinCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+		private void PrevSpinCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = spinHistory.Count > 1 && spinHistoryIndex < spinHistory.Count;
 		}
 
-		private void NextSpinCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+		private void NextSpinCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = spinHistoryIndex > 1;
 		}
 
-		private void NextSpinCommand_Executed(object sender, ExecutedRoutedEventArgs e)
-		{
+		private void NextSpinCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
 			NextSpin();
 		}
 
-		private void RespinCommand_Executed(object sender, ExecutedRoutedEventArgs e)
-		{
+		private void RespinCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
 			Spin();
 		}
 
-		private void ShuffleCommand_Executed(object sender, ExecutedRoutedEventArgs e)
-		{
+		private void ShuffleCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
 			Shuffle();
 		}
 
-		private void ResetTimerCommand_Executed(object sender, ExecutedRoutedEventArgs e)
-		{
+		private void ResetTimerCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
 			timerManuallyStopped = false;
 			StopTimer();
 			ResetTimer();
 		}
 
-		private void StartTimerCommand_Executed(object sender, ExecutedRoutedEventArgs e)
-		{
+		private void StartTimerCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
 			timerManuallyStopped = false;
 			StartTimer();
 		}
 
-		private void StartTimerCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+		private void StartTimerCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = timerStopped;
 		}
 
-		private void StopTimerCommand_Executed(object sender, ExecutedRoutedEventArgs e)
-		{
+		private void StopTimerCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
 			timerManuallyStopped = true;
 			StopTimer();
 		}
 
-		private void StopTimerCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+		private void StopTimerCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = !timerManuallyStopped;
 		}
 
-		private void ShuffleCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+		private void ShuffleCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = ShuffleButtonEnabled;
 		}
 
-		private void PasteSpinCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+		private void PasteSpinCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			//e.CanExecute = Croupier.Spin.Parse(Clipboard.GetText(), out _);
 			e.CanExecute = SpinParser.Parse(Clipboard.GetText(), out _);
 		}

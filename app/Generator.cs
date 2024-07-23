@@ -169,7 +169,7 @@ namespace Croupier
 			if (DoTagsViolateRules(tags)) return false;
 			return true;
 		}
-		
+
 		private bool IsLargeFirearm(KillMethod method) {
 			if (ruleset.loudSMGIsLargeFirearm && method.IsLoudWeapon && method.Firearm == FirearmKillMethod.SMG)
 				return true;
