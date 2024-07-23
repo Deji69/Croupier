@@ -37,6 +37,7 @@ namespace Croupier {
 		public List<string> SpinHistory { get; set; } = [];
 		public List<string> Bookmarks { get; set; } = [];
 
+		public bool CheckUpdate { get; set; } = true;
 		public bool AlwaysOnTop { get; set; } = false;
 		public bool RightToLeft { get; set; } = false;
 		public bool StaticSize { get; set; } = false;

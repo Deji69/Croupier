@@ -91,6 +91,7 @@ namespace Croupier
 		private const int MAX_HISTORY_ENTRIES = 30;
 		public event PropertyChangedEventHandler PropertyChanged;
 
+		public static readonly RoutedUICommand CheckUpdateCommand = new("Check Update", "CheckUpdate", typeof(MainWindow));
 		public static readonly RoutedUICommand CopySpinCommand = new("Copy Spin", "CopySpin", typeof(MainWindow), [
 			new KeyGesture(Key.C, ModifierKeys.Control),
 		]);
@@ -180,6 +181,16 @@ namespace Croupier
 				SyncHistoryEntries();
 				foreach (var entry in TargetNameFormatEntries)
 					entry.Refresh();
+			}
+		}
+		public bool AutoUpdateCheck {
+			get {
+				return Config.Default.CheckUpdate;
+			}
+			set {
+				Config.Default.CheckUpdate = value;
+				Config.Save();
+				OnPropertyChanged(nameof(AutoUpdateCheck));
 			}
 		}
 
@@ -816,17 +827,8 @@ namespace Croupier
 			var idx = MissionListItems.ToList().FindIndex(item => item.ID == currentMission.ID);
 			MissionSelect.SelectedIndex = idx;
 
-			UpdateChecker.CheckForUpdateAsync().ContinueWith(task => {
-				if (task.Result == null) return;
-
-				var result = MessageBox.Show(
-					$"Click Yes to download {task.Result.name}. Click No to update later.",
-					"Update Available - Croupier",
-					MessageBoxButton.YesNo
-				);
-				if (result == MessageBoxResult.Yes)
-					UpdateChecker.OpenUrl(task.Result.url);
-			});
+			if (Config.Default.CheckUpdate)
+				DoUpdateCheck();
 		}
 
 		public void Spin(MissionID id = MissionID.NONE) {
@@ -1539,9 +1541,43 @@ namespace Croupier
 			e.CanExecute = SpinParser.Parse(Clipboard.GetText(), out _);
 		}
 
-		private void Command_AlwaysCanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+		private void CheckUpdateCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
+			DoUpdateCheck(true);
+		}
+
+		private void Command_AlwaysCanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = true;
+		}
+
+		private static async void DoUpdateCheck(bool informOnFail = false) {
+			try {
+				var result = await UpdateChecker.CheckForUpdateAsync();
+				if (result == null) {
+					if (informOnFail) {
+						MessageBox.Show(
+							$"Croupier is up-to-date!",
+							"Update Check - Croupier",
+							MessageBoxButton.OK
+						);
+					}
+					return;
+				}
+
+				var msgRes = MessageBox.Show(
+					$"Click Yes to download {result.name}. Click No to update later.",
+					"Update Available - Croupier",
+					MessageBoxButton.YesNo
+				);
+				if (msgRes == MessageBoxResult.Yes)
+					UpdateChecker.OpenUrl(result.url);
+			}
+			catch (Exception ex) {
+				if (informOnFail) MessageBox.Show(
+					$"Update check error: {ex.Message}",
+					"Update Check - Croupier",
+					MessageBoxButton.OK
+				);
+			}
 		}
 	}
 }

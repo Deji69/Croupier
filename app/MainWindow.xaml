@@ -21,6 +21,7 @@
 		Closing="Window_Closing"
 		Deactivated="Window_Deactivated">
 	<Window.CommandBindings>
+		<CommandBinding Command="{x:Static local:MainWindow.CheckUpdateCommand}" CanExecute="Command_AlwaysCanExecute" Executed="CheckUpdateCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.CopySpinCommand}" CanExecute="Command_AlwaysCanExecute" Executed="CopySpinCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.PasteSpinCommand}" CanExecute="PasteSpinCommand_CanExecute" Executed="PasteSpinCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.EditSpinCommand}" CanExecute="Command_AlwaysCanExecute" Executed="EditSpinCommand_Executed" />
@@ -593,6 +594,16 @@
 					Header="_Rulesets"
 					Command="{x:Static local:MainWindow.EditRulesetsCommand}"
 				/>
+				<Separator />
+				<MenuItem Name="ContextMenuUpdateCheck" Header="Update Check" StaysOpenOnClick="True">
+					<MenuItem.ItemContainerStyle>
+						<Style TargetType="MenuItem">
+							<Setter Property="StaysOpenOnClick" Value="True" />
+						</Style>
+					</MenuItem.ItemContainerStyle>
+					<MenuItem Header="Check Now" Command="{x:Static local:MainWindow.CheckUpdateCommand}" />
+					<MenuItem Header="Check On Launch" IsChecked="{Binding AutoUpdateCheck, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsCheckable="True" />
+				</MenuItem>
 				<MenuItem
 					Header="E_xit"
 					Click="ContextMenu_Exit"
