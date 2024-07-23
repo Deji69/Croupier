@@ -158,6 +158,7 @@ inline static const std::unordered_map<std::string, eMapKillMethod> specificKill
 	{"58dceb1c-d7db-41dc-9750-55e3ab87fdf0", eMapKillMethod::BattleAxe},
 	{"b153112f-9cd1-4a49-a9c6-ba1a34f443ab", eMapKillMethod::BeakStaff},
 	{"d938aa5c-72cf-4907-8bf5-522a67a11ae5", eMapKillMethod::Broadsword},
+	{"12200bd8-9605-4111-8b26-4e73cb07d816", eMapKillMethod::Broadsword},
 	{"6d4c88f3-9a09-453c-9a6e-a081f1136bf3", eMapKillMethod::BurialKnife},
 	{"e312a416-5b56-4cb5-8994-1d4bc82fbb84", eMapKillMethod::CircumcisionKnife},
 	{"2c037ef5-a01b-4532-8216-1d535193a837", eMapKillMethod::CombatKnife},
