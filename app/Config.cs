@@ -34,6 +34,7 @@ namespace Croupier {
 		public bool Ruleset_SuitOnlyMode { get; set; } = false;
 		public bool Ruleset_AllowDuplicateDisguises { get; set; } = false;
 		public bool Ruleset_EnableAnyDisguise { get; set; } = false;
+		public bool Ruleset_LoudSMGIsLargeFirearm { get; set; } = false;
 		public List<string> SpinHistory { get; set; } = [];
 		public List<string> Bookmarks { get; set; } = [];
 

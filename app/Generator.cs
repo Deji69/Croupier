@@ -160,7 +160,7 @@ namespace Croupier
 		}
 
 		private bool IsLegalForSpin(Spin spin, Target target, Disguise disguise, KillMethod method) {
-			if (method.IsLargeFirearm && spin.LargeFirearmCount > 0) return false;
+			if (IsLargeFirearm(method) && CountLargeFirearms(spin) > 0) return false;
 			if (spin.HasMethod(method)) return false;
 			var tags = target.GetMethodTags(method);
 			if (tags.Contains(MethodTag.LoudOnly) && method.IsSilencedWeapon) return false;
@@ -168,6 +168,16 @@ namespace Croupier
 			tags = target.TestRules(disguise, method);
 			if (DoTagsViolateRules(tags)) return false;
 			return true;
+		}
+		
+		private bool IsLargeFirearm(KillMethod method) {
+			if (ruleset.loudSMGIsLargeFirearm && method.IsLoudWeapon && method.Firearm == FirearmKillMethod.SMG)
+				return true;
+			return method.IsLargeFirearm;
+		}
+
+		private int CountLargeFirearms(Spin spin) {
+			return spin.Conditions.Count(c => IsLargeFirearm(c.Method));
 		}
 		
 		private bool DoTagsViolateRules(List<MethodTag> tags) {

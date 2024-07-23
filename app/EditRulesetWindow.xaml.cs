@@ -112,6 +112,15 @@ namespace Croupier
 				OnPropertyChanged(nameof(LoudRemoteExplosiveKillTypes));
 			}
 		}
+		public bool LoudSMGIsLargeFirearm
+		{
+			get => Ruleset.loudSMGIsLargeFirearm;
+			set {
+				Ruleset.loudSMGIsLargeFirearm = value;
+				CustomRulesetChanged();
+				OnPropertyChanged(nameof(LoudSMGIsLargeFirearm));
+			}
+		}
 
 		public bool MediumConditions
 		{
@@ -260,6 +269,7 @@ namespace Croupier
 				customRuleset.suitOnlyMode = Config.Default.Ruleset_SuitOnlyMode;
 				customRuleset.allowDuplicateDisguise = Config.Default.Ruleset_AllowDuplicateDisguises;
 				customRuleset.enableAnyDisguise = Config.Default.Ruleset_EnableAnyDisguise;
+				customRuleset.loudSMGIsLargeFirearm = Config.Default.Ruleset_LoudSMGIsLargeFirearm;
 			}
 
 			var ruleset = Rulesets.FirstOrDefault(r => r.Name == Config.Default.Ruleset);

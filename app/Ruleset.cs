@@ -39,6 +39,7 @@ namespace Croupier
 					liveComplications = true;
 					liveComplicationsExcludeStandard = true;
 					liveComplicationChance = 25;
+					loudSMGIsLargeFirearm = true;
 					break;
 				case RulesetPreset.RRWC2023:
 					genericEliminations = false;
@@ -49,6 +50,7 @@ namespace Croupier
 					liveComplications = true;
 					liveComplicationsExcludeStandard = true;
 					liveComplicationChance = 25;
+					loudSMGIsLargeFirearm = true;
 					break;
 				case RulesetPreset.RR12:
 					genericEliminations = false;
@@ -59,6 +61,7 @@ namespace Croupier
 					liveComplications = true;
 					liveComplicationsExcludeStandard = true;
 					liveComplicationChance = 20;
+					loudSMGIsLargeFirearm = true;
 					break;
 				case RulesetPreset.RR11:
 					genericEliminations = true;
@@ -66,6 +69,7 @@ namespace Croupier
 					thrownKillTypes = true;
 					enableEasterEggConditions = true;
 					enableAnyExplosives = true;
+					loudSMGIsLargeFirearm = true;
 					break;
 				case RulesetPreset.Croupier:
 					genericEliminations = false;
@@ -99,5 +103,7 @@ namespace Croupier
 		public bool enableRemoteExplosives = false;
 		public bool enableLoudRemoteExplosives = false;
 		public bool enableEasterEggConditions = false;
+
+		public bool loudSMGIsLargeFirearm = false;
 	}
 }

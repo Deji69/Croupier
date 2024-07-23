@@ -39,6 +39,7 @@
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
 					</Grid.RowDefinitions>
 					<CheckBox
 						Grid.Row="0"
@@ -279,6 +280,28 @@
 						FontWeight="Normal"
 						VerticalAlignment="Top">
 						Enable generation of 'Loud Remote' as a potential 'kill type' for explosives.
+					</TextBlock>
+					<CheckBox
+						Grid.Row="10"
+						Grid.Column="0"
+						Margin="0,0,10,0"
+						Foreground="White"
+						FontWeight="Bold"
+						VerticalContentAlignment="Top"
+						IsChecked="{Binding LoudSMGIsLargeFirearm}">
+						<TextBlock TextWrapping="Wrap">
+							'Loud SMG' Is Large Firearm
+						</TextBlock>
+					</CheckBox>
+					<TextBlock
+						Grid.Row="10"
+						Grid.Column="1"
+						Foreground="White"
+						Margin="5,0,0,0"
+						TextWrapping="WrapWithOverflow"
+						FontWeight="Normal"
+						VerticalAlignment="Top">
+						Loud SMG will be considered a large firearm by Croupier, counting towards the large firearm limit in a spin.
 					</TextBlock>
 				</Grid>
 				<Expander
