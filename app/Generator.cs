@@ -190,8 +190,7 @@ namespace Croupier
 		}
 		
 		private bool CanMethodHaveLiveComplication(KillMethod method) {
-			switch (method.Type)
-			{
+			switch (method.Type) {
 				case KillMethodType.Firearm:
 					// Allow all firearm kills except explosive (unless enabled)
 					if (method.Firearm == FirearmKillMethod.Explosive)
