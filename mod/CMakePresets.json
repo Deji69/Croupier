@@ -15,10 +15,6 @@
 			"cacheVariables": {
 				"CMAKE_INSTALL_PREFIX": "${sourceDir}/_install/${presetName}",
 				"CMAKE_CXX_COMPILER": "cl.exe",
-				"CMAKE_TOOLCHAIN_FILE": {
-					"value": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake",
-					"type": "FILEPATH"
-				},
 				"VCPKG_TARGET_TRIPLET": "x64-windows-static",
 				"VCPKG_HOST_TRIPLET": "x64-windows-static",
 				"CMAKE_POLICY_DEFAULT_CMP0091": "NEW"

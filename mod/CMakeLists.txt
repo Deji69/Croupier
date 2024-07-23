@@ -24,7 +24,14 @@ add_library(Croupier SHARED
 add_library(unac STATIC)
 target_sources(unac PRIVATE "src/unac.h" "src/unac.c")
 find_library(ICONV_LIB_PATH iconv)
-find_package(directx-headers CONFIG REQUIRED)
+include(FetchContent)
+FetchContent_Declare(
+	directx-headers
+	GIT_REPOSITORY https://github.com/microsoft/DirectX-Headers.git
+	GIT_TAG        9be295b3b81ce1d0ff2b44f18d0eb86ea54c5122 # release-1.10.0
+)
+
+FetchContent_MakeAvailable(directx-headers)
 
 target_link_libraries(Croupier PRIVATE
 	ZHMModSDK
