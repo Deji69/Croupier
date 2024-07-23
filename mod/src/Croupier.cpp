@@ -1842,20 +1842,20 @@ auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Ki
 		return killMethodBroad == "unarmed" ? eKillValidationType::Valid : eKillValidationType::Invalid;
 	case eKillMethod::Pistol:
 		return killMethodBroad == "pistol" || killMethodBroad == "close_combat_pistol_elimination" ? eKillValidationType::Valid : eKillValidationType::Invalid;
+	case eKillMethod::PistolElimination:
+		return killMethodBroad == "close_combat_pistol_elimination" ? eKillValidationType::Valid : eKillValidationType::Invalid;
 	case eKillMethod::SMG:
 		if (killMethodBroad == "melee_lethal" && ev.Value.KillItemCategory == "smg") // wtf?
 			return eKillValidationType::Valid;
 		return killMethodBroad == "smg" ? eKillValidationType::Valid : eKillValidationType::Invalid;
+	case eKillMethod::SMGElimination:
+		return killMethodBroad == "melee_lethal" && ev.Value.KillItemCategory == "smg" ? eKillValidationType::Valid : eKillValidationType::Invalid;
 	case eKillMethod::Shotgun:
 		return killMethodBroad == "shotgun" ? eKillValidationType::Valid : eKillValidationType::Invalid;
 	case eKillMethod::AssaultRifle:
 		return killMethodBroad == "assaultrifle" ? eKillValidationType::Valid : eKillValidationType::Invalid;
 	case eKillMethod::Sniper:
 		return killMethodBroad == "sniperrifle" ? eKillValidationType::Valid : eKillValidationType::Invalid;
-	case eKillMethod::PistolElimination:
-		return killMethodBroad == "close_combat_pistol_elimination" ? eKillValidationType::Valid : eKillValidationType::Invalid;
-	case eKillMethod::SMGElimination:
-		return killMethodBroad == "melee_lethal" && ev.Value.KillItemCategory == "smg" ? eKillValidationType::Valid : eKillValidationType::Invalid;
 	case eKillMethod::Explosive:
 		return killMethodBroad == "explosive"
 			&& checkExplosiveKillType(ev.Value.KillItemRepositoryId, type)
