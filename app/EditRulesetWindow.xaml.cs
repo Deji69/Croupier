@@ -15,67 +15,55 @@ namespace Croupier
 		public event EventHandler<Ruleset> ApplyRuleset;
 
 		public bool GenericEliminations {
-			get { return Ruleset.genericEliminations; }
+			get => Ruleset.genericEliminations;
 			set {
 				Ruleset.genericEliminations = value;
 				CustomRulesetChanged();
 				OnPropertyChanged(nameof(GenericEliminations));
 			}
 		}
-		public bool LiveComplications
-		{
-			get { return Ruleset.liveComplications; }
-			set
-			{
+		public bool LiveComplications {
+			get => Ruleset.liveComplications;
+			set {
 				Ruleset.liveComplications = value;
 				CustomRulesetChanged();
 				OnPropertyChanged(nameof(LiveComplications));
 			}
 		}
-		public bool LiveComplicationsExcludeStandard
-		{
-			get { return Ruleset.liveComplicationsExcludeStandard; }
-			set
-			{
+		public bool LiveComplicationsExcludeStandard {
+			get => Ruleset.liveComplicationsExcludeStandard;
+			set {
 				Ruleset.liveComplicationsExcludeStandard = value;
 				CustomRulesetChanged();
 				OnPropertyChanged(nameof(LiveComplicationsExcludeStandard));
 			}
 		}
-		public int LiveComplicationChance
-		{
-			get { return Ruleset.liveComplicationChance; }
-			set
-			{
+		public int LiveComplicationChance {
+			get => Ruleset.liveComplicationChance;
+			set {
 				Ruleset.liveComplicationChance = value;
 				CustomRulesetChanged();
 				OnPropertyChanged(nameof(LiveComplicationChance));
 			}
 		}
-		public bool MeleeKillTypes
-		{
-			get { return Ruleset.meleeKillTypes; }
-			set
-			{
+		public bool MeleeKillTypes {
+			get => Ruleset.meleeKillTypes;
+			set {
 				Ruleset.meleeKillTypes = value;
 				CustomRulesetChanged();
 				OnPropertyChanged(nameof(MeleeKillTypes));
 			}
 		}
-		public bool ThrownKillTypes
-		{
-			get { return Ruleset.thrownKillTypes; }
-			set
-			{
+		public bool ThrownKillTypes {
+			get => Ruleset.thrownKillTypes;
+			set {
 				Ruleset.thrownKillTypes = value;
 				CustomRulesetChanged();
 				OnPropertyChanged(nameof(ThrownKillTypes));
 			}
 		}
 		public bool AnyExplosiveKillTypes {
-			get {
-				return Ruleset.enableAnyExplosives;
-			}
+			get => Ruleset.enableAnyExplosives;
 			set {
 				Ruleset.enableAnyExplosives = value;
 				CustomRulesetChanged();
@@ -83,9 +71,7 @@ namespace Croupier
 			}
 		}
 		public bool RemoteExplosiveKillTypes {
-			get {
-				return Ruleset.enableRemoteExplosives;
-			}
+			get => Ruleset.enableRemoteExplosives;
 			set {
 				Ruleset.enableRemoteExplosives = value;
 				CustomRulesetChanged();
@@ -93,27 +79,24 @@ namespace Croupier
 			}
 		}
 		public bool ImpactExplosiveKillTypes {
-			get {
-				return Ruleset.enableImpactExplosives;
-			}
+			get => Ruleset.enableImpactExplosives;
 			set {
 				Ruleset.enableImpactExplosives = value;
 				CustomRulesetChanged();
 				OnPropertyChanged(nameof(ImpactExplosiveKillTypes));
 			}
 		}
+
 		public bool LoudRemoteExplosiveKillTypes {
-			get {
-				return Ruleset.enableLoudRemoteExplosives;
-			}
+			get => Ruleset.enableLoudRemoteExplosives;
 			set {
 				Ruleset.enableLoudRemoteExplosives = value;
 				CustomRulesetChanged();
 				OnPropertyChanged(nameof(LoudRemoteExplosiveKillTypes));
 			}
 		}
-		public bool LoudSMGIsLargeFirearm
-		{
+
+		public bool LoudSMGIsLargeFirearm {
 			get => Ruleset.loudSMGIsLargeFirearm;
 			set {
 				Ruleset.loudSMGIsLargeFirearm = value;
@@ -122,90 +105,80 @@ namespace Croupier
 			}
 		}
 
-		public bool MediumConditions
-		{
-			get { return Ruleset.enableMedium; }
-			set
-			{
+		public bool MediumConditions {
+			get => Ruleset.enableMedium;
+			set	{
 				Ruleset.enableMedium = value;
 				CustomRulesetChanged();
 				OnPropertyChanged(nameof(MediumConditions));
 			}
 		}
-		public bool HardConditions
-		{
+
+		public bool HardConditions {
 			get { return Ruleset.enableHard; }
-			set
-			{
+			set {
 				Ruleset.enableHard = value;
 				CustomRulesetChanged();
 				OnPropertyChanged(nameof(HardConditions));
 			}
 		}
-		public bool ExtremeConditions
-		{
-			get { return Ruleset.enableExtreme; }
-			set
-			{
+
+		public bool ExtremeConditions {
+			get => Ruleset.enableExtreme;
+			set {
 				Ruleset.enableExtreme = value;
 				CustomRulesetChanged();
 				OnPropertyChanged(nameof(ExtremeConditions));
 			}
 		}
-		public bool BuggyConditions
-		{
-			get { return Ruleset.enableBuggy; }
-			set
-			{
+
+		public bool BuggyConditions {
+			get => Ruleset.enableBuggy;
+			set {
 				Ruleset.enableBuggy = value;
 				CustomRulesetChanged();
 				OnPropertyChanged(nameof(BuggyConditions));
 			}
 		}
-		public bool ImpossibleConditions
-		{
-			get { return Ruleset.enableImpossible; }
-			set
-			{
+
+		public bool ImpossibleConditions {
+			get => Ruleset.enableImpossible;
+			set {
 				Ruleset.enableImpossible = value;
 				CustomRulesetChanged();
 				OnPropertyChanged(nameof(ImpossibleConditions));
 			}
 		}
+
 		public bool EasterEggConditions {
-			get {
-				return Ruleset.enableEasterEggConditions;
-			}
+			get => Ruleset.enableEasterEggConditions;
 			set {
 				Ruleset.enableEasterEggConditions = value;
 				CustomRulesetChanged();
 				OnPropertyChanged(nameof(EasterEggConditions));
 			}
 		}
+
 		public bool SuitOnlyMode {
-			get {
-				return Ruleset.suitOnlyMode;
-			}
+			get => Ruleset.suitOnlyMode;
 			set {
 				Ruleset.suitOnlyMode = value;
 				CustomRulesetChanged();
 				OnPropertyChanged(nameof(SuitOnlyMode));
 			}
 		}
+
 		public bool EnableAnyDisguise {
-			get {
-				return Ruleset.enableAnyDisguise;
-			}
+			get => Ruleset.enableAnyDisguise;
 			set {
 				Ruleset.enableAnyDisguise = value;
 				CustomRulesetChanged();
 				OnPropertyChanged(nameof(EnableAnyDisguise));
 			}
 		}
+
 		public bool AllowDuplicateDisguises {
-			get {
-				return Ruleset.allowDuplicateDisguise;
-			}
+			get => Ruleset.allowDuplicateDisguise;
 			set {
 				Ruleset.allowDuplicateDisguise = value;
 				CustomRulesetChanged();
@@ -215,7 +188,7 @@ namespace Croupier
 
 		private Ruleset _Ruleset;
 		public Ruleset Ruleset {
-			get { return _Ruleset; }
+			get => _Ruleset;
 			set {
 				_Ruleset = value;
 				OnPropertyChanged(nameof(Ruleset));
@@ -241,8 +214,7 @@ namespace Croupier
 		}
 		private readonly ObservableCollection<Ruleset> Rulesets;
 
-		public EditRulesetWindow(ObservableCollection<Ruleset> rulesets)
-		{
+		public EditRulesetWindow(ObservableCollection<Ruleset> rulesets) {
 			InitializeComponent();
 			DataContext = this;
 			Rulesets = rulesets;
@@ -281,8 +253,7 @@ namespace Croupier
 			else SelectRuleset(Rulesets[0]);
 		}
 
-		private void RulesetComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
+		private void RulesetComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) {
 			var comboBox = (ComboBox)sender;
 			if (comboBox.SelectedValue == null) {
 				comboBox.SelectedIndex = Rulesets.IndexOf(Ruleset);
@@ -346,8 +317,7 @@ namespace Croupier
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		protected virtual void OnPropertyChanged(string propertyName)
-		{
+		protected virtual void OnPropertyChanged(string propertyName) {
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 	}
