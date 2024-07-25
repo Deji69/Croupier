@@ -279,7 +279,6 @@ namespace Croupier {
 			{"dracula", "vampire"},
 			{"hippy", "hippie"},
 			{"bicyclist", "cyclist"},
-			{"garden", "gardener"},
 			{"gardner", "gardener"},
 			{"guardener", "gardener"},
 			{"housekpr", "housekeeper"},
