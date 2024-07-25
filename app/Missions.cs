@@ -181,48 +181,7 @@ namespace Croupier
 
 		public MissionID ID { get; set; } = mission;
 		public string Name {
-			get {
-				return ID switch {
-					MissionID.ICAFACILITY_ARRIVAL => "Arrival",
-					MissionID.ICAFACILITY_GUIDED => "Guided Training",
-					MissionID.ICAFACILITY_FREEFORM => "Freeform Training",
-					MissionID.ICAFACILITY_FINALTEST => "The Final Test",
-					MissionID.PARIS_SHOWSTOPPER => "The Showstopper",
-					MissionID.SAPIENZA_WORLDOFTOMORROW => "World of Tomorrow",
-					MissionID.MARRAKESH_GILDEDCAGE => "A Gilded Cage",
-					MissionID.BANGKOK_CLUB27 => "Club 27",
-					MissionID.COLORADO_FREEDOMFIGHTERS => "Freedom Fighters",
-					MissionID.HOKKAIDO_SITUSINVERSUS => "Situs Inversus",
-					MissionID.BANGKOK_THESOURCE => "The Source",
-					MissionID.SAPIENZA_THEAUTHOR => "The Author",
-					MissionID.HOKKAIDO_PATIENTZERO => "Patient Zero",
-					MissionID.PARIS_HOLIDAYHOARDERS => "Holiday Hoarders",
-					MissionID.SAPIENZA_THEICON => "The Icon",
-					MissionID.SAPIENZA_LANDSLIDE => "Landslide",
-					MissionID.MARRAKESH_HOUSEBUILTONSAND => "A House Built On Sand",
-					MissionID.HOKKAIDO_SNOWFESTIVAL => "Snow Festival",
-					MissionID.HAWKESBAY_NIGHTCALL => "Nightcall",
-					MissionID.MIAMI_FINISHLINE => "The Finish Line",
-					MissionID.SANTAFORTUNA_THREEHEADEDSERPENT => "Three-Headed Serpent",
-					MissionID.MUMBAI_CHASINGAGHOST => "Chasing a Ghost",
-					MissionID.WHITTLETON_ANOTHERLIFE => "Another Life",
-					MissionID.ISLEOFSGAIL_THEARKSOCIETY => "The Ark Society",
-					MissionID.NEWYORK_GOLDENHANDSHAKE => "Golden Handshake",
-					MissionID.HAVEN_THELASTRESORT => "The Last Resort",
-					MissionID.MIAMI_ASILVERTONGUE => "A Silver Tongue",
-					MissionID.SANTAFORTUNA_EMBRACEOFTHESERPENT => "Embrace of the Serpent",
-					MissionID.MUMBAI_ILLUSIONSOFGRANDEUR => "Illusions of Grandeur",
-					MissionID.WHITTLETON_ABITTERPILL => "A Bitter Pill",
-					MissionID.DUBAI_ONTOPOFTHEWORLD => "On Top of the World",
-					MissionID.DARTMOOR_DEATHINTHEFAMILY => "Death in the Family",
-					MissionID.BERLIN_APEXPREDATOR => "Apex Predator",
-					MissionID.CHONGQING_ENDOFANERA => "End of an Era",
-					MissionID.MENDOZA_THEFAREWELL => "The Farewell",
-					MissionID.CARPATHIAN_UNTOUCHABLE => "Untouchable",
-					MissionID.AMBROSE_SHADOWSINTHEWATER => "Shadows in the Water",
-					_ => "",
-				};
-			}
+			get => GetMissionName(ID);
 		}
 		public string Location {
 			get {
@@ -854,6 +813,49 @@ namespace Croupier
 		public static bool GetMissionFromString(string name, out MissionID mission)
 		{
 			return missionDict.TryGetValue(TokenCharacterRegex.Replace(name.RemoveDiacritics(), "").ToLower(), out mission);
+		}
+
+		public static string GetMissionName(MissionID id) {
+			return id switch {
+				MissionID.ICAFACILITY_ARRIVAL => "Arrival",
+				MissionID.ICAFACILITY_GUIDED => "Guided Training",
+				MissionID.ICAFACILITY_FREEFORM => "Freeform Training",
+				MissionID.ICAFACILITY_FINALTEST => "The Final Test",
+				MissionID.PARIS_SHOWSTOPPER => "The Showstopper",
+				MissionID.SAPIENZA_WORLDOFTOMORROW => "World of Tomorrow",
+				MissionID.MARRAKESH_GILDEDCAGE => "A Gilded Cage",
+				MissionID.BANGKOK_CLUB27 => "Club 27",
+				MissionID.COLORADO_FREEDOMFIGHTERS => "Freedom Fighters",
+				MissionID.HOKKAIDO_SITUSINVERSUS => "Situs Inversus",
+				MissionID.BANGKOK_THESOURCE => "The Source",
+				MissionID.SAPIENZA_THEAUTHOR => "The Author",
+				MissionID.HOKKAIDO_PATIENTZERO => "Patient Zero",
+				MissionID.PARIS_HOLIDAYHOARDERS => "Holiday Hoarders",
+				MissionID.SAPIENZA_THEICON => "The Icon",
+				MissionID.SAPIENZA_LANDSLIDE => "Landslide",
+				MissionID.MARRAKESH_HOUSEBUILTONSAND => "A House Built On Sand",
+				MissionID.HOKKAIDO_SNOWFESTIVAL => "Snow Festival",
+				MissionID.HAWKESBAY_NIGHTCALL => "Nightcall",
+				MissionID.MIAMI_FINISHLINE => "The Finish Line",
+				MissionID.SANTAFORTUNA_THREEHEADEDSERPENT => "Three-Headed Serpent",
+				MissionID.MUMBAI_CHASINGAGHOST => "Chasing a Ghost",
+				MissionID.WHITTLETON_ANOTHERLIFE => "Another Life",
+				MissionID.ISLEOFSGAIL_THEARKSOCIETY => "The Ark Society",
+				MissionID.NEWYORK_GOLDENHANDSHAKE => "Golden Handshake",
+				MissionID.HAVEN_THELASTRESORT => "The Last Resort",
+				MissionID.MIAMI_ASILVERTONGUE => "A Silver Tongue",
+				MissionID.SANTAFORTUNA_EMBRACEOFTHESERPENT => "Embrace of the Serpent",
+				MissionID.MUMBAI_ILLUSIONSOFGRANDEUR => "Illusions of Grandeur",
+				MissionID.WHITTLETON_ABITTERPILL => "A Bitter Pill",
+				MissionID.DUBAI_ONTOPOFTHEWORLD => "On Top of the World",
+				MissionID.DARTMOOR_DEATHINTHEFAMILY => "Death in the Family",
+				MissionID.BERLIN_APEXPREDATOR => "Apex Predator",
+				MissionID.CHONGQING_ENDOFANERA => "End of an Era",
+				MissionID.MENDOZA_THEFAREWELL => "The Farewell",
+				MissionID.CARPATHIAN_UNTOUCHABLE => "Untouchable",
+				MissionID.AMBROSE_SHADOWSINTHEWATER => "Shadows in the Water",
+				_ => "N/A",
+			};
 		}
 
 		public static bool GetMissionCodename(MissionID id, out string codename)
