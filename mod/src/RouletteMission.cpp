@@ -834,7 +834,7 @@ const std::unordered_map<eMission, std::vector<RouletteDisguise>> missionDisguis
 		RouletteDisguise{"Coca Field Worker", "outfit_11f2849d-87c5-4806-a25e-1a9dad85981d_0.jpg", "11f2849d-87c5-4806-a25e-1a9dad85981d"},
 		RouletteDisguise{"Construction Worker", "outfit_57342129-03a9-47a4-a509-cc0656e0a76a_0.jpg", "57342129-03a9-47a4-a509-cc0656e0a76a"},
 		RouletteDisguise{"Drug Lab Worker", "outfit_a741cd97-135e-465e-89c3-4fa52a2bbf9d_0.jpg", "a741cd97-135e-465e-89c3-4fa52a2bbf9d"},
-		RouletteDisguise{"Elite Guard", "outfit_3e3be8e1-1fe4-4b3a-959c-9e52f595b0c4_0.jpg", "3e3be8e1-1fe4-4b3a-959c-9e52f595b0c4"},
+		RouletteDisguise{"Elite Guard", "outfit_fbf1ca6f-8559-410d-a0b4-66a5a32d1d90_0.jpg", "fbf1ca6f-8559-410d-a0b4-66a5a32d1d90"},
 		RouletteDisguise{"Gardener", "outfit_886c3b26-b81f-4731-8080-524f2d6da5dd_0.jpg", "886c3b26-b81f-4731-8080-524f2d6da5dd"},
 		RouletteDisguise{"Hippie", "outfit_177410f1-4fd7-4ef2-8ed7-2119bcba3661_0.jpg", "177410f1-4fd7-4ef2-8ed7-2119bcba3661"},
 		RouletteDisguise{"Hippo Whisperer", "outfit_4a145036-e4cc-4798-a795-42bcee511524_0.jpg", "4a145036-e4cc-4798-a795-42bcee511524"},
