@@ -105,7 +105,9 @@ namespace Croupier
 					var bytesRead = stream.Read(buffer, 0, buffer.Length);
 					if (bytesRead <= 0) break;
 					var data = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-					ProcessReceivedMessage(data);
+					foreach (var msg in data.Split("\n", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)) {
+						ProcessReceivedMessage(msg);
+					}
 					Console.WriteLine("Received from client: " + data);
 				}
 			} catch (System.IO.IOException) { }
