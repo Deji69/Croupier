@@ -52,6 +52,8 @@ The bonus missions and special assignments have not been playtested for conditio
 
 - **Ruleset Presets**: Croupier provides ruleset presets for the current and previous Roulette Rivals tournament rulesets, as well as additional presets with alternate rules. You can also define your own custom preset to tune the rules to your liking. Supported in the mod when disconnected, but enhanced with the app. (Note: editing a ruleset in the mod will not edit any in the app - these two are treated separately.)
 
+- **Statistics**: Croupier will keep track of all your highs and lows, providing detailed insights into your completed spins, number of killed targets, best times and much more.
+
 - **Stream-Friendly**: the app is easy to window capture in streaming/recording software and has a 'Static Mode' to aid with positioning and alignment.
 
   For transparency, add a Colour Key filter with Key Colour of '#111313', Similarity of 1 and Smoothness of 1.
