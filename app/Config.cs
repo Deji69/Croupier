@@ -8,8 +8,9 @@ using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Croupier {
-	class Config
-	{
+	class Config {
+		public static event EventHandler<int> OnSave;
+
 		public static Config Default = new();
 
 		public List<string> CustomMissionPool { get; set; } = [];
@@ -35,6 +36,7 @@ namespace Croupier {
 		public bool Ruleset_AllowDuplicateDisguises { get; set; } = false;
 		public bool Ruleset_EnableAnyDisguise { get; set; } = false;
 		public bool Ruleset_LoudSMGIsLargeFirearm { get; set; } = false;
+		public bool SpinIsRandom { get; set; } = false;
 		public List<string> SpinHistory { get; set; } = [];
 		public List<string> Bookmarks { get; set; } = [];
 
@@ -44,7 +46,7 @@ namespace Croupier {
 		public bool StaticSize { get; set; } = false;
 		public bool StaticSizeLHS { get; set; } = false;
 		public bool VerticalDisplay { get; set; } = false;
-		public bool KillValidations { get; set; } = false;
+		public bool KillValidations { get; set; } = true;
 		public bool Timer { get; set; } = false;
 		public bool TimerMultiSpin { get; set; } = false;
 		public bool TimerFractions { get; set; } = false;
@@ -66,6 +68,8 @@ namespace Croupier {
 		public string LiveSplitIP { get; set; } = "127.0.0.1";
 		public int LiveSplitPort { get; set; } = 16834;
 
+		public Stats Stats { get; set; } = new Stats();
+
 		static public bool Load()
 		{
 			try {
@@ -80,6 +84,7 @@ namespace Croupier {
 		{
 			var json = JsonSerializer.Serialize(Default, jsonSerializerOptions);
 			File.WriteAllText("config.json", json);
+			OnSave?.Invoke(null, 0);
 		}
 
 		private static readonly JsonSerializerOptions jsonSerializerOptions = new() {

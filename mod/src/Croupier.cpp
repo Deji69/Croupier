@@ -632,7 +632,17 @@ auto Croupier::SendMissionFailed() -> void {
 }
 
 auto Croupier::SendMissionComplete() -> void {
-	this->client->send(eClientMessage::MissionComplete, {this->sharedSpin.isSA ? "1" : "0"});
+	this->client->send(eClientMessage::MissionComplete, {this->sharedSpin.isSA ? "1" : "0", std::to_string(this->sharedSpin.exitIGT)});
+}
+
+auto Croupier::SendMissionStart(const std::string& locationId, const std::vector<LoadoutItemEventValue>& loadout) -> void {
+	std::string loadoutStr = "[";
+	for (const auto& item : loadout) {
+		if (!loadoutStr.empty()) loadoutStr += ",";
+		loadoutStr += std::format("\"{}\"", item.RepositoryId);
+	}
+	loadoutStr += "]";
+	this->client->send(eClientMessage::MissionStart, {locationId, loadoutStr});
 }
 
 auto Croupier::SendKillValidationUpdate() -> void {
@@ -1473,16 +1483,21 @@ auto Croupier::LogSpin() -> void {
 auto lastThrownItem = ""s;
 
 auto Croupier::SetupEvents() -> void {
-	events.listen<Events::ContractStart>([this](auto& ev) {
+	events.listen<Events::ContractStart>([this](const ServerEvent<Events::ContractStart>& ev) {
 		this->sharedSpin.playerStart();
+
 		this->SendKillValidationUpdate();
+		this->SendMissionStart(ev.Value.LocationId, ev.Value.Loadout);
+	});
+	events.listen<Events::IntroCutEnd>([this](const ServerEvent<Events::IntroCutEnd>& ev) {
+		this->sharedSpin.playerCutsceneEnd(ev.Timestamp);
 	});
 	events.listen<Events::ContractLoad>([this](auto& ev) {
 		this->sharedSpin.playerLoad();
 		this->SendKillValidationUpdate();
 	});
 	events.listen<Events::ExitGate>([this](const ServerEvent<Events::ExitGate>& ev) {
-		this->sharedSpin.playerExit();
+		this->sharedSpin.playerExit(ev.Timestamp);
 
 		// Mark any unfulfilled kill methods as invalid (never killed a Berlin agent with correct requirements, destroyed heart instead of killing Soders or vice-versa, etc.)
 		auto const& conds = spin.getConditions();
@@ -1496,7 +1511,7 @@ auto Croupier::SetupEvents() -> void {
 	});
 	events.listen<Events::ContractEnd>([this](const ServerEvent<Events::ContractEnd>& ev) {
 		if (!this->sharedSpin.isFinished) {
-			this->sharedSpin.playerExit();
+			this->sharedSpin.playerExit(ev.Timestamp);
 
 			// Mark any unfulfilled kill methods as invalid (never killed a Berlin agent with correct requirements, destroyed heart instead of killing Soders or vice-versa, etc.)
 			auto const& conds = spin.getConditions();
@@ -2117,7 +2132,6 @@ static std::set<std::string> eventsNotToPrint = {
 	"HeroSpawn_Location",
 	"HoldingIllegalWeapon",
 	"Investigate_Curious",
-	"IntroCutEnd",
 	"ItemDropped",
 	"ItemPickedUp",
 	"ItemRemovedFromInventory",

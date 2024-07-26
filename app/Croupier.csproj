@@ -75,7 +75,7 @@
 			<AutoGen>True</AutoGen>
 			<DependentUpon>Settings.settings</DependentUpon>
 		</Compile>
-		<Compile Update="StreakSettingsWindow.xaml.cs">
+		<Compile Update="StatisticsWindow.xaml.cs">
 		  <SubType>Code</SubType>
 		</Compile>
 	</ItemGroup>
@@ -94,5 +94,10 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <None Include="U:\Dev\project\hitman\croupier\app\.editorconfig" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="StatisticsWindow.xaml">
+	    <SubType>Designer</SubType>
+	  </Page>
 	</ItemGroup>
 </Project>

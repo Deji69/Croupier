@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -27,7 +28,8 @@ namespace Croupier
 		public static event EventHandler<int> Prev;
 		public static event EventHandler<int> Next;
 		public static event EventHandler<int> ToggleSpinLock;
-		public static event EventHandler<bool> MissionComplete;
+		public static event EventHandler<MissionStart> MissionStart;
+		public static event EventHandler<MissionCompletion> MissionComplete;
 		public static event EventHandler<int> MissionFailed;
 		public static event EventHandler<int> ResetTimer;
 		public static event EventHandler<int> ResetStreak;
@@ -138,7 +140,7 @@ namespace Croupier
 		private static void ProcessReceivedMessage(string msg) {
 			var firstSplit = msg.Split(":", 2);
 			var cmd = firstSplit.First();
-			var rest = firstSplit.Length > 1 ? firstSplit.Last().Split(" \t\n", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries) : [];
+			var rest = firstSplit.Length > 1 ? firstSplit.Last().Split("\t", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries) : [];
 
 			if (cmd == "Respin") {
 				var mission = rest.Length > 0 ? MissionIDMethods.FromKey(rest.First()) : MissionID.NONE;
@@ -178,8 +180,18 @@ namespace Croupier
 				App.Current.Dispatcher.Invoke(new Action(() => SpinData?.Invoke(null, rest.First())));
 				return;
 			}
+			else if (cmd == "MissionStart") {
+				App.Current.Dispatcher.Invoke(new Action(() => MissionStart?.Invoke(null, new MissionStart() {
+					Location = rest.First(),
+					Loadout = JsonSerializer.Deserialize<string[]>(rest[1]),
+				})));
+				return;
+			}
 			else if (cmd == "MissionComplete") {
-				App.Current.Dispatcher.Invoke(new Action(() => MissionComplete?.Invoke(null, int.Parse(rest.First()) == 1)));
+				App.Current.Dispatcher.Invoke(new Action(() => MissionComplete?.Invoke(null, new() {
+					SA = int.Parse(rest.First()) == 1,
+					IGT = double.Parse(rest[1])
+				})));
 				return;
 			}
 			else if (cmd == "MissionFailed") {

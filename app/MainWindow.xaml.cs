@@ -113,8 +113,11 @@ namespace Croupier
 		public static readonly RoutedUICommand EditRulesetsCommand = new("Edit Rulesets", "EditRulesets", typeof(MainWindow), [
 			new KeyGesture(Key.R, ModifierKeys.Alt),
 		]);
-		public static readonly RoutedUICommand StreakSettingsCommand = new("Streak Settings", "StreakSettings", typeof(MainWindow), [
+		public static readonly RoutedUICommand ShowStatisticsWindowCommand = new("Show Statistics Window", "ShowStatisticsWindow", typeof(MainWindow), [
 			new KeyGesture(Key.S, ModifierKeys.Alt),
+		]);
+		public static readonly RoutedUICommand StreakSettingsCommand = new("Streak Settings", "StreakSettings", typeof(MainWindow), [
+			new KeyGesture(Key.T, ModifierKeys.Alt),
 		]);
 		public static readonly RoutedUICommand ResetStreakCommand = new("Reset Streak", "ResetStreak", typeof(MainWindow), [
 			new KeyGesture(Key.S, ModifierKeys.Control),
@@ -151,7 +154,7 @@ namespace Croupier
 		private EditMapPoolWindow EditMapPoolWindowInst;
 		private EditRulesetWindow EditRulesetWindowInst;
 		private TimerSettingsWindow TimerSettingsWindowInst;
-		private StreakSettingsWindow StreakSettingsWindowInst;
+		private StatisticsWindow StatisticsWindowInst;
 		private EditSpinWindow EditSpinWindowInst;
 		private HitmapsWindow HitmapsWindowInst;
 		private LiveSplitWindow LiveSplitWindowInst;
@@ -439,6 +442,10 @@ namespace Croupier
 			}
 		}
 
+		public Spin CurrentSpin {
+			get => spin;
+		}
+
 		public ObservableCollection<SpinHistoryEntry> HistoryEntries = [];
 		public ObservableCollection<SpinHistoryEntry> BookmarkEntries = [
 			new("<Add Current>", 0),
@@ -500,6 +507,7 @@ namespace Croupier
 
 		private readonly List<MissionID> missionPool = [];
 		private Mission currentMission = null;
+		private Entrance usedEntrance = null;
 		private bool disableClientUpdate = false;
 		private bool timerStopped = true;
 		private bool timerManuallyStopped = false;
@@ -509,6 +517,7 @@ namespace Croupier
 		private Spin spin = null;
 		private bool spinCompleted = false;
 		private bool hasRestartedSinceSpin = false;
+		private List<TargetID> trackedValidKills = [];
 		private DateTime? autoSpinSchedule = null;
 		private MissionID autoSpinMission = MissionID.NONE;
 		private readonly LiveSplitClient liveSplit;
@@ -631,13 +640,18 @@ namespace Croupier
 			CroupierSocketServer.ResetStreak += (object sender, int _) => {
 				ResetStreak();
 			};
-			CroupierSocketServer.MissionComplete += (object sender, bool sa) => {
+			CroupierSocketServer.MissionStart += (object sender, MissionStart start) => {
+				TrackGameMissionAttempt(start);
+			};
+			CroupierSocketServer.MissionComplete += (object sender, MissionCompletion arg) => {
 				if (spinCompleted) return;
 				spinCompleted = true;
-				if (sa) IncrementStreak();
+				arg.KillsValidated = CheckSpinKillsValid();
+				if (arg.SA) IncrementStreak();
 				else ResetStreak();
 				liveSplit.Split();
 				StopTimer();
+				TrackGameMissionCompletion(arg);
 			};
 			CroupierSocketServer.MissionFailed += (object sender, int _) => {
 				if (spinCompleted) return;
@@ -699,6 +713,8 @@ namespace Croupier
 						cond.KillValidation = kv;
 					}
 				}
+
+				TrackKillValidation();
 			};
 			HitmapsSpinLink.ReceiveNewSpinData += (object sender, string data) => {
 				if (SpinParser.Parse(data, out var spin)) {
@@ -706,6 +722,7 @@ namespace Croupier
 					UpdateSpinHistory();
 					PostConditionUpdate();
 					StartTimer(true);
+					TrackNewSpin();
 				}
 			};
 
@@ -749,6 +766,13 @@ namespace Croupier
 			foreach (var bookmark in Config.Default.Bookmarks) {
 				BookmarkEntries.Add(new(bookmark, BookmarkEntries.Count));
 			}
+		}
+
+		private bool CheckSpinKillsValid() {
+			foreach (var cond in spin.Conditions) {
+				if (!cond.KillValidation.IsValid) return false;
+			}
+			return true;
 		}
 
 		private void EditRulesetWindow_ApplyRuleset(object sender, Ruleset ruleset) {
@@ -847,6 +871,11 @@ namespace Croupier
 			spinCompleted = false;
 			hasRestartedSinceSpin = false;
 			StartTimer();
+
+			Config.Default.SpinIsRandom = true;
+			Config.Save();
+
+			TrackNewSpin();
 		}
 
 		public bool SetMission(MissionID id) {
@@ -955,6 +984,8 @@ namespace Croupier
 		}
 
 		private void PostConditionUpdate() {
+			Config.Default.SpinIsRandom = false;
+			Config.Save();
 			SendSpinToClient();
 			SetupSpinUI();
 			RefitWindow();
@@ -964,14 +995,19 @@ namespace Croupier
 			SendStreakToClient();
 
 			Config.Default.StreakCurrent = streak;
-			
-			if (streak > Config.Default.StreakPB)
+
+			if (streak > Config.Default.StreakPB) {
 				Config.Default.StreakPB = streak;
+				if (Config.Default.StreakPB > Config.Default.Stats.TopStreak)
+					Config.Default.Stats.TopStreak = Config.Default.StreakPB;
+			}
 
 			if (Config.Default.ShowStreakPB)
 				Streak.Text = "Streak: " + streak + " (PB: " + Config.Default.StreakPB + ")";
 			else
 				Streak.Text = "Streak: " + streak;
+
+			Config.Save();
 		}
 
 		private void IncrementStreak() {
@@ -982,6 +1018,86 @@ namespace Croupier
 		private void ResetStreak() {
 			streak = 0;
 			UpdateStreakStatus();
+		}
+
+		private void TrackNewSpin() {
+			var stats = Config.Default.Stats;
+			var spinStats = stats.GetSpinStats(spin);
+			var missionStats = stats.GetMissionStats(spin.Mission);
+			spinStats.IsCustom = Config.Default.SpinIsRandom;
+			++stats.NumRandomSpins;
+			++missionStats.NumSpins;
+
+			usedEntrance = null;
+			trackedValidKills = [];
+
+			Config.Save();
+		}
+
+		private void TrackKillValidation() {
+			var stats = Config.Default.Stats;
+
+			foreach (var cond in spin.Conditions) {
+				if (!cond.KillValidation.IsValid)
+					continue;
+				if (trackedValidKills.Contains(cond.Target.ID))
+					continue;
+
+				trackedValidKills.Add(cond.Target.ID);
+				++stats.NumValidKills;
+			}
+
+			Config.Save();
+		}
+
+		private void TrackGameMissionAttempt(MissionStart start) {
+			var stats = Config.Default.Stats;
+			var locationId = start.Location.ToLower();
+			usedEntrance = Locations.Entrances.Find(e => e.ID == locationId);
+
+
+			var spinStats = stats.GetSpinStats(spin);
+			var missionStats = stats.GetMissionStats(spin.Mission);
+
+			spinStats.IsCustom = !Config.Default.SpinIsRandom;
+			if (spinStats.IsCustom) {
+				++stats.NumCustomSpins;
+				++missionStats.NumSpins;
+			}
+			
+			++missionStats.NumAttempts;
+
+			if (spinStats.Attempts == 0)
+				++stats.NumUniqueAttempts;
+
+			++spinStats.Attempts;
+			++stats.NumAttempts;
+
+			Config.Save();
+		}
+
+		private void TrackGameMissionCompletion(MissionCompletion mc) {
+			var stats = Config.Default.Stats;
+			if (!mc.SA) {
+				if (mc.KillsValidated)
+					++stats.NumNonSAWins;
+				return;
+			}
+
+			if (!mc.KillsValidated)
+				return;
+
+			var spinStats = stats.GetSpinStats(spin);
+			var missionStats = stats.GetMissionStats(spin.Mission);
+			++stats.NumWins;
+			++missionStats.NumWins;
+			spinStats.Completions.Add(new() {
+				IGT = mc.IGT > 0 ? mc.IGT : 0,
+				Mission = spin.Mission,
+				StartLocation = usedEntrance.ID,
+			});
+
+			Config.Save();
 		}
 
 		private void StartTimer(bool overrideManual = false) {
@@ -1340,21 +1456,23 @@ namespace Croupier
 			ResetStreak();
 		}
 
-		private void StreakSettingsCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
-			if (StreakSettingsWindowInst != null) {
-				StreakSettingsWindowInst.Activate();
+		private void ShowStatisticsWindowCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
+			if (StatisticsWindowInst != null) {
+				StatisticsWindowInst.Activate();
 				return;
 			}
-			StreakSettingsWindowInst = new() {
+			StatisticsWindowInst = new() {
 				Owner = this,
 				WindowStartupLocation = WindowStartupLocation.CenterOwner
 			};
-			StreakSettingsWindowInst.ResetStreak += (object sender, int _) => ResetStreak();
-			StreakSettingsWindowInst.ResetStreakPB += (object sender, int _) => UpdateStreakStatus();
-			StreakSettingsWindowInst.Closed += (object sender, EventArgs e) => {
-				StreakSettingsWindowInst = null;
+			StatisticsWindowInst.Closed += (object sender, EventArgs e) => {
+				StatisticsWindowInst = null;
 			};
-			StreakSettingsWindowInst.Show();
+			StatisticsWindowInst.Show();
+		}
+
+		private void StreakSettingsCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
+			TimerSettingsCommand_Executed(sender, e);
 		}
 
 		private void TimerSettingsCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
@@ -1369,6 +1487,8 @@ namespace Croupier
 			TimerSettingsWindowInst.Closed += (object sender, EventArgs e) => {
 				TimerSettingsWindowInst = null;
 			};
+			TimerSettingsWindowInst.ResetStreak += (object sender, int _) => ResetStreak();
+			TimerSettingsWindowInst.ResetStreakPB += (object sender, int _) => UpdateStreakStatus();
 			TimerSettingsWindowInst.Show();
 		}
 

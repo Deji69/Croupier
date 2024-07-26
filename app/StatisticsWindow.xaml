@@ -1,0 +1,130 @@
+﻿<Window x:Class="Croupier.StatisticsWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:local="clr-namespace:Croupier"
+		d:DataContext="{d:DesignInstance Type=local:StatisticsWindowViewModel}"
+		mc:Ignorable="d"
+		Title="Statistics - Croupier"
+		WindowStyle="SingleBorderWindow"
+		Width="640"
+		Height="420"
+		MinHeight="320"
+		MinWidth="600"
+		Icon="/CroupierLogoIconsFlatLg.png">
+	<Window.Resources>
+		<DataTemplate DataType="{x:Type local:StatisticsViewModel}">
+			<Grid Margin="8,0" ToolTip="{Binding Description}">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="170" />
+					<ColumnDefinition Width="1*" />
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+				<TextBlock
+					Grid.Row="0"
+					Grid.Column="0"
+					Foreground="White"
+					Text="{Binding Name}"
+					TextWrapping="WrapWithOverflow"
+					FontWeight="Bold"
+					Margin="0,0,0,5"
+					MinWidth="140"
+					/>
+				<TextBlock
+					Grid.Row="0"
+					Grid.Column="1"
+					Foreground="White"
+					Margin="5,0,0,5"
+					TextWrapping="WrapWithOverflow"
+					FontWeight="Normal"
+					VerticalAlignment="Top"
+					Text="{Binding Value, StringFormat={}{0:N0}}" />
+			</Grid>
+		</DataTemplate>
+	</Window.Resources>
+	<ScrollViewer UseLayoutRounding="True" Margin="0" Background="Black">
+		<StackPanel Orientation="Vertical">
+			<TextBlock
+				Text="Statistics"
+				FontWeight="Bold"
+				Foreground="White"
+				Margin="5,2,5,5"
+				/>
+			<ItemsControl ItemsSource="{Binding MainStats}" />
+
+			<!--<Expander Header="History" Margin="5">-->
+			<DataGrid
+				ItemsSource="{Binding History}"
+				MinHeight="300"
+				Background="#111"
+				Foreground="#FFF"
+				BorderThickness="0"
+				CanUserResizeRows="False"
+				CanUserReorderColumns="False"
+				AutoGenerateColumns="False"
+				MinRowHeight="23"
+			>
+				<DataGrid.CellStyle>
+					<Style TargetType="DataGridCell">
+						<Setter Property="HorizontalAlignment" Value="Stretch" />
+						<Setter Property="VerticalAlignment" Value="Stretch" />
+						<Setter Property="VerticalContentAlignment" Value="Center" />
+						<Setter Property="Template">
+							<Setter.Value>
+								<ControlTemplate TargetType="{x:Type DataGridCell}">
+									<Border Padding="5">
+										<ContentPresenter VerticalAlignment="Center" />
+									</Border>
+								</ControlTemplate>
+							</Setter.Value>
+						</Setter>
+					</Style>
+				</DataGrid.CellStyle>
+				<DataGrid.RowStyle>
+					<Style TargetType="DataGridRow">
+						<Setter Property="Background" Value="#111" />
+						<Setter Property="BorderBrush" Value="Transparent" />
+						<Setter Property="BorderThickness" Value="0,0,0,0"/>
+						<Setter Property="VerticalContentAlignment" Value="Stretch" />
+						<Setter Property="Template">
+							<Setter.Value>
+								<ControlTemplate TargetType="{x:Type DataGridRow}">
+									<DataGridCellsPresenter
+										Grid.Column="1"
+										ItemsPanel="{TemplateBinding ItemsPanel}"
+										SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+								</ControlTemplate>
+							</Setter.Value>
+						</Setter>
+						<Style.Triggers>
+							<Trigger Property="IsSelected" Value="True">
+								<Setter Property="Foreground" Value="#FFF"/>
+								<Setter Property="Background" Value="#222"/>
+							</Trigger>
+						</Style.Triggers>
+					</Style>
+				</DataGrid.RowStyle>
+				<DataGrid.ColumnHeaderStyle>
+					<Style TargetType="DataGridColumnHeader">
+						<Setter Property="Background" Value="#111" />
+						<Setter Property="BorderBrush" Value="#080808" />
+						<Setter Property="BorderThickness" Value="1" />
+						<Setter Property="Padding" Value="8,4" />
+					</Style>
+				</DataGrid.ColumnHeaderStyle>
+				<DataGrid.Columns>
+					<DataGridTextColumn Header="Mission" Binding="{Binding Mission}" />
+					<DataGridTextColumn Header="Spin" Binding="{Binding Spin}" />
+					<DataGridTextColumn Header="Entrance" Binding="{Binding Entrance}" />
+					<DataGridTextColumn Header="IGT" Binding="{Binding IGT}" />
+				</DataGrid.Columns>
+			</DataGrid>
+			<!--</Expander>-->
+		</StackPanel>
+	</ScrollViewer>
+</Window>

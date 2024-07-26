@@ -38,9 +38,35 @@ namespace Croupier {
 				? "Spins will generate instantly on planning screen detection."
 				: $"Spins will generate {autoSpinCountdown} second{(autoSpinCountdown > 1 ? "s" : "")} after planning screen detection.");
 		}
+		public int StreakCurrent {
+			get => Config.Default.StreakCurrent;
+			set {
+				Config.Default.StreakCurrent = 0;
+				UpdateProperty(nameof(StreakCurrent));
+			}
+		}
+
+		public int StreakPB {
+			get => Config.Default.StreakPB;
+			set {
+				Config.Default.StreakPB = 0;
+				UpdateProperty(nameof(StreakPB));
+			}
+		}
+
+		public int ReplanWindow {
+			get => Config.Default.StreakReplanWindow;
+			set {
+				Config.Default.StreakReplanWindow = value;
+				UpdateProperty(nameof(ReplanWindow));
+			}
+		}
 	}
 	
 	public partial class TimerSettingsWindow : Window {
+		public event EventHandler<int> ResetStreak;
+		public event EventHandler<int> ResetStreakPB;
+
 		private readonly TimerSettingsWindowViewModel viewModel = new();
 		private readonly List<Mission> missions = [
 			new Mission(MissionID.NONE),
@@ -99,6 +125,16 @@ namespace Croupier {
 			if (items.Count == 0) return;
 			var item = (MissionComboBoxItem)items[0];
 			viewModel.ResetMission = item.ID;
+		}
+
+		private void ResetCurrentStreak_Click(object sender, RoutedEventArgs e) {
+			viewModel.StreakCurrent = 0;
+			ResetStreak?.Invoke(this, 0);
+		}
+
+		private void ResetStreakPB_Click(object sender, RoutedEventArgs e) {
+			viewModel.StreakPB = 0;
+			ResetStreakPB?.Invoke(this, 0);
 		}
 	}
 }

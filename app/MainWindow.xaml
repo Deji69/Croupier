@@ -25,6 +25,7 @@
 		<CommandBinding Command="{x:Static local:MainWindow.CopySpinCommand}" CanExecute="Command_AlwaysCanExecute" Executed="CopySpinCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.PasteSpinCommand}" CanExecute="PasteSpinCommand_CanExecute" Executed="PasteSpinCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.EditSpinCommand}" CanExecute="Command_AlwaysCanExecute" Executed="EditSpinCommand_Executed" />
+		<CommandBinding Command="{x:Static local:MainWindow.ShowStatisticsWindowCommand}" CanExecute="Command_AlwaysCanExecute" Executed="ShowStatisticsWindowCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.ShowHitmapsWindowCommand}" CanExecute="Command_AlwaysCanExecute" Executed="ShowHitmapsWindowCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.ShowLiveSplitWindowCommand}" CanExecute="Command_AlwaysCanExecute" Executed="ShowLiveSplitWindowCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.EditMapPoolCommand}" CanExecute="Command_AlwaysCanExecute" Executed="EditMapPoolCommand_Executed" />
@@ -374,7 +375,7 @@
 						<TextBlock.ContextMenu>
 							<ContextMenu Name="TimerContextMenu" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
 								<MenuItem
-									Header="Timer Settings"
+									Header="Timer &amp; Streak Settings"
 									Command="{x:Static local:MainWindow.TimerSettingsCommand}"
 								/>
 								<MenuItem
@@ -437,7 +438,7 @@
 						<TextBlock.ContextMenu>
 							<ContextMenu Name="StreakContextMenu" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
 								<MenuItem
-									Header="Streak Settings &amp; Statistics"
+									Header="Timer &amp; Streak Settings"
 									Command="{x:Static local:MainWindow.StreakSettingsCommand}"
 								/>
 								<MenuItem
@@ -570,14 +571,20 @@
 					Header="Static Size"
 					IsChecked="{Binding StaticSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 					IsCheckable="True"
+					ToolTip="The Croupier window will keep a consistent width. Recommended for stream overlay capture."
 				/>
 				<MenuItem
 					Header="Static Size Align Left"
 					IsChecked="{Binding StaticSizeLHS, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 					IsCheckable="True"
 					IsEnabled="{Binding StaticSize, UpdateSourceTrigger=PropertyChanged}"
+					ToolTip="The layout will be arranged in a way that's optimised to be an overlay on the opposite side of the screen."
 				/>
 				<Separator />
+				<MenuItem
+					Header="_Statistics"
+					Command="{x:Static local:MainWindow.ShowStatisticsWindowCommand}"
+				/>
 				<MenuItem
 					Header="Hitmaps/Web Link"
 					Command="{x:Static local:MainWindow.ShowHitmapsWindowCommand}"

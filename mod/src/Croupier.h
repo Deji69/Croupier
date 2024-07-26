@@ -48,6 +48,8 @@ struct SharedRouletteSpin {
 	std::vector<KillSetpieceEvent> killSetpieceEvents;
 	std::chrono::steady_clock::time_point timeStarted;
 	std::chrono::seconds timeElapsed = std::chrono::seconds(0);
+	double startIGT = 0;
+	double exitIGT = 0;
 	bool isSA = true;
 	bool isCaughtOnCams = false;
 	bool isCamsDestroyed = false;
@@ -126,10 +128,15 @@ struct SharedRouletteSpin {
 
 		this->killed.clear();
 		this->spottedNotKilled.clear();
+		this->exitIGT = 0;
 		this->isSA = true;
 		this->isCaughtOnCams = false;
 		this->isCamsDestroyed = false;
 		this->hasLoadedGame = false;
+	}
+
+	auto playerCutsceneEnd(double igt) {
+		this->startIGT = igt;
 	}
 
 	auto playerLoad() {
@@ -138,12 +145,13 @@ struct SharedRouletteSpin {
 		this->resetKillValidations();
 	}
 
-	auto playerExit() {
+	auto playerExit(double timestamp = 0) {
 		this->timeElapsed = this->getTimeElapsed();
 		this->isPlaying = false;
 		this->isFinished = true;
 		if (this->spottedNotKilled.size() > 0)
 			this->isSA = false;
+		this->exitIGT = timestamp - this->startIGT;
 		this->isSA = this->isSA && !this->isCaughtOnCams && !this->hasLoadedGame;
 		this->killed.clear();
 		this->spottedNotKilled.clear();
@@ -214,6 +222,7 @@ public:
 	auto SendRandom() -> void;
 	auto SendMissions() -> void;
 	auto SendToggleSpinLock() -> void;
+	auto SendMissionStart(const std::string& locationId, const std::vector<LoadoutItemEventValue>& loadout) -> void;
 	auto SendMissionFailed() -> void;
 	auto SendMissionComplete() -> void;
 	auto SendKillValidationUpdate() -> void;

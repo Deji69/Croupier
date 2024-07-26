@@ -25,6 +25,7 @@ std::map<eClientMessage, std::string> clientMessageTypeMap = {
 	{eClientMessage::ToggleSpinLock, "ToggleSpinLock"},
 	{eClientMessage::ToggleTimer, "ToggleTimer"},
 	{eClientMessage::KillValidation, "KillValidation"},
+	{eClientMessage::MissionStart, "MissionStart"},
 	{eClientMessage::MissionComplete, "MissionComplete"},
 	{eClientMessage::MissionFailed, "MissionFailed"},
 	{eClientMessage::Streak, "Streak"},
@@ -49,6 +50,7 @@ std::map<std::string, eClientMessage> clientMessageTypeMapRev = {
 	{"ToggleSpinLock", eClientMessage::ToggleSpinLock},
 	{"ToggleTimer", eClientMessage::ToggleTimer},
 	{"KillValidation", eClientMessage::KillValidation},
+	{"MissionStart", eClientMessage::MissionStart},
 	{"MissionComplete", eClientMessage::MissionComplete},
 	{"MissionFailed", eClientMessage::MissionFailed},
 	{"Streak", eClientMessage::Streak},
@@ -273,7 +275,7 @@ auto CroupierClient::send(eClientMessage type, std::initializer_list<std::string
 	message.type = type;
 	std::string argStr;
 	for (auto const& arg : args)
-		argStr += (argStr.empty() ? "" : " ") + arg;
+		argStr += (argStr.empty() ? "" : "\t") + arg;
 	message.args = std::move(argStr);
 	this->queue.push_back(std::move(message));
 }

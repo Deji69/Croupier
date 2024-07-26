@@ -22,6 +22,7 @@ enum class eClientMessage {
 	ToggleSpinLock,
 	ToggleTimer,
 	KillValidation,
+	MissionStart,
 	MissionFailed,
 	MissionComplete,
 	ResetStreak,
