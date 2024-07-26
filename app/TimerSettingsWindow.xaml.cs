@@ -45,6 +45,14 @@ namespace Croupier {
 			}
 		}
 
+		public bool StreakRequireValidKills {
+			get => Config.Default.StreakRequireValidKills;
+			set {
+				Config.Default.StreakRequireValidKills = value;
+				UpdateProperty(nameof(StreakRequireValidKills));
+			}
+		}
+
 		public int ReplanWindow {
 			get => Config.Default.StreakReplanWindow;
 			set {

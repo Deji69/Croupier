@@ -639,7 +639,7 @@ namespace Croupier
 				if (spinCompleted) return;
 				spinCompleted = true;
 				arg.KillsValidated = CheckSpinKillsValid();
-				if (arg.SA) IncrementStreak();
+				if (arg.SA && (arg.KillsValidated || Config.Default.StreakRequireValidKills == false)) IncrementStreak();
 				else ResetStreak();
 				liveSplit.Split();
 				StopTimer();
