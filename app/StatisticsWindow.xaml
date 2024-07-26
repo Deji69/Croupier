@@ -10,8 +10,8 @@
 		WindowStyle="SingleBorderWindow"
 		Width="640"
 		Height="420"
-		MinHeight="320"
-		MinWidth="600"
+		MinHeight="420"
+		MinWidth="640"
 		Icon="/CroupierLogoIconsFlatLg.png">
 	<Window.Resources>
 		<DataTemplate DataType="{x:Type local:StatisticsViewModel}">
@@ -55,11 +55,29 @@
 				Foreground="White"
 				Margin="5,2,5,5"
 				/>
-			<ItemsControl ItemsSource="{Binding MainStats}" />
+			<ItemsControl ItemsSource="{Binding MainStats}" MinHeight="150" />
 
+			<TextBlock
+				Text="History"
+				FontWeight="Bold"
+				Foreground="White"
+				Margin="5,2,5,5"
+				/>
+			<!--<StackPanel Orientation="Horizontal" Margin="8,0,8,8">
+				<TextBlock
+					Text="Mission"
+					Foreground="White"
+					Margin="0,0,5,0"
+					/>
+				<ComboBox
+					/>
+				<TextBox
+					Width="100"
+					/>
+			</StackPanel>-->
 			<DataGrid
 				ItemsSource="{Binding History}"
-				MinHeight="300"
+				MinHeight="50"
 				Background="#111"
 				Foreground="#FFF"
 				BorderThickness="0"
@@ -69,8 +87,6 @@
 				MinRowHeight="23"
 				VerticalAlignment="Stretch"
 				MaxHeight="1000"
-				RowEditEnding="DataGrid_RowEditEnding"
-				CellEditEnding="DataGrid_CellEditEnding"
 			>
 				<DataGrid.CellStyle>
 					<Style TargetType="DataGridCell">
@@ -124,12 +140,31 @@
 					<DataGridTextColumn
 						Header="Mission"
 						Binding="{Binding Mission}"
+						MinWidth="80"
 						IsReadOnly="True" />
 					<DataGridTextColumn
 						Header="Spin"
 						Binding="{Binding Spin}"
+						MinWidth="150"
 						IsReadOnly="True" />
-					<DataGridTextColumn Header="Entrance" Binding="{Binding Entrance}" IsReadOnly="True">
+					<DataGridTextColumn
+						Header="Entrance"
+						Binding="{Binding Entrance}"
+						MinWidth="80"
+						IsReadOnly="True">
+						<DataGridTextColumn.HeaderStyle>
+							<Style TargetType="DataGridColumnHeader">
+								<Setter Property="Background" Value="#111" />
+								<Setter Property="BorderBrush" Value="#080808" />
+								<Setter Property="BorderThickness" Value="1" />
+								<Setter Property="Padding" Value="8,4" />
+							</Style>
+						</DataGridTextColumn.HeaderStyle>
+					</DataGridTextColumn>
+					<DataGridTextColumn
+						Header="IGT"
+						Binding="{Binding IGT}"
+						IsReadOnly="True">
 						<DataGridTextColumn.HeaderStyle>
 							<Style TargetType="DataGridColumnHeader">
 								<Setter Property="Background" Value="#111" />
@@ -140,18 +175,11 @@
 							</Style>
 						</DataGridTextColumn.HeaderStyle>
 					</DataGridTextColumn>
-					<DataGridTextColumn Header="IGT" Binding="{Binding IGT}" IsReadOnly="True">
-						<DataGridTextColumn.HeaderStyle>
-							<Style TargetType="DataGridColumnHeader">
-								<Setter Property="Background" Value="#111" />
-								<Setter Property="BorderBrush" Value="#080808" />
-								<Setter Property="BorderThickness" Value="1" />
-								<Setter Property="Padding" Value="8,4" />
-								<Setter Property="HorizontalContentAlignment" Value="Center" />
-							</Style>
-						</DataGridTextColumn.HeaderStyle>
-					</DataGridTextColumn>
-					<DataGridTextColumn Header="Comment" Binding="{Binding Comment}" />
+					<DataGridTextColumn
+						Header="Comment"
+						Binding="{Binding Comment}"
+						MinWidth="200"
+						/>
 				</DataGrid.Columns>
 			</DataGrid>
 		</StackPanel>

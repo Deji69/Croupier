@@ -28,7 +28,7 @@ namespace Croupier {
 			}
 		}
 
-		private SpinCompletionStats stats = stats;
+		private readonly SpinCompletionStats stats = stats;
 		private bool editing = false;
 		private string comment = "";
 		private string commentTemp = "";
@@ -240,16 +240,6 @@ namespace Croupier {
 
 		public override void OnApplyTemplate() {
 			base.OnApplyTemplate();
-		}
-
-		private void DataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e) {
-		}
-
-		private void DataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e) {
-			if (e.EditAction == DataGridEditAction.Commit) {
-				var ctx = e.Row.DataContext as HistoryViewModel;
-				ctx.Comment = e.EditingElement.DataContext as string;
-			}
 		}
 	}
 }
