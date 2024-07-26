@@ -119,6 +119,28 @@ namespace Croupier {
 			return bestStats;
 		}
 
+		public SpinStats GetSlowestIGTSpinStats() {
+			SpinStats bestStats = null;
+			SpinCompletionStats bestCompletionStats = null;
+			foreach (var item in SpinStats.Where(s => s.Value.Completions.Count > 0)) {
+				var completion = item.Value.GetFastestIGTCompletion();
+				if (completion.IGT > 0 && (bestStats == null || completion.IGT > bestCompletionStats.IGT)) {
+					bestStats = item.Value;
+					bestCompletionStats = completion;
+				}
+			}
+			return bestStats;
+		}
+
+		public double GetAverageBestIGT() {
+			List<double> times = [];
+			foreach (var item in SpinStats.Where(s => s.Value.Completions.Count > 0)) {
+				foreach (var c in item.Value.Completions)
+					times.Add(c.IGT);
+			}
+			return times.Average();
+		}
+
 		public SpinStats GetSpinStats(Spin spin) {
 			var spinStr = spin.ToString();
 			if (SpinStats.TryGetValue(spinStr, out var spinStats))

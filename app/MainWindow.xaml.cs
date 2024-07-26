@@ -1091,6 +1091,10 @@ namespace Croupier
 			var missionStats = stats.GetMissionStats(spin.Mission);
 			++stats.NumWins;
 			++missionStats.NumWins;
+
+			if (spinStats.Completions.Count == 0)
+				++stats.NumUniqueWins;
+
 			spinStats.Completions.Add(new() {
 				IGT = mc.IGT > 0 ? mc.IGT : 0,
 				Mission = spin.Mission,

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -74,7 +75,7 @@ namespace Croupier {
 
 			foreach (var spin in Config.Default.Stats.SpinStats) {
 				foreach (var c in spin.Value.Completions) {
-					History.Add(new(c) {
+					History.Insert(0, new(c) {
 						Entrance = Locations.GetEntranceCommonName(c.StartLocation),
 						IGT = this.FormatIGT(c.IGT),
 						Mission = Mission.GetMissionName(c.Mission),
@@ -139,31 +140,66 @@ namespace Croupier {
 				Value = Config.Default.Stats.NumValidKills,
 			});
 
+			var averageBestIGT = FormatIGT(Config.Default.Stats.GetAverageBestIGT());
+
+			MainStats.Add(new() {
+				Name = "Avg IGT",
+				Description = "The time averaged from your fastest completions of every spin.",
+				Value = averageBestIGT,
+			});
+
 			var fastestIGT = "N/A";
 			var fastestIGTMission = "N/A";
 			var fastestIGTSpin = "N/A";
 
 			var fastestIGTSpinStats = Config.Default.Stats.GetFastestIGTSpinStats();
 			if (fastestIGTSpinStats != null) {
-				fastestIGT = this.FormatIGT(fastestIGTSpinStats.GetFastestIGTCompletion().IGT);
+				fastestIGT = FormatIGT(fastestIGTSpinStats.GetFastestIGTCompletion().IGT);
 				fastestIGTMission = Mission.GetMissionName(fastestIGTSpinStats.Mission);
 				fastestIGTSpin = fastestIGTSpinStats.Spin;
 			}
 
+			var longestIGT = "N/A";
+			var longestIGTMission = "N/A";
+			var longestIGTSpin = "N/A";
+
+			var longestIGTSpinStats = Config.Default.Stats.GetSlowestIGTSpinStats();
+			if (longestIGTSpinStats != null) {
+				longestIGT = FormatIGT(longestIGTSpinStats.GetFastestIGTCompletion().IGT);
+				longestIGTMission = Mission.GetMissionName(longestIGTSpinStats.Mission);
+				longestIGTSpin = longestIGTSpinStats.Spin;
+			};
+
 			MainStats.Add(new() {
 				Name = "Fastest IGT",
-				Description = "Fastest IGT (in-game time) achieved on a spin.",
+				Description = "Fastest in-game time achieved on a spin.",
 				Value = fastestIGT,
 			});
 			MainStats.Add(new() {
 				Name = "Fastest IGT Mission",
-				Description = "The mission you got your fastest IGT on.",
+				Description = "The mission you got your fastest in-game time on.",
 				Value = fastestIGTMission,
 			});
 			MainStats.Add(new() {
 				Name = "Fastest IGT Spin",
-				Description = "is the spin you gained your fastest IGT with.",
+				Description = "The spin you've completed with the fastest in-game time.",
 				Value = fastestIGTSpin,
+			});
+
+			MainStats.Add(new() {
+				Name = "Longest IGT",
+				Description = "Longest in-game time achieved on a spin.",
+				Value = longestIGT,
+			});
+			MainStats.Add(new() {
+				Name = "Longest IGT Mission",
+				Description = "The mission you got your longest in-game time on.",
+				Value = longestIGTMission,
+			});
+			MainStats.Add(new() {
+				Name = "Longest IGT Spin",
+				Description = "The spin you spent the most in-game time completing.",
+				Value = longestIGTSpin,
 			});
 
 			var mostSpunMission = "N/A";
@@ -224,7 +260,7 @@ namespace Croupier {
 			else
 				str = ts.ToString(@"ss\s");
 
-			var frac = ts.ToString(@"FFF").TrimEnd('0');
+			var frac = ts.ToString("FFF").TrimEnd('0');
 
 			return str + (frac.Length > 0 ? $" {frac}ms" : "");
 		}
