@@ -28,6 +28,7 @@ namespace Croupier {
 		public MissionID Mission = MissionID.NONE;
 		public double IGT = 0;
 		public string StartLocation = "";
+		public string Comment = "";
 	}
 
 	public class SpinStats(MissionID mission, string spin) {

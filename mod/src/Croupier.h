@@ -46,6 +46,8 @@ struct SharedRouletteSpin {
 	std::vector<DisguiseChange> disguiseChanges;
 	std::vector<KillConfirmation> killValidations;
 	std::vector<KillSetpieceEvent> killSetpieceEvents;
+	std::vector<LoadoutItemEventValue> loadout;
+	std::string locationId;
 	std::chrono::steady_clock::time_point timeStarted;
 	std::chrono::seconds timeElapsed = std::chrono::seconds(0);
 	double startIGT = 0;
@@ -222,7 +224,7 @@ public:
 	auto SendRandom() -> void;
 	auto SendMissions() -> void;
 	auto SendToggleSpinLock() -> void;
-	auto SendMissionStart(const std::string& locationId, const std::vector<LoadoutItemEventValue>& loadout) -> void;
+	auto SendMissionStart(const std::string& locationId, const std::string& entranceId, const std::vector<LoadoutItemEventValue>& loadout) -> void;
 	auto SendMissionFailed() -> void;
 	auto SendMissionComplete() -> void;
 	auto SendKillValidationUpdate() -> void;

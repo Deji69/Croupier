@@ -76,20 +76,21 @@ namespace Croupier {
 				var json = File.ReadAllText("config.json");
 				Default = JsonSerializer.Deserialize<Config>(json, jsonSerializerOptions);
 			}
-			catch { }
+			catch (FileNotFoundException) { }
 			return true;
 		}
 
-		static public void Save()
+		static public void Save(bool skipCallbacks = false)
 		{
 			var json = JsonSerializer.Serialize(Default, jsonSerializerOptions);
 			File.WriteAllText("config.json", json);
-			OnSave?.Invoke(null, 0);
+			if (!skipCallbacks) OnSave?.Invoke(null, 0);
 		}
 
 		private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
 			AllowTrailingCommas = true,
 			WriteIndented = true,
+			IncludeFields = true,
 		};
 	}
 }

@@ -978,6 +978,7 @@ namespace Croupier
 			if (spin == null) return;
 			conditions.Clear();
 			conditions.AddRange(spin.Conditions);
+			this.spin = spin;
 			SetMission(spin.Mission);
 			EditSpinWindowInst?.UpdateConditions(conditions);
 			PostConditionUpdate();
@@ -1055,7 +1056,6 @@ namespace Croupier
 			var locationId = start.Location.ToLower();
 			usedEntrance = Locations.Entrances.Find(e => e.ID == locationId);
 
-
 			var spinStats = stats.GetSpinStats(spin);
 			var missionStats = stats.GetMissionStats(spin.Mission);
 
@@ -1094,7 +1094,7 @@ namespace Croupier
 			spinStats.Completions.Add(new() {
 				IGT = mc.IGT > 0 ? mc.IGT : 0,
 				Mission = spin.Mission,
-				StartLocation = usedEntrance.ID,
+				StartLocation = usedEntrance?.ID ?? "",
 			});
 
 			Config.Save();
@@ -1386,6 +1386,8 @@ namespace Croupier
 		}
 
 		private void Window_Closing(object sender, CancelEventArgs e) {
+			StatisticsWindowInst?.Close();
+			Config.Save(true);
 		}
 
 		private void CopySpinCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
@@ -1462,7 +1464,7 @@ namespace Croupier
 				return;
 			}
 			StatisticsWindowInst = new() {
-				Owner = this,
+				Owner = null,
 				WindowStartupLocation = WindowStartupLocation.CenterOwner
 			};
 			StatisticsWindowInst.Closed += (object sender, EventArgs e) => {

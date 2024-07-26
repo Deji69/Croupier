@@ -48,7 +48,7 @@
 		</DataTemplate>
 	</Window.Resources>
 	<ScrollViewer UseLayoutRounding="True" Margin="0" Background="Black">
-		<StackPanel Orientation="Vertical">
+		<StackPanel Orientation="Vertical" VerticalAlignment="Stretch">
 			<TextBlock
 				Text="Statistics"
 				FontWeight="Bold"
@@ -57,7 +57,6 @@
 				/>
 			<ItemsControl ItemsSource="{Binding MainStats}" />
 
-			<!--<Expander Header="History" Margin="5">-->
 			<DataGrid
 				ItemsSource="{Binding History}"
 				MinHeight="300"
@@ -68,6 +67,10 @@
 				CanUserReorderColumns="False"
 				AutoGenerateColumns="False"
 				MinRowHeight="23"
+				VerticalAlignment="Stretch"
+				MaxHeight="1000"
+				RowEditEnding="DataGrid_RowEditEnding"
+				CellEditEnding="DataGrid_CellEditEnding"
 			>
 				<DataGrid.CellStyle>
 					<Style TargetType="DataGridCell">
@@ -118,13 +121,39 @@
 					</Style>
 				</DataGrid.ColumnHeaderStyle>
 				<DataGrid.Columns>
-					<DataGridTextColumn Header="Mission" Binding="{Binding Mission}" />
-					<DataGridTextColumn Header="Spin" Binding="{Binding Spin}" />
-					<DataGridTextColumn Header="Entrance" Binding="{Binding Entrance}" />
-					<DataGridTextColumn Header="IGT" Binding="{Binding IGT}" />
+					<DataGridTextColumn
+						Header="Mission"
+						Binding="{Binding Mission}"
+						IsReadOnly="True" />
+					<DataGridTextColumn
+						Header="Spin"
+						Binding="{Binding Spin}"
+						IsReadOnly="True" />
+					<DataGridTextColumn Header="Entrance" Binding="{Binding Entrance}" IsReadOnly="True">
+						<DataGridTextColumn.HeaderStyle>
+							<Style TargetType="DataGridColumnHeader">
+								<Setter Property="Background" Value="#111" />
+								<Setter Property="BorderBrush" Value="#080808" />
+								<Setter Property="BorderThickness" Value="1" />
+								<Setter Property="Padding" Value="8,4" />
+								<Setter Property="HorizontalContentAlignment" Value="Center" />
+							</Style>
+						</DataGridTextColumn.HeaderStyle>
+					</DataGridTextColumn>
+					<DataGridTextColumn Header="IGT" Binding="{Binding IGT}" IsReadOnly="True">
+						<DataGridTextColumn.HeaderStyle>
+							<Style TargetType="DataGridColumnHeader">
+								<Setter Property="Background" Value="#111" />
+								<Setter Property="BorderBrush" Value="#080808" />
+								<Setter Property="BorderThickness" Value="1" />
+								<Setter Property="Padding" Value="8,4" />
+								<Setter Property="HorizontalContentAlignment" Value="Center" />
+							</Style>
+						</DataGridTextColumn.HeaderStyle>
+					</DataGridTextColumn>
+					<DataGridTextColumn Header="Comment" Binding="{Binding Comment}" />
 				</DataGrid.Columns>
 			</DataGrid>
-			<!--</Expander>-->
 		</StackPanel>
 	</ScrollViewer>
 </Window>

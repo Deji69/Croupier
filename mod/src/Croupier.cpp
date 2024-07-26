@@ -635,14 +635,13 @@ auto Croupier::SendMissionComplete() -> void {
 	this->client->send(eClientMessage::MissionComplete, {this->sharedSpin.isSA ? "1" : "0", std::to_string(this->sharedSpin.exitIGT)});
 }
 
-auto Croupier::SendMissionStart(const std::string& locationId, const std::vector<LoadoutItemEventValue>& loadout) -> void {
-	std::string loadoutStr = "[";
+auto Croupier::SendMissionStart(const std::string& locationId, const std::string& entranceId, const std::vector<LoadoutItemEventValue>& loadout) -> void {
+	std::string loadoutStr = "";
 	for (const auto& item : loadout) {
 		if (!loadoutStr.empty()) loadoutStr += ",";
 		loadoutStr += std::format("\"{}\"", item.RepositoryId);
 	}
-	loadoutStr += "]";
-	this->client->send(eClientMessage::MissionStart, {locationId, loadoutStr});
+	this->client->send(eClientMessage::MissionStart, {entranceId, "[" + loadoutStr + "]"});
 }
 
 auto Croupier::SendKillValidationUpdate() -> void {
@@ -1470,8 +1469,7 @@ auto Croupier::Respin(bool isAuto) -> void {
 
 auto Croupier::LogSpin() -> void {
 	std::string spinText;
-	for (auto& cond : this->spin.getConditions())
-	{
+	for (auto& cond : this->spin.getConditions()) {
 		if (!spinText.empty()) spinText += " || ";
 		if (cond.killMethod.name.empty()) spinText += "***";
 		spinText += std::format("{}: {} / {}", cond.target.get().getName(), cond.methodName, cond.disguise.get().name);
@@ -1485,9 +1483,13 @@ auto lastThrownItem = ""s;
 auto Croupier::SetupEvents() -> void {
 	events.listen<Events::ContractStart>([this](const ServerEvent<Events::ContractStart>& ev) {
 		this->sharedSpin.playerStart();
+		this->sharedSpin.locationId = ev.Value.LocationId;
+		this->sharedSpin.loadout = ev.Value.Loadout;
 
 		this->SendKillValidationUpdate();
-		this->SendMissionStart(ev.Value.LocationId, ev.Value.Loadout);
+	});
+	events.listen<Events::HeroSpawn_Location>([this](const ServerEvent<Events::HeroSpawn_Location>& ev) {
+		this->SendMissionStart(this->sharedSpin.locationId, ev.Value.RepositoryId, this->sharedSpin.loadout);
 	});
 	events.listen<Events::IntroCutEnd>([this](const ServerEvent<Events::IntroCutEnd>& ev) {
 		this->sharedSpin.playerCutsceneEnd(ev.Timestamp);

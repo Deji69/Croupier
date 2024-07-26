@@ -293,6 +293,18 @@ struct Event<Events::ContractEnd> {
 };
 
 template<>
+struct Event<Events::HeroSpawn_Location> {
+	static auto constexpr Name = "HeroSpawn_Location";
+	struct EventValue {
+		std::string RepositoryId;
+
+		EventValue(const nlohmann::json& json) :
+			RepositoryId(json.value("RepositoryId", ""))
+		{}
+	};
+};
+
+template<>
 struct Event<Events::ContractFailed> {
 	static auto constexpr Name = "ContractFailed";
 	using EventValue = RawEventValue;

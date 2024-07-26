@@ -46,6 +46,7 @@ enum class Events {
 	ExitGate,
 	FirstMissedShot,
 	FirstNonHeadshot,
+	HeroSpawn_Location,
 	HoldingIllegalWeapon,
 	IntroCutEnd,
 	ItemDestroyed, // broken camcorder

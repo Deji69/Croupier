@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Croupier {
 	public class StatisticsViewModel : ViewModel {
@@ -10,11 +12,47 @@ namespace Croupier {
 		public object Value { get; set; }
 	}
 
-	public class HistoryViewModel : ViewModel {
+	public class HistoryViewModel(SpinCompletionStats stats) : ViewModel, IEditableObject {
 		public string Mission { get; set; }
 		public string Spin { get; set; }
 		public string IGT { get; set; }
 		public string Entrance { get; set; }
+
+		public string Comment {
+			get => comment;
+			set {
+				if (value.Length > 1000)
+					comment = value[0..1000];
+				else
+					comment = value;
+			}
+		}
+
+		private SpinCompletionStats stats = stats;
+		private bool editing = false;
+		private string comment = "";
+		private string commentTemp = "";
+
+		void IEditableObject.BeginEdit() {
+			if (editing) return;
+			commentTemp = Comment;
+			editing = true;
+		}
+
+		void IEditableObject.CancelEdit() {
+			if (!editing) return;
+			Comment = commentTemp;
+			editing = false;
+		}
+
+		void IEditableObject.EndEdit() {
+			if (!editing) return;
+			commentTemp = "";
+			editing = false;
+
+			stats.Comment = Comment;
+			Config.Save();
+		}
 	}
 
 	public class StatisticsWindowViewModel : ViewModel {
@@ -36,11 +74,12 @@ namespace Croupier {
 
 			foreach (var spin in Config.Default.Stats.SpinStats) {
 				foreach (var c in spin.Value.Completions) {
-					History.Add(new() {
+					History.Add(new(c) {
 						Entrance = Locations.GetEntranceCommonName(c.StartLocation),
 						IGT = this.FormatIGT(c.IGT),
 						Mission = Mission.GetMissionName(c.Mission),
 						Spin = spin.Key,
+						Comment = c.Comment ?? "",
 					});
 				}
 			}
@@ -179,18 +218,15 @@ namespace Croupier {
 			var str = "";
 
 			if (ts.TotalHours >= 1)
-				str = ts.ToString(@"h\h\ m\m\ ss.FFF\m\s");
+				str = ts.ToString(@"h\h\ m\m\ ss\s");
 			else if (ts.TotalMinutes >= 1)
-				str = ts.ToString(@"m\m\ ss\s\ FFF\m\s");
+				str = ts.ToString(@"m\m\ ss\s");
 			else
-				str = ts.ToString(@"ss\s\ FFF\m\s");
+				str = ts.ToString(@"ss\s");
 
-			str = str.TrimStart('0');
+			var frac = ts.ToString(@"FFF").TrimEnd('0');
 
-			if (str.Length > 0 && str[^1] == '.')
-				str = str[0..^1];
-
-			return str;
+			return str + (frac.Length > 0 ? $" {frac}ms" : "");
 		}
 	}
 	
@@ -204,6 +240,16 @@ namespace Croupier {
 
 		public override void OnApplyTemplate() {
 			base.OnApplyTemplate();
+		}
+
+		private void DataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e) {
+		}
+
+		private void DataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e) {
+			if (e.EditAction == DataGridEditAction.Commit) {
+				var ctx = e.Row.DataContext as HistoryViewModel;
+				ctx.Comment = e.EditingElement.DataContext as string;
+			}
 		}
 	}
 }
