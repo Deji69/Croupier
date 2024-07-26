@@ -8,7 +8,7 @@ namespace Croupier {
 	
 	public partial class DebugWindow : Window {
 		protected MainWindow mainWindow;
-		private readonly StreakSettingsWindowViewModel viewModel = new();
+		private readonly DebugWindowViewModel viewModel = new();
 
 		public DebugWindow(MainWindow main) {
 			mainWindow = main;
@@ -34,12 +34,26 @@ namespace Croupier {
 			CroupierSocketServer.SpoofMessage("LoadFinished:0");
 		}
 
+		private void Attempt_Click(object sender, RoutedEventArgs e) {
+			CroupierSocketServer.SpoofMessage($"MissionStart:bc531204-8e82-4550-b2a7-829b047dc6cc\t[]");
+		}
+
 		private void WinSpin_Click(object sender, RoutedEventArgs e) {
-			CroupierSocketServer.SpoofMessage("MissionComplete:1");
+			CroupierSocketServer.SpoofMessage($"MissionComplete:1\t{(double)(Random.Shared.Next(50 * 10, 400 * 10)) / 10.0}");
 		}
 
 		private void RIPSpin_Click(object sender, RoutedEventArgs e) {
 			CroupierSocketServer.SpoofMessage("MissionFailed:1");
+		}
+
+		private void ValidKills_Click(object sender, RoutedEventArgs e) {
+			var msg = "";
+			foreach (var cond in mainWindow.CurrentSpin.Conditions) {
+				if (msg.Length > 0) msg += ",";
+				msg += $"{(int)cond.Target.ID}:2:1:{(int)cond.Target.ID}";
+			}
+
+			CroupierSocketServer.SpoofMessage($"KillValidation:{msg}");
 		}
 
 		private void AutoSpin_Click(object sender, RoutedEventArgs e) {

@@ -32,6 +32,18 @@
 					Click="RIPSpin_Click"
 					/>
 				<Button
+					Content="Attempt"
+					Width="70"
+					Margin="0,0,5,0"
+					Click="Attempt_Click"
+					/>
+				<Button
+					Content="Valid Kills"
+					Width="70"
+					Margin="0,0,5,0"
+					Click="ValidKills_Click"
+					/>
+				<Button
 					Content="Win Spin"
 					Width="70"
 					Margin="0,0,5,0"
