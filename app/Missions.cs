@@ -16,6 +16,14 @@ namespace Croupier
 		Season3,
 	}
 
+	public class MissionComboBoxItem {
+		public MissionID ID { get; set; }
+		public string Name { get; set; }
+		public string Location { get; set; }
+		public Uri Image { get; set; }
+		public bool IsSeparator { get; set; }
+	}
+
 	static class MissionGroupMethods {
 		public static string GetName(this MissionGroup group) {
 			return group switch {
@@ -176,6 +184,44 @@ namespace Croupier
 
 	public partial class Mission(MissionID mission) {
 		private static readonly Regex TokenCharacterRegex = CreateTokenCharacterRegex();
+
+		public static readonly List<Mission> All = [
+			new Mission(MissionID.ICAFACILITY_FREEFORM),
+			new Mission(MissionID.ICAFACILITY_FINALTEST),
+			new Mission(MissionID.PARIS_SHOWSTOPPER),
+			new Mission(MissionID.SAPIENZA_WORLDOFTOMORROW),
+			new Mission(MissionID.MARRAKESH_GILDEDCAGE),
+			new Mission(MissionID.BANGKOK_CLUB27),
+			new Mission(MissionID.COLORADO_FREEDOMFIGHTERS),
+			new Mission(MissionID.HOKKAIDO_SITUSINVERSUS),
+			new Mission(MissionID.BANGKOK_THESOURCE),
+			new Mission(MissionID.SAPIENZA_THEAUTHOR),
+			new Mission(MissionID.HOKKAIDO_PATIENTZERO),
+			new Mission(MissionID.PARIS_HOLIDAYHOARDERS),
+			new Mission(MissionID.SAPIENZA_THEICON),
+			new Mission(MissionID.SAPIENZA_LANDSLIDE),
+			new Mission(MissionID.MARRAKESH_HOUSEBUILTONSAND),
+			new Mission(MissionID.HOKKAIDO_SNOWFESTIVAL),
+			new Mission(MissionID.HAWKESBAY_NIGHTCALL),
+			new Mission(MissionID.MIAMI_FINISHLINE),
+			new Mission(MissionID.SANTAFORTUNA_THREEHEADEDSERPENT),
+			new Mission(MissionID.MUMBAI_CHASINGAGHOST),
+			new Mission(MissionID.WHITTLETON_ANOTHERLIFE),
+			new Mission(MissionID.ISLEOFSGAIL_THEARKSOCIETY),
+			new Mission(MissionID.NEWYORK_GOLDENHANDSHAKE),
+			new Mission(MissionID.HAVEN_THELASTRESORT),
+			new Mission(MissionID.MIAMI_ASILVERTONGUE),
+			new Mission(MissionID.SANTAFORTUNA_EMBRACEOFTHESERPENT),
+			new Mission(MissionID.MUMBAI_ILLUSIONSOFGRANDEUR),
+			new Mission(MissionID.WHITTLETON_ABITTERPILL),
+			new Mission(MissionID.DUBAI_ONTOPOFTHEWORLD),
+			new Mission(MissionID.DARTMOOR_DEATHINTHEFAMILY),
+			new Mission(MissionID.BERLIN_APEXPREDATOR),
+			new Mission(MissionID.CHONGQING_ENDOFANERA),
+			new Mission(MissionID.MENDOZA_THEFAREWELL),
+			new Mission(MissionID.CARPATHIAN_UNTOUCHABLE),
+			new Mission(MissionID.AMBROSE_SHADOWSINTHEWATER),
+		];
 
 		public readonly List<Target> Targets = MakeTargetList(mission);
 
@@ -347,15 +393,11 @@ namespace Croupier
 			}
 		}
 		public Uri ImagePath {
-			get {
-				return new Uri(Path.Combine(Environment.CurrentDirectory, "missions", this.Image));
-			}
+			get => new(Path.Combine(Environment.CurrentDirectory, "missions", this.Image));
 		}
 
 		public List<Disguise> Disguises {
-			get {
-				return GetDisguises(ID);
-			}
+			get => GetDisguises(ID);
 		}
 
 		public List<SpecificKillMethod> Methods {

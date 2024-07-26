@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Croupier {
 	public class StatisticsViewModel : ViewModel {
@@ -60,6 +62,38 @@ namespace Croupier {
 		public ObservableCollection<StatisticsViewModel> MainStats { get; set; } = [];
 		public ObservableCollection<HistoryViewModel> History { get; set; } = [];
 
+		public MissionID FilterMissionID { get; set; } = MissionID.NONE;
+
+		public List<MissionComboBoxItem> Missions {
+			get {
+				var items = new List<MissionComboBoxItem>();
+				var group = MissionGroup.None;
+				items.Add(new() {
+					ID = MissionID.NONE,
+					Name = "(ALL)",
+					Location = "",
+					IsSeparator = false
+				});
+				foreach (var mission in Mission.All) {
+					if (mission.Group != group) {
+						items.Add(new() {
+							Name = mission.Group.GetName(),
+							IsSeparator = true,
+						});
+						group = mission.Group;
+					}
+					items.Add(new() {
+						ID = mission.ID,
+						Name = mission.ID != MissionID.NONE ? mission.Name : "(NONE)",
+						Location = mission.Location,
+						IsSeparator = false
+					});
+				}
+					
+				return items;
+			}
+		}
+
 		public StatisticsWindowViewModel() {
 			Update();
 			UpdateHistory();
@@ -74,6 +108,8 @@ namespace Croupier {
 			History.Clear();
 
 			foreach (var spin in Config.Default.Stats.SpinStats) {
+				if (FilterMissionID != MissionID.NONE && spin.Value.Mission != FilterMissionID)
+					continue;
 				foreach (var c in spin.Value.Completions) {
 					History.Insert(0, new(c) {
 						Entrance = Locations.GetEntranceCommonName(c.StartLocation),
@@ -223,17 +259,17 @@ namespace Croupier {
 
 			MainStats.Add(new() {
 				Name = "Most Spun Mission",
-				Description = mostSpunMissionStats != null ? $"is the most spun mission (spun {mostSpunMissionStats.NumSpins} times)" : "is your most spun mission.",
+				Description = "The mission appearing in the highest number of spins.",
 				Value = mostSpunMission,
 			});
 			MainStats.Add(new() {
 				Name = "Most Attempted Mission",
-				Description = mostPlayedMissionStats != null ? $"is your most played mission (played {mostPlayedMissionStats.NumAttempts} times)" : "is your most played mission.",
+				Description = "The mission you have started/restarted the most.",
 				Value = mostPlayedMission,
 			});
 			MainStats.Add(new() {
 				Name = "Most Won Mission",
-				Description = mostWonMissionStats != null ? $"is the mission you've completed the most spins in ({mostWonMissionStats.NumWins} wins)" : "is your most played mission.",
+				Description = "The mission you've beaten the most spins on.",
 				Value = mostWonMission,
 			});
 
@@ -244,7 +280,7 @@ namespace Croupier {
 
 			MainStats.Add(new() {
 				Name = "Top Starting Location",
-				Description = "is the starting location you have won the most spins from",
+				Description = "The starting location you have beaten the most spins from.",
 				Value = mostUsedEntranceStr,
 			});
 		}
@@ -276,6 +312,20 @@ namespace Croupier {
 
 		public override void OnApplyTemplate() {
 			base.OnApplyTemplate();
+		}
+
+		private void MissionFilterComboBox_Selected(object sender, SelectionChangedEventArgs e) {
+			var items = e.AddedItems;
+			if (items.Count == 0)
+				return;
+			var item = (MissionComboBoxItem)items[0];
+			viewModel.FilterMissionID = item.ID;
+			viewModel.UpdateHistory();
+		}
+
+		private void DataGridCell_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
+			var cell = (DataGridCell)sender;
+			var item = (HistoryViewModel)cell.DataContext;
 		}
 	}
 }

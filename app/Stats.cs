@@ -28,6 +28,7 @@ namespace Croupier {
 		public MissionID Mission = MissionID.NONE;
 		public double IGT = 0;
 		public string StartLocation = "";
+		public List<string> Loadout = [];
 		public string Comment = "";
 	}
 

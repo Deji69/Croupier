@@ -12,15 +12,6 @@ using System.Windows.Threading;
 
 namespace Croupier
 {
-	public class MissionComboBoxItem
-	{
-		public MissionID ID { get; set; }
-		public string Name { get; set; }
-		public string Location { get; set; }
-		public Uri Image { get; set; }
-		public bool IsSeparator { get; set; }
-	}
-
 	public class TargetNameFormatEntry(TargetNameFormat id, string name) : INotifyPropertyChanged {
 		public TargetNameFormat ID { get; set; } = id;
 		public int Index { get { return (int)ID; } }
@@ -508,6 +499,7 @@ namespace Croupier
 		private readonly List<MissionID> missionPool = [];
 		private Mission currentMission = null;
 		private Entrance usedEntrance = null;
+		private string[] loadout = [];
 		private bool disableClientUpdate = false;
 		private bool timerStopped = true;
 		private bool timerManuallyStopped = false;
@@ -1029,6 +1021,7 @@ namespace Croupier
 			++stats.NumRandomSpins;
 			++missionStats.NumSpins;
 
+			loadout = [];
 			usedEntrance = null;
 			trackedValidKills = [];
 
@@ -1054,6 +1047,7 @@ namespace Croupier
 		private void TrackGameMissionAttempt(MissionStart start) {
 			var stats = Config.Default.Stats;
 			var locationId = start.Location.ToLower();
+			loadout = start.Loadout;
 			usedEntrance = Locations.Entrances.Find(e => e.ID == locationId);
 
 			var spinStats = stats.GetSpinStats(spin);
@@ -1099,6 +1093,7 @@ namespace Croupier
 				IGT = mc.IGT > 0 ? mc.IGT : 0,
 				Mission = spin.Mission,
 				StartLocation = usedEntrance?.ID ?? "",
+				Loadout = loadout.ToList(),
 			});
 
 			Config.Save();
