@@ -133,6 +133,7 @@
 						<Setter Property="Background" Value="#111" />
 						<Setter Property="BorderBrush" Value="#080808" />
 						<Setter Property="BorderThickness" Value="1" />
+						<Setter Property="FontWeight" Value="Bold" />
 						<Setter Property="Padding" Value="8,4" />
 					</Style>
 				</DataGrid.ColumnHeaderStyle>
@@ -157,6 +158,7 @@
 								<Setter Property="Background" Value="#111" />
 								<Setter Property="BorderBrush" Value="#080808" />
 								<Setter Property="BorderThickness" Value="1" />
+								<Setter Property="FontWeight" Value="Bold" />
 								<Setter Property="Padding" Value="8,4" />
 							</Style>
 						</DataGridTextColumn.HeaderStyle>
@@ -170,6 +172,7 @@
 								<Setter Property="Background" Value="#111" />
 								<Setter Property="BorderBrush" Value="#080808" />
 								<Setter Property="BorderThickness" Value="1" />
+								<Setter Property="FontWeight" Value="Bold" />
 								<Setter Property="Padding" Value="8,4" />
 								<Setter Property="HorizontalContentAlignment" Value="Center" />
 							</Style>
