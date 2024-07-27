@@ -139,7 +139,7 @@ namespace Croupier {
 				foreach (var c in item.Value.Completions)
 					times.Add(c.IGT);
 			}
-			return times.Average();
+			return times.Count > 0 ? times.Average() : 0;
 		}
 
 		public SpinStats GetSpinStats(Spin spin) {
