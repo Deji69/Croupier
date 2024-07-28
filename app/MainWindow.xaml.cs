@@ -1095,7 +1095,7 @@ namespace Croupier
 				IGT = mc.IGT > 0 ? mc.IGT : 0,
 				Mission = spin.Mission,
 				StartLocation = usedEntrance?.ID ?? "",
-				Loadout = loadout.ToList(),
+				Loadout = [..loadout],
 			});
 
 			Config.Save();
@@ -1387,6 +1387,7 @@ namespace Croupier
 		}
 
 		private void Window_Closing(object sender, CancelEventArgs e) {
+			timer.Stop();
 			StatisticsWindowInst?.Close();
 			Config.Save(true);
 		}
