@@ -662,11 +662,13 @@ namespace Croupier
 				disableClientUpdate = true;
 				PreviousSpin();
 				disableClientUpdate = false;
+				SendSpinToClient();
 			};
 			CroupierSocketServer.Next += (object sender, int _) => {
 				disableClientUpdate = true;
 				NextSpin();
 				disableClientUpdate = false;
+				SendSpinToClient();
 			};
 			CroupierSocketServer.SpinData += (object sender, string data) => {
 				if (SpinParser.Parse(data, out var spin)) {
