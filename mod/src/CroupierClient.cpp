@@ -86,6 +86,7 @@ auto CroupierClient::reconnect() -> bool {
 		connectInfo.ai_protocol = IPPROTO_TCP;
 
 		if (getaddrinfo("127.0.0.1", "8898", &connectInfo, &addressInfo) != 0) {
+			addressInfo = nullptr;
 			Logger::Error("getaddrinfo failed");
 		}
 
@@ -111,7 +112,7 @@ auto CroupierClient::reconnect() -> bool {
 		}
 
 		this->connected = this->sock != INVALID_SOCKET;
-		freeaddrinfo(addressInfo);
+		if (addressInfo) freeaddrinfo(addressInfo);
 	}
 
 	connectionMutex.unlock();
@@ -178,7 +179,8 @@ auto CroupierClient::start() -> bool {
 			}
 
 			// Process message and add to queue
-			this->processMessage(std::string(buffer, read));
+			auto msg = std::string(buffer, read);
+			this->processMessage(msg);
 		}
 	});
 	return true;
@@ -237,12 +239,13 @@ auto CroupierClient::writeMessage(const ClientMessage& msg) -> bool {
 
 auto CroupierClient::processMessage(const std::string& msg) -> void {
 	// Check for multiple messages
-	auto msgs = split(msg, "\n", 2);
+	auto msgs = split(msg, "\n");
 	if (msgs.size() > 1) {
 		for (auto& msg : msgs) {
 			if (trim(msg).empty()) continue;
 			this->processMessage(std::string(msg));
 		}
+		return;
 	}
 
 	// Try to parse message
