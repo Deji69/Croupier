@@ -211,14 +211,14 @@ public:
 				case 3:
 					token = context.tokens[i] + context.tokens[i + 1] + context.tokens[i + 2];
 					if (parseTargetToken(token)) {
-						context.tokens.erase(begin(context.tokens) + i, end(context.tokens) + i + 3);
+						context.tokens.erase(begin(context.tokens) + i, begin(context.tokens) + i + 3);
 						break;
 					}
 					[[fallthrough]];
 				case 2:
 					token = context.tokens[i] + context.tokens[i + 1];
 					if (parseTargetToken(token)) {
-						context.tokens.erase(begin(context.tokens) + i, end(context.tokens) + i + 2);
+						context.tokens.erase(begin(context.tokens) + i, begin(context.tokens) + i + 2);
 						break;
 					}
 					[[fallthrough]];
