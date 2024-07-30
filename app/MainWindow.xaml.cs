@@ -637,7 +637,6 @@ namespace Croupier
 				TrackGameMissionAttempt(start);
 			};
 			CroupierSocketServer.MissionComplete += (object sender, MissionCompletion arg) => {
-				if (spinCompleted) return;
 				spinCompleted = true;
 				arg.KillsValidated = CheckSpinKillsValid();
 				if (arg.SA && (arg.KillsValidated || Config.Default.StreakRequireValidKills == false)) IncrementStreak();
