@@ -534,6 +534,7 @@ namespace Croupier
 					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Impossible]),
 					new(SpecificKillMethod.BattleAxe, [MethodTag.BannedInRR, MethodTag.Extreme]),
 					new(SpecificKillMethod.BeakStaff, [MethodTag.BannedInRR, MethodTag.Extreme]),
+					new(StandardKillMethod.FallingObject, [MethodTag.BannedInRR]),
 				],
 			}},
 			{"GV", new Target(TargetID.GalenVholes)},
