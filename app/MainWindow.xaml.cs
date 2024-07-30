@@ -514,7 +514,7 @@ namespace Croupier
 		private MissionID autoSpinMission = MissionID.NONE;
 		private readonly LiveSplitClient liveSplit;
 		private readonly DispatcherTimer timer = null;
-		
+
 		private ObservableCollection<MissionComboBoxItem> MissionListItems {
 			get {
 				var items = new ObservableCollection<MissionComboBoxItem>();
@@ -604,6 +604,7 @@ namespace Croupier
 				SendSpinToClient();
 				SendSpinLockToClient();
 				SendStreakToClient();
+				SendTimerToClient();
 			};
 			CroupierSocketServer.Respin += (object sender, MissionID id) => Spin(id);
 			CroupierSocketServer.AutoSpin += (object sender, MissionID id) => {
@@ -685,6 +686,7 @@ namespace Croupier
 			};
 			CroupierSocketServer.LoadFinished += (object sender, int _) => {
 				if (!spinCompleted) ResumeTimer();
+				SendTimerToClient();
 			};
 			CroupierSocketServer.KillValidation += (object sender, string data) => {
 				if (data.Length == 0) return;
@@ -1116,6 +1118,7 @@ namespace Croupier
 			timerStopped = false;
 			timerStart = timeElapsed.HasValue ? DateTime.Now - timeElapsed.Value : DateTime.Now;
 			timeElapsed = null;
+			SendTimerToClient();
 		}
 
 		private void StopTimer() {
@@ -1124,6 +1127,7 @@ namespace Croupier
 			if (timerStopped) return;
 			timeElapsed = DateTime.Now - timerStart;
 			timerStopped = true;
+			SendTimerToClient();
 		}
 
 		private void ResumeTimer() {
@@ -1142,12 +1146,19 @@ namespace Croupier
 
 			timeElapsed = null;
 			timerStart = DateTime.Now;
+			SendTimerToClient();
 		}
 
 		public void SendSpinLockToClient() {
 			if (disableClientUpdate) return;
 			CroupierSocketServer.Send("SpinLock:" + (SpinLock ? "1" : "0"));
-		} 
+		}
+
+		public void SendTimerToClient() {
+			if (disableClientUpdate) return;
+			double elapsed = (timeElapsed ?? DateTime.Now - timerStart).TotalMilliseconds;
+			CroupierSocketServer.Send($"Timer:{(timerStopped ? 0 : 1)}," + elapsed);
+		}
 
 		public void SendSpinToClient() {
 			if (disableClientUpdate) return;

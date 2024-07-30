@@ -139,6 +139,7 @@ struct SharedRouletteSpin {
 
 	auto playerCutsceneEnd(double igt) {
 		this->startIGT = igt;
+		this->isPlaying = true;
 	}
 
 	auto playerLoad() {

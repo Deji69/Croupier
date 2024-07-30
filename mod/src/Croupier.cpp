@@ -451,6 +451,28 @@ auto Croupier::ProcessClientMessages() -> void {
 				if (message.args.size() < 1) break;
 				std::from_chars(message.args.c_str(), message.args.c_str() + message.args.size(), this->config.streakCurrent);
 				return;
+			case eClientMessage::Timer:
+				{
+					auto parts = split(message.args, ",", 2);
+					if (parts.empty() || parts[0].empty()) return;
+					auto timerStopped = 0;
+					if (std::from_chars(parts[0].data(), parts[0].data() + parts[0].size(), timerStopped).ec != std::errc()) {
+						if (timerStopped) this->sharedSpin.isFinished = true;
+						else {
+							this->sharedSpin.isPlaying = true;
+							this->sharedSpin.isFinished = false;
+						}
+					}
+					if (parts.size() < 2) return;
+					uint64_t timeElapsed = 0;
+					auto res = std::from_chars(parts[1].data(), parts[1].data() + parts[1].size(), timeElapsed);
+					if (res.ec == std::errc()) {
+						auto now = std::chrono::steady_clock::now();
+						this->sharedSpin.timeStarted = now - std::chrono::milliseconds(timeElapsed);
+						this->sharedSpin.timeElapsed = std::chrono::duration_cast<std::chrono::seconds>(now - this->sharedSpin.timeStarted);
+					}
+				}
+				return;
 		}
 	}
 }
@@ -815,14 +837,14 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 				ImGui::SameLine(150.0);
 
 				if (ImGui::Button("Reset")) {
-					this->SendResetTimer();
 					this->sharedSpin.timeStarted = std::chrono::steady_clock::now();
+					this->SendResetTimer();
 				}
 
 				ImGui::SameLine();
 				if (ImGui::Button("Start")) {
-					this->SendPauseTimer(false);
 					this->sharedSpin.timeStarted = std::chrono::steady_clock::now();
+					this->SendPauseTimer(false);
 				}
 			}
 		}
