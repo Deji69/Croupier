@@ -513,6 +513,7 @@ namespace Croupier
 		private DateTime? autoSpinSchedule = null;
 		private MissionID autoSpinMission = MissionID.NONE;
 		private readonly LiveSplitClient liveSplit;
+		private readonly DispatcherTimer timer = null;
 		
 		private ObservableCollection<MissionComboBoxItem> MissionListItems {
 			get {
@@ -574,7 +575,7 @@ namespace Croupier
 
 			PropertyChanged += MainWindow_PropertyChanged;
 
-			var timer = new DispatcherTimer {
+			timer = new DispatcherTimer {
 				Interval = TimeSpan.FromMilliseconds(1)
 			};
 			timer.Tick += (object sender, EventArgs e) => {
