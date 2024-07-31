@@ -1082,7 +1082,7 @@ namespace Croupier
 						new("Masseur", "outfit_138eda40-501a-48b8-affc-928321566a4e_0.jpg"),
 						new("Military Officer", "outfit_65d860f4-998e-4f92-a1d7-9f40c04a2474_0.jpg"),
 						new("Military Soldier", "outfit_955bca9e-bc91-46da-a4df-3dfc787c8aff_0.jpg"),
-						new("Prisoner", "outfit_fdb4aade-4d5f-47e2-896f-fc1addf64d52_0.jpg"),
+						new("Prisoner", "outfit_fdb4aade-4d5f-47e2-896f-fc1addf64d52_0.jpg") { Hostile = true },
 						new("Shopkeeper", "outfit_ecf1b752-0cd6-4283-a1a5-743fc0249525_0.jpg"),
 						new("Waiter", "outfit_6348cc33-665f-4470-80b4-a0ad836df702_0.jpg"),
 					];
@@ -1109,7 +1109,7 @@ namespace Croupier
 						new("Kitchen Staff", "outfit_85971c2e-34ae-423f-9653-bc32c5f3e4f7_0.jpg"),
 						new("Morgan's Bodyguard", "outfit_4c8941af-541c-4bb9-a8e3-8b8e61b0a789_0.jpg"),
 						new("Recording Crew", "outfit_ef704a8e-88b7-430a-a217-09bbeea7074f_0.jpg"),
-						new("Stalker", "outfit_c5bf909f-66a5-4f19-9aee-aeb953172e45_0.jpg"),
+						new("Stalker", "outfit_c5bf909f-66a5-4f19-9aee-aeb953172e45_0.jpg"){ Hostile = true },
 						new("Waiter", "outfit_57669117-fbf3-4630-80e3-53e5420a8f30_0.jpg"),
 					];
 				case MissionID.BANGKOK_THESOURCE:
@@ -1129,7 +1129,7 @@ namespace Croupier
 					];
 				case MissionID.COLORADO_FREEDOMFIGHTERS:
 					return [
-						new("Suit", "outfit_dd9792ec-4a1d-4c29-a928-a556fc0b6692_0.jpg", true),
+						new("Suit", "outfit_dd9792ec-4a1d-4c29-a928-a556fc0b6692_0.jpg", true) { Hostile = true},
 						new("Explosives Specialist", "outfit_59c4f7db-f065-4fac-bc6c-5c7ac3758eed_0.jpg"),
 						new("Hacker", "outfit_aab7f28d-84d9-47d1-be52-d142f5970086_0.jpg"),
 						new("Militia Cook", "outfit_dac13714-a012-47cf-b76a-150cfc4cece5_0.jpg"),
@@ -1138,13 +1138,13 @@ namespace Croupier
 						new("Militia Spec Ops", "outfit_ed1a4bf9-0641-4e70-9af1-d6e68cbb84d6_0.jpg"),
 						new("Militia Technician", "outfit_143c62fc-4bf6-474a-9542-1e81bf93a044_0.jpg"),
 						new("Point Man", "outfit_338021a8-0c61-4732-a991-559e25e49efe_0.jpg"),
-						new("Scarecrow", "outfit_fd5d2b9d-dcef-4596-a98a-5266a148c40c_0.jpg"),
+						new("Scarecrow", "outfit_fd5d2b9d-dcef-4596-a98a-5266a148c40c_0.jpg") { Hostile = true },
 					];
 				case MissionID.HOKKAIDO_SITUSINVERSUS:
 				case MissionID.HOKKAIDO_SNOWFESTIVAL:
 					return [
 						new("Suit", "outfit_1c3964e1-75c6-4adb-8cbb-ebd0a830b839_0.jpg", true),
-						new("Baseball Player", "outfit_5946924c-958d-48f4-ada3-86beb58aa778_0.jpg"),
+						new("Baseball Player", "outfit_5946924c-958d-48f4-ada3-86beb58aa778_0.jpg") { Hostile = true },
 						new("Bodyguard", "outfit_5270225d-797a-43f8-8435-078ae0d92249_0.jpg"),
 						new("Chef", "outfit_d6bbbe57-8cc8-45ed-b1cb-d1f9477c4b61_0.jpg"),
 						new("Chief Surgeon", "outfit_b8deb948-a0a9-4dcb-9df4-1c2ecd29765f_0.jpg"),
@@ -1154,7 +1154,7 @@ namespace Croupier
 						new("Hospital Director", "outfit_f6f53c39-17f9-48cf-9594-7a696b036d61_0.jpg"),
 						new("Morgue Doctor", "outfit_3d4424a3-23f9-4cfe-b225-2e06c17d780b_0.jpg"),
 						new("Motorcyclist", "outfit_8e01f48f-ef06-448c-9d22-5d58c4414968_0.jpg"),
-						new("Ninja", "outfit_06456d4d-da36-4008-bea5-c0b985a565f5_0.jpg"),
+						new("Ninja", "outfit_06456d4d-da36-4008-bea5-c0b985a565f5_0.jpg") { Hostile = true },
 						new("Patient", "outfit_c98a6467-5dd9-4041-8bff-119445750d4d_0.jpg"),
 						new("Resort Security", "outfit_25406dac-d206-48c7-a6df-dffb887c9227_0.jpg"),
 						new("Resort Staff", "outfit_52992428-8884-48db-9764-e486d17d4804_0.jpg"),
@@ -1165,7 +1165,7 @@ namespace Croupier
 					];
 				case MissionID.HOKKAIDO_PATIENTZERO:
 					return [
-						new("Suit", "outfit_250112ba-e39d-473c-99cd-5fc429c5fff5_0.jpg", true),
+						new("Suit", "outfit_250112ba-e39d-473c-99cd-5fc429c5fff5_0.jpg", true) { Hostile = true },
 						new("Bio Suit", "outfit_e8ef431d-62b2-4d0a-a766-750c0bc6e39e_0.jpg"),
 						new("Bodyguard", "outfit_5270225d-797a-43f8-8435-078ae0d92249_0.jpg"),
 						new("Chef", "outfit_d6bbbe57-8cc8-45ed-b1cb-d1f9477c4b61_0.jpg"),
@@ -1309,7 +1309,7 @@ namespace Croupier
 					disguises.Add(new("Guard", "outfit_6565bf3a-aa59-44f5-9b89-ef645f99d4fa_0.jpg"));
 					disguises.Add(new("Initiate", "outfit_daf223e8-0b22-405f-a3b9-40d2b9992c2f_0.jpg"));
 					disguises.Add(new("Jebediah Block", "outfit_bef91840-e5aa-4a44-9f2e-30c732b1f7be_0.jpg"));
-					disguises.Add(new("Knight's Armor", "outfit_fae73e92-2307-4163-8e9f-30401ca884bf_0.jpg"));
+					disguises.Add(new("Knight's Armor", "outfit_fae73e92-2307-4163-8e9f-30401ca884bf_0.jpg") { Hostile = true });
 					disguises.Add(new("Master of Ceremonies", "outfit_9db0a810-7549-4932-b0ab-9d6241afdc2c_0.jpg"));
 					disguises.Add(new("Raider", "outfit_58f91772-a202-49e4-a558-159f762d78e3_0.jpg"));
 					break;

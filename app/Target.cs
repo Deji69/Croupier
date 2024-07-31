@@ -140,31 +140,37 @@ namespace Croupier
 		public StandardKillMethod? standard;
 		public FirearmKillMethod? firearm;
 		public SpecificKillMethod? specific;
-		public List<MethodTag> tags = [];
+		public List<string> tags = [];
 
-		public TargetKillMethodTags(StandardKillMethod? standard, MethodTag[] tags)
+		public TargetKillMethodTags(StandardKillMethod? standard, List<string> tags)
 		{
 			this.standard = standard;
-			this.tags = [..tags];
+			this.tags = tags;
 		}
 
-		public TargetKillMethodTags(FirearmKillMethod? firearm, MethodTag[] tags)
+		public TargetKillMethodTags(FirearmKillMethod? firearm, List<string> tags)
 		{
 			this.firearm = firearm;
-			this.tags = [..tags];
+			this.tags = tags;
 		}
 
-		public TargetKillMethodTags(SpecificKillMethod? specific, MethodTag[] tags)
+		public TargetKillMethodTags(SpecificKillMethod? specific, List<string> tags)
 		{
 			this.specific = specific;
-			this.tags = [..tags];
+			this.tags = tags;
+		}
+
+		public bool MatchesKillMethod(KillMethod method) {
+			return standard == method.Standard
+				&& specific == method.Specific
+				&& firearm == method.Firearm;
 		}
 	}
 
-	public class MethodRule(Func<Disguise, KillMethod, bool> func, MethodTag[] tags)
+	public class MethodRule(Func<Disguise, KillMethod, Mission, bool> func, List<string> tags)
 	{
-		public readonly Func<Disguise, KillMethod, bool> Func = func;
-		public readonly MethodTag[] Tags = tags;
+		public readonly Func<Disguise, KillMethod, Mission, bool> Func = func;
+		public readonly List<string> Tags = tags;
 	}
 
 	public class TargetInfo(string name, string shortName, string initials, string image, MissionID mission) {
@@ -176,22 +182,6 @@ namespace Croupier
 	}
 
 	public class Target {
-		static private readonly Func<Disguise, KillMethod, bool> stalkerRemoteTest = (Disguise disguise, KillMethod method) => {
-			return disguise.Name == "Stalker" && !method.IsRemote;
-		};
-		static private readonly Func<Disguise, KillMethod, bool> loudLiveTest = (Disguise disguise, KillMethod method) => {
-			return method.IsLiveFirearm && method.IsLoudWeapon;
-		};
-		static private readonly Func<Disguise, KillMethod, bool> remoteExplosiveTest = (Disguise disguise, KillMethod method) => {
-			return method.Type == KillMethodType.Firearm && method.Firearm == FirearmKillMethod.Explosive
-				&& (method.KillType == KillType.Remote || method.KillType == KillType.LoudRemote);
-		};
-		static private readonly Func<Disguise, KillMethod, bool> impactExplosiveTest = (Disguise disguise, KillMethod method) => {
-			return method.Type == KillMethodType.Firearm && method.Firearm == FirearmKillMethod.Explosive && method.KillType == KillType.Impact;
-		};
-		static private readonly Func<Disguise, KillMethod, bool> knightsArmourTrapTest = (Disguise disguise, KillMethod method) => {
-			return disguise.Name == "Knight's Armor" && !method.IsRemote;
-		};
 		static public readonly Dictionary<TargetID, TargetInfo> targetInfos = new() {
 			{ TargetID.KalvinRitter, new("Kalvin Ritter", "Kalvin", "KR", "polarbear2_sparrow.jpg", MissionID.ICAFACILITY_FREEFORM) },
 			{ TargetID.JasperKnight, new("Jasper Knight", "Jasper", "JK", "polarbear5.jpg", MissionID.ICAFACILITY_FINALTEST) },
@@ -289,317 +279,69 @@ namespace Croupier
 			{ TargetID.Unknown, new("Unknown", "Unknown", "?", "mongoose_unknown_man.jpg", MissionID.NONE) },
 		};
 		static public readonly Dictionary<string, Target> Targets = new() {
-			{"KR", new Target(TargetID.KalvinRitter) {
-				MethodTags = [
-					new(StandardKillMethod.Electrocution, [MethodTag.Impossible]),
-					new(StandardKillMethod.Fire, [MethodTag.Impossible]),
-					new(StandardKillMethod.InjectedPoison, [MethodTag.Impossible]),
-					new(FirearmKillMethod.AssaultRifle, [MethodTag.LoudOnly]),
-					new(FirearmKillMethod.Shotgun, [MethodTag.LoudOnly]),
-					new(FirearmKillMethod.SMG, [MethodTag.Impossible]),
-					new(FirearmKillMethod.Sniper, [MethodTag.Impossible]),
-				],
-				Rules = [
-					new(impactExplosiveTest, [ MethodTag.BannedInRR, MethodTag.Impossible ]),
-				]
-			}},
-			{"JK", new Target(TargetID.JasperKnight) {
-				MethodTags = [
-					new(StandardKillMethod.Electrocution, [MethodTag.Impossible]),
-					new(StandardKillMethod.Fire, [MethodTag.Impossible]),
-					new(StandardKillMethod.InjectedPoison, [MethodTag.Impossible]),
-					new(FirearmKillMethod.AssaultRifle, [MethodTag.LoudOnly]),
-					new(FirearmKillMethod.Shotgun, [MethodTag.LoudOnly]),
-					new(FirearmKillMethod.SMG, [MethodTag.Impossible]),
-					new(FirearmKillMethod.Sniper, [MethodTag.Impossible]),
-					new(FirearmKillMethod.Explosive, [MethodTag.Impossible]),
-				],
-				Rules = []
-			}},
-			{"VN", new Target(TargetID.ViktorNovikov) {
-				MethodTags = [
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Extreme, MethodTag.DuplicateOnlySameDisguise]),
-				],
-			}},
-			{"DM", new Target(TargetID.DaliaMargolis) {
-				MethodTags = [
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Extreme, MethodTag.DuplicateOnlySameDisguise]),
-				],
-			}},
-			{"HSB", new Target(TargetID.HarrySmokeyBagnato) {
-				MethodTags = [
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Extreme, MethodTag.DuplicateOnlySameDisguise]),
-				],
-			}},
-			{"MSG", new Target(TargetID.MarvSlickGonif) {
-				MethodTags = [
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Extreme, MethodTag.DuplicateOnlySameDisguise]),
-				],
-			}},
-			{"SC", new Target(TargetID.SilvioCaruso) {
-				MethodTags = [
-					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Buggy]),
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Impossible]),
-				],
-			}},
-			{"FDS", new Target(TargetID.FrancescaDeSantis) {
-				MethodTags = [
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Impossible]),
-				],
-			}},
+			{"KR", new Target(TargetID.KalvinRitter)},
+			{"JK", new Target(TargetID.JasperKnight)},
+			{"VN", new Target(TargetID.ViktorNovikov)},
+			{"DM", new Target(TargetID.DaliaMargolis)},
+			{"HSB", new Target(TargetID.HarrySmokeyBagnato)},
+			{"MSG", new Target(TargetID.MarvSlickGonif)},
+			{"SC", new Target(TargetID.SilvioCaruso)},
+			{"FDS", new Target(TargetID.FrancescaDeSantis)},
 			{"DB", new Target(TargetID.DinoBosco)},
-			{"MA", new Target(TargetID.MarcoAbiatti) {
-				MethodTags = [
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Impossible]),
-				],
-			}},
-			{"CB", new Target(TargetID.CraigBlack) {
-				MethodTags = [
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Impossible]),
-				],
-			}},
-			{"BA", new Target(TargetID.BrotherAkram) {
-				MethodTags = [
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Impossible]),
-				],
-			}},
-			{"RZ", new Target(TargetID.RezaZaydan) {
-				MethodTags = [
-					new(StandardKillMethod.Drowning, [MethodTag.BannedInRR, MethodTag.Extreme]),
-					new(StandardKillMethod.Electrocution, [MethodTag.BannedInRR, MethodTag.Extreme]),
-				],
-			}},
-			{"CHS", new Target(TargetID.ClausHugoStrandberg) {
-				MethodTags = [
-					new(StandardKillMethod.FallingObject, [MethodTag.Hard]),
-				],
-				Rules = {
-					new((Disguise disguise, KillMethod method) => {
-						if (disguise.Name != "Prisoner") return false;
-						return !method.IsRemote;
-					}, [MethodTag.BannedInRR, MethodTag.Hard]),
-				},
-			}},
+			{"MA", new Target(TargetID.MarcoAbiatti)},
+			{"CB", new Target(TargetID.CraigBlack)},
+			{"BA", new Target(TargetID.BrotherAkram)},
+			{"RZ", new Target(TargetID.RezaZaydan)},
+			{"CHS", new Target(TargetID.ClausHugoStrandberg)},
 			{"KTK", new Target(TargetID.KongTuoKwang)},
-			{"MM", new Target(TargetID.MatthieuMendola) {
-				Name = "Matthieu Mendola",
-				ShortName = "Matthieu",
-				Image = "python_matthieu_mendola_briefing.jpg",
-				Mission = MissionID.MARRAKESH_HOUSEBUILTONSAND,
-			}},
-			{"JC", new Target(TargetID.JordanCross) {
-				MethodTags = [
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Extreme]),
-				],
-				Rules = {
-					new(stalkerRemoteTest, [MethodTag.BannedInRR, MethodTag.Hard])
-				},
-			}},
-			{"KM", new Target(TargetID.KenMorgan) {
-				MethodTags = [
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Extreme]),
-				],
-				Rules = [
-					new(stalkerRemoteTest, [MethodTag.BannedInRR, MethodTag.Hard])
-				],
-			}},
-			{"ON", new Target(TargetID.OybekNabazov) {
-				MethodTags = [
-					new(StandardKillMethod.FallingObject, [MethodTag.BannedInRR, MethodTag.Extreme]),
-				],
-			}},
-			{"SY", new Target(TargetID.SisterYulduz) {
-				MethodTags = [
-					new(StandardKillMethod.FallingObject, [MethodTag.BannedInRR, MethodTag.Extreme]),
-				],
-			}},
-			{"SR", new Target(TargetID.SeanRose) {
-				MethodTags = [
-					new(StandardKillMethod.Drowning, [ MethodTag.BannedInRR, MethodTag.Extreme ]),
-					new(StandardKillMethod.ConsumedPoison, [ MethodTag.BannedInRR, MethodTag.Impossible ]),
-				],
-				Rules = [
-					new(loudLiveTest, [ MethodTag.BannedInRR, MethodTag.Hard ])
-				]
-			}},
-			{"PG", new Target(TargetID.PenelopeGraves) {
-				MethodTags = [
-					new(StandardKillMethod.Drowning, [MethodTag.BannedInRR, MethodTag.Extreme]),
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Hard]),
-				],
-				Rules = [
-					new(loudLiveTest, [MethodTag.BannedInRR, MethodTag.Hard])
-				],
-			}},
-			{"EB", new Target(TargetID.EzraBerg) {
-				MethodTags = [
-					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Impossible]),
-					new(StandardKillMethod.Drowning, [MethodTag.BannedInRR, MethodTag.Extreme]),
-					new(StandardKillMethod.Electrocution, [MethodTag.BannedInRR, MethodTag.Extreme]),
-				],
-			}},
-			{"MP", new Target(TargetID.MayaParvati) {
-				MethodTags = [
-					new(StandardKillMethod.Drowning, [MethodTag.BannedInRR, MethodTag.Extreme]),
-				],
-			}},
-			{"ES", new Target(TargetID.ErichSoders) {
-				Type = TargetType.Soders,
-			}},
-			{"YY", new Target(TargetID.YukiYamazaki) {
-				MethodTags = [
-					new(StandardKillMethod.Fire, []),
-				],
-			}},
-			{"OC", new Target(TargetID.OwenCage) {
-				MethodTags = [
-					new(StandardKillMethod.Drowning, [MethodTag.BannedInRR, MethodTag.Extreme]),
-				],
-			}},
+			{"MM", new Target(TargetID.MatthieuMendola)},
+			{"JC", new Target(TargetID.JordanCross)},
+			{"KM", new Target(TargetID.KenMorgan)},
+			{"ON", new Target(TargetID.OybekNabazov)},
+			{"SY", new Target(TargetID.SisterYulduz)},
+			{"SR", new Target(TargetID.SeanRose)},
+			{"PG", new Target(TargetID.PenelopeGraves)},
+			{"EB", new Target(TargetID.EzraBerg)},
+			{"MP", new Target(TargetID.MayaParvati)},
+			{"ES", new Target(TargetID.ErichSoders)},
+			{"YY", new Target(TargetID.YukiYamazaki)},
+			{"OC", new Target(TargetID.OwenCage)},
 			{"KL", new Target(TargetID.KlausLiebleid)},
 			{"DF", new Target(TargetID.DmitriFedorov)},
-			{"AR", new Target(TargetID.AlmaReynard) {
-				MethodTags = [
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Impossible]),
-					new(StandardKillMethod.FallingObject, [MethodTag.BannedInRR, MethodTag.Impossible]),
-				],
-			}},
+			{"AR", new Target(TargetID.AlmaReynard)},
 			{"SK", new Target(TargetID.SierraKnox)},
-			{"RK", new Target(TargetID.RobertKnox) {
-				MethodTags = [
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Extreme]),
-				],
-			}},
+			{"RK", new Target(TargetID.RobertKnox)},
 			{"AJ", new Target(TargetID.AjitKrish) {
 				Name = "Ajit \"AJ\" Krish",
 				ShortName = "AJ",
 				Image = "cottonmouth_ajit_krish.jpg",
 				Mission = MissionID.MIAMI_ASILVERTONGUE,
 			}},
-			{"RD", new Target(TargetID.RicoDelgado) {
-				MethodTags = [
-					new(StandardKillMethod.Fire, []),
-					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Extreme]),
-				],
-			}},
-			{"JF", new Target(TargetID.JorgeFranco) {
-				MethodTags = [
-					new(StandardKillMethod.FallingObject, [MethodTag.BannedInRR, MethodTag.Impossible]),
-				],
-			}},
-			{"AM", new Target(TargetID.AndreaMartinez) {
-				MethodTags = [
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Extreme]),
-				],
-			}},
+			{"RD", new Target(TargetID.RicoDelgado)},
+			{"JF", new Target(TargetID.JorgeFranco)},
+			{"AM", new Target(TargetID.AndreaMartinez)},
 			{"BR", new Target(TargetID.BlairReddington)},
-			{"WK", new Target(TargetID.WazirKale) {
-				MethodTags = [
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Extreme]),
-					new(StandardKillMethod.Drowning, [MethodTag.BannedInRR, MethodTag.Extreme]),
-				],
-				Rules = [
-					new(loudLiveTest, [MethodTag.BannedInRR, MethodTag.Extreme]),
-				],
-			}},
-			{"VS", new Target(TargetID.VanyaShah) {
-				MethodTags = [
-					new(StandardKillMethod.Drowning, [MethodTag.BannedInRR, MethodTag.Extreme]),
-					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Extreme]),
-				],
-				Rules = [
-					new(loudLiveTest, [MethodTag.BannedInRR, MethodTag.Extreme]),
-				],
-			}},
-			{"DR", new Target(TargetID.DawoodRangan) {
-				MethodTags = [
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Extreme]),
-					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Extreme]),
-				],
-				Rules = {
-					new MethodRule(loudLiveTest, [MethodTag.BannedInRR, MethodTag.Hard]),
-				},
-			}},
+			{"WK", new Target(TargetID.WazirKale)},
+			{"VS", new Target(TargetID.VanyaShah)},
+			{"DR", new Target(TargetID.DawoodRangan)},
 			{"BC", new Target(TargetID.BasilCarnaby)},
-			{"J", new Target(TargetID.Janus) {
-				MethodTags = [
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Impossible]),
-					new(StandardKillMethod.FallingObject, [MethodTag.BannedInRR, MethodTag.Impossible]),
-					new(SpecificKillMethod.BattleAxe, [MethodTag.BannedInRR, MethodTag.Extreme]),
-					new(SpecificKillMethod.BeakStaff, [MethodTag.BannedInRR, MethodTag.Extreme]),
-				],
-			}},
-			{"NC", new Target(TargetID.NolanCassidy) {
-				MethodTags = [
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Impossible]),
-					new(SpecificKillMethod.BattleAxe, [MethodTag.BannedInRR, MethodTag.Extreme]),
-					new(SpecificKillMethod.BeakStaff, [MethodTag.BannedInRR, MethodTag.Extreme]),
-					new(StandardKillMethod.FallingObject, [MethodTag.BannedInRR]),
-				],
-			}},
+			{"J", new Target(TargetID.Janus)},
+			{"NC", new Target(TargetID.NolanCassidy)},
 			{"GV", new Target(TargetID.GalenVholes)},
-			{"ZW", new Target(TargetID.ZoeWashington) {
-				MethodTags = [
-					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Impossible]),
-				],
-				Rules = {
-					new(knightsArmourTrapTest, [MethodTag.BannedInRR, MethodTag.Extreme])
-				},
-			}},
-			{"SW", new Target(TargetID.SophiaWashington) {
-				MethodTags = [
-					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Extreme]),
-					new(StandardKillMethod.Drowning, [MethodTag.BannedInRR, MethodTag.Hard]),
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Hard]),
-				],
-				Rules = [
-					new(knightsArmourTrapTest, [MethodTag.BannedInRR, MethodTag.Extreme])
-				],
-			}},
+			{"ZW", new Target(TargetID.ZoeWashington)},
+			{"SW", new Target(TargetID.SophiaWashington)},
 			{"AS", new Target(TargetID.AthenaSavalas) {
 				Name = "Athena Savalas",
 				ShortName = "Athena",
 				Image = "racoon_athena_savalas.jpg",
 				Mission = MissionID.NEWYORK_GOLDENHANDSHAKE,
-				MethodTags = [
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Impossible]),
-				],
 			}},
-			{"TW", new Target(TargetID.TysonWilliams) {
-				MethodTags = [
-					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Extreme]),
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Impossible]),
-				],
-			}},
-			{"SB", new Target(TargetID.StevenBradley) {
-				MethodTags = [
-					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Impossible]),
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Impossible]),
-				],
-			}},
-			{"LV", new Target(TargetID.LjudmilaVetrova) {
-				MethodTags = [
-					new(StandardKillMethod.FallingObject, [MethodTag.BannedInRR, MethodTag.Hard]),
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Impossible]),
-				],
-			}},
-			{"CI", new Target(TargetID.CarlIngram) {
-				MethodTags = [
-					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Buggy]),
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Extreme]),
-				],
-			}},
-			{"MS", new Target(TargetID.MarcusStuyvesant) {
-				MethodTags = [
-					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Extreme]),
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Extreme]),
-				],
-			}},
-			{"AC", new Target(TargetID.AlexaCarlisle) {
-				MethodTags = [
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Impossible]),
-				],
-			}},
+			{"TW", new Target(TargetID.TysonWilliams)},
+			{"SB", new Target(TargetID.StevenBradley)},
+			{"LV", new Target(TargetID.LjudmilaVetrova)},
+			{"CI", new Target(TargetID.CarlIngram)},
+			{"MS", new Target(TargetID.MarcusStuyvesant)},
+			{"AC", new Target(TargetID.AlexaCarlisle)},
 			{"1", new Target(TargetID.Agent1)},
 			{"2", new Target(TargetID.Agent2)},
 			{"3", new Target(TargetID.Agent3)},
@@ -611,50 +353,11 @@ namespace Croupier
 			{"9", new Target(TargetID.Agent9)},
 			{"10", new Target(TargetID.Agent10)},
 			{"11", new Target(TargetID.Agent11)},
-			{"H", new Target(TargetID.Hush) {
-				MethodTags = [
-					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Extreme]),
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Extreme]),
-				],
-				Rules = [
-					new(loudLiveTest, [MethodTag.BannedInRR, MethodTag.Hard]),
-				],
-			}},
-			{"IR", new Target(TargetID.ImogenRoyce) {
-				MethodTags = [
-					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Hard]),
-					new(StandardKillMethod.FallingObject, [MethodTag.BannedInRR, MethodTag.Extreme]),
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Hard]),
-				],
-			}},
-			{"DY", new Target(TargetID.DonArchibaldYates) {
-				MethodTags = [
-					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Hard]),
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Extreme]),
-				],
-			}},
-			{"TV", new Target(TargetID.TamaraVidal) {
-				MethodTags = [
-					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Hard]),
-					new(StandardKillMethod.FallingObject, [MethodTag.BannedInRR, MethodTag.Hard]),
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Extreme]),
-				],
-			}},
-			{"AE", new Target(TargetID.ArthurEdwards) {
-				MethodTags = [
-					new(StandardKillMethod.Drowning, [MethodTag.BannedInRR, MethodTag.Impossible]),
-					new(StandardKillMethod.ConsumedPoison, [MethodTag.BannedInRR, MethodTag.Impossible]),
-					new(StandardKillMethod.Electrocution, [MethodTag.BannedInRR, MethodTag.Impossible]),
-					new(StandardKillMethod.Explosion, [MethodTag.BannedInRR, MethodTag.Impossible]),
-					new(StandardKillMethod.FallingObject, [MethodTag.BannedInRR, MethodTag.Impossible]),
-					new(StandardKillMethod.Fire, [MethodTag.BannedInRR, MethodTag.Impossible]),
-					new(FirearmKillMethod.Sniper, [MethodTag.BannedInRR, MethodTag.Impossible]),
-				],
-				Rules = [
-					new(remoteExplosiveTest, [ MethodTag.BannedInRR, MethodTag.Impossible ]),
-					new(impactExplosiveTest, [ MethodTag.BannedInRR, MethodTag.Impossible ]),
-				]
-			}},
+			{"H", new Target(TargetID.Hush)},
+			{"IR", new Target(TargetID.ImogenRoyce)},
+			{"DY", new Target(TargetID.DonArchibaldYates)},
+			{"TV", new Target(TargetID.TamaraVidal)},
+			{"AE", new Target(TargetID.ArthurEdwards)},
 			{"NCR", new Target(TargetID.NoelCrest)},
 			{"SV", new Target(TargetID.SinhiAkkaVenthan)},
 		};
@@ -835,27 +538,6 @@ namespace Croupier
 			get {
 				return new Uri(Path.Combine(Environment.CurrentDirectory, "actors", this.Image));
 			}
-		}
-
-		public List<MethodTag> TestRules(Disguise disguise, KillMethod method) {
-			var broken = new List<MethodTag>();
-			Rules.ForEach(rule => {
-				if (rule.Func(disguise, method))
-					broken.AddRange(rule.Tags);
-			});
-			return broken;
-		}
-
-		public List<MethodTag> GetMethodTags(KillMethod method) {
-			var methodTagsList = MethodTags?.Find((TargetKillMethodTags methodTags) => {
-				return method.Type switch {
-					KillMethodType.Standard => method.Standard == methodTags.standard,
-					KillMethodType.Specific => method.Specific == methodTags.specific,
-					KillMethodType.Firearm => method.Firearm == methodTags.firearm,
-					_ => false,
-				};
-			});
-			return methodTagsList?.tags ?? [];
 		}
 	}
 }

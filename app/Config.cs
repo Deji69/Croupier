@@ -16,6 +16,7 @@ namespace Croupier {
 		public List<string> CustomMissionPool { get; set; } = [];
 		public MissionPoolPresetID MissionPool { get; set; } = MissionPoolPresetID.MainMissions;
 		public string Ruleset { get; set; } = "";
+		public RulesetConfig Ruleset_Custom { get; set; } = null;
 		public bool Ruleset_GenericEliminations { get; set; } = false;
 		public bool Ruleset_LiveComplications { get; set; } = true;
 		public bool Ruleset_LiveComplicationsExcludeStandard { get; set; } = true;

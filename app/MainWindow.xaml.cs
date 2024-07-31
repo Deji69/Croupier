@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -486,15 +487,7 @@ namespace Croupier
 			new Mission(MissionID.CARPATHIAN_UNTOUCHABLE),
 			new Mission(MissionID.AMBROSE_SHADOWSINTHEWATER),
 		];
-		private Ruleset rules = new("current", RulesetPreset.RR14);
-		private readonly ObservableCollection<Ruleset> rulesets = [
-			new("RR14", RulesetPreset.RR14),
-			new("RRWC 2023", RulesetPreset.RRWC2023),
-			new("RR12", RulesetPreset.RR12),
-			new("RR11", RulesetPreset.RR11),
-			new("Croupier", RulesetPreset.Croupier),
-			new("Custom", RulesetPreset.Custom),
-		];
+		private readonly ObservableCollection<Ruleset> rulesets = [];
 
 		private readonly List<MissionID> missionPool = [];
 		private Mission currentMission = null;
@@ -735,13 +728,69 @@ namespace Croupier
 			}
 		}
 
+		private void LoadRulesetConfiguration() {
+			var files = Directory.GetFiles("rulesets", "*.json");
+			
+			rulesets.Clear();
+
+			foreach (var file in files.Reverse()) {
+				var ruleset = Ruleset.LoadConfig(file);
+				if (rulesets.Any(r => r.Name == ruleset.Name))
+					continue;
+				if (ruleset.Name == "Custom")
+					rulesets.Insert(0, ruleset);
+				else
+					rulesets.Add(ruleset);
+			}
+
+			var custom = rulesets.FirstOrDefault(r => r.Name == "Custom");
+			var rr15 = rulesets.FirstOrDefault(r => r.Name == "RR15");
+
+			if (custom == null) {
+				custom = new("Custom", new() {
+					AllowDuplicateMethod = false,
+					AllowDuplicateDisguise = Config.Default.Ruleset_AllowDuplicateDisguises,
+					AnyDisguise = Config.Default.Ruleset_EnableAnyDisguise,
+					AnyExplosives = Config.Default.Ruleset_AnyExplosiveKillTypes,
+					Banned = ["Slow", "Hard", "Extreme", "Impossible", "Buggy", "EasterEgg"],
+					GenericEliminations = Config.Default.Ruleset_GenericEliminations,
+					ImpactExplosives = Config.Default.Ruleset_ImpactExplosiveKillTypes,
+					LiveComplications = Config.Default.Ruleset_LiveComplications,
+					LiveComplicationChance = Config.Default.Ruleset_LiveComplicationChance,
+					LiveComplicationsExcludeStandard = Config.Default.Ruleset_LiveComplicationsExcludeStandard,
+					LoudRemoteExplosives = Config.Default.Ruleset_LoudRemoteExplosiveKillTypes,
+					LoudSMGIsLargeFirearm = Config.Default.Ruleset_LoudSMGIsLargeFirearm,
+					MeleeKillTypes = Config.Default.Ruleset_MeleeKillTypes,
+					RemoteExplosives = Config.Default.Ruleset_RemoteExplosiveKillTypes,
+					SuitOnly = Config.Default.Ruleset_SuitOnlyMode,
+					ThrownKillTypes = Config.Default.Ruleset_ThrownKillTypes,
+				}, rr15?.Tags);
+				custom.Save();
+				rulesets.Add(custom);
+			}
+			//new("RR14", RulesetPreset.RR14),
+			//new("RRWC 2023", RulesetPreset.RRWC2023),
+			//new("RR12", RulesetPreset.RR12),
+			//new("RR11", RulesetPreset.RR11),
+			//new("Croupier", RulesetPreset.Croupier),
+			//new("Custom", RulesetPreset.Custom),
+
+			var newRuleset = rulesets.FirstOrDefault(r => r.Name == Config.Default.Ruleset);
+			if (newRuleset != null)
+				Ruleset.Current = newRuleset;
+			else if (rulesets.Count > 0) {
+				Ruleset.Current = rulesets.First();
+				Config.Default.Ruleset = Ruleset.Current?.Name ?? "Custom";
+			}
+			else
+				Config.Default.Ruleset = Ruleset.Current?.Name ?? "Custom";
+		}
+
 		private void LoadSettings() {
 			if (!Enum.IsDefined(typeof(MissionPoolPresetID), Config.Default.MissionPool))
 				Config.Default.MissionPool = MissionPoolPresetID.MainMissions;
 
-			var newRuleset = rulesets.FirstOrDefault(r => r.Name == Config.Default.Ruleset);
-			if (newRuleset != null) rules = newRuleset;
-			else Config.Default.Ruleset = rules.Name;
+			LoadRulesetConfiguration();
 
 			VerticalDisplay = Config.Default.VerticalDisplay;
 			TopmostEnabled = Config.Default.AlwaysOnTop;
@@ -769,10 +818,6 @@ namespace Croupier
 				if (!cond.KillValidation.IsValid) return false;
 			}
 			return true;
-		}
-
-		private void EditRulesetWindow_ApplyRuleset(object sender, Ruleset ruleset) {
-			rules = ruleset;
 		}
 
 		private void EditSpinWindow_SetCondition(object _sender, SpinCondition condition) {
@@ -852,7 +897,7 @@ namespace Croupier
 
 			autoSpinSchedule = null;
 
-			Generator gen = new(rules, currentMission);
+			Generator gen = new(Ruleset.Current, currentMission);
 			spin = gen.GenerateSpin();
 			SetSpin(spin);
 			spinHistoryIndex = 1;
@@ -1452,6 +1497,8 @@ namespace Croupier
 		}
 
 		private void EditRulesetsCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
+			LoadRulesetConfiguration();
+
 			if (EditRulesetWindowInst != null) {
 				EditRulesetWindowInst.Activate();
 				return;
@@ -1460,7 +1507,6 @@ namespace Croupier
 				Owner = this,
 				WindowStartupLocation = WindowStartupLocation.CenterOwner
 			};
-			EditRulesetWindowInst.ApplyRuleset += EditRulesetWindow_ApplyRuleset;
 			EditRulesetWindowInst.Closed += (object sender, EventArgs e) => {
 				EditRulesetWindowInst = null;
 			};

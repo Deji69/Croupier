@@ -13,6 +13,8 @@ namespace Croupier
 		public bool Suit { get; set; } = suit;
 		public bool Any { get; set; } = any;
 
+		public bool Hostile { get; set; } = false;
+
 		public Uri ImageUri {
 			get {
 				return new Uri(Path.Combine(Environment.CurrentDirectory, "outfits", Image));

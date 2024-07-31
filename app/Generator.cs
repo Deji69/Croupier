@@ -28,12 +28,12 @@ namespace Croupier
 			KillMethod method;
 
 			// In suit only mode, force the suit disguise for every target
-			if (ruleset.suitOnlyMode)
+			if (ruleset.Rules.SuitOnly)
 				disguise = Mission.GetSuitDisguise(mission.ID);
 			else {
 				// Generate disguises, regenerate if necessary based on duplication rule
 				do disguise = GenerateDisguise();
-				while (spin != null && !ruleset.allowDuplicateDisguise && spin.HasDisguise(disguise));
+				while (spin != null && !ruleset.Rules.AllowDuplicateDisguise && spin.HasDisguise(disguise));
 			}
 
 			// Generate methods until something legal pops up
@@ -80,15 +80,15 @@ namespace Croupier
 
 					// Randomly apply kill types to explosive
 					if (method.Firearm == FirearmKillMethod.Explosive) {
-						if (!shouldGenerateKillType && ruleset.enableAnyExplosives)
+						if (!shouldGenerateKillType && ruleset.Rules.AnyExplosives)
 							break;
 
 						List<KillType> explosiveKillTypes = [ KillType.Loud ];
-						if (ruleset.enableImpactExplosives)
+						if (ruleset.Rules.ImpactExplosives)
 							explosiveKillTypes.Add(KillType.Impact);
-						if (ruleset.enableRemoteExplosives)
+						if (ruleset.Rules.RemoteExplosives)
 							explosiveKillTypes.Add(KillType.Remote);
-						if (ruleset.enableLoudRemoteExplosives)
+						if (ruleset.Rules.LoudRemoteExplosives)
 							explosiveKillTypes.Add(KillType.LoudRemote);
 						method.KillType = explosiveKillTypes[random.Next(explosiveKillTypes.Count)];
 					}
@@ -105,7 +105,7 @@ namespace Croupier
 						method.Specific = mission.Methods[random.Next(mission.Methods.Count)];
 
 						// Skip easter egg conditions unless enabled
-						if (!ruleset.enableEasterEggConditions) {
+						if (!ruleset.Rules.Banned.Contains("EasterEgg")) {
 							var easterEggMethods = Mission.GetEasterEggMethods(mission.ID);
 							if (easterEggMethods.Contains(method.Specific.Value))
 								continue;
@@ -117,16 +117,16 @@ namespace Croupier
 					// Randomly apply thrown or melee to specific melee kills if enabled
 					if (shouldGenerateKillType && KillMethod.IsSpecificKillMethodMelee((SpecificKillMethod)method.Specific)) {
 						List<KillType> killTypes = [ ];
-						if (ruleset.meleeKillTypes) killTypes.Add(KillType.Melee);
-						if (ruleset.thrownKillTypes) killTypes.Add(KillType.Thrown);
+						if (ruleset.Rules.MeleeKillTypes) killTypes.Add(KillType.Melee);
+						if (ruleset.Rules.ThrownKillTypes) killTypes.Add(KillType.Thrown);
 						method.KillType = killTypes.Count > 0 ? killTypes[random.Next(killTypes.Count)] : KillType.Any;
 					}
 					break;
 			}
 
 			// If live complications enabled and valid for the kill method, randomly apply it
-			if (ruleset.liveComplications && CanMethodHaveLiveComplication(method)) {
-				if (random.Next(100) + 1 <= ruleset.liveComplicationChance)
+			if (ruleset.Rules.LiveComplications && CanMethodHaveLiveComplication(method)) {
+				if (random.Next(100) + 1 <= ruleset.Rules.LiveComplicationChance)
 					method.Complication = KillComplication.Live;
 			}
 
@@ -162,16 +162,16 @@ namespace Croupier
 		private bool IsLegalForSpin(Spin spin, Target target, Disguise disguise, KillMethod method) {
 			if (IsLargeFirearm(method) && CountLargeFirearms(spin) > 0) return false;
 			if (spin.HasMethod(method)) return false;
-			var tags = target.GetMethodTags(method);
-			if (tags.Contains(MethodTag.LoudOnly) && method.IsSilencedWeapon) return false;
+			var tags = ruleset.GetMethodTags(target.ID, method);
+			if (tags.Contains("OnlyLoud") && method.IsSilencedWeapon) return false;
 			if (DoTagsViolateRules(tags)) return false;
-			tags = target.TestRules(disguise, method);
+			tags = ruleset.TestRules(target.ID, disguise, method, mission);
 			if (DoTagsViolateRules(tags)) return false;
 			return true;
 		}
 
 		private bool IsLargeFirearm(KillMethod method) {
-			if (ruleset.loudSMGIsLargeFirearm && method.IsLoudWeapon && method.Firearm == FirearmKillMethod.SMG)
+			if (ruleset.Rules.LoudSMGIsLargeFirearm && method.IsLoudWeapon && method.Firearm == FirearmKillMethod.SMG)
 				return true;
 			return method.IsLargeFirearm;
 		}
@@ -180,13 +180,13 @@ namespace Croupier
 			return spin.Conditions.Count(c => IsLargeFirearm(c.Method));
 		}
 		
-		private bool DoTagsViolateRules(List<MethodTag> tags) {
-			if (tags.Count == 0) return false;
-			return (tags.Contains(MethodTag.Buggy) && !ruleset.enableBuggy)
-				|| (tags.Contains(MethodTag.BannedInRR) && !ruleset.enableMedium)
-				|| (tags.Contains(MethodTag.Hard) && !ruleset.enableHard)
-				|| (tags.Contains(MethodTag.Extreme) && !ruleset.enableExtreme)
-				|| (tags.Contains(MethodTag.Impossible) && !ruleset.enableImpossible);
+		private bool DoTagsViolateRules(List<string> tags) {
+			if (tags.Count == 0 || ruleset.Rules.Banned.Count == 0) return false;
+			foreach (var tag in tags) {
+				if (ruleset.Rules.Banned.Contains(tag))
+					return true;
+			}
+			return false;
 		}
 		
 		private bool CanMethodHaveLiveComplication(KillMethod method) {
@@ -194,7 +194,7 @@ namespace Croupier
 				case KillMethodType.Firearm:
 					// Allow all firearm kills except explosive (unless enabled)
 					if (method.Firearm == FirearmKillMethod.Explosive)
-						return !ruleset.liveComplicationsExcludeStandard;
+						return !ruleset.Rules.LiveComplicationsExcludeStandard;
 					return true;
 				case KillMethodType.Specific:
 					// Allow all specific melee kills
@@ -205,7 +205,7 @@ namespace Croupier
 					// Exception for neck snaps, allow based on being 'melee' kills
 					if (method.Standard == StandardKillMethod.NeckSnap) return true;
 					// Allow all other standard kills if exclude option not enabled
-					return !ruleset.liveComplicationsExcludeStandard;
+					return !ruleset.Rules.LiveComplicationsExcludeStandard;
 			}
 
 			return false;
