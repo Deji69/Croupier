@@ -557,14 +557,14 @@ namespace Croupier
 				}
 			}
 
+			LoadSettings();
+
 			if (spinHistory.Count > 0)
 				SetSpinHistory(1);
 			else {
 				SetMission(missions[0].ID);
 				Spin(currentMission.ID);
 			}
-
-			LoadSettings();
 
 			PropertyChanged += MainWindow_PropertyChanged;
 
