@@ -32,7 +32,7 @@ namespace Croupier
 			LiveSplitClient.Stop();
 			HitmapsSpinLink.ForceStop();
 			base.OnExit(e);
-			Config.Save();
+			Config.Save(true);
 			WindowPlace.Save();
 		}
 	}
