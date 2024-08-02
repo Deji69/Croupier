@@ -303,7 +303,7 @@ namespace Croupier
 			{"PG", new Target(TargetID.PenelopeGraves)},
 			{"EB", new Target(TargetID.EzraBerg)},
 			{"MP", new Target(TargetID.MayaParvati)},
-			{"ES", new Target(TargetID.ErichSoders)},
+			{"ES", new Target(TargetID.ErichSoders) { Type = TargetType.Soders } },
 			{"YY", new Target(TargetID.YukiYamazaki)},
 			{"OC", new Target(TargetID.OwenCage)},
 			{"KL", new Target(TargetID.KlausLiebleid)},
