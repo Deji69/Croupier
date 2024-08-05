@@ -189,7 +189,28 @@
 						Header="Spin"
 						Binding="{Binding Spin}"
 						MinWidth="300"
-						IsReadOnly="True" />
+						IsReadOnly="True">
+						<DataGridTextColumn.CellStyle>
+							<Style TargetType="DataGridCell">
+								<Setter Property="ToolTip" Value="{Binding Spin}" />
+								<Setter Property="Foreground" Value="#FFF" />
+								<Setter Property="Background" Value="Transparent" />
+								<Setter Property="HorizontalAlignment" Value="Stretch" />
+								<Setter Property="VerticalAlignment" Value="Stretch" />
+								<Setter Property="VerticalContentAlignment" Value="Center" />
+								<EventSetter Event="MouseDoubleClick" Handler="DataGridCell_MouseDoubleClick"/>
+								<Setter Property="Template">
+									<Setter.Value>
+										<ControlTemplate TargetType="{x:Type DataGridCell}">
+											<Border Padding="5">
+												<ContentPresenter VerticalAlignment="Center" />
+											</Border>
+										</ControlTemplate>
+									</Setter.Value>
+								</Setter>
+							</Style>
+						</DataGridTextColumn.CellStyle>
+					</DataGridTextColumn>
 					<DataGridTextColumn
 						Header="Entrance"
 						Binding="{Binding Entrance}"
