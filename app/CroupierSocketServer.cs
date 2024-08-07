@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Croupier
 {
@@ -44,28 +45,33 @@ namespace Croupier
 		private const int PORT = 8898;
 
 		public static void Start() {
-			var ipAddress = IPAddress.Parse("127.0.0.1");
-			var serverSocket = new TcpListener(ipAddress, PORT);
-			List<Thread> threads = [];
-			serverSocket.Start();
-			System.Diagnostics.Debug.WriteLine("[SOCKET] Waiting for connection...");
+			try {
+				var ipAddress = IPAddress.Parse("127.0.0.1");
+				var serverSocket = new TcpListener(ipAddress, PORT);
+				List<Thread> threads = [];
+				serverSocket.Start();
+				System.Diagnostics.Debug.WriteLine("[SOCKET] Waiting for connection...");
 
-			App.Current.Exit += OnExit;
+				App.Current.Exit += OnExit;
 
-			Task.Run(async () => {
-				while (!CancelConnection.IsCancellationRequested) {
-					var client = await serverSocket.AcceptTcpClientAsync();
-					var stream = client.GetStream();
+				Task.Run(async () => {
+					while (!CancelConnection.IsCancellationRequested) {
+						var client = await serverSocket.AcceptTcpClientAsync();
+						var stream = client.GetStream();
 
-					System.Diagnostics.Debug.WriteLine("[SOCKET] Client connected.");
-					var receive = HandleClientReceiveAsync(client, CancelConnection.Token);
-					var send = HandleClientSendAsync(client, CancelConnection.Token);
+						System.Diagnostics.Debug.WriteLine("[SOCKET] Client connected.");
+						var receive = HandleClientReceiveAsync(client, CancelConnection.Token);
+						var send = HandleClientSendAsync(client, CancelConnection.Token);
 
-					App.Current.Dispatcher.Invoke(new Action(() => Connected?.Invoke(null, 0)));
-					await receive.WaitAsync(CancelConnection.Token);
-					await send.WaitAsync(CancelConnection.Token);
-				}
-			});
+						App.Current.Dispatcher.Invoke(new Action(() => Connected?.Invoke(null, 0)));
+						await receive.WaitAsync(CancelConnection.Token);
+						await send.WaitAsync(CancelConnection.Token);
+					}
+				});
+			}
+			catch (Exception ex) {
+				MessageBox.Show($"Socket server error. The port {PORT} may not be available.\n{ex.Message}");
+			}
 		}
 
 		public static void Send(ClientMessage message) {
