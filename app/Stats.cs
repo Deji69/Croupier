@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -107,10 +108,10 @@ namespace Croupier {
 			return Locations.Entrances.Find(e => e.ID == key);
 		}
 
-		public SpinStats GetFastestIGTSpinStats() {
+		public SpinStats GetFastestIGTSpinStats(MissionID mission = MissionID.NONE) {
 			SpinStats bestStats = null;
 			SpinCompletionStats bestCompletionStats = null;
-			foreach (var item in SpinStats.Where(s => s.Value.Completions.Count > 0)) {
+			foreach (var item in SpinStats.Where(s => s.Value.Completions.Count > 0 && (mission == MissionID.NONE || s.Value.Mission == mission))) {
 				var completion = item.Value.GetFastestIGTCompletion();
 				if (completion.IGT > 0 && (bestStats == null || completion.IGT < bestCompletionStats.IGT)) {
 					bestStats = item.Value;
@@ -120,10 +121,10 @@ namespace Croupier {
 			return bestStats;
 		}
 
-		public SpinStats GetSlowestIGTSpinStats() {
+		public SpinStats GetSlowestIGTSpinStats(MissionID mission = MissionID.NONE) {
 			SpinStats bestStats = null;
 			SpinCompletionStats bestCompletionStats = null;
-			foreach (var item in SpinStats.Where(s => s.Value.Completions.Count > 0)) {
+			foreach (var item in SpinStats.Where(s => s.Value.Completions.Count > 0 && (mission == MissionID.NONE || s.Value.Mission == mission))) {
 				var completion = item.Value.GetFastestIGTCompletion();
 				if (completion.IGT > 0 && (bestStats == null || completion.IGT > bestCompletionStats.IGT)) {
 					bestStats = item.Value;
@@ -133,9 +134,9 @@ namespace Croupier {
 			return bestStats;
 		}
 
-		public double GetAverageBestIGT() {
+		public double GetAverageBestIGT(MissionID mission = MissionID.NONE) {
 			List<double> times = [];
-			foreach (var item in SpinStats.Where(s => s.Value.Completions.Count > 0)) {
+			foreach (var item in SpinStats.Where(s => s.Value.Completions.Count > 0 && (mission == MissionID.NONE || s.Value.Mission == mission))) {
 				foreach (var c in item.Value.Completions)
 					times.Add(c.IGT);
 			}

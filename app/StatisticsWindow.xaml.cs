@@ -61,8 +61,24 @@ namespace Croupier {
 	public class StatisticsWindowViewModel : ViewModel {
 		public ObservableCollection<StatisticsViewModel> MainStats { get; set; } = [];
 		public ObservableCollection<HistoryViewModel> History { get; set; } = [];
+		public string Title {
+			get {
+				if (FilterMissionID == MissionID.NONE)
+					return "Stats";
+				return Mission.GetMissionName(FilterMissionID) + " Stats";
+			}
+		}
 
-		public MissionID FilterMissionID { get; set; } = MissionID.NONE;
+		public MissionID FilterMissionID {
+			get => _filterMissionID;
+			set {
+				_filterMissionID = value;
+				UpdateProperty(nameof(FilterMissionID));
+				UpdateProperty(nameof(Title));
+			}
+		}
+
+		private MissionID _filterMissionID = MissionID.NONE;
 
 		public List<MissionComboBoxItem> Missions {
 			get {
@@ -82,9 +98,11 @@ namespace Croupier {
 						});
 						group = mission.Group;
 					}
+					if (mission.ID == MissionID.NONE)
+						continue;
 					items.Add(new() {
 						ID = mission.ID,
-						Name = mission.ID != MissionID.NONE ? mission.Name : "(NONE)",
+						Name = mission.Name,
 						Location = mission.Location,
 						IsSeparator = false
 					});
@@ -124,6 +142,13 @@ namespace Croupier {
 
 		public void Update() {
 			MainStats.Clear();
+			if (FilterMissionID == MissionID.NONE)
+				AddGlobalStats();
+			else
+				AddMissionStats(FilterMissionID);
+		}
+
+		public void AddGlobalStats() {
 			MainStats.Add(new() {
 				Name = "Spins",
 				Description = "Total spins created.",
@@ -285,6 +310,75 @@ namespace Croupier {
 			});
 		}
 
+
+		public void AddMissionStats(MissionID mission) {
+			var missionStats = Config.Default.Stats.GetMissionStats(mission);
+			
+			MainStats.Add(new() {
+				Name = "Spins",
+				Description = "Total spins created.",
+				Value = missionStats.NumSpins,
+			});
+			MainStats.Add(new() {
+				Name = "Attempts",
+				Description = "Number of mission attempts.",
+				Value = missionStats.NumAttempts,
+			});
+			MainStats.Add(new() {
+				Name = "Spin Wins",
+				Description = "Total SA spin completions.",
+				Value = missionStats.NumWins,
+			});
+
+			var averageBestIGT = FormatIGT(Config.Default.Stats.GetAverageBestIGT(mission));
+
+			MainStats.Add(new() {
+				Name = "Avg IGT",
+				Description = "The time averaged from your fastest completions of every spin.",
+				Value = averageBestIGT,
+			});
+
+			var fastestIGT = "N/A";
+			var fastestIGTSpin = "N/A";
+
+			var fastestIGTSpinStats = Config.Default.Stats.GetFastestIGTSpinStats(mission);
+			if (fastestIGTSpinStats != null) {
+				fastestIGT = FormatIGT(fastestIGTSpinStats.GetFastestIGTCompletion().IGT);
+				fastestIGTSpin = fastestIGTSpinStats.Spin;
+			}
+
+			var longestIGT = "N/A";
+			var longestIGTSpin = "N/A";
+
+			var longestIGTSpinStats = Config.Default.Stats.GetSlowestIGTSpinStats(mission);
+			if (longestIGTSpinStats != null) {
+				longestIGT = FormatIGT(longestIGTSpinStats.GetFastestIGTCompletion().IGT);
+				longestIGTSpin = longestIGTSpinStats.Spin;
+			};
+
+			MainStats.Add(new() {
+				Name = "Fastest IGT",
+				Description = "Fastest in-game time achieved on a spin.",
+				Value = fastestIGT,
+			});
+			MainStats.Add(new() {
+				Name = "Fastest IGT Spin",
+				Description = "The spin you've completed with the fastest in-game time.",
+				Value = fastestIGTSpin,
+			});
+
+			MainStats.Add(new() {
+				Name = "Longest IGT",
+				Description = "Longest in-game time achieved on a spin.",
+				Value = longestIGT,
+			});
+			MainStats.Add(new() {
+				Name = "Longest IGT Spin",
+				Description = "The spin you spent the most in-game time completing.",
+				Value = longestIGTSpin,
+			});
+		}
+
 		private string FormatIGT(double igt) {
 			var ts = TimeSpan.FromSeconds(igt);
 			var str = "";
@@ -320,6 +414,7 @@ namespace Croupier {
 				return;
 			var item = (MissionComboBoxItem)items[0];
 			viewModel.FilterMissionID = item.ID;
+			viewModel.Update();
 			viewModel.UpdateHistory();
 		}
 
