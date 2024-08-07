@@ -1775,7 +1775,10 @@ auto Croupier::SetupEvents() -> void {
 			}
 			else if (cond.killMethod.method != eKillMethod::NONE) {
 				if (ev.Value.Event_metricvalue == "Body_Kill")
-					kc.correctMethod = cond.killMethod.isGun || cond.killMethod.method == eKillMethod::Explosive ? eKillValidationType::Valid : eKillValidationType::Invalid;
+					kc.correctMethod = cond.killMethod.isGun
+						|| cond.killMethod.method == eKillMethod::Explosive
+						|| cond.killMethod.method == eKillMethod::Explosion
+						? eKillValidationType::Valid : eKillValidationType::Invalid;
 				else if (ev.Value.Event_metricvalue == "Heart_Kill")
 					kc.correctMethod = eKillValidationType::Invalid;
 				else if (ev.Value.Event_metricvalue == "Spidermachine_Kill")
