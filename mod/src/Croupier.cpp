@@ -1472,6 +1472,9 @@ auto Croupier::Respin(bool isAuto) -> void {
 
 	this->generator.setRuleset(&this->rules);
 
+	if (isAuto && this->spinLocked) return;
+	if (this->client->isConnected()) return;
+
 	try {
 		if (!this->spin.getConditions().empty()) {
 			this->spinHistory.emplace(std::move(this->spin));
