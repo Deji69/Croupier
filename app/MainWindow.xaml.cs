@@ -578,7 +578,7 @@ namespace Croupier
 					Timer.Text = (DateTime.Now - autoSpinSchedule.Value).ToString(@"\-s");
 					if (DateTime.Now > autoSpinSchedule.Value) {
 						autoSpinSchedule = null;
-						Spin(autoSpinMission);
+						AutoSpin(autoSpinMission);
 					}
 				}
 				else if (timerStopped && !timeElapsed.HasValue)
@@ -606,7 +606,7 @@ namespace Croupier
 					autoSpinSchedule = DateTime.Now + TimeSpan.FromSeconds(Config.Default.AutoSpinCountdown);
 					autoSpinMission = id;
 				}
-				else Spin(id);
+				else AutoSpin(id);
 			};
 			CroupierSocketServer.Random += (object sender, int _) => Shuffle();
 			CroupierSocketServer.ToggleSpinLock += (object sender, int _) => {
@@ -886,6 +886,13 @@ namespace Croupier
 
 			if (Config.Default.CheckUpdate)
 				DoUpdateCheck();
+		}
+
+		public void AutoSpin(MissionID id = MissionID.NONE) {
+			if (id != MissionID.NONE && currentMission != null && currentMission.ID == id && !spinCompleted)
+				return;
+
+			Spin();
 		}
 
 		public void Spin(MissionID id = MissionID.NONE) {
