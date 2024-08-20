@@ -892,7 +892,7 @@ namespace Croupier
 			if (id != MissionID.NONE && currentMission != null && currentMission.ID == id && !spinCompleted)
 				return;
 
-			Spin();
+			Spin(id);
 		}
 
 		public void Spin(MissionID id = MissionID.NONE) {
