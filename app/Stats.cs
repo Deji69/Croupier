@@ -113,6 +113,8 @@ namespace Croupier {
 			SpinCompletionStats bestCompletionStats = null;
 			foreach (var item in SpinStats.Where(s => s.Value.Completions.Count > 0 && (mission == MissionID.NONE || s.Value.Mission == mission))) {
 				var completion = item.Value.GetFastestIGTCompletion();
+				if (completion == null)
+					continue;
 				if (completion.IGT > 0 && (bestStats == null || completion.IGT < bestCompletionStats.IGT)) {
 					bestStats = item.Value;
 					bestCompletionStats = completion;
@@ -126,6 +128,8 @@ namespace Croupier {
 			SpinCompletionStats bestCompletionStats = null;
 			foreach (var item in SpinStats.Where(s => s.Value.Completions.Count > 0 && (mission == MissionID.NONE || s.Value.Mission == mission))) {
 				var completion = item.Value.GetFastestIGTCompletion();
+				if (completion == null)
+					continue;
 				if (completion.IGT > 0 && (bestStats == null || completion.IGT > bestCompletionStats.IGT)) {
 					bestStats = item.Value;
 					bestCompletionStats = completion;
