@@ -129,7 +129,7 @@ namespace Croupier {
 				foreach (var c in spin.Value.Completions) {
 					History.Insert(0, new(c) {
 						Entrance = Locations.GetEntranceCommonName(c.StartLocation),
-						IGT = this.FormatIGT(c.IGT),
+						IGT = this.FormatSecondsTime(c.IGT),
 						Mission = Mission.GetMissionName(c.Mission),
 						Spin = spin.Key,
 						Comment = c.Comment ?? "",
@@ -199,7 +199,7 @@ namespace Croupier {
 				Value = Config.Default.Stats.NumValidKills,
 			});
 
-			var averageBestIGT = FormatIGT(Config.Default.Stats.GetAverageBestIGT());
+			var averageBestIGT = FormatSecondsTime(Config.Default.Stats.GetAverageBestIGT());
 
 			MainStats.Add(new() {
 				Name = "Avg IGT",
@@ -213,7 +213,7 @@ namespace Croupier {
 
 			var fastestIGTSpinStats = Config.Default.Stats.GetFastestIGTSpinStats();
 			if (fastestIGTSpinStats != null) {
-				fastestIGT = FormatIGT(fastestIGTSpinStats.GetFastestIGTCompletion().IGT);
+				fastestIGT = FormatSecondsTime(fastestIGTSpinStats.GetFastestIGTCompletion().IGT);
 				fastestIGTMission = Mission.GetMissionName(fastestIGTSpinStats.Mission);
 				fastestIGTSpin = fastestIGTSpinStats.Spin;
 			}
@@ -224,7 +224,7 @@ namespace Croupier {
 
 			var longestIGTSpinStats = Config.Default.Stats.GetSlowestIGTSpinStats();
 			if (longestIGTSpinStats != null) {
-				longestIGT = FormatIGT(longestIGTSpinStats.GetFastestIGTCompletion().IGT);
+				longestIGT = FormatSecondsTime(longestIGTSpinStats.GetFastestIGTCompletion().IGT);
 				longestIGTMission = Mission.GetMissionName(longestIGTSpinStats.Mission);
 				longestIGTSpin = longestIGTSpinStats.Spin;
 			};
@@ -328,11 +328,11 @@ namespace Croupier {
 				Value = missionStats.NumWins,
 			});
 
-			var averageBestIGT = FormatIGT(Config.Default.Stats.GetAverageBestIGT(mission));
+			var averageBestIGT = FormatSecondsTime(Config.Default.Stats.GetAverageBestIGT(mission));
 
 			MainStats.Add(new() {
 				Name = "Avg IGT",
-				Description = "The time averaged from your fastest completions of every spin.",
+				Description = "The time averaged from your fastest completions of every spin in in-game time.",
 				Value = averageBestIGT,
 			});
 
@@ -341,7 +341,7 @@ namespace Croupier {
 
 			var fastestIGTSpinStats = Config.Default.Stats.GetFastestIGTSpinStats(mission);
 			if (fastestIGTSpinStats != null) {
-				fastestIGT = FormatIGT(fastestIGTSpinStats.GetFastestIGTCompletion().IGT);
+				fastestIGT = FormatSecondsTime(fastestIGTSpinStats.GetFastestIGTCompletion().IGT);
 				fastestIGTSpin = fastestIGTSpinStats.Spin;
 			}
 
@@ -350,7 +350,7 @@ namespace Croupier {
 
 			var longestIGTSpinStats = Config.Default.Stats.GetSlowestIGTSpinStats(mission);
 			if (longestIGTSpinStats != null) {
-				longestIGT = FormatIGT(longestIGTSpinStats.GetFastestIGTCompletion().IGT);
+				longestIGT = FormatSecondsTime(longestIGTSpinStats.GetFastestIGTCompletion().IGT);
 				longestIGTSpin = longestIGTSpinStats.Spin;
 			};
 
@@ -375,10 +375,58 @@ namespace Croupier {
 				Description = "The spin you spent the most in-game time completing.",
 				Value = longestIGTSpin,
 			});
+
+			var averageBestRTA = FormatSecondsTime(Config.Default.Stats.GetAverageBestIGT(mission));
+
+			MainStats.Add(new() {
+				Name = "Avg RTA",
+				Description = "The time averaged from your fastest completions of every spin in real time.",
+				Value = averageBestRTA,
+			});
+
+			var fastestRTA = "N/A";
+			var fastestRTASpin = "N/A";
+
+			var fastestRTASpinStats = Config.Default.Stats.GetFastestRTASpinStats(mission);
+			if (fastestRTASpinStats != null) {
+				fastestRTA = FormatSecondsTime(fastestRTASpinStats.GetFastestRTACompletion().RTA);
+				fastestRTASpin = fastestRTASpinStats.Spin;
 		}
 
-		private string FormatIGT(double igt) {
-			var ts = TimeSpan.FromSeconds(igt);
+			MainStats.Add(new() {
+				Name = "Fastest RTA",
+				Description = "Fastest real time achieved on a spin.",
+				Value = fastestRTA,
+			});
+			MainStats.Add(new() {
+				Name = "Fastest RTA Spin",
+				Description = "The spin you've completed with the fastest real time.",
+				Value = fastestRTASpin,
+			});
+
+			var longestRTA = "N/A";
+			var longestRTASpin = "N/A";
+
+			var longestRTASpinStats = Config.Default.Stats.GetSlowestRTASpinStats(mission);
+			if (longestRTASpinStats != null) {
+				longestRTA = FormatSecondsTime(longestRTASpinStats.GetFastestRTACompletion().RTA);
+				longestRTASpin = longestRTASpinStats.Spin;
+			}
+
+			MainStats.Add(new() {
+				Name = "Longest RTA",
+				Description = "Longest real time taken on a spin.",
+				Value = longestRTA,
+			});
+			MainStats.Add(new() {
+				Name = "Longest RTA Spin",
+				Description = "The spin you spent the most real time completing.",
+				Value = longestRTASpin,
+			});
+		}
+
+		private string FormatSecondsTime(double time) {
+			var ts = TimeSpan.FromSeconds(time);
 			var str = "";
 
 			if (ts.TotalHours >= 1)

@@ -1147,6 +1147,7 @@ namespace Croupier
 
 			spinStats.Completions.Add(new() {
 				IGT = mc.IGT > 0 ? mc.IGT : 0,
+				RTA = (DateTime.Now - timerStart).TotalSeconds,
 				Mission = spin.Mission,
 				StartLocation = usedEntrance?.ID ?? "",
 				Loadout = [..loadout],
