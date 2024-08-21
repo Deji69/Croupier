@@ -17,6 +17,7 @@ namespace Croupier {
 		public string Mission { get; set; }
 		public string Spin { get; set; }
 		public string IGT { get; set; }
+		public string RTA { get; set; }
 		public string Entrance { get; set; }
 
 		public string Comment {
@@ -67,16 +68,68 @@ namespace Croupier {
 			}
 		}
 
+		public bool MissionColumnEnabled {
+			get => _missionColumnEnabled;
+			set {
+				_missionColumnEnabled = value;
+				UpdateProperty(nameof(MissionColumnEnabled));
+			}
+		}
+
+		public bool EntranceColumnEnabled {
+			get => _entranceColumnEnabled;
+			set {
+				_entranceColumnEnabled = value;
+				UpdateProperty(nameof(EntranceColumnEnabled));
+			}
+		}
+
+		public bool IGTColumnEnabled {
+			get => _igtColumnEnabled;
+			set {
+				_igtColumnEnabled = value;
+				UpdateProperty(nameof(IGTColumnEnabled));
+			}
+		}
+
+		public bool RTAColumnEnabled {
+			get => _rtaColumnEnabled;
+			set {
+				_rtaColumnEnabled = value;
+				UpdateProperty(nameof(RTAColumnEnabled));
+			}
+		}
+
+		public bool CommentColumnEnabled {
+			get => _commentColumnEnabled;
+			set {
+				_commentColumnEnabled = value;
+				UpdateProperty(nameof(CommentColumnEnabled));
+			}
+		}
+
+		public Visibility MissionColumnVisibility {
+			get {
+				return FilterMissionID != MissionID.NONE ? Visibility.Visible : Visibility.Hidden;
+			}
+		}
+
 		public MissionID FilterMissionID {
 			get => _filterMissionID;
 			set {
 				_filterMissionID = value;
 				UpdateProperty(nameof(FilterMissionID));
 				UpdateProperty(nameof(Title));
+				UpdateProperty(nameof(MissionColumnVisibility));
 			}
 		}
 
 		private MissionID _filterMissionID = MissionID.NONE;
+		private bool _missionColumnEnabled = true;
+		private bool _entranceColumnEnabled = true;
+		private bool _igtColumnEnabled = true;
+		private bool _rtaColumnEnabled = true;
+		private bool _commentColumnEnabled = true;
 
 		public List<MissionComboBoxItem> Missions {
 			get {
@@ -130,6 +183,7 @@ namespace Croupier {
 					History.Insert(0, new(c) {
 						Entrance = Locations.GetEntranceCommonName(c.StartLocation),
 						IGT = this.FormatSecondsTime(c.IGT),
+						RTA = this.FormatSecondsTime(c.RTA),
 						Mission = Mission.GetMissionName(c.Mission),
 						Spin = spin.Key,
 						Comment = c.Comment ?? "",
@@ -391,7 +445,7 @@ namespace Croupier {
 			if (fastestRTASpinStats != null) {
 				fastestRTA = FormatSecondsTime(fastestRTASpinStats.GetFastestRTACompletion().RTA);
 				fastestRTASpin = fastestRTASpinStats.Spin;
-		}
+			}
 
 			MainStats.Add(new() {
 				Name = "Fastest RTA",
@@ -425,7 +479,7 @@ namespace Croupier {
 			});
 		}
 
-		private string FormatSecondsTime(double time) {
+		private string FormatSecondsTime(double time, bool allowFrac = true) {
 			var ts = TimeSpan.FromSeconds(time);
 			var str = "";
 
@@ -436,9 +490,10 @@ namespace Croupier {
 			else
 				str = ts.ToString(@"ss\s");
 
+			var enableFrac = allowFrac && ts.TotalMinutes < 10;
 			var frac = ts.ToString("FFF").TrimEnd('0');
 
-			return str + (frac.Length > 0 ? $" {frac}ms" : "");
+			return str + (enableFrac && frac.Length > 0 ? $" {frac}ms" : "");
 		}
 	}
 	
@@ -448,10 +503,38 @@ namespace Croupier {
 		public StatisticsWindow() {
 			DataContext = viewModel;
 			InitializeComponent();
+			UpdateColumnVisibilities();
+			viewModel.PropertyChanged += ViewModel_PropertyChanged;
+		}
+
+		private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+			switch (e.PropertyName) {
+				case nameof(StatisticsWindowViewModel.MissionColumnEnabled):
+				case nameof(StatisticsWindowViewModel.EntranceColumnEnabled):
+				case nameof(StatisticsWindowViewModel.IGTColumnEnabled):
+				case nameof(StatisticsWindowViewModel.RTAColumnEnabled):
+				case nameof(StatisticsWindowViewModel.CommentColumnEnabled):
+					UpdateColumnVisibilities();
+					break;
+			};
+		}
+
+		private void UpdateColumnVisibilities() {
+			ToggleHistoryTableColumnVisibility(0, viewModel.MissionColumnEnabled);
+			ToggleHistoryTableColumnVisibility(2, viewModel.EntranceColumnEnabled);
+			ToggleHistoryTableColumnVisibility(3, viewModel.IGTColumnEnabled);
+			ToggleHistoryTableColumnVisibility(4, viewModel.RTAColumnEnabled);
+			ToggleHistoryTableColumnVisibility(5, viewModel.CommentColumnEnabled);
+		}
+
+		private void ToggleHistoryTableColumnVisibility(int idx, bool enable) {
+			HistoryTable.Columns[idx].Width = enable ? DataGridLength.Auto : 0;
+			HistoryTable.Columns[idx].MaxWidth = enable ? double.PositiveInfinity : 0;
 		}
 
 		public override void OnApplyTemplate() {
 			base.OnApplyTemplate();
+			
 		}
 
 		private void MissionFilterComboBox_Selected(object sender, SelectionChangedEventArgs e) {
@@ -467,6 +550,20 @@ namespace Croupier {
 		private void DataGridCell_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			var cell = (DataGridCell)sender;
 			var item = (HistoryViewModel)cell.DataContext;
+		}
+
+		private void HistoryTable_PreviewMouseWheel(object sender, MouseWheelEventArgs e) {
+			//what we're doing here, is that we're invoking the "MouseWheel" event of the parent ScrollViewer.
+
+			//first, we make the object with the event arguments (using the values from the current event)
+			var args = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
+
+			//then we need to set the event that we're invoking.
+			//the ScrollViewer control internally does the scrolling on MouseWheelEvent, so that's what we're going to use:
+			args.RoutedEvent = ScrollViewer.MouseWheelEvent;
+
+			//and finally, we raise the event on the parent ScrollViewer.
+			WindowScrollViewer.RaiseEvent(args);
 		}
 	}
 }

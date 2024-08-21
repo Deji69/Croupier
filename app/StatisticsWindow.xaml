@@ -47,7 +47,7 @@
 			</Grid>
 		</DataTemplate>
 	</Window.Resources>
-	<ScrollViewer UseLayoutRounding="True" Margin="0" Background="Black">
+	<ScrollViewer Name="WindowScrollViewer" UseLayoutRounding="True" Margin="0" Background="Black">
 		<StackPanel Orientation="Vertical" VerticalAlignment="Stretch">
 			<StackPanel Orientation="Horizontal" Margin="10,8,10,8">
 				<TextBlock
@@ -110,7 +110,84 @@
 				Foreground="White"
 				Margin="5,10,5,5"
 				/>
+
+			<StackPanel Orientation="Horizontal">
+				<TextBlock
+					Text="Columns:"
+					FontSize="12"
+					FontWeight="Bold"
+					Foreground="White"
+					Margin="10,5,10,5"
+					/>
+				<CheckBox
+					VerticalAlignment="Center"
+					VerticalContentAlignment="Center"
+					IsChecked="{Binding MissionColumnEnabled}"
+					Margin="5,0"
+					>
+					<TextBlock
+						Text="Mission"
+						FontSize="12"
+						Foreground="White"
+						Margin="4,5"
+						/>
+				</CheckBox>
+				<CheckBox
+					VerticalAlignment="Center"
+					VerticalContentAlignment="Center"
+					IsChecked="{Binding EntranceColumnEnabled}"
+					Margin="5,0"
+					>
+					<TextBlock
+						Text="Entrance"
+						FontSize="12"
+						Foreground="White"
+						Margin="4,5"
+						/>
+				</CheckBox>
+				<CheckBox
+					VerticalAlignment="Center"
+					VerticalContentAlignment="Center"
+					IsChecked="{Binding IGTColumnEnabled}"
+					Margin="5,0"
+					>
+					<TextBlock
+						Text="IGT"
+						FontSize="12"
+						Foreground="White"
+						Margin="4,5"
+						/>
+				</CheckBox>
+				<CheckBox
+					VerticalAlignment="Center"
+					VerticalContentAlignment="Center"
+					IsChecked="{Binding RTAColumnEnabled}"
+					Margin="5,0"
+					>
+					<TextBlock
+						Text="RTA"
+						FontSize="12"
+						Foreground="White"
+						Margin="4,5"
+						/>
+				</CheckBox>
+				<CheckBox
+					VerticalAlignment="Center"
+					VerticalContentAlignment="Center"
+					IsChecked="{Binding CommentColumnEnabled}"
+					Margin="5,0"
+					>
+					<TextBlock
+						Text="Comment"
+						FontSize="12"
+						Foreground="White"
+						Margin="4,5"
+						/>
+				</CheckBox>
+			</StackPanel>
+
 			<DataGrid
+				Name="HistoryTable"
 				ItemsSource="{Binding History}"
 				MinHeight="50"
 				Background="#111"
@@ -121,7 +198,10 @@
 				AutoGenerateColumns="False"
 				MinRowHeight="23"
 				VerticalAlignment="Stretch"
-				MaxHeight="1000"
+				VerticalScrollBarVisibility="Disabled"
+				HorizontalScrollBarVisibility="Disabled"
+				ScrollViewer.CanContentScroll="False"
+				PreviewMouseWheel="HistoryTable_PreviewMouseWheel"
 			>
 				<DataGrid.CellStyle>
 					<Style TargetType="DataGridCell">
@@ -184,6 +264,7 @@
 						Header="Mission"
 						Binding="{Binding Mission}"
 						MinWidth="90"
+						Visibility="{Binding MissionColumnVisibility, RelativeSource={RelativeSource AncestorType=DataGrid}}"
 						IsReadOnly="True" />
 					<DataGridTextColumn
 						Header="Spin"
@@ -239,6 +320,22 @@
 								<Setter Property="Padding" Value="8,4" />
 								<Setter Property="HorizontalContentAlignment" Value="Center" />
 								<Setter Property="ToolTip" Value="In-game time" />
+							</Style>
+						</DataGridTextColumn.HeaderStyle>
+					</DataGridTextColumn>
+					<DataGridTextColumn
+						Header="RTA"
+						Binding="{Binding RTA}"
+						IsReadOnly="True">
+						<DataGridTextColumn.HeaderStyle>
+							<Style TargetType="DataGridColumnHeader">
+								<Setter Property="Background" Value="#111" />
+								<Setter Property="BorderBrush" Value="#080808" />
+								<Setter Property="BorderThickness" Value="1" />
+								<Setter Property="FontWeight" Value="Bold" />
+								<Setter Property="Padding" Value="8,4" />
+								<Setter Property="HorizontalContentAlignment" Value="Center" />
+								<Setter Property="ToolTip" Value="Real time since spin" />
 							</Style>
 						</DataGridTextColumn.HeaderStyle>
 					</DataGridTextColumn>
