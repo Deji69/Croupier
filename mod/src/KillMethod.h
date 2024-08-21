@@ -171,6 +171,7 @@ inline static const std::unordered_map<std::string, eMapKillMethod> specificKill
 	{"3a8207bb-84f5-438f-8f30-5c83aef2af80", eMapKillMethod::Hatchet},
 	{"9e728dc1-3344-4615-be7a-1bcbdd7ad4aa", eMapKillMethod::HobbyKnife},
 	{"20f7ee3f-b261-4baa-8965-9b0b9061f27f", eMapKillMethod::Hook},
+	{"58a036dc-79d4-4d64-8bf5-3faafa3cfead", eMapKillMethod::Hook},
 	{"b1b40b14-eded-404f-b933-c4da15e85644", eMapKillMethod::Icicle},
 	{"fba6e133-78d1-4af1-8450-1ff30466c553", eMapKillMethod::JarlsPirateSaber},
 	{"5631dace-7f4a-4df8-8e97-b47373b815ff", eMapKillMethod::Katana},
