@@ -1902,6 +1902,21 @@ auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Ki
 	case eKillMethod::Sniper:
 		return killMethodBroad == "sniperrifle" ? eKillValidationType::Valid : eKillValidationType::Invalid;
 	case eKillMethod::Explosive:
+		if (type == eKillType::Impact) {
+			// Check for molotov burn kills...
+			if (haveDamageEvents
+				&& ev.Value.DamageEvents[0] == "Burn"
+				&& !haveKillMethod
+				&& !isAccident)
+				return eKillValidationType::Valid;
+		}
+		if (type == eKillType::Loud || type == eKillType::Impact) {
+			// Check for deadly lock-on throw kills...
+			if (killMethodBroad == "throw"
+				&& killClass == "melee"
+				&& checkExplosiveKillType(ev.Value.KillItemRepositoryId, type))
+				return eKillValidationType::Valid;
+		}
 		return killMethodBroad == "explosive"
 			&& checkExplosiveKillType(ev.Value.KillItemRepositoryId, type)
 			? eKillValidationType::Valid : eKillValidationType::Invalid;
