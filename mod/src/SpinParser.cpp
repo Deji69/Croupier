@@ -640,7 +640,9 @@ const std::vector<DisguiseKeywords> disguiseKeywords = {
 		{"jason", "VIP Patient (Jason Portman)"},
 		{"portman", "VIP Patient (Jason Portman)"},
 		{"yogainstructor", "Yoga Instructor"},
+		{"gyminstructor", "Yoga Instructor" },
 		{"yoga", "Yoga Instructor"},
+		{"instructor", "Yoga Instructor"},
 	}},
 	DisguiseKeywords{{eMission::HOKKAIDO_PATIENTZERO}, {
 		{"biosuit", "Bio Suit"},

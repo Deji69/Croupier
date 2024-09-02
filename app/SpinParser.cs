@@ -837,7 +837,9 @@ namespace Croupier {
 				{"jason", "VIP Patient (Jason Portman)"},
 				{"portman", "VIP Patient (Jason Portman)"},
 				{"yogainstructor", "Yoga Instructor"},
+				{"gyminstructor", "Yoga Instructor" },
 				{"yoga", "Yoga Instructor"},
+				{"instructor", "Yoga Instructor"},
 			}),
 			new([MissionID.HOKKAIDO_PATIENTZERO], new(){
 				{"biosuit", "Bio Suit"},
