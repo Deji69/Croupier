@@ -162,6 +162,18 @@ namespace Croupier {
 		public KillComplication? Complication { get; set; } = null;
 		public KillType KillType { get; set; } = KillType.Any;
 
+		public KillMethod(StandardKillMethod km) : this(KillMethodType.Standard) {
+			Standard = km;
+		}
+
+		public KillMethod(FirearmKillMethod km) : this(KillMethodType.Firearm) {
+			Firearm = km;
+		}
+
+		public KillMethod(SpecificKillMethod km) : this(KillMethodType.Specific) {
+			Specific = km;
+		}
+
 		public string DisplayText {
 			get {
 				string prefix = "";

@@ -21,6 +21,7 @@ namespace Croupier
 		public bool LiveComplications { get; set; } = true;
 		public bool LiveComplicationsExcludeStandard { get; set; } = true;
 		public int LiveComplicationChance { get; set; } = 25;
+		public int KillTypeChance { get; set; } = 50;
 		public bool LoudSMGIsLargeFirearm { get; set; } = true;
 		public bool AllowDuplicateDisguise { get; set; } = false;
 		public bool AllowDuplicateMethod { get; set; } = false;

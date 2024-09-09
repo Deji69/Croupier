@@ -57,20 +57,23 @@ namespace Croupier
 			return mission.Disguises[random.Next(mission.Disguises.Count)];
 		}
 
+		public static KillMethod CreateKillMethod(TargetType target = TargetType.Normal) {
+			return new KillMethod(StandardKillMethod.NeckSnap);
+		}
+
 		public KillMethod GenerateKillMethod(TargetType targetType = TargetType.Normal) {
 			if (targetType == TargetType.Soders) return GenerateSodersKillMethod();
 
 			// Pick random type of kill method, skip map-specific type if the mission has no such items
+			KillMethodType type;
 			var types = Enum.GetValues(typeof(KillMethodType));
-			KillMethod method;
-			do {
-				method = new KillMethod((KillMethodType)types.GetValue(random.Next(types.Length)));
-			} while (
-				(method.Type == KillMethodType.Specific && mission.Methods.Count == 0)
-			);
+			do type = (KillMethodType)types.GetValue(random.Next(types.Length));
+			while (type == KillMethodType.Specific && mission.Methods.Count == 0);
 
 			// Pick a random method of the generated type
-			var shouldGenerateKillType = random.Next(2) != 0;
+			var method = new KillMethod(type);
+			var shouldGenerateKillType = random.Next(101) > ruleset.Rules.KillTypeChance;
+
 			switch (method.Type) {
 				case KillMethodType.Standard:
 					method.Standard = KillMethod.StandardList[random.Next(KillMethod.StandardList.Count)];
@@ -92,13 +95,9 @@ namespace Croupier
 							explosiveKillTypes.Add(KillType.LoudRemote);
 						method.KillType = explosiveKillTypes[random.Next(explosiveKillTypes.Count)];
 					}
-					else {
-						if (!shouldGenerateKillType)
-							break;
-
-						// Randomly apply loud or silenced to other firearms
+					// Randomly apply loud or silenced to other firearms
+					else if (shouldGenerateKillType)
 						method.KillType = (new[]{ KillType.Loud, KillType.Silenced })[random.Next(2)];
-					}
 					break;
 				case KillMethodType.Specific:
 					while (true) {
@@ -159,7 +158,7 @@ namespace Croupier
 			return method;
 		}
 
-		private bool IsLegalForSpin(Spin spin, Target target, Disguise disguise, KillMethod method) {
+		public bool IsLegalForSpin(Spin spin, Target target, Disguise disguise, KillMethod method) {
 			if (IsLargeFirearm(method) && CountLargeFirearms(spin) > 0) return false;
 			if (spin.HasMethod(method)) return false;
 			var tags = ruleset.GetMethodTags(target.ID, method);
