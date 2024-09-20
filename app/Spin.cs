@@ -52,25 +52,6 @@ namespace Croupier
 
 			return str;
 		}
-
-		public static bool Parse(string str, out Spin spin) {
-			SpinParseContext context = new();
-			var tokens = str.Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-			for (var i = 0; i < tokens.Length; ++i) {
-				if (!SpinCondition.Parse(tokens[i], context)) {
-					spin = null;
-					return false;
-				}
-			}
-
-			var mission = new Mission(context.Mission);
-			if (context.Conditions.Count < mission.Targets.Count) {
-				spin = null;
-				return false;
-			}
-			spin = new(context.Conditions);
-			return true;
-		}
 	}
 
 	public class SpinCondition : INotifyPropertyChanged {
