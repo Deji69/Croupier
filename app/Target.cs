@@ -191,7 +191,7 @@ namespace Croupier
 			{ TargetID.MarvSlickGonif, new("Marv \"Slick\" Gonif", "Slick", "MSG", "noel_marv_gonif.jpg", MissionID.PARIS_HOLIDAYHOARDERS) },
 			{ TargetID.SilvioCaruso, new("Silvio Caruso", "Silvio", "SC", "world_of_tomorrow_silvio_caruso.jpg", MissionID.SAPIENZA_WORLDOFTOMORROW) },
 			{ TargetID.FrancescaDeSantis, new("Francesca De Santis", "Francesca", "FDS", "world_of_tomorrow_francesca_de_santis.jpg", MissionID.SAPIENZA_WORLDOFTOMORROW) },
-			{ TargetID.DinoBosco, new("Dino Bosco", "Dino", "FDS", "copperhead_roman_strauss_levine.jpg", MissionID.SAPIENZA_THEICON) },
+			{ TargetID.DinoBosco, new("Dino Bosco", "Dino", "DB", "copperhead_roman_strauss_levine.jpg", MissionID.SAPIENZA_THEICON) },
 			{ TargetID.MarcoAbiatti, new("Marco Abiatti", "Marco", "MA", "mamba_marco_abiatti.jpg", MissionID.SAPIENZA_LANDSLIDE) },
 			{ TargetID.CraigBlack, new("Craig Black", "Craig", "CB", "ws_ebola_craig_black.jpg", MissionID.SAPIENZA_THEAUTHOR) },
 			{ TargetID.BrotherAkram, new("Brother Akram", "Akram", "BA", "ws_ebola_brother_akram.jpg", MissionID.SAPIENZA_THEAUTHOR) },
