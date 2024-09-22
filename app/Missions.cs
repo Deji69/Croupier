@@ -519,6 +519,14 @@ namespace Croupier
 						methods.Add(SpecificKillMethod.Scissors);
 						methods.Add(SpecificKillMethod.Screwdriver);
 						break;
+					case MissionID.HAWKESBAY_NIGHTCALL:
+						methods.Add(SpecificKillMethod.Cleaver);
+						methods.Add(SpecificKillMethod.FoldingKnife);
+						methods.Add(SpecificKillMethod.Katana);
+						methods.Add(SpecificKillMethod.KitchenKnife);
+						methods.Add(SpecificKillMethod.Scissors);
+						methods.Add(SpecificKillMethod.Shuriken);
+						break;
 					case MissionID.MIAMI_FINISHLINE:
 					case MissionID.MIAMI_ASILVERTONGUE:
 						methods.Add(SpecificKillMethod.AmputationKnife);
