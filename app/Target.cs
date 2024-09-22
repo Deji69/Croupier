@@ -228,7 +228,7 @@ namespace Croupier
 			{ TargetID.NolanCassidy, new("Nolan Cassidy", "Nolan", "NC", "skunk_nolan_cassidy.jpg", MissionID.WHITTLETON_ANOTHERLIFE) },
 			{ TargetID.GalenVholes, new("Galen Vholes", "Galen", "GV", "gartersnake_ghalen_vholes.jpg", MissionID.WHITTLETON_ABITTERPILL) },
 			{ TargetID.ZoeWashington, new("Zoe Washington", "Zoe", "ZW", "magpie_zoe_washington.jpg", MissionID.ISLEOFSGAIL_THEARKSOCIETY) },
-			{ TargetID.SophiaWashington, new("Sophia Washington", "Sophia", "sW", "magpie_serena_washington.jpg", MissionID.ISLEOFSGAIL_THEARKSOCIETY) },
+			{ TargetID.SophiaWashington, new("Sophia Washington", "Sophia", "SW", "magpie_serena_washington.jpg", MissionID.ISLEOFSGAIL_THEARKSOCIETY) },
 			{ TargetID.AthenaSavalas, new("Athena Savalas", "Athena", "AS", "racoon_athena_savalas.jpg", MissionID.NEWYORK_GOLDENHANDSHAKE) },
 			{ TargetID.TysonWilliams, new("Tyson Williams", "Tyson", "TW", "stingray_tyson_williams.jpg", MissionID.HAVEN_THELASTRESORT) },
 			{ TargetID.StevenBradley, new("Steven Bradley", "Steven", "SB", "stingray_steven_bradley.jpg", MissionID.HAVEN_THELASTRESORT) },
