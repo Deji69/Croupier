@@ -84,6 +84,10 @@ namespace Croupier
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		public static readonly RoutedUICommand CheckUpdateCommand = new("Check Update", "CheckUpdate", typeof(MainWindow));
+		public static readonly RoutedUICommand CheckDailySpinsCommand = new("Check Daily Spins", "CheckDailySpins", typeof(MainWindow));
+		public static readonly RoutedUICommand DailySpin1Command = new("Daily Spin 1", "DailySpin1", typeof(MainWindow));
+		public static readonly RoutedUICommand DailySpin2Command = new("Daily Spin 2", "DailySpin2", typeof(MainWindow));
+		public static readonly RoutedUICommand DailySpin3Command = new("Daily Spin 3", "DailySpin3", typeof(MainWindow));
 		public static readonly RoutedUICommand CopySpinCommand = new("Copy Spin", "CopySpin", typeof(MainWindow), [
 			new KeyGesture(Key.C, ModifierKeys.Control),
 		]);
@@ -151,6 +155,9 @@ namespace Croupier
 		private HitmapsWindow HitmapsWindowInst;
 		private LiveSplitWindow LiveSplitWindowInst;
 		private TargetNameFormat _targetNameFormat = TargetNameFormat.Initials;
+		private DailySpinData dailySpin1 = null;
+		private DailySpinData dailySpin2 = null;
+		private DailySpinData dailySpin3 = null;
 		private double _spinFontSize = 16;
 		private bool _rightToLeft = false;
 		private bool _topmostEnabled = false;
@@ -431,6 +438,66 @@ namespace Croupier
 				if (!StaticSize)
 					return double.NaN;
 				return SpinGridWidth * 0.33;
+			}
+		}
+
+		public string DailySpin1Label {
+			get {
+				if (dailySpin1 == null) return "Spin #1";
+				if (!SpinParser.Parse(dailySpin1.spin, out var spin)) return "Spin #1";
+				var stats = Config.Default.Stats.GetSpinStats(spin);
+				var completion = stats.GetFastestIGTCompletion();
+				if (completion == null) return "Spin #1";
+				return $"Spin #1 ({TimeFormatter.FormatSecondsTime(completion.IGT)})";
+			}
+		}
+
+		public bool DailySpin1Completed {
+			get {
+				if (dailySpin1 == null) return false;
+				if (!SpinParser.Parse(dailySpin1.spin, out var spin)) return false;
+				var stats = Config.Default.Stats.GetSpinStats(spin);
+				return stats.Completions.Count > 0;
+			}
+		}
+
+		public string DailySpin2Label {
+			get {
+				if (dailySpin2 == null) return "Spin #2";
+				if (!SpinParser.Parse(dailySpin2.spin, out var spin)) return "Spin #2";
+				var stats = Config.Default.Stats.GetSpinStats(spin);
+				var completion = stats.GetFastestIGTCompletion();
+				if (completion == null) return "Spin #2";
+				return $"Spin #2 ({TimeFormatter.FormatSecondsTime(completion.IGT)})";
+			}
+		}
+
+		public bool DailySpin2Completed {
+			get {
+				if (dailySpin2 == null) return false;
+				if (!SpinParser.Parse(dailySpin2.spin, out var spin)) return false;
+				var stats = Config.Default.Stats.GetSpinStats(spin);
+				return stats.Completions.Count > 0;
+			}
+		}
+
+		public string DailySpin3Label {
+			get {
+				if (dailySpin3 == null) return "Spin #3";
+				if (!SpinParser.Parse(dailySpin3.spin, out var spin)) return "Spin #3";
+				var stats = Config.Default.Stats.GetSpinStats(spin);
+				var completion = stats.GetFastestIGTCompletion();
+				if (completion == null) return "Spin #3";
+				return $"Spin #3 ({TimeFormatter.FormatSecondsTime(completion.IGT)})";
+			}
+		}
+
+		public bool DailySpin3Completed {
+			get {
+				if (dailySpin3 == null) return false;
+				if (!SpinParser.Parse(dailySpin3.spin, out var spin)) return false;
+				var stats = Config.Default.Stats.GetSpinStats(spin);
+				return stats.Completions.Count > 0;
 			}
 		}
 
@@ -884,8 +951,10 @@ namespace Croupier
 			var idx = MissionListItems.ToList().FindIndex(item => item.ID == currentMission.ID);
 			MissionSelect.SelectedIndex = idx;
 
-			if (Config.Default.CheckUpdate)
+			if (Config.Default.CheckUpdate) {
 				DoUpdateCheck();
+				CheckDailySpinsAsync();
+			}
 		}
 
 		public void AutoSpin(MissionID id = MissionID.NONE) {
@@ -1154,6 +1223,14 @@ namespace Croupier
 			});
 
 			Config.Save();
+
+			OnPropertyChanged(nameof(DailySpin1Completed));
+			OnPropertyChanged(nameof(DailySpin2Completed));
+			OnPropertyChanged(nameof(DailySpin3Completed));
+
+			OnPropertyChanged(nameof(DailySpin1Label));
+			OnPropertyChanged(nameof(DailySpin2Label));
+			OnPropertyChanged(nameof(DailySpin3Label));
 		}
 
 		private void StartTimer(bool overrideManual = false) {
@@ -1561,6 +1638,52 @@ namespace Croupier
 			TimerSettingsWindowInst.Show();
 		}
 
+		private void CheckDailySpinsCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
+			CheckDailySpinsAsync();
+		}
+
+		private void DailySpin1Command_Executed(object sender, ExecutedRoutedEventArgs e) {
+			if (SpinParser.Parse(dailySpin1.spin, out var spin)) {
+				SetSpin(spin);
+				spinHistoryIndex = 1;
+				PushCurrentSpinToHistory();
+				PostConditionUpdate();
+				StopTimer();
+			}
+		}
+		
+		private void DailySpin2Command_Executed(object sender, ExecutedRoutedEventArgs e) {
+			if (SpinParser.Parse(dailySpin2.spin, out var spin)) {
+				SetSpin(spin);
+				spinHistoryIndex = 1;
+				PushCurrentSpinToHistory();
+				PostConditionUpdate();
+				StopTimer();
+			}
+		}
+
+		private void DailySpin3Command_Executed(object sender, ExecutedRoutedEventArgs e) {
+			if (SpinParser.Parse(dailySpin3.spin, out var spin)) {
+				SetSpin(spin);
+				spinHistoryIndex = 1;
+				PushCurrentSpinToHistory();
+				PostConditionUpdate();
+				StopTimer();
+			}
+		}
+
+		private void DailySpin1Command_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
+			e.CanExecute = dailySpin1 != null && SpinParser.Parse(dailySpin1.spin, out _);
+		}
+
+		private void DailySpin2Command_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
+			e.CanExecute = dailySpin2 != null && SpinParser.Parse(dailySpin2.spin, out _);
+		}
+
+		private void DailySpin3Command_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
+			e.CanExecute = dailySpin3 != null && SpinParser.Parse(dailySpin3.spin, out _);
+		}
+
 		private void DebugWindowCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
 #if DEBUG
 			e.CanExecute = true;
@@ -1691,6 +1814,25 @@ namespace Croupier
 
 		private void Command_AlwaysCanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = true;
+		}
+
+		private async void CheckDailySpinsAsync() {
+			var result = await DailySpinChecker.CheckForDailySpinsAsync();
+
+			for (var i = 0; i < result.Length; ++i) {
+				var spin = result[i];
+				if (i == 0) dailySpin1 = spin;
+				else if (i == 1) dailySpin2 = spin;
+				else if (i == 2) dailySpin3 = spin;
+			}
+
+			OnPropertyChanged(nameof(DailySpin1Completed));
+			OnPropertyChanged(nameof(DailySpin2Completed));
+			OnPropertyChanged(nameof(DailySpin3Completed));
+
+			OnPropertyChanged(nameof(DailySpin1Label));
+			OnPropertyChanged(nameof(DailySpin2Label));
+			OnPropertyChanged(nameof(DailySpin3Label));
 		}
 
 		private static async void DoUpdateCheck(bool informOnFail = false) {

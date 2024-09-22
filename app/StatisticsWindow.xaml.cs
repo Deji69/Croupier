@@ -480,20 +480,7 @@ namespace Croupier {
 		}
 
 		private string FormatSecondsTime(double time, bool allowFrac = true) {
-			var ts = TimeSpan.FromSeconds(time);
-			var str = "";
-
-			if (ts.TotalHours >= 1)
-				str = ts.ToString(@"h\h\ m\m\ ss\s");
-			else if (ts.TotalMinutes >= 1)
-				str = ts.ToString(@"m\m\ ss\s");
-			else
-				str = ts.ToString(@"ss\s");
-
-			var enableFrac = allowFrac && ts.TotalMinutes < 10;
-			var frac = ts.ToString("FFF").TrimEnd('0');
-
-			return str + (enableFrac && frac.Length > 0 ? $" {frac}ms" : "");
+			return TimeFormatter.FormatSecondsTime(time, allowFrac);
 		}
 	}
 	
