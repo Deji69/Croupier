@@ -613,9 +613,9 @@
 						</Style>
 					</MenuItem.ItemContainerStyle>
 					<MenuItem Header="Refresh" Command="{x:Static local:MainWindow.CheckDailySpinsCommand}" ToolTip="Refresh daily spins from the web." />
-					<MenuItem Header="{Binding DailySpin1Label, UpdateSourceTrigger=PropertyChanged}" IsCheckable="False" IsChecked="{Binding DailySpin1Completed, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Command="{x:Static local:MainWindow.DailySpin1Command}" />
-					<MenuItem Header="{Binding DailySpin2Label, UpdateSourceTrigger=PropertyChanged}" IsCheckable="True" IsChecked="{Binding DailySpin2Completed, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Command="{x:Static local:MainWindow.DailySpin2Command}" />
-					<MenuItem Header="{Binding DailySpin3Label, UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding DailySpin3Completed, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Command="{x:Static local:MainWindow.DailySpin3Command}" />
+					<MenuItem Header="{Binding DailySpin1Label, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding DailySpin1Tooltip, UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding DailySpin1Completed, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Command="{x:Static local:MainWindow.DailySpin1Command}" />
+					<MenuItem Header="{Binding DailySpin2Label, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding DailySpin2Tooltip, UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding DailySpin2Completed, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Command="{x:Static local:MainWindow.DailySpin2Command}" />
+					<MenuItem Header="{Binding DailySpin3Label, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding DailySpin3Tooltip, UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding DailySpin3Completed, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Command="{x:Static local:MainWindow.DailySpin3Command}" />
 				</MenuItem>
 				<MenuItem Name="ContextMenuUpdateCheck" Header="Update Check" StaysOpenOnClick="True">
 					<MenuItem.ItemContainerStyle>

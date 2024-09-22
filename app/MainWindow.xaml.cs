@@ -452,6 +452,13 @@ namespace Croupier
 			}
 		}
 
+		public string DailySpin1Tooltip {
+			get {
+				if (dailySpin1 == null) return "";
+				return dailySpin1.spin;
+			}
+		}
+
 		public bool DailySpin1Completed {
 			get {
 				if (dailySpin1 == null) return false;
@@ -472,6 +479,13 @@ namespace Croupier
 			}
 		}
 
+		public string DailySpin2Tooltip {
+			get {
+				if (dailySpin2 == null) return "";
+				return dailySpin2.spin;
+			}
+		}
+
 		public bool DailySpin2Completed {
 			get {
 				if (dailySpin2 == null) return false;
@@ -489,6 +503,13 @@ namespace Croupier
 				var completion = stats.GetFastestIGTCompletion();
 				if (completion == null) return "Spin #3";
 				return $"Spin #3 ({TimeFormatter.FormatSecondsTime(completion.IGT)})";
+			}
+		}
+
+		public string DailySpin3Tooltip {
+			get {
+				if (dailySpin3 == null) return "";
+				return dailySpin3.spin;
 			}
 		}
 
@@ -1833,6 +1854,10 @@ namespace Croupier
 			OnPropertyChanged(nameof(DailySpin1Label));
 			OnPropertyChanged(nameof(DailySpin2Label));
 			OnPropertyChanged(nameof(DailySpin3Label));
+
+			OnPropertyChanged(nameof(DailySpin1Tooltip));
+			OnPropertyChanged(nameof(DailySpin2Tooltip));
+			OnPropertyChanged(nameof(DailySpin3Tooltip));
 		}
 
 		private static async void DoUpdateCheck(bool informOnFail = false) {
