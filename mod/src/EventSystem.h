@@ -67,7 +67,7 @@ protected:
 		serverEvent.Name = ev.value("Name", "");
 		serverEvent.ContractId = ev.value("ContractId", "");
 		serverEvent.ContractSessionId = ev.value("ContractSessionId", "");
-		serverEvent.Timestamp = ev.value("Timestamp", 0);
+		serverEvent.Timestamp = ev.value("Timestamp", 0.0);
 
 		for (auto& handler : this->handlers)
 			handler(serverEvent);
