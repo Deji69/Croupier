@@ -40,6 +40,8 @@ The bonus missions and special assignments have not been playtested for conditio
 
 - **Desktop Interface**: run at any time from a PC, without having to run the game or play on PC. With options for customising the presentation of the spin layout and resizing the spins. Click and drag the window to reposition it.
 
+- **Daily Spins**: All Croupier users can easily access the same 3 spins, updated daily. Try to get your best time on these daily challenges.
+
 - **Custom Spins**: edit any spin to set up your own challenge. Select any kill method or disguise available in the mission for each target and choose complications and kill requirements.
 
 - **Spin History**: view and revisit the last 30 spins using the History entry in the right-click menu. Choose a format for target naming using the 'Target Name Format' entry if you'd prefer an alternative to initials.
