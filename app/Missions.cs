@@ -1173,7 +1173,7 @@ namespace Croupier
 						new("Helicopter Pilot", "outfit_b8dbb7b6-fef9-4782-923f-ddebc573625e_0.jpg"),
 						new("Hospital Director", "outfit_f6f53c39-17f9-48cf-9594-7a696b036d61_0.jpg"),
 						new("Morgue Doctor", "outfit_3d4424a3-23f9-4cfe-b225-2e06c17d780b_0.jpg"),
-						new("Motorcyclist", "outfit_8e01f48f-ef06-448c-9d22-5d58c4414968_0.jpg"),
+						new("Motorcyclist", "outfit_8e01f48f-ef06-448c-9d22-5d58c4414968_0.jpg") { Hostile = true },
 						new("Ninja", "outfit_06456d4d-da36-4008-bea5-c0b985a565f5_0.jpg") { Hostile = true },
 						new("Patient", "outfit_c98a6467-5dd9-4041-8bff-119445750d4d_0.jpg"),
 						new("Resort Security", "outfit_25406dac-d206-48c7-a6df-dffb887c9227_0.jpg"),
