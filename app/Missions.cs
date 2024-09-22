@@ -597,6 +597,18 @@ namespace Croupier
 						methods.Add(SpecificKillMethod.Starfish);
 						methods.Add(SpecificKillMethod.VikingAxe);
 						break;
+					case MissionID.NEWYORK_GOLDENHANDSHAKE:
+						methods.Add(SpecificKillMethod.AntiqueCurvedKnife);
+						methods.Add(SpecificKillMethod.BurialKnife);
+						methods.Add(SpecificKillMethod.FireAxe);
+						methods.Add(SpecificKillMethod.FoldingKnife);
+						methods.Add(SpecificKillMethod.HobbyKnife);
+						methods.Add(SpecificKillMethod.KitchenKnife);
+						methods.Add(SpecificKillMethod.LetterOpener);
+						methods.Add(SpecificKillMethod.Scissors);
+						methods.Add(SpecificKillMethod.Screwdriver);
+						methods.Add(SpecificKillMethod.Tanto);
+						break;
 					case MissionID.HAVEN_THELASTRESORT:
 						methods.Add(SpecificKillMethod.BarberRazor);
 						methods.Add(SpecificKillMethod.Cleaver);
