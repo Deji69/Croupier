@@ -1376,7 +1376,7 @@ namespace Croupier
 					disguises.Add(new("Maintenance Staff", "outfit_e65f04b2-47a6-4d3d-b36c-9fb7fa08a00b_0.jpg"));
 					disguises.Add(new("Penthouse Guard", "outfit_f0a52fef-608a-4fa8-9fd6-bd5c15506188_0.jpg"));
 					disguises.Add(new("Penthouse Staff", "outfit_a745ca17-3a7e-4c15-8219-6a5d6245ac7f_0.jpg"));
-					disguises.Add(new("Skydiving Suit", "outfit_c4146f27-81a9-42ef-b3c7-87a9d60b87fe_0.jpg"));
+					disguises.Add(new("Skydiving Suit", "outfit_c4146f27-81a9-42ef-b3c7-87a9d60b87fe_0.jpg") { Hostile = true });
 					disguises.Add(new("The Assassin", "outfit_ef9dddc5-25c7-450f-afcb-ac1b8f9569c9_0.jpg"));
 					break;
 				case MissionID.DARTMOOR_DEATHINTHEFAMILY:
