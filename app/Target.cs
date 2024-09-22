@@ -252,7 +252,7 @@ namespace Croupier
 			{ TargetID.DonArchibaldYates, new("Don Archibald Yates", "Don", "DY", "elegant_yates.jpg", MissionID.MENDOZA_THEFAREWELL) },
 			{ TargetID.TamaraVidal, new("Tamara Vidal", "Tamara", "TV", "elegant_vidal.jpg", MissionID.MENDOZA_THEFAREWELL) },
 			{ TargetID.ArthurEdwards, new("Arthur Edwards", "Arthur", "AE", "trapped_arthur_edwards.jpg", MissionID.CARPATHIAN_UNTOUCHABLE) },
-			{ TargetID.NoelCrest, new("Noel Crest", "Noel", "NC", "rocky_noel_crest.jpg", MissionID.AMBROSE_SHADOWSINTHEWATER) },
+			{ TargetID.NoelCrest, new("Noel Crest", "Noel", "NCR", "rocky_noel_crest.jpg", MissionID.AMBROSE_SHADOWSINTHEWATER) },
 			{ TargetID.SinhiAkkaVenthan, new("Sinhi \"Akka\" Venthan", "Akka", "SV", "rocky_sinhi_akka_venthan.jpg", MissionID.AMBROSE_SHADOWSINTHEWATER) },
 			{ TargetID.Target1, new("Target #1", "1", "1st", "default_target_briefing.dds", MissionID.NONE) },
 			{ TargetID.Target2, new("Target #2", "2", "2nd", "default_target_briefing.dds", MissionID.NONE) },
