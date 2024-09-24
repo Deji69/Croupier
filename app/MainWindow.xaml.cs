@@ -447,8 +447,9 @@ namespace Croupier
 				if (!SpinParser.Parse(dailySpin1.spin, out var spin)) return "Spin #1";
 				var stats = Config.Default.Stats.GetSpinStats(spin);
 				var completion = stats.GetFastestIGTCompletion();
-				if (completion == null) return $"Spin #{dailySpin1.id}";
-				return $"Spin #{dailySpin1.id} ({TimeFormatter.FormatSecondsTime(completion.IGT)})";
+				var location = new Mission(spin.Mission).Location;
+				if (completion == null) return $"Spin #{dailySpin1.id}: {location}";
+				return $"Spin #{dailySpin1.id}: {location} ({TimeFormatter.FormatSecondsTime(completion.IGT)})";
 			}
 		}
 
@@ -474,8 +475,9 @@ namespace Croupier
 				if (!SpinParser.Parse(dailySpin2.spin, out var spin)) return "Spin #2";
 				var stats = Config.Default.Stats.GetSpinStats(spin);
 				var completion = stats.GetFastestIGTCompletion();
-				if (completion == null) return $"Spin #{dailySpin2.id}";
-				return $"Spin #{dailySpin2.id} ({TimeFormatter.FormatSecondsTime(completion.IGT)})";
+				var location = new Mission(spin.Mission).Location;
+				if (completion == null) return $"Spin #{dailySpin2.id}: {location}";
+				return $"Spin #{dailySpin2.id}: {location} ({TimeFormatter.FormatSecondsTime(completion.IGT)})";
 			}
 		}
 
@@ -501,8 +503,9 @@ namespace Croupier
 				if (!SpinParser.Parse(dailySpin3.spin, out var spin)) return "Spin #3";
 				var stats = Config.Default.Stats.GetSpinStats(spin);
 				var completion = stats.GetFastestIGTCompletion();
-				if (completion == null) return $"Spin #{dailySpin3.id}";
-				return $"Spin #{dailySpin3.id} ({TimeFormatter.FormatSecondsTime(completion.IGT)})";
+				var location = new Mission(spin.Mission).Location;
+				if (completion == null) return $"Spin #{dailySpin3.id}: {location}";
+				return $"Spin #{dailySpin3.id}: {location} ({TimeFormatter.FormatSecondsTime(completion.IGT)})";
 			}
 		}
 
