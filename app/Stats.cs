@@ -29,6 +29,7 @@ namespace Croupier {
 		public MissionID Mission = MissionID.NONE;
 		public double IGT = 0;
 		public double RTA = 0;
+		public int? DailyID = null;
 		public string StartLocation = "";
 		public List<string> Loadout = [];
 		public string Comment = "";
@@ -39,6 +40,7 @@ namespace Croupier {
 		public string Spin { get; set; } = spin;
 		public int Attempts { get; set; } = 0;
 		public bool IsCustom { get; set; } = false;
+		public int DailyID { get; set; } = 0;
 		public List<SpinCompletionStats> Completions { get; set; } = [];
 
 		public SpinCompletionStats GetFastestIGTCompletion() {
@@ -64,6 +66,7 @@ namespace Croupier {
 		public Dictionary<MissionID, MissionStats> MissionStats { get; set; } = [];
 		public Dictionary<string, SpinStats> SpinStats { get; set; } = [];
 		public int NumRandomSpins { get; set; } = 0;
+		public int NumDailySpins { get; set; } = 0;
 		public int NumCustomSpins { get; set; } = 0;
 		public int NumWins { get; set; } = 0;
 		public int NumNonSAWins { get; set; } = 0;

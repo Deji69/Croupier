@@ -761,6 +761,7 @@ namespace Croupier
 					SetSpin(spin);
 					UpdateSpinHistory();
 					PostConditionUpdate();
+					ResetCurrentSpinProgress();
 					StartTimer();
 					disableClientUpdate = false;
 				}
@@ -801,6 +802,7 @@ namespace Croupier
 					SetSpin(spin);
 					UpdateSpinHistory();
 					PostConditionUpdate();
+					ResetCurrentSpinProgress();
 					StartTimer(true);
 					TrackNewSpin();
 				}
@@ -1171,8 +1173,24 @@ namespace Croupier
 			var spinStats = stats.GetSpinStats(spin);
 			var missionStats = stats.GetMissionStats(spin.Mission);
 			spinStats.IsCustom = Config.Default.SpinIsRandom;
-			++stats.NumRandomSpins;
-			++missionStats.NumSpins;
+
+			var spinStr = spin.ToString();
+			if (Config.Default.SpinIsRandom)
+				++stats.NumRandomSpins;
+
+			if (spinStats.DailyID == 0) {
+				if (spinStr == dailySpin1.spin)
+					spinStats.DailyID = dailySpin1.id;
+				else if (spinStr == dailySpin2.spin)
+					spinStats.DailyID = dailySpin2.id;
+				else if (spinStr == dailySpin3.spin)
+					spinStats.DailyID = dailySpin3.id;
+
+				if (spinStats.DailyID != 0)
+					++stats.NumDailySpins;
+				
+				++missionStats.NumSpins;
+			}
 
 			loadout = [];
 			usedEntrance = null;
@@ -1581,13 +1599,16 @@ namespace Croupier
 
 		private void PasteSpinCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
 			var text = Clipboard.GetText();
-			//if (Croupier.Spin.Parse(text, out var spin)) {
 			if (SpinParser.Parse(text, out var spin)) {
+				if (this.spin == null || this.spin.ToString() == spin.ToString())
+					return;
 				SetSpin(spin);
 				spinHistoryIndex = 1;
 				PushCurrentSpinToHistory();
 				PostConditionUpdate();
-				StopTimer();
+				ResetCurrentSpinProgress();
+				ResetTimer();
+				TrackNewSpin();
 			}
 		}
 
@@ -1678,6 +1699,7 @@ namespace Croupier
 				PostConditionUpdate();
 				ResetCurrentSpinProgress();
 				ResetTimer();
+				TrackNewSpin();
 			}
 		}
 		
@@ -1689,6 +1711,7 @@ namespace Croupier
 				PostConditionUpdate();
 				ResetCurrentSpinProgress();
 				ResetTimer();
+				TrackNewSpin();
 			}
 		}
 
@@ -1700,6 +1723,7 @@ namespace Croupier
 				PostConditionUpdate();
 				ResetCurrentSpinProgress();
 				ResetTimer();
+				TrackNewSpin();
 			}
 		}
 
