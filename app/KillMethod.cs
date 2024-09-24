@@ -329,7 +329,7 @@ namespace Croupier {
 				case KillMethodType.Specific:
 					switch (Specific) {
 						case SpecificKillMethod.AmputationKnife: return new KillMethodInfo("Amputation Knife", "item_perspective_62c2ac2e-329e-4648-822a-e45a29a93cd0_0.jpg");
-						case SpecificKillMethod.AntiqueCurvedKnife: return new KillMethodInfo("Antique Curved Knife", "item_perspective_5c211971-235a-4856-9eea-fe890940f63a_0.jpg");
+						case SpecificKillMethod.AntiqueCurvedKnife: return new KillMethodInfo("Antique Carved Knife", "item_perspective_5c211971-235a-4856-9eea-fe890940f63a_0.jpg");
 						case SpecificKillMethod.BarberRazor: return new KillMethodInfo("Barber Razor", "item_perspective_5ce2f842-e091-4ead-a51c-1cc406309c8d_0.jpg");
 						case SpecificKillMethod.BattleAxe: return new KillMethodInfo("Battle Axe", "item_perspective_58dceb1c-d7db-41dc-9750-55e3ab87fdf0_0.jpg");
 						case SpecificKillMethod.BeakStaff: return new KillMethodInfo("Beak Staff", "item_perspective_b153112f-9cd1-4a49-a9c6-ba1a34f443ab_0.jpg");
@@ -473,6 +473,10 @@ namespace Croupier {
 			{"amputation", SpecificKillMethod.AmputationKnife},
 			{"ampknife", SpecificKillMethod.AmputationKnife},
 			{"amputationknife", SpecificKillMethod.AmputationKnife},
+			{"antiquecarvedknife", SpecificKillMethod.AntiqueCurvedKnife},
+			{"antiquecarveknife", SpecificKillMethod.AntiqueCurvedKnife},
+			{"carvedknife", SpecificKillMethod.AntiqueCurvedKnife},
+			{"carveknife", SpecificKillMethod.AntiqueCurvedKnife},
 			{"antiquecurvedknife", SpecificKillMethod.AntiqueCurvedKnife},
 			{"antiquecurveknife", SpecificKillMethod.AntiqueCurvedKnife},
 			{"antiqueknife", SpecificKillMethod.AntiqueCurvedKnife},
