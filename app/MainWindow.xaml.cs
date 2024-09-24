@@ -1009,14 +1009,18 @@ namespace Croupier
 				StopTimer();
 			}
 
-			spinCompleted = false;
-			hasRestartedSinceSpin = false;
+			ResetCurrentSpinProgress();
 			StartTimer();
 
 			Config.Default.SpinIsRandom = true;
 			Config.Save();
 
 			TrackNewSpin();
+		}
+
+		public void ResetCurrentSpinProgress() {
+			spinCompleted = false;
+			hasRestartedSinceSpin = false;
 		}
 
 		public bool SetMission(MissionID id) {
@@ -1672,7 +1676,8 @@ namespace Croupier
 				spinHistoryIndex = 1;
 				PushCurrentSpinToHistory();
 				PostConditionUpdate();
-				StopTimer();
+				ResetCurrentSpinProgress();
+				ResetTimer();
 			}
 		}
 		
@@ -1682,7 +1687,8 @@ namespace Croupier
 				spinHistoryIndex = 1;
 				PushCurrentSpinToHistory();
 				PostConditionUpdate();
-				StopTimer();
+				ResetCurrentSpinProgress();
+				ResetTimer();
 			}
 		}
 
@@ -1692,7 +1698,8 @@ namespace Croupier
 				spinHistoryIndex = 1;
 				PushCurrentSpinToHistory();
 				PostConditionUpdate();
-				StopTimer();
+				ResetCurrentSpinProgress();
+				ResetTimer();
 			}
 		}
 
