@@ -1070,6 +1070,7 @@ namespace Croupier
 			}
 
 			SetSpinHistory(spinHistoryIndex + 1);
+			ResetCurrentSpinProgress();
 			ResetTimer();
 		}
 
@@ -1082,6 +1083,7 @@ namespace Croupier
 			}
 
 			SetSpinHistory(spinHistoryIndex - 1);
+			ResetCurrentSpinProgress();
 			ResetTimer();
 		}
 

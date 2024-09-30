@@ -109,6 +109,8 @@ namespace Croupier {
 		Soders_ShootHeart,
 		Soders_TrashHeart,
 		Yuki_SabotageCableCar,
+		Sierra_ShootCar,
+		Sierra_DestroyCarExplosive,
 	}
 
 	class KillMethodInfo(string name, string image) {
@@ -153,6 +155,12 @@ namespace Croupier {
 			SpecificKillMethod.Soders_RobotArms,
 			SpecificKillMethod.Soders_ShootHeart,
 			SpecificKillMethod.Soders_TrashHeart,
+			SpecificKillMethod.Sierra_DestroyCarExplosive,
+			SpecificKillMethod.Sierra_ShootCar,
+		];
+		public static readonly List<SpecificKillMethod> SierraKillsList = [
+			SpecificKillMethod.Sierra_ShootCar,
+			SpecificKillMethod.Sierra_DestroyCarExplosive,
 		];
 
 		public KillMethodType Type { get; set; } = type;
@@ -379,6 +387,8 @@ namespace Croupier {
 						case SpecificKillMethod.Soders_RobotArms: return new KillMethodInfo("Robot Arms", "snowcrane_soders_spidermachine.jpg");
 						case SpecificKillMethod.Soders_ShootHeart: return new KillMethodInfo("Shoot Heart", "snowcrane_sign_soders_heart.jpg");
 						case SpecificKillMethod.Soders_TrashHeart: return new KillMethodInfo("Trash Heart", "snowcrane_throw_away_heart.jpg");
+						case SpecificKillMethod.Sierra_DestroyCarExplosive: return new KillMethodInfo("Bomb the Car", "story_pitstop_flamingo.jpg");
+						case SpecificKillMethod.Sierra_ShootCar: return new KillMethodInfo("Shoot the Car", "helping_hand.jpg");
 					}
 					break;
 			}
@@ -394,6 +404,8 @@ namespace Croupier {
 				or SpecificKillMethod.Soders_RobotArms
 				or SpecificKillMethod.Soders_ShootHeart
 				or SpecificKillMethod.Soders_TrashHeart
+				or SpecificKillMethod.Sierra_DestroyCarExplosive
+				or SpecificKillMethod.Sierra_ShootCar
 				or SpecificKillMethod.Yuki_SabotageCableCar => false,
 				_ => true,
 			};
@@ -583,6 +595,25 @@ namespace Croupier {
 			{"throwheartinthetrash", SpecificKillMethod.Soders_TrashHeart},
 			{"throwtheheartinthetrash", SpecificKillMethod.Soders_TrashHeart},
 			{"throwheartintrash", SpecificKillMethod.Soders_TrashHeart},
+			{"shootcar", SpecificKillMethod.Sierra_ShootCar},
+			{"shootthecar", SpecificKillMethod.Sierra_ShootCar},
+			{"carshot", SpecificKillMethod.Sierra_ShootCar},
+			{"snipecar", SpecificKillMethod.Sierra_ShootCar},
+			{"carsnipe", SpecificKillMethod.Sierra_ShootCar},
+			{"destroycarviaexplosive", SpecificKillMethod.Sierra_DestroyCarExplosive},
+			{"destroythecar", SpecificKillMethod.Sierra_DestroyCarExplosive},
+			{"destroycar", SpecificKillMethod.Sierra_DestroyCarExplosive},
+			{"carbomb", SpecificKillMethod.Sierra_DestroyCarExplosive},
+			{"bombcar", SpecificKillMethod.Sierra_DestroyCarExplosive},
+			{"bomboncar", SpecificKillMethod.Sierra_DestroyCarExplosive},
+			{"bombonthecar", SpecificKillMethod.Sierra_DestroyCarExplosive},
+			{"explodecar", SpecificKillMethod.Sierra_DestroyCarExplosive},
+			{"carexplode", SpecificKillMethod.Sierra_DestroyCarExplosive},
+			{"carexplosion", SpecificKillMethod.Sierra_DestroyCarExplosive},
+			{"carexplosive", SpecificKillMethod.Sierra_DestroyCarExplosive},
+			{"explosivecar", SpecificKillMethod.Sierra_DestroyCarExplosive},
+			{"explosiveoncar", SpecificKillMethod.Sierra_DestroyCarExplosive},
+			{"viaexplosive", SpecificKillMethod.Sierra_DestroyCarExplosive},
 			{"starfish", SpecificKillMethod.Starfish},
 			{"tanto", SpecificKillMethod.Tanto},
 			{"unicornhorn", SpecificKillMethod.UnicornHorn},

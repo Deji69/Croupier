@@ -37,7 +37,7 @@ namespace Croupier
 			}
 
 			// Generate methods until something legal pops up
-			do method = GenerateKillMethod(target.Type);
+			do method = GenerateKillMethod(target);
 			while (!IsLegalForSpin(spin, target, disguise, method));
 
 			return new SpinCondition() {
@@ -61,8 +61,8 @@ namespace Croupier
 			return new KillMethod(StandardKillMethod.NeckSnap);
 		}
 
-		public KillMethod GenerateKillMethod(TargetType targetType = TargetType.Normal) {
-			if (targetType == TargetType.Soders) return GenerateSodersKillMethod();
+		public KillMethod GenerateKillMethod(Target target) {
+			if (target.Type == TargetType.Soders) return GenerateSodersKillMethod();
 
 			// Pick random type of kill method, skip map-specific type if the mission has no such items
 			KillMethodType type;
@@ -100,8 +100,10 @@ namespace Croupier
 						method.KillType = (new[]{ KillType.Loud, KillType.Silenced })[random.Next(2)];
 					break;
 				case KillMethodType.Specific:
+					List<SpecificKillMethod> methods = [..mission.Methods, ..(target.ID == TargetID.SierraKnox ? KillMethod.SierraKillsList : [])];
+
 					while (true) {
-						method.Specific = mission.Methods[random.Next(mission.Methods.Count)];
+						method.Specific = methods[random.Next(methods.Count)];
 
 						// Skip easter egg conditions unless enabled
 						if (!ruleset.Rules.Banned.Contains("EasterEgg")) {

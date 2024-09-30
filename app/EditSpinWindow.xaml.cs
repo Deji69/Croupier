@@ -177,6 +177,17 @@ namespace Croupier
 			get {
 				var items = new List<MethodComboBoxItem>();
 				var mission = new Mission(Target.Mission);
+				
+				if (Target.ID == TargetID.SierraKnox) {
+					items.Add(new("Unique", true));
+					KillMethod.SierraKillsList.ForEach(v => {
+						var km = new KillMethod(KillMethodType.Specific) { Specific = v };
+						items.Add(new(km.Name) {
+							Specific = v,
+							Image = km.ImageUri,
+						});
+					});
+				}
 				if (Target.Type == TargetType.Soders) {
 					items.Add(new("Firearms", true));
 					KillMethod.FirearmList.ForEach(v => {
@@ -186,7 +197,7 @@ namespace Croupier
 							Image = km.ImageUri,
 						});
 					});
-					items.Add(new("Specific", true));
+					items.Add(new("Unique", true));
 					KillMethod.SodersKillsList.ForEach(v => {
 						var km = new KillMethod(KillMethodType.Specific) { Specific = v };
 						items.Add(new(km.Name) {
