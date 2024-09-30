@@ -110,6 +110,8 @@ namespace Croupier
 								&& (method.KillType == KillType.Remote || method.KillType == KillType.LoudRemote),
 						"ImpactExplosive" => (Disguise disguise, KillMethod method, Mission mission) =>
 							method.Type == KillMethodType.Firearm && method.Firearm == FirearmKillMethod.Explosive && method.KillType == KillType.Impact,
+						"ShootCarAsMoses" => (Disguise disguise, KillMethod method, Mission mission) =>
+							method.Type == KillMethodType.Specific && method.Specific == SpecificKillMethod.Sierra_ShootCar && disguise.Name == "Moses Lee",
 						_ => null,
 					};
 					if (func == null)
