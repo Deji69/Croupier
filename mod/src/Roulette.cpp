@@ -439,6 +439,11 @@ std::vector<Keyword> Keyword::keywords = {
 	{ "ShootHeart", eMapKillMethod::Soders_ShootHeart },
 	{ "TrashHeart", eMapKillMethod::Soders_TrashHeart },
 	{ "ThrowHeart", eMapKillMethod::Soders_TrashHeart, "TrashHeart" },
+	// Map Kill Method - Sierra Knox
+	{ "ShootTheCar", eMapKillMethod::Sierra_ShootCar },
+	{ "ShootCar", eMapKillMethod::Sierra_ShootCar, "ShootTheCar" },
+	{ "BombTheCar", eMapKillMethod::Sierra_BombCar },
+	{ "BombCar", eMapKillMethod::Sierra_BombCar, "BombTheCar" },
 };
 
 const std::vector<eKillMethod> RouletteSpinGenerator::standardKillMethods = {
@@ -568,6 +573,8 @@ auto isSpecificKillMethodMelee(eMapKillMethod method) -> bool {
 	case eMapKillMethod::Soders_ShootHeart:
 	case eMapKillMethod::Soders_TrashHeart:
 	case eMapKillMethod::Yuki_SabotageCableCar:
+	case eMapKillMethod::Sierra_BombCar:
+	case eMapKillMethod::Sierra_ShootCar:
 		return false;
 	}
 	return true;
@@ -716,6 +723,8 @@ auto getSpecificKillMethodNameAndImage(eMapKillMethod method) -> std::pair<std::
 	case eMapKillMethod::Soders_RobotArms: return {"Robot Arms", "snowcrane_soders_spidermachine.jpg"};
 	case eMapKillMethod::Soders_ShootHeart: return {"Shoot Heart", "snowcrane_sign_soders_heart.jpg"};
 	case eMapKillMethod::Soders_TrashHeart: return {"Trash Heart", "snowcrane_throw_away_heart.jpg"};
+	case eMapKillMethod::Sierra_BombCar: return {"Bomb the Car", "story_pitstop_flamingo.jpg"};
+	case eMapKillMethod::Sierra_ShootCar: return {"Shoot the Car", "helping_hand.jpg"};
 	}
 	return {"", ""};
 }

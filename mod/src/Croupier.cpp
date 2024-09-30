@@ -1981,6 +1981,26 @@ auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Ki
 }
 
 auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Kill>& ev, eMapKillMethod method, eKillType type) -> eKillValidationType {
+	if (!isSpecificKillMethodMelee(method)) {
+		if (target == eTargetID::SierraKnox) {
+			auto const haveDamageEvents = !ev.Value.DamageEvents.empty();
+			auto const killContext = ev.Value.KillContext;
+			auto const& killClass = ev.Value.KillClass;
+			auto const isKillClassUnknown = killClass == "unknown";
+			// true for car kill
+			// EKillType_ItemTakeOutFront (4)
+			// KillClass == "unknown"
+			// killContext == eDC_HIDDEN (2)
+			// KillMethodBroad == ""
+			// KillMethodStrict == ""
+			auto const isContextKill = haveDamageEvents && ev.Value.DamageEvents[0] == "ContextKill";
+			if ((method == eMapKillMethod::Sierra_BombCar || method == eMapKillMethod::Sierra_ShootCar)
+				&& isContextKill
+				&& isKillClassUnknown
+				&& killContext == EDeathContext::eDC_HIDDEN)
+				return eKillValidationType::Valid;
+		}
+	}
 	if (!ev.Value.KillItemRepositoryId.empty()) {
 		if (type == eKillType::Thrown && ev.Value.KillMethodBroad != "throw") {
 			Logger::Info("Kill validation failed. Expected 'throw', got '{}'.", ev.Value.KillMethodBroad);
