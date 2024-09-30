@@ -101,16 +101,15 @@ auto CroupierClient::reconnect() -> bool {
 
 		for (; addrInfo != nullptr; addrInfo = addrInfo->ai_next) {
 			this->sock = socket(addrInfo->ai_family, addrInfo->ai_socktype, addrInfo->ai_protocol);
-			if (this->sock == INVALID_SOCKET) {
-				Logger::Error("Error creating socket");
+			if (this->sock == INVALID_SOCKET)
 				continue;
-			}
 
 			if (connect(this->sock, addrInfo->ai_addr, static_cast<int>(addrInfo->ai_addrlen)) != SOCKET_ERROR)
 				break;
 			closesocket(this->sock);
 			this->sock = INVALID_SOCKET;
-			//Logger::Error("Error connecting to socket");
+			auto error = WSAGetLastError();
+			Logger::Error("Error connecting socket ({})", error);
 		}
 
 		this->connected = this->sock != INVALID_SOCKET;
@@ -144,23 +143,24 @@ auto CroupierClient::start() -> bool {
 			}
 
 			// Process the outward message queue
-			if (this->queueMutex.try_lock()) {
+			if (!this->queue.empty()) {
+				this->queueMutex.lock();
 				while (!this->queue.empty()) {
 					auto& msg = this->queue.front();
 					writeQueue.push_back(std::move(msg));
 					this->queue.pop_front();
 				}
 				this->queueMutex.unlock();
+
+				// Send out messages to socket
+				while (!writeQueue.empty()) {
+					auto& msg = writeQueue.back();
+					if (!this->writeMessage(msg)) break;
+					writeQueue.pop_back();
+				}
 			}
 
-			// Send out messages to socket
-			while (!writeQueue.empty()) {
-				auto& msg = writeQueue.back();
-				if (!this->writeMessage(msg)) break;
-				writeQueue.pop_back();
-			}
-
-			if (this->connected) std::this_thread::sleep_for(100ms);
+			if (this->connected) std::this_thread::sleep_for(5ms);
 		}
 	});
 	readThread = std::thread([this] {
