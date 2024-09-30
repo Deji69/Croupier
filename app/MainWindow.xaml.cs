@@ -837,7 +837,7 @@ namespace Croupier
 			}
 
 			var custom = rulesets.FirstOrDefault(r => r.Name == "Custom");
-			var rr15 = rulesets.FirstOrDefault(r => r.Name == "RR15");
+			var fallbackDefaultRuleset = rulesets.FirstOrDefault(r => r.Name == "RRWC2024");
 
 			if (custom == null) {
 				custom = new("Custom", new() {
@@ -857,7 +857,7 @@ namespace Croupier
 					RemoteExplosives = Config.Default.Ruleset_RemoteExplosiveKillTypes,
 					SuitOnly = Config.Default.Ruleset_SuitOnlyMode,
 					ThrownKillTypes = Config.Default.Ruleset_ThrownKillTypes,
-				}, rr15?.Tags);
+				}, fallbackDefaultRuleset?.Tags);
 				custom.Save();
 				rulesets.Add(custom);
 			}
