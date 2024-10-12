@@ -1181,11 +1181,11 @@ namespace Croupier
 				++stats.NumRandomSpins;
 
 			if (spinStats.DailyID == 0) {
-				if (spinStr == dailySpin1.spin)
+				if (dailySpin1 != null && spinStr == dailySpin1.spin)
 					spinStats.DailyID = dailySpin1.id;
-				else if (spinStr == dailySpin2.spin)
+				else if (dailySpin2 != null && spinStr == dailySpin2.spin)
 					spinStats.DailyID = dailySpin2.id;
-				else if (spinStr == dailySpin3.spin)
+				else if (dailySpin3 != null && spinStr == dailySpin3.spin)
 					spinStats.DailyID = dailySpin3.id;
 
 				if (spinStats.DailyID != 0)
