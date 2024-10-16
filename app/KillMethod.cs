@@ -155,8 +155,6 @@ namespace Croupier {
 			SpecificKillMethod.Soders_RobotArms,
 			SpecificKillMethod.Soders_ShootHeart,
 			SpecificKillMethod.Soders_TrashHeart,
-			SpecificKillMethod.Sierra_DestroyCarExplosive,
-			SpecificKillMethod.Sierra_ShootCar,
 		];
 		public static readonly List<SpecificKillMethod> SierraKillsList = [
 			SpecificKillMethod.Sierra_ShootCar,
