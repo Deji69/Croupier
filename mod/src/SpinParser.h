@@ -151,7 +151,7 @@ public:
 					}, kwit->second)) return true;
 				}
 
-				if (context.killMethod == eKillMethod::NONE) {
+				if (context.killMethod == eKillMethod::NONE && context.mapMethod == eMapKillMethod::NONE) {
 					auto it = ::methodKeywords.find(token);
 					if (it != end(::methodKeywords)) {
 						return parseTokenImpl(it->second, parseTokenImpl);
