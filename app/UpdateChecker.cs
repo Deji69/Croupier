@@ -1,14 +1,8 @@
 ﻿using Octokit;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Net.Http;
 using System.Reflection;
-using System.Reflection.Metadata.Ecma335;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Croupier {
@@ -18,8 +12,11 @@ namespace Croupier {
 	}
 
 	public class UpdateChecker {
-		public static async Task<NewVersionInfo> CheckForUpdateAsync() {
-			var currentVer = Version.Parse(Assembly.GetExecutingAssembly().GetName().Version.ToString());
+		public static async Task<NewVersionInfo?> CheckForUpdateAsync() {
+			var ver = Assembly.GetExecutingAssembly().GetName().Version;
+			if (ver == null)
+				return null;
+			var currentVer = Version.Parse(ver.ToString());
 			var client = new GitHubClient(new ProductHeaderValue("Croupier"));
 			var release = await client.Repository.Release.GetLatest("Deji69", "Croupier");
 			if (!release.TagName.StartsWith('v') || release.TagName.Length < 2)
@@ -46,9 +43,7 @@ namespace Croupier {
 				else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
 					Process.Start("open", url);
 				}
-				else {
-					throw;
-				}
+				else throw;
 			}
 		}
 	}

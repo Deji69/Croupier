@@ -9,7 +9,7 @@ using System.Windows.Controls;
 
 namespace Croupier {
 	public static class BrowserService {
-		public static event EventHandler<string> InstallStatusUpdate;
+		public static event EventHandler<string>? InstallStatusUpdate;
 		private static bool installInProgress = false;
 		private static int installProgressPercentage = 0;
 		private static long installTotalBytes = 0;
@@ -88,12 +88,12 @@ namespace Croupier {
 	}
 	
 	public class HitmapsSpinLink {
-		public static event EventHandler<string> ReceiveNewSpinData;
-		public event EventHandler<string> OnStatusChange;
-		public event EventHandler<string> OnBrowserStatusChange;
-		protected string url;
-		protected Thread thread;
-		protected IBrowser browser;
+		public static event EventHandler<string>? ReceiveNewSpinData;
+		public event EventHandler<string>? OnStatusChange;
+		public event EventHandler<string>? OnBrowserStatusChange;
+		protected string url = "";
+		protected Thread? thread;
+		protected IBrowser? browser;
 		protected volatile bool awaitingPreviousThread = true;
 
 		public void SetLink(string url)

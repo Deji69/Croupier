@@ -7,10 +7,10 @@
 	};
 
 	public class KillValidation {
-		public TargetID target;
+		public Target? target = null;
 		public KillValidationType killValidation = KillValidationType.Incomplete;
 		public bool disguiseValidation = false;
-		public TargetID specificTarget = TargetID.Unknown;
+		public Target? specificTarget = null;
 
 		public bool IsValid {
 			get => disguiseValidation && killValidation != KillValidationType.Invalid && killValidation != KillValidationType.Incomplete;

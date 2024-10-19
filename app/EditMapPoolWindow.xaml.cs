@@ -64,7 +64,8 @@ namespace Croupier
 					var toRemove = new List<string>();
 					
 					foreach (var key in Config.Default.CustomMissionPool) {
-						if (!Mission.GetMissionFromString(key, out var id)) {
+						var id = MissionIDMethods.FromKey(key);
+						if (id != MissionID.NONE) {
 							toRemove.Add(key);
 							continue;
 						}
@@ -90,7 +91,7 @@ namespace Croupier
 		public string Name { get; set; } = name;
 		
 		public bool IsInPool {
-			get { return _IsInPool; }
+			get => _IsInPool;
 			set {
 				_IsInPool = value;
 				OnPropertyChanged(nameof(IsInPool));
@@ -100,10 +101,9 @@ namespace Croupier
 		public int Column { get; set; } = 0;
 		public int Row { get; set; } = 0;
 
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 
-		protected virtual void OnPropertyChanged(string propertyName)
-		{
+		protected virtual void OnPropertyChanged(string propertyName) {
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 	}
@@ -112,10 +112,10 @@ namespace Croupier
 	{
 		public MissionPoolPresetID Preset { get; set; }
 
-		private string _Name;
+		private string? _Name;
 
 		public string Name {
-			get { return _Name; }
+			get => _Name ?? "";
 			set {
 				_Name = value;
 				OnPropertyChanged(nameof(Name));
@@ -126,7 +126,7 @@ namespace Croupier
 			return Preset.GetMissions();
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 
 		protected virtual void OnPropertyChanged(string propertyName)
 		{
@@ -136,16 +136,14 @@ namespace Croupier
 
 	public class MissionPoolGroup : INotifyPropertyChanged
 	{
-		public MissionPoolGroup(string name, ObservableCollection<MissionPoolEntry> entries)
-		{
+		public MissionPoolGroup(string name, ObservableCollection<MissionPoolEntry> entries) {
 			Name = name;
 			Entries = entries;
 			foreach (var entry in Entries)
 				entry.PropertyChanged += EntryPopertyChanged;
 		}
 
-		private void EntryPopertyChanged(object sender, PropertyChangedEventArgs e)
-		{
+		private void EntryPopertyChanged(object? sender, PropertyChangedEventArgs e) {
 			OnPropertyChanged(nameof(PoolState));
 		}
 
@@ -166,19 +164,18 @@ namespace Croupier
 			}
 		}
 
-		private ObservableCollection<MissionPoolEntry> _Entries;
+		private ObservableCollection<MissionPoolEntry> _Entries = [];
 		public ObservableCollection<MissionPoolEntry> Entries {
-			get { return _Entries; }
+			get => _Entries;
 			set {
 				_Entries = value;
 				OnPropertyChanged(nameof(Entries));
 			}
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 
-		protected virtual void OnPropertyChanged(string propertyName)
-		{
+		protected virtual void OnPropertyChanged(string propertyName) {
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 	}
@@ -280,7 +277,7 @@ namespace Croupier
 				Config.Default.CustomMissionPool.AddRange(unique);
 			}
 
-			AddMissionToPool += (object sender, MissionID e) => {
+			AddMissionToPool += (object? sender, MissionID e) => {
 				if (!IsCustomPoolSelected) return;
 				var key = e.GetKey();
 				if (!Config.Default.CustomMissionPool.Contains(key))
@@ -289,7 +286,7 @@ namespace Croupier
 
 				customMissionPoolPresetEntry.Name = "Custom (" + Config.Default.CustomMissionPool.Count.ToString() + ")";
 			};
-			RemoveMissionFromPool += (object sender, MissionID e) => {
+			RemoveMissionFromPool += (object? sender, MissionID e) => {
 				if (!IsCustomPoolSelected) return;
 				Config.Default.CustomMissionPool.Remove(e.GetKey());
 				Config.Save();
@@ -357,10 +354,9 @@ namespace Croupier
 			Config.Save();
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 
-		protected virtual void OnPropertyChanged(string propertyName)
-		{
+		protected virtual void OnPropertyChanged(string propertyName) {
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 	}

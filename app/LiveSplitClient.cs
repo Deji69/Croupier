@@ -5,12 +5,12 @@ using System.Text;
 
 namespace Croupier {
 	public class LiveSplitClient {
-		public event EventHandler<string> OnStatusChange;
-		private string status;
+		public event EventHandler<string>? OnStatusChange;
+		private string status = "";
 		private bool started = false;
 		private bool connected = false;
 		private bool needToStop = false;
-		private Socket socket = null;
+		private Socket? socket = null;
 
 		public string CurrentStatus {
 			get => status;
@@ -82,7 +82,7 @@ namespace Croupier {
 		public bool Send(string command) {
 			if (!connected)
 				return false;
-			socket.Send(Encoding.ASCII.GetBytes($"{command}\r\n"));
+			socket?.Send(Encoding.ASCII.GetBytes($"{command}\r\n"));
 			return true;
 		}
 

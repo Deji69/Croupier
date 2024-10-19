@@ -14,7 +14,7 @@ namespace Croupier {
 		#region Fields
 
 		readonly Action<object> _execute;
-		readonly Predicate<object> _canExecute;
+		readonly Predicate<object>? _canExecute;
 
 		#endregion // Fields
 
@@ -34,7 +34,7 @@ namespace Croupier {
 		/// </summary>
 		/// <param name="execute">The execution logic.</param>
 		/// <param name="canExecute">The execution status logic.</param>
-		public RelayCommand(Action<object> execute, Predicate<object> canExecute)
+		public RelayCommand(Action<object> execute, Predicate<object>? canExecute)
 		{
 			ArgumentNullException.ThrowIfNull(execute);
 
@@ -47,23 +47,18 @@ namespace Croupier {
 		#region ICommand Members
 
 		[DebuggerStepThrough]
-		public bool CanExecute(object parameters)
+		public bool CanExecute(object? parameters)
 		{
-			return _canExecute == null || _canExecute(parameters);
+			return _canExecute == null || _canExecute(parameters!);
 		}
 
-		public event EventHandler CanExecuteChanged {
-			add {
-				CommandManager.RequerySuggested += value;
-			}
-			remove {
-				CommandManager.RequerySuggested -= value;
-			}
+		public event EventHandler? CanExecuteChanged {
+			add => CommandManager.RequerySuggested += value;
+			remove => CommandManager.RequerySuggested -= value;
 		}
 
-		public void Execute(object parameters)
-		{
-			_execute(parameters);
+		public void Execute(object? parameters) {
+			_execute(parameters!);
 		}
 
 		#endregion // ICommand Members
