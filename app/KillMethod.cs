@@ -109,6 +109,10 @@ namespace Croupier {
 	}
 
 	public partial class KillMethod(string name, string image, KillMethodCategory category, string? target = null, StringCollection? tags = null, StringCollection? keywords = null) : IComparable<KillMethod> {
+		public KillMethod(KillMethod method, StringCollection tags) : this(method.Name, method.Image, method.Category, method.Target, [..method.Tags, ..tags], method.Keywords) {
+			Variants = method.Variants;
+		}
+
 		public string Name { get; set; } = name;
 		public string Image { get; set; } = image;
 		public KillMethodCategory Category { get; set; } = category;
@@ -117,13 +121,7 @@ namespace Croupier {
 		public StringCollection Keywords { get; set; } = keywords ?? [];
 		public List<KillMethodVariant> Variants { get; set; } = [];
 
-		public Uri ImageUri {
-			get {
-				if (Category != KillMethodCategory.Melee)
-					return new Uri(Path.Combine(Environment.CurrentDirectory, "methods", Image));
-				return new Uri(Path.Combine(Environment.CurrentDirectory, "weapons", Image));
-			}
-		}
+		public Uri ImageUri => new(Path.Combine(Environment.CurrentDirectory, "methods", Image));
 
 		public bool IsLive => Tags.Contains("IsLive");
 
@@ -155,7 +153,7 @@ namespace Croupier {
 
 		public bool CanHaveLiveComplication(Ruleset ruleset) {
 			return Category switch {
-				KillMethodCategory.Weapon => !IsExplosive || ruleset.Rules.LiveComplicationsExcludeStandard,
+				KillMethodCategory.Weapon => !IsExplosive || !ruleset.Rules.LiveComplicationsExcludeStandard,
 				KillMethodCategory.Melee => true,
 				KillMethodCategory.Unique => false,
 				KillMethodCategory.Standard => !IsLive && (!ruleset.Rules.LiveComplicationsExcludeStandard || Name == "Neck Snap"),

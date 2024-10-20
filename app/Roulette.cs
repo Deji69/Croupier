@@ -1,30 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace Croupier {
-	public interface IKillMethodTypeConfig {
-		public string Name { get; set; }
-		public string Image { get; set; }
-		public List<string> Tags { get; set; }
-	}
-
-	public interface IKillMethodConfig {
-		public string Name { get; set; }
-		public string Image { get; set; }
-		public string Category { get; set; }
-		public List<string> Tags { get; set; }
-		public List<string> Keywords { get; set; }
-	}
-
 	public class Roulette {
 		public static readonly Roulette Main = new();
 

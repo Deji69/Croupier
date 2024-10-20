@@ -174,11 +174,10 @@ namespace Croupier
 		private bool _timerFractions = true;
 
 		public TargetNameFormat TargetNameFormat {
-			get { return _targetNameFormat; }
+			get => _targetNameFormat;
 			set {
 				_targetNameFormat = value;
 				Config.Default.TargetNameFormat = value.ToString();
-				Config.Save();
 				OnPropertyChanged(nameof(TargetNameFormat));
 				SyncHistoryEntries();
 				foreach (var entry in TargetNameFormatEntries)
@@ -186,18 +185,15 @@ namespace Croupier
 			}
 		}
 		public bool AutoUpdateCheck {
-			get {
-				return Config.Default.CheckUpdate;
-			}
+			get => Config.Default.CheckUpdate;
 			set {
 				Config.Default.CheckUpdate = value;
-				Config.Save();
 				OnPropertyChanged(nameof(AutoUpdateCheck));
 			}
 		}
 
 		public double SpinFontSize {
-			get { return _spinFontSize; }
+			get => _spinFontSize;
 			private set {
 				if (_spinFontSize != value) {
 					_spinFontSize = value;
@@ -206,35 +202,27 @@ namespace Croupier
 			}
 		}
 
-		public bool ShuffleButtonEnabled {
-			get {
-				return missionPool.Count > 0;
-			}
-		}
+		public bool ShuffleButtonEnabled => missionPool.Count > 0;
 
 		public bool TopmostEnabled {
-			get {
-				return _topmostEnabled;
-			}
+			get => _topmostEnabled;
 			set {
 				_topmostEnabled = value;
 				Topmost = value;
 				Config.Default.AlwaysOnTop = value;
-				Config.Save();
 				OnPropertyChanged(nameof(TopmostEnabled));
 			}
 		}
 		public bool VerticalDisplay {
-			get { return _verticalDisplay; }
+			get => _verticalDisplay;
 			set {
 				_verticalDisplay = value;
 				Config.Default.VerticalDisplay = value;
-				Config.Save();
 				OnPropertyChanged(nameof(VerticalDisplay));
 			}
 		}
 		public bool SpinLock {
-			get { return _spinLock; }
+			get => _spinLock;
 			set {
 				if (value == _spinLock) return;
 				_spinLock = value;
@@ -248,10 +236,8 @@ namespace Croupier
 			set {
 				if (value == _rightToLeft) return;
 				_rightToLeft = value;
-				if (value != Config.Default.RightToLeft) {
+				if (value != Config.Default.RightToLeft)
 					Config.Default.RightToLeft = value;
-					Config.Save();
-				}
 				OnPropertyChanged(nameof(RightToLeft));
 				OnPropertyChanged(nameof(RightToLeftFlowDir));
 				OnPropertyChanged(nameof(ContentGridFlowDir));
@@ -265,10 +251,8 @@ namespace Croupier
 				if (value == _staticSize) return;
 				_staticSize = value;
 
-				if (value != Config.Default.StaticSize) {
+				if (value != Config.Default.StaticSize)
 					Config.Default.StaticSize = value;
-					Config.Save();
-				}
 
 				OnPropertyChanged(nameof(ContentGridAlign));
 				OnPropertyChanged(nameof(StaticSize));
@@ -285,10 +269,8 @@ namespace Croupier
 			set {
 				if (value == _staticSizeLHS) return;
 				_staticSizeLHS = value;
-				if (value != Config.Default.StaticSizeLHS) {
+				if (value != Config.Default.StaticSizeLHS)
 					Config.Default.StaticSizeLHS = value;
-					Config.Save();
-				}
 				OnPropertyChanged(nameof(ContentGridAlign));
 				OnPropertyChanged(nameof(StaticSize));
 				OnPropertyChanged(nameof(SpinAlignHorz));
@@ -304,10 +286,8 @@ namespace Croupier
 			set {
 				if (value == _killValidations) return;
 				_killValidations = value;
-				if (value != Config.Default.KillValidations) {
+				if (value != Config.Default.KillValidations)
 					Config.Default.KillValidations = value;
-					Config.Save();
-				}
 
 				OnPropertyChanged(nameof(KillValidations));
 
@@ -315,9 +295,8 @@ namespace Croupier
 					cond.ForceUpdate();
 			}
 		}
-		public bool ShowSpinLabels {
-			get => !_editMode;
-		}
+		public bool ShowSpinLabels => !_editMode;
+		public bool ShowStatusBar => ShowTimer || ShowStreak;
 		public bool EditMode {
 			get => _editMode;
 			set {
@@ -327,17 +306,12 @@ namespace Croupier
 				OnPropertyChanged(nameof(ShowSpinLabels));
 			}
 		}
-		public bool ShowStatusBar {
-			get => ShowTimer || ShowStreak;
-		}
 		public bool ShowTimer {
 			get => _showTimer;
 			set {
 				_showTimer = value;
-				if (value != Config.Default.Timer) {
+				if (value != Config.Default.Timer)
 					Config.Default.Timer = value;
-					Config.Save();
-				}
 				OnPropertyChanged(nameof(ShowStatusBar));
 				OnPropertyChanged(nameof(ShowTimer));
 				RefitWindow();
@@ -347,10 +321,8 @@ namespace Croupier
 			get => _showStreak;
 			set {
 				_showStreak = value;
-				if (value != Config.Default.Streak) {
+				if (value != Config.Default.Streak)
 					Config.Default.Streak = value;
-					Config.Save();
-				}
 				OnPropertyChanged(nameof(ShowStatusBar));
 				OnPropertyChanged(nameof(ShowStreak));
 				RefitWindow();
@@ -360,22 +332,18 @@ namespace Croupier
 			get => _showStreakPB;
 			set {
 				_showStreakPB = value;
-				if (value != Config.Default.ShowStreakPB) {
+				if (value != Config.Default.ShowStreakPB)
 					Config.Default.ShowStreakPB = value;
-					Config.Save();
-				}
 				OnPropertyChanged(nameof(ShowStreakPB));
-				UpdateStreakStatus();
+				UpdateStreakStatus(false);
 			}
 		}
 		public bool TimerMultiSpin {
 			get => _timerMultiSpin;
 			set {
 				_timerMultiSpin = value;
-				if (value != Config.Default.TimerMultiSpin) {
+				if (value != Config.Default.TimerMultiSpin)
 					Config.Default.TimerMultiSpin = value;
-					Config.Save();
-				}
 				OnPropertyChanged(nameof(TimerMultiSpin));
 			}
 		}
@@ -383,63 +351,25 @@ namespace Croupier
 			get => _timerFractions;
 			set {
 				_timerFractions = value;
-				if (value != Config.Default.TimerFractions) {
+				if (value != Config.Default.TimerFractions)
 					Config.Default.TimerFractions = value;
-					Config.Save();
-				}
 				OnPropertyChanged(nameof(TimerFractions));
 			}
 		}
-		public FlowDirection RightToLeftFlowDir {
-			get {
-				if (ContentGridFlowDir == FlowDirection.RightToLeft)
-					return RightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
-				return RightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
-			}
-		}
-		public HorizontalAlignment ContentGridAlign {
-			get {
-				if (!StaticSize)
-					return HorizontalAlignment.Stretch;
-				return StaticSizeLHS ? HorizontalAlignment.Left : HorizontalAlignment.Right;
-			}
-		}
-		public TextAlignment SpinTextAlignment {
-			get {
-				return RightToLeft ? TextAlignment.Right : TextAlignment.Left;
-			}
-		}
-		public FlowDirection ContentGridFlowDir {
-			get {
-				if (!StaticSize)
-					return FlowDirection.LeftToRight;
-				return StaticSizeLHS ? FlowDirection.LeftToRight : FlowDirection.RightToLeft;
-			}
-		}
-		public HorizontalAlignment SpinAlignHorz {
-			get {
-				if (!StaticSize) return HorizontalAlignment.Stretch;
-				return StaticSizeLHS ? HorizontalAlignment.Left : HorizontalAlignment.Right;
-			}
-		}
-		public bool StatusAlignLeft {
-			get {
-				return StaticSize ? StaticSizeLHS : !RightToLeft;
-			}
-		}
-		public double SpinGridWidth {
-			get {
-				if (!StaticSize) return double.NaN;
-				return (VerticalDisplay ? Width : Width / 2) - 6;
-			}
-		}
-		public double SpinGridHeight {
-			get {
-				if (!StaticSize)
-					return double.NaN;
-				return SpinGridWidth * 0.33;
-			}
-		}
+		public FlowDirection RightToLeftFlowDir
+			=> ContentGridFlowDir == FlowDirection.RightToLeft
+				? (RightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight)
+				: (RightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight);
+		public HorizontalAlignment ContentGridAlign
+			=> !StaticSize ? HorizontalAlignment.Stretch : (StaticSizeLHS ? HorizontalAlignment.Left : HorizontalAlignment.Right);
+		public TextAlignment SpinTextAlignment => RightToLeft ? TextAlignment.Right : TextAlignment.Left;
+		public FlowDirection ContentGridFlowDir
+			=> !StaticSize ? FlowDirection.LeftToRight : (StaticSizeLHS ? FlowDirection.LeftToRight : FlowDirection.RightToLeft);
+		public HorizontalAlignment SpinAlignHorz
+			=> !StaticSize ? HorizontalAlignment.Stretch : (StaticSizeLHS ? HorizontalAlignment.Left : HorizontalAlignment.Right);
+		public bool StatusAlignLeft => StaticSize ? StaticSizeLHS : !RightToLeft;
+		public double SpinGridWidth => !StaticSize ? double.NaN : (VerticalDisplay ? Width : Width / 2) - 6;
+		public double SpinGridHeight => !StaticSize ? double.NaN : SpinGridWidth * 0.33;
 
 		public string DailySpin1Label {
 			get {
@@ -525,9 +455,7 @@ namespace Croupier
 			}
 		}
 
-		public Spin? CurrentSpin {
-			get => spin;
-		}
+		public Spin? CurrentSpin => spin;
 
 		public ObservableCollection<SpinHistoryEntry> HistoryEntries = [];
 		public ObservableCollection<SpinHistoryEntry> BookmarkEntries = [
@@ -605,16 +533,6 @@ namespace Croupier
 				Logo.ToolTip = "Croupier v" + logoVerStr;
 			}
 
-			if (Config.Default.SpinHistory.Count > 0) {
-				string[] history = new string[Config.Default.SpinHistory.Count];
-				Config.Default.SpinHistory.CopyTo(history, 0);
-
-				foreach (var item in history.Reverse()) {
-					if (SpinParser.TryParse(item, out var spin))
-						PushSpinToHistory(spin!);
-				}
-			}
-
 			LoadSettings();
 
 			missions.AddRange([
@@ -665,6 +583,8 @@ namespace Croupier
 
 			var idx = MissionListItems.ToList().FindIndex(item => item.ID == currentMission?.ID);
 			MissionSelect.SelectedIndex = idx;
+
+			LoadSpinHistory();
 
 			if (spinHistory.Count > 0)
 				SetSpinHistory(1);
@@ -876,6 +796,20 @@ namespace Croupier
 			}
 		}
 
+		private void LoadSpinHistory() {
+			if (Config.Default.SpinHistory.Count > 0) {
+				string[] history = new string[Config.Default.SpinHistory.Count];
+				Config.Default.SpinHistory.CopyTo(history, 0);
+
+				foreach (var item in history.Reverse()) {
+					if (SpinParser.TryParse(item, out var spin))
+						PushSpinToHistory(spin!, true);
+				}
+
+				SyncHistoryEntries();
+			}
+		}
+
 		private void LoadSettings() {
 			if (!Enum.IsDefined(typeof(MissionPoolPresetID), Config.Default.MissionPool))
 				Config.Default.MissionPool = MissionPoolPresetID.MainMissions;
@@ -896,7 +830,7 @@ namespace Croupier
 			KillValidations = Config.Default.KillValidations;
 			TargetNameFormat = TargetNameFormatMethods.FromString(Config.Default.TargetNameFormat);
 			LoadMissionPool();
-			UpdateStreakStatus();
+			UpdateStreakStatus(false);
 
 			foreach (var bookmark in Config.Default.Bookmarks) {
 				BookmarkEntries.Add(new(bookmark, BookmarkEntries.Count));
@@ -995,7 +929,7 @@ namespace Croupier
 			autoSpinSchedule = null;
 
 			var gen = Roulette.Main.CreateGenerator(Ruleset.Current);
-			spin = gen.Spin(Mission.Get(currentMission.ID));
+			spin = gen.Spin(Mission.Get(currentMission!.ID));
 			SetSpin(spin);
 			spinHistoryIndex = 1;
 			PushCurrentSpinToHistory();
@@ -1030,7 +964,7 @@ namespace Croupier
 			return idx != -1;
 		}
 
-		public bool PushSpinToHistory(Spin spin) {
+		public bool PushSpinToHistory(Spin spin, bool skipSync = false) {
 			if (spin == null || spin.Conditions.Count == 0) return false;
 			if (spin.Conditions == conditions) return false;
 			if (spinHistory.Count > 0 && spinHistory[^1].ToString() == spin.ToString())
@@ -1041,7 +975,7 @@ namespace Croupier
 				HistoryEntries.Insert(0, new(spin.ToString(), spinHistory.Count - 1));
 			while (spinHistory.Count > MAX_HISTORY_ENTRIES)
 				spinHistory.RemoveAt(0);
-			SyncHistoryEntries();
+			if (!skipSync) SyncHistoryEntries();
 			return true;
 		}
 
@@ -1092,6 +1026,8 @@ namespace Croupier
 		}
 
 		public void SyncHistoryEntries() {
+			if (spinHistory.Count == 0) return;
+
 			var fwdIndex = spinHistory.Count - spinHistoryIndex;
 
 			Config.Default.SpinHistory.Clear();
@@ -1138,7 +1074,7 @@ namespace Croupier
 			RefitWindow();
 		}
 
-		private void UpdateStreakStatus() {
+		private void UpdateStreakStatus(bool save = true) {
 			SendStreakToClient();
 
 			Config.Default.StreakCurrent = streak;
@@ -1154,7 +1090,7 @@ namespace Croupier
 			else
 				Streak.Text = "Streak: " + streak;
 
-			Config.Save();
+			if (save) Config.Save();
 		}
 
 		private void IncrementStreak() {

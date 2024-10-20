@@ -11,9 +11,9 @@ namespace Croupier {
 
 		public int CompareTo(MapTokenFrequency? other) {
 			if (other == null) return 0;
-			if (Frequency < other.Frequency) return -1;
+			if (Frequency < other.Frequency) return 1;
 			if (Frequency == other.Frequency) return 0;
-			return 1;
+			return -1;
 		}
 	}
 
@@ -37,7 +37,7 @@ namespace Croupier {
 		public static readonly List<string> AnyDisguiseKeywords = ["anydisg", "anydisguise"];
 		public static SpinParser? Main { get; private set; }
 
-		private readonly Dictionary<string, Target> targetKeywordMap = [];
+		private readonly Dictionary<string, List<Target>> targetKeywordMap = [];
 		private readonly Dictionary<string, List<Disguise>> disguiseKeywordMap = [];
 		private readonly Dictionary<string, KillMethod> methodKeywordMap = [];
 		private readonly Dictionary<string, List<MissionKillMethod>> missionMethodKeywordMap = [];
@@ -151,6 +151,14 @@ namespace Croupier {
 			}
 		}
 
+		private List<Target> GetTargetListForKeyword(string keyword) {
+			if (targetKeywordMap.TryGetValue(keyword, out var targets))
+				return targets;
+			List<Target> list = [];
+			targetKeywordMap.Add(keyword, list);
+			return list;
+		}
+
 		private List<Mission> GetMissionListForKeyword(string keyword) {
 			if (missionIdentifyingKeywordMap.TryGetValue(keyword, out var missions))
 				return missions;
@@ -185,7 +193,7 @@ namespace Croupier {
 			foreach (var target in mission.Targets) {
 				foreach (var keyword in target.Keywords) {
 					if (keyword == null) continue;
-					targetKeywordMap.Add(keyword, target);
+					GetTargetListForKeyword(keyword).Add(target);
 					AddMissionIdentifyingKeyword(keyword, mission);
 				}
 			}
@@ -224,6 +232,16 @@ namespace Croupier {
 					AddMissionIdentifyingKeyword(keyword, mission);
 				}
 			}
+			foreach (var target in mission.Targets) {
+				var uniqueMethods = roulette.GetUniqueMethods(target);
+				foreach (var method in uniqueMethods) {
+					foreach (var keyword in method.Keywords) {
+						if (keyword == null) continue;
+						AddMissionMethodKeyword(keyword, new(mission, method, []));
+						AddMissionIdentifyingKeyword(keyword, mission);
+					}
+				}
+			}
 		}
 
 		private void AddMethodKeywords(List<KillMethod> methods) {
@@ -255,7 +273,7 @@ namespace Croupier {
 			var j = 1;
 			var maxLength = 4;
 			var numTokens = tokens.Length;
-			var targets = missionHint.Targets;
+			var targets = missionHint.Targets.ToList();
 
 			for (var i = 0; i < numTokens; i += j > 0 ? j : 1) {
 				var maxTokens = maxLength > (numTokens - i) ? numTokens - i : maxLength;
@@ -273,8 +291,15 @@ namespace Croupier {
 					var complication = context.Complication == KillComplication.None ? ParseComplication(token) : null;
 					var killType = context.KillType == KillType.Any ? ParseKillType(token) : null;
 
-					if (!isSuit && !isAnyDisguise && context.Target == null && targetKeywordMap.TryGetValue(token, out var target)) {
-						context.Target = target;
+					if (!isSuit && !isAnyDisguise && context.Target == null && targetKeywordMap.TryGetValue(token, out var targetList)) {
+						foreach (var target in targetList) {
+							if (target.Mission == missionHint) {
+								context.Target = target;
+								break;
+							}
+						}
+
+						context.Target ??= targetList.First();
 						break;
 					}
 					else if (complication != null) {
@@ -295,11 +320,14 @@ namespace Croupier {
 						break;
 					}
 					else if (context.Method == null) {
-						if (methodKeywordMap.TryGetValue(token, out var method))
+						if (methodKeywordMap.TryGetValue(token, out var method)) {
 							context.Method = method;
-						else if (missionMethodKeywordMap.TryGetValue(token, out var methods))
+							break;
+						}
+						else if (missionMethodKeywordMap.TryGetValue(token, out var methods)) {
 							context.Method = methods.FirstOrDefault(m => m.Mission == missionHint);
-						break;
+							break;
+						}
 					}
 				}
 
@@ -357,8 +385,6 @@ namespace Croupier {
 			return spin;
 		}
 
-		public Target? ParseTarget(string input) => targetKeywordMap.GetValueOrDefault(input);
-
 		public static SpinParser Get() {
 			return Main ??= new(Roulette.Main);
 		}
@@ -367,7 +393,7 @@ namespace Croupier {
 			try {
 				var parser = Get();
 				spin = parser.Parse(input);
-			} catch {
+			} catch (Exception e) {
 				spin = null;
 				return false;
 			}
