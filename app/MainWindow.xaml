@@ -331,7 +331,7 @@
 				<Button Margin="0,0,4,0" Style="{StaticResource ButtonFlatStyle}"
 					VerticalAlignment="Stretch"
 					Width="28"
-					ToolTip="Random Map/Spin (Map Pool) (Alt+Spacebar)"
+					ToolTip="Random Map/Spin (Map Pool) (Ctrl+Spacebar)"
 					ToolTipService.InitialShowDelay="750"
 					Command="{x:Static local:MainWindow.ShuffleCommand}"
 					Content="{materialIcons:MaterialIconExt Kind=ShuffleVariant}"/>
