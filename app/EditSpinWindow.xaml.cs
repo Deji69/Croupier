@@ -71,7 +71,7 @@ namespace Croupier
 		}
 
 		public int SelectedDisguiseIndex {
-			get => Disguises.FindIndex(v => v.Disguise?.Name == Disguise.Name);
+			get => Disguises.FindIndex(v => v.Disguise == Disguise);
 			set {
 				if (value < 0 || value > Disguises.Count) return;
 				SelectedDisguise = Disguises[value];
@@ -79,7 +79,7 @@ namespace Croupier
 		}
 
 		public MethodComboBoxItem? SelectedMethod {
-			get => (MethodComboBoxItem?)ValidMethods.Find(v => v is MethodComboBoxItem w && Kill.Method == w.Method);
+			get => (MethodComboBoxItem?)ValidMethods.Find(v => v is MethodComboBoxItem w && Kill.Method.IsSameMethod(w.Method));
 			set {
 				if (value == null) return;
 				Kill.Method = value.Method;
@@ -90,7 +90,7 @@ namespace Croupier
 		}
 
 		public int SelectedMethodIndex {
-			get => ValidMethods.FindIndex(v => v is MethodComboBoxItem w && Kill.Method == w.Method);
+			get => ValidMethods.FindIndex(v => v is MethodComboBoxItem w && Kill.Method.IsSameMethod(w.Method));
 			set {
 				if (value < 0 || value > ValidMethods.Count) return;
 				if (ValidMethods[value] is MethodComboBoxItem km)
@@ -101,7 +101,7 @@ namespace Croupier
 		public List<VariantComboBoxItem> KillTypes {
 			get {
 				var items = new List<VariantComboBoxItem>();
-				Kill.Method.Variants.ForEach(v => items.Add(new(v)));
+				Kill.Method.GetBasicMethod().Variants.ForEach(v => items.Add(new(v)));
 				return items;
 			}
 		}
