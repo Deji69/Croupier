@@ -68,8 +68,7 @@ struct ParseConditionContext {
 	ParseConditionContext(std::vector<std::string>& tokens) : tokens(tokens) {};
 };
 
-class SpinParser
-{
+class SpinParser {
 public:
 	static auto createSpinFromParseContexts(const std::vector<ParseConditionContext>& contexts) -> std::optional<RouletteSpin> {
 		if (contexts.empty()) return nullptr;
@@ -89,9 +88,16 @@ public:
 			if (!disguise) disguise = mission->getSuitDisguise();
 			if (!disguise) return nullptr;
 			auto killMethod = context.killMethod;
-			if (killMethod == eKillMethod::NONE && context.mapMethod == eMapKillMethod::NONE)
+			auto mapMethod = context.mapMethod;
+			if (killMethod == eKillMethod::NONE && mapMethod == eMapKillMethod::NONE)
 				killMethod = eKillMethod::NeckSnap;
-			spin.add(RouletteSpinCondition{target, *disguise, KillMethod{killMethod}, MapKillMethod{context.mapMethod}, context.killType, context.complication});
+
+ 			if (target.getID() == eTargetID::ErichSoders && killMethod != eKillMethod::NONE && mapMethod == eMapKillMethod::NONE) {
+				mapMethod = KillMethod::convertToSodersKill(killMethod);
+				killMethod = eKillMethod::NONE;
+			}
+
+			spin.add(RouletteSpinCondition{target, *disguise, KillMethod{killMethod}, MapKillMethod{mapMethod}, context.killType, context.complication});
 		}
 
 		return spin;
