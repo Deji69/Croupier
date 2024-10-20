@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 
 namespace Croupier {
 	public class DailySpinData {
-		public required int ID { get; set; }
-		public required string Date { get; set; }
-		public required string Spin { get; set; }
+		public required int id { get; set; }
+		public required string date { get; set; }
+		public required string spin { get; set; }
 	}
 
 	public class DailySpinChecker {

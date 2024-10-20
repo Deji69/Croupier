@@ -372,26 +372,26 @@ namespace Croupier
 		public string DailySpin1Label {
 			get {
 				if (dailySpin1 == null) return "Spin #1";
-				if (!SpinParser.TryParse(dailySpin1.Spin, out var spin)) return "Spin #1";
+				if (!SpinParser.TryParse(dailySpin1.spin, out var spin)) return "Spin #1";
 				var stats = Config.Default.Stats.GetSpinStats(spin!);
 				var completion = stats.GetFastestIGTCompletion();
 				var location = Mission.Get(spin!.Mission).Location;
-				if (completion == null) return $"Spin #{dailySpin1.ID}: {location}";
-				return $"Spin #{dailySpin1.ID}: {location} ({TimeFormatter.FormatSecondsTime(completion.IGT)})";
+				if (completion == null) return $"Spin #{dailySpin1.id}: {location}";
+				return $"Spin #{dailySpin1.id}: {location} ({TimeFormatter.FormatSecondsTime(completion.IGT)})";
 			}
 		}
 
 		public string DailySpin1Tooltip {
 			get {
 				if (dailySpin1 == null) return "";
-				return dailySpin1.Spin;
+				return dailySpin1.spin;
 			}
 		}
 
 		public bool DailySpin1Completed {
 			get {
 				if (dailySpin1 == null) return false;
-				if (!SpinParser.TryParse(dailySpin1.Spin, out var spin)) return false;
+				if (!SpinParser.TryParse(dailySpin1.spin, out var spin)) return false;
 				var stats = Config.Default.Stats.GetSpinStats(spin!);
 				return stats.Completions.Count > 0;
 			}
@@ -400,26 +400,26 @@ namespace Croupier
 		public string DailySpin2Label {
 			get {
 				if (dailySpin2 == null) return "Spin #2";
-				if (!SpinParser.TryParse(dailySpin2.Spin, out var spin)) return "Spin #2";
+				if (!SpinParser.TryParse(dailySpin2.spin, out var spin)) return "Spin #2";
 				var stats = Config.Default.Stats.GetSpinStats(spin!);
 				var completion = stats.GetFastestIGTCompletion();
 				var location = Mission.Get(spin!.Mission).Location;
-				if (completion == null) return $"Spin #{dailySpin2.ID}: {location}";
-				return $"Spin #{dailySpin2.ID}: {location} ({TimeFormatter.FormatSecondsTime(completion.IGT)})";
+				if (completion == null) return $"Spin #{dailySpin2.id}: {location}";
+				return $"Spin #{dailySpin2.id}: {location} ({TimeFormatter.FormatSecondsTime(completion.IGT)})";
 			}
 		}
 
 		public string DailySpin2Tooltip {
 			get {
 				if (dailySpin2 == null) return "";
-				return dailySpin2.Spin;
+				return dailySpin2.spin;
 			}
 		}
 
 		public bool DailySpin2Completed {
 			get {
 				if (dailySpin2 == null) return false;
-				if (!SpinParser.TryParse(dailySpin2.Spin, out var spin)) return false;
+				if (!SpinParser.TryParse(dailySpin2.spin, out var spin)) return false;
 				var stats = Config.Default.Stats.GetSpinStats(spin!);
 				return stats.Completions.Count > 0;
 			}
@@ -428,26 +428,26 @@ namespace Croupier
 		public string DailySpin3Label {
 			get {
 				if (dailySpin3 == null) return "Spin #3";
-				if (!SpinParser.TryParse(dailySpin3.Spin, out var spin)) return "Spin #3";
+				if (!SpinParser.TryParse(dailySpin3.spin, out var spin)) return "Spin #3";
 				var stats = Config.Default.Stats.GetSpinStats(spin!);
 				var completion = stats.GetFastestIGTCompletion();
 				var location = Mission.Get(spin!.Mission).Location;
-				if (completion == null) return $"Spin #{dailySpin3.ID}: {location}";
-				return $"Spin #{dailySpin3.ID}: {location} ({TimeFormatter.FormatSecondsTime(completion.IGT)})";
+				if (completion == null) return $"Spin #{dailySpin3.id}: {location}";
+				return $"Spin #{dailySpin3.id}: {location} ({TimeFormatter.FormatSecondsTime(completion.IGT)})";
 			}
 		}
 
 		public string DailySpin3Tooltip {
 			get {
 				if (dailySpin3 == null) return "";
-				return dailySpin3.Spin;
+				return dailySpin3.spin;
 			}
 		}
 
 		public bool DailySpin3Completed {
 			get {
 				if (dailySpin3 == null) return false;
-				if (!SpinParser.TryParse(dailySpin3.Spin, out var spin)) return false;
+				if (!SpinParser.TryParse(dailySpin3.spin, out var spin)) return false;
 				var stats = Config.Default.Stats.GetSpinStats(spin!);
 				return stats.Completions.Count > 0;
 			}
@@ -1114,12 +1114,12 @@ namespace Croupier
 				++stats.NumRandomSpins;
 
 			if (spinStats.DailyID == 0) {
-				if (dailySpin1 != null && spinStr == dailySpin1.Spin)
-					spinStats.DailyID = dailySpin1.ID;
-				else if (dailySpin2 != null && spinStr == dailySpin2.Spin)
-					spinStats.DailyID = dailySpin2.ID;
-				else if (dailySpin3 != null && spinStr == dailySpin3.Spin)
-					spinStats.DailyID = dailySpin3.ID;
+				if (dailySpin1 != null && spinStr == dailySpin1.spin)
+					spinStats.DailyID = dailySpin1.id;
+				else if (dailySpin2 != null && spinStr == dailySpin2.spin)
+					spinStats.DailyID = dailySpin2.id;
+				else if (dailySpin3 != null && spinStr == dailySpin3.spin)
+					spinStats.DailyID = dailySpin3.id;
 
 				if (spinStats.DailyID != 0)
 					++stats.NumDailySpins;
@@ -1630,7 +1630,7 @@ namespace Croupier
 
 		private void DailySpin1Command_Executed(object? sender, ExecutedRoutedEventArgs e) {
 			if (dailySpin1 == null) return;
-			if (SpinParser.TryParse(dailySpin1.Spin, out var spin)) {
+			if (SpinParser.TryParse(dailySpin1.spin, out var spin)) {
 				SetSpin(spin!);
 				spinHistoryIndex = 1;
 				PushCurrentSpinToHistory();
@@ -1643,7 +1643,7 @@ namespace Croupier
 		
 		private void DailySpin2Command_Executed(object? sender, ExecutedRoutedEventArgs e) {
 			if (dailySpin2 == null) return;
-			if (SpinParser.TryParse(dailySpin2.Spin, out var spin)) {
+			if (SpinParser.TryParse(dailySpin2.spin, out var spin)) {
 				SetSpin(spin!);
 				spinHistoryIndex = 1;
 				PushCurrentSpinToHistory();
@@ -1656,7 +1656,7 @@ namespace Croupier
 
 		private void DailySpin3Command_Executed(object? sender, ExecutedRoutedEventArgs e) {
 			if (dailySpin3 == null) return;
-			if (SpinParser.TryParse(dailySpin3.Spin, out var spin)) {
+			if (SpinParser.TryParse(dailySpin3.spin, out var spin)) {
 				SetSpin(spin!);
 				spinHistoryIndex = 1;
 				PushCurrentSpinToHistory();
@@ -1668,15 +1668,15 @@ namespace Croupier
 		}
 
 		private void DailySpin1Command_CanExecute(object? sender, CanExecuteRoutedEventArgs e) {
-			e.CanExecute = dailySpin1 != null && SpinParser.TryParse(dailySpin1.Spin, out _);
+			e.CanExecute = dailySpin1 != null && SpinParser.TryParse(dailySpin1.spin, out _);
 		}
 
 		private void DailySpin2Command_CanExecute(object? sender, CanExecuteRoutedEventArgs e) {
-			e.CanExecute = dailySpin2 != null && SpinParser.TryParse(dailySpin2.Spin, out _);
+			e.CanExecute = dailySpin2 != null && SpinParser.TryParse(dailySpin2.spin, out _);
 		}
 
 		private void DailySpin3Command_CanExecute(object? sender, CanExecuteRoutedEventArgs e) {
-			e.CanExecute = dailySpin3 != null && SpinParser.TryParse(dailySpin3.Spin, out _);
+			e.CanExecute = dailySpin3 != null && SpinParser.TryParse(dailySpin3.spin, out _);
 		}
 
 		private void DebugWindowCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e) {
@@ -1812,26 +1812,35 @@ namespace Croupier
 		}
 
 		private async void CheckDailySpinsAsync() {
-			var result = await DailySpinChecker.CheckForDailySpinsAsync();
+			try {
+				var result = await DailySpinChecker.CheckForDailySpinsAsync();
 
-			for (var i = 0; i < result.Length; ++i) {
-				var spin = result[i];
-				if (i == 0) dailySpin1 = spin;
-				else if (i == 1) dailySpin2 = spin;
-				else if (i == 2) dailySpin3 = spin;
+				for (var i = 0; i < result.Length; ++i) {
+					var spin = result[i];
+					if (i == 0) dailySpin1 = spin;
+					else if (i == 1) dailySpin2 = spin;
+					else if (i == 2) dailySpin3 = spin;
+				}
+
+				OnPropertyChanged(nameof(DailySpin1Completed));
+				OnPropertyChanged(nameof(DailySpin2Completed));
+				OnPropertyChanged(nameof(DailySpin3Completed));
+
+				OnPropertyChanged(nameof(DailySpin1Label));
+				OnPropertyChanged(nameof(DailySpin2Label));
+				OnPropertyChanged(nameof(DailySpin3Label));
+
+				OnPropertyChanged(nameof(DailySpin1Tooltip));
+				OnPropertyChanged(nameof(DailySpin2Tooltip));
+				OnPropertyChanged(nameof(DailySpin3Tooltip));
+			} catch (Exception e) {
+				MessageBox.Show(
+					$"Error checking for daily spins.\n{e.Message}",
+					"Daily Spin Check",
+					MessageBoxButton.OK,
+					MessageBoxImage.Error
+				);
 			}
-
-			OnPropertyChanged(nameof(DailySpin1Completed));
-			OnPropertyChanged(nameof(DailySpin2Completed));
-			OnPropertyChanged(nameof(DailySpin3Completed));
-
-			OnPropertyChanged(nameof(DailySpin1Label));
-			OnPropertyChanged(nameof(DailySpin2Label));
-			OnPropertyChanged(nameof(DailySpin3Label));
-
-			OnPropertyChanged(nameof(DailySpin1Tooltip));
-			OnPropertyChanged(nameof(DailySpin2Tooltip));
-			OnPropertyChanged(nameof(DailySpin3Tooltip));
 		}
 
 		private static async void DoUpdateCheck(bool informOnFail = false) {
