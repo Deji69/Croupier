@@ -32,7 +32,7 @@ namespace Croupier {
 	}
 
 	public class SpinParser {
-		public static readonly List<string> IgnoreKeywords = ["as", "in", "with"];
+		public static readonly List<string> IgnoreKeywords = ["as", "in", "with", "target"];
 		public static readonly List<string> SuitKeywords = ["suit"];
 		public static readonly List<string> AnyDisguiseKeywords = ["anydisg", "anydisguise"];
 		public static SpinParser? Main { get; private set; }
@@ -256,7 +256,7 @@ namespace Croupier {
 		
 
 		public Spin Parse(string input) {
-			var tokens = ProcessInput(input);
+			var tokens = ProcessInput(input).Where(t => !IgnoreKeywords.Contains(input)).ToArray();
 
 			var missionTokenFreqs = AnalyseMapTokenFrequency(missionIdentifyingKeywordMap, tokens, 3);
 			missionTokenFreqs.Sort();
@@ -468,8 +468,7 @@ namespace Croupier {
 			return keys;
 		}
 
-		private static string[] ProcessInput(string input)
-		{
+		private static string[] ProcessInput(string input) {
 			return Strings.TokenCharacterWithSpacesRegex.Replace(input.RemoveDiacritics().ToLower(), " ").Split(" ", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
 		}
 	}
