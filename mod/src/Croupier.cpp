@@ -674,7 +674,7 @@ auto Croupier::SendKillValidationUpdate() -> void {
 
 		data += std::format(
 			"{}:{}:{}:{}",
-			static_cast<int>(cond.target.get().getID()),
+			Keyword::getForTarget(cond.target.get().getName()),
 			static_cast<int>(kc.correctMethod),
 			kc.correctDisguise ? 1 : 0,
 			static_cast<int>(kc.specificTarget)
