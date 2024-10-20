@@ -15,12 +15,10 @@ namespace Croupier
 {
 	public class TargetNameFormatEntry(TargetNameFormat id, string name) : INotifyPropertyChanged {
 		public TargetNameFormat ID { get; set; } = id;
-		public int Index { get { return (int)ID; } }
+		public int Index => (int)ID;
 		public string Name { get; set; } = name;
 		public bool IsSelected {
-			get {
-				return TargetNameFormatMethods.FromString(Config.Default.TargetNameFormat) == ID;
-			}
+			get => TargetNameFormatMethods.FromString(Config.Default.TargetNameFormat) == ID;
 			set {
 				Config.Default.TargetNameFormat = value.ToString();
 				OnPropertyChanged(nameof(IsSelected));
@@ -46,7 +44,7 @@ namespace Croupier
 		private int _index = index;
 
 		public string Name {
-			get { return _name; }
+			get => _name;
 			set {
 				_name = value;
 				OnPropertyChanged(nameof(Name));
@@ -54,14 +52,14 @@ namespace Croupier
 		}
 
 		public int Index {
-			get { return _index; }
+			get => _index;
 			set {
 				_index = value;
 				OnPropertyChanged(nameof(Index));
 			}
 		}
 		public bool IsSelected {
-			get { return isSelected; }
+			get => isSelected;
 			set {
 				isSelected = value;
 				OnPropertyChanged(nameof(IsSelected));
