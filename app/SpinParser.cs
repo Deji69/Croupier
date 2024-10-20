@@ -23,6 +23,7 @@ namespace Croupier {
 		public Target? Target { get; set; } = null;
 		public Target? AutoTarget { get; set; } = null;
 		public KillMethod? Method { get; set; } = null;
+		public string? MethodToken { get; set; } = null;
 		public Disguise? Disguise { get; set; } = null;
 	}
 
@@ -32,7 +33,7 @@ namespace Croupier {
 	}
 
 	public class SpinParser {
-		public static readonly List<string> IgnoreKeywords = ["as", "in", "with", "target"];
+		public static readonly List<string> IgnoreKeywords = ["as", "in", "with", "target", "using", "eliminate", "wear"];
 		public static readonly List<string> SuitKeywords = ["suit"];
 		public static readonly List<string> AnyDisguiseKeywords = ["anydisg", "anydisguise"];
 		public static SpinParser? Main { get; private set; }
@@ -256,7 +257,7 @@ namespace Croupier {
 		
 
 		public Spin Parse(string input) {
-			var tokens = ProcessInput(input).Where(t => !IgnoreKeywords.Contains(input)).ToArray();
+			var tokens = ProcessInput(input).Where(t => !IgnoreKeywords.Contains(t)).ToArray();
 
 			var missionTokenFreqs = AnalyseMapTokenFrequency(missionIdentifyingKeywordMap, tokens, 3);
 			missionTokenFreqs.Sort();
@@ -322,10 +323,12 @@ namespace Croupier {
 					else if (context.Method == null) {
 						if (methodKeywordMap.TryGetValue(token, out var method)) {
 							context.Method = method;
+							context.MethodToken = token;
 							break;
 						}
 						else if (missionMethodKeywordMap.TryGetValue(token, out var methods)) {
 							context.Method = methods.FirstOrDefault(m => m.Mission == missionHint);
+							context.MethodToken = token;
 							break;
 						}
 					}
@@ -371,8 +374,8 @@ namespace Croupier {
 				KillMethod km = ctx.Method!;
 
 				var uniqueMethods = roulette.GetUniqueMethods(target);
-				if (uniqueMethods.Any()) {
-					var uniqueMethod = uniqueMethods.FirstOrDefault(m => m.Name == km.Name);
+				if (uniqueMethods.Any() && ctx.MethodToken != null) {
+					var uniqueMethod = uniqueMethods.FirstOrDefault(m => m.Keywords.Contains(ctx.MethodToken));
 					if (uniqueMethod != null) km = uniqueMethod;
 				}
 
@@ -405,7 +408,8 @@ namespace Croupier {
 				"live" or "nko" or "noko" or "nonko" or "ntko" or "notargetko" or
 				"notargetpacification" or "nopacification" or "nopacify" or
 				"notargetknockout" or "noknockout" or "notargetpacify" or
-				"donotko" or "donotpacify" or "nonpacify" or "nonpacification"
+				"donotko" or "donotpacify" or "nonpacify" or "nonpacification" or
+				"elimination" or "elim"
 					=> KillComplication.Live,
 				_ => null,
 			};
@@ -469,7 +473,8 @@ namespace Croupier {
 		}
 
 		private static string[] ProcessInput(string input) {
-			return Strings.TokenCharacterWithSpacesRegex.Replace(input.RemoveDiacritics().ToLower(), " ").Split(" ", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+			input = Strings.TokenCharacterRegex.Replace(input.RemoveDiacritics().ToLower(), " ");
+			return input.Split(" ", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
 		}
 	}
 }

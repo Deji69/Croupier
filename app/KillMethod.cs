@@ -143,6 +143,8 @@ namespace Croupier {
 
 		public bool IsRemote => IsRemoteTechnically && !IsLoud && !IsImpact;
 
+		public bool IsRemoteOnly => Tags.Contains("IsRemoteOnly");
+
 		public bool IsRemoteTechnically => Tags.Contains("IsRemote");
 
 		public bool IsImpact => Tags.Contains("IsImpact");
@@ -179,11 +181,11 @@ namespace Croupier {
 
 		public bool IsKillType(KillType type) {
 			return type switch {
-				KillType.Loud => IsLoud,
+				KillType.Loud => IsLoud && !IsImpact && !IsRemoteOnly,
 				KillType.Silenced => IsSilenced,
 				KillType.Impact => IsImpact,
-				KillType.Remote => IsRemote,
-				KillType.LoudRemote => IsLoud && IsRemoteTechnically,
+				KillType.Remote => IsRemote && IsRemoteOnly,
+				KillType.LoudRemote => IsLoud && IsRemoteTechnically && IsRemoteOnly,
 				KillType.Melee => IsMelee,
 				KillType.Thrown => IsThrown,
 				KillType.Any => this is not KillMethodVariant,
