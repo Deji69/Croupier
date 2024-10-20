@@ -72,6 +72,7 @@ namespace Croupier {
 			AllowTrailingCommas = true,
 			WriteIndented = true,
 			IncludeFields = true,
+			ReadCommentHandling = JsonCommentHandling.Skip
 		};
 	}
 }
