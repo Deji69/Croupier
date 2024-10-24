@@ -121,9 +121,9 @@ namespace Croupier {
 							return;
 						}
 
-						var elem = await page.WaitForSelectorAsync(".targets", new() { Timeout = 15000 });
+						var elem = await page.WaitForSelectorAsync(".targets,.spin-container,.spin", new() { Timeout = 15000 });
 						try {
-							var overlayElem = await page.WaitForSelectorAsync(".overlay-targets", new() { Timeout = 500 });
+							var overlayElem = await page.WaitForSelectorAsync(".overlay-targets,.spin,.viewer-spin", new() { Timeout = 500 });
 							if (overlayElem != null) elem = overlayElem;
 						} catch (Exception) {}
 
