@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -20,29 +19,29 @@ namespace Croupier
 
 	public class CroupierSocketServer
 	{
-		public static event EventHandler<MissionID> Respin;
-		public static event EventHandler<MissionID> AutoSpin;
-		public static event EventHandler<List<MissionID>> Missions;
-		public static event EventHandler<string> SpinData;
-		public static event EventHandler<string> KillValidation;
-		public static event EventHandler<int> Random;
-		public static event EventHandler<int> Prev;
-		public static event EventHandler<int> Next;
-		public static event EventHandler<int> ToggleSpinLock;
-		public static event EventHandler<MissionStart> MissionStart;
-		public static event EventHandler<MissionCompletion> MissionComplete;
-		public static event EventHandler<int> MissionFailed;
-		public static event EventHandler<int> ResetTimer;
-		public static event EventHandler<int> ResetStreak;
-		public static event EventHandler<bool> PauseTimer;
-		public static event EventHandler<bool> ToggleTimer;
-		public static event EventHandler<int> LoadStarted;
-		public static event EventHandler<int> LoadFinished;
-		public static event EventHandler<int> Connected;
+		public static event EventHandler<MissionID>? Respin;
+		public static event EventHandler<MissionID>? AutoSpin;
+		public static event EventHandler<List<MissionID>>? Missions;
+		public static event EventHandler<string>? SpinData;
+		public static event EventHandler<string>? KillValidation;
+		public static event EventHandler<int>? Random;
+		public static event EventHandler<int>? Prev;
+		public static event EventHandler<int>? Next;
+		public static event EventHandler<int>? ToggleSpinLock;
+		public static event EventHandler<MissionStart>? MissionStart;
+		public static event EventHandler<MissionCompletion>? MissionComplete;
+		public static event EventHandler<int>? MissionFailed;
+		public static event EventHandler<int>? ResetTimer;
+		public static event EventHandler<int>? ResetStreak;
+		public static event EventHandler<bool>? PauseTimer;
+		public static event EventHandler<bool>? ToggleTimer;
+		public static event EventHandler<int>? LoadStarted;
+		public static event EventHandler<int>? LoadFinished;
+		public static event EventHandler<int>? Connected;
 		private static readonly CancellationTokenSource CancelConnection = new();
 		private static readonly BlockingCollection<ClientMessage> clientMessages = [];
 
-		private const int PORT = 8898;
+		private const int PORT = 4747;
 
 		public static void Start() {
 			try {
@@ -151,8 +150,8 @@ namespace Croupier
 				List<MissionID> missions = [];
 				if (rest.Length > 0) {
 					foreach (var token in rest.First().Split(",")) {
-						if (!Mission.GetMissionFromString(token, out var mission))
-							continue;
+						var mission = MissionIDMethods.FromName(token);
+						if (mission == MissionID.NONE) continue;
 						missions.Add(mission);
 					}
 				}
@@ -177,9 +176,9 @@ namespace Croupier
 				return;
 			}
 			else if (cmd == "MissionStart") {
-				App.Current.Dispatcher.Invoke(new Action(() => MissionStart?.Invoke(null, new MissionStart() {
+				App.Current.Dispatcher.Invoke(new Action(() => MissionStart?.Invoke(null, new() {
 					Location = rest.First(),
-					Loadout = JsonSerializer.Deserialize<string[]>(rest[1]),
+					Loadout = JsonSerializer.Deserialize<string[]>(rest[1])!,
 				})));
 				return;
 			}

@@ -23,6 +23,7 @@
 	<Window.CommandBindings>
 		<CommandBinding Command="{x:Static local:MainWindow.CheckUpdateCommand}" CanExecute="Command_AlwaysCanExecute" Executed="CheckUpdateCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.CopySpinCommand}" CanExecute="Command_AlwaysCanExecute" Executed="CopySpinCommand_Executed" />
+		<CommandBinding Command="{x:Static local:MainWindow.CopySpinLinkCommand}" CanExecute="Command_AlwaysCanExecute" Executed="CopySpinLinkCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.PasteSpinCommand}" CanExecute="PasteSpinCommand_CanExecute" Executed="PasteSpinCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.EditSpinCommand}" CanExecute="Command_AlwaysCanExecute" Executed="EditSpinCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.ShowStatisticsWindowCommand}" CanExecute="Command_AlwaysCanExecute" Executed="ShowStatisticsWindowCommand_Executed" />
@@ -331,7 +332,7 @@
 				<Button Margin="0,0,4,0" Style="{StaticResource ButtonFlatStyle}"
 					VerticalAlignment="Stretch"
 					Width="28"
-					ToolTip="Random Map/Spin (Map Pool) (Alt+Spacebar)"
+					ToolTip="Random Map/Spin (Map Pool) (Ctrl+Spacebar)"
 					ToolTipService.InitialShowDelay="750"
 					Command="{x:Static local:MainWindow.ShuffleCommand}"
 					Content="{materialIcons:MaterialIconExt Kind=ShuffleVariant}"/>
@@ -518,9 +519,19 @@
 				</MenuItem>
 				<Separator />
 				<MenuItem
+					Name="ContextMenuCopySpin"
 					Header="_Copy Spin"
 					Command="{x:Static local:MainWindow.CopySpinCommand}"
-				/>
+					StaysOpenOnClick="True"
+				>
+					<MenuItem.ItemContainerStyle>
+						<Style TargetType="MenuItem">
+							<Setter Property="StaysOpenOnClick" Value="True" />
+						</Style>
+					</MenuItem.ItemContainerStyle>
+					<MenuItem Header="Copy Text" Command="{x:Static local:MainWindow.CopySpinCommand}" />
+					<MenuItem Header="Copy Link" Command="{x:Static local:MainWindow.CopySpinLinkCommand}" />
+				</MenuItem>
 				<MenuItem
 					Header="_Paste Spin"
 					Command="{x:Static local:MainWindow.PasteSpinCommand}"

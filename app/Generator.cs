@@ -6,210 +6,148 @@ using System.Threading.Tasks;
 
 namespace Croupier
 {
-	public class Generator(Ruleset ruleset, Mission mission)
+	public class Generator(Ruleset ruleset, List<KillMethod>? standardKills = null, List<KillMethod>? weaponKills = null, List<KillMethod>? uniqueKills = null, List<Mission>? missions = null)
 	{
 		private static readonly Random random = new();
 		private readonly Ruleset ruleset = ruleset;
-		private readonly Mission mission = mission;
+		private readonly List<KillMethod> standardKills = standardKills ?? [];
+		private readonly List<KillMethod> weaponKills = weaponKills ?? [];
+		private readonly List<KillMethod> uniqueKills = uniqueKills ?? [];
+		private readonly List<Mission> missions = missions ?? [];
 
-		public Spin GenerateSpin() {
+		public Spin Spin(Mission? mission = null) {
+			mission ??= Mission.Get(Mission.GetRandomMissionID());
 			Spin spin = new();
 			mission.Targets.ForEach(target => {
-				spin.Conditions.Add(GenerateCondition(ref target, spin));
+				spin.Conditions.Add(SpinCondition(spin, mission, target));
 			});
 			return spin;
 		}
 
-		public SpinCondition GenerateCondition(ref Target target, Spin spin = null) {
+		public SpinCondition SpinCondition(Spin spin, Mission mission, Target target) {
 			if (!mission.Targets.Contains(target))
-				throw new ArgumentException("target is not in the selected mission");
+				throw new ArgumentException($"Target '{target.Name}' is not in the mission '{mission.Name}'.");
 
-			Disguise disguise;
-			KillMethod method;
+			Disguise? disguise = null;
+			SpinKillMethod? kill = null;
 
-			// In suit only mode, force the suit disguise for every target
-			if (ruleset.Rules.SuitOnly)
-				disguise = Mission.GetSuitDisguise(mission.ID);
+			if (ruleset.Rules.SuitOnly) {
+				// In suit only mode, force the suit disguise for every target
+				disguise = mission.SuitDisguise;
+				
+				if (disguise == null)
+					throw new Exception($"Failed to determine suit disguise for mission '{mission.Name}'.");
+			}
 			else {
 				// Generate disguises, regenerate if necessary based on duplication rule
-				do disguise = GenerateDisguise();
-				while (spin != null && !ruleset.Rules.AllowDuplicateDisguise && spin.HasDisguise(disguise));
+				do disguise = GenerateDisguise(mission);
+				while (!ruleset.Rules.AllowDuplicateDisguise && spin.HasDisguise(disguise));
 			}
-
-			// Generate methods until something legal pops up
-			do method = GenerateKillMethod(target);
-			while (!IsLegalForSpin(spin, target, disguise, method));
-
-			return new SpinCondition() {
-				Target = target,
-				Disguise = disguise,
-				Method = method,
-			};
+			
+			kill = GenerateKill(spin, mission, target, disguise);
+			return new SpinCondition(target, disguise, kill);
 		}
 
-		public Disguise GenerateDisguise() {
-			if (Config.Default.Ruleset_EnableAnyDisguise) {
+		public bool IsLegalForSpin(Spin spin, Mission mission, Target target, Disguise disguise, KillMethod kill, KillComplication complication = KillComplication.None) {
+			if (kill.IsLargeFirearm && spin.LargeFirearmCount > 0) return false;
+			if (spin.HasMethod(kill)) return false;
+			var tags = ruleset.GetMethodTags(target, kill);
+			if (tags.Contains("OnlyLoud") && kill.IsSilencedWeapon) return false;
+			if (ruleset.AreAnyOfTheseTagsBanned(tags)) return false;
+			tags = ruleset.TestRules(target, disguise, kill, mission, complication);
+			if (ruleset.AreAnyOfTheseTagsBanned(tags)) return false;
+			return true;
+		}
+
+		public Disguise GenerateDisguise(Mission mission) {
+			if (ruleset.Rules.AnyDisguise) {
 				var disguises = new List<Disguise>(mission.Disguises) {
-					new("Any", "condition_disguise_any.jpg", false, true)
+					new(mission, "Any", "condition_disguise_any.jpg", false, true)
 				};
 				return disguises[random.Next(disguises.Count)];
 			}
 			return mission.Disguises[random.Next(mission.Disguises.Count)];
 		}
 
-		public static KillMethod CreateKillMethod(TargetType target = TargetType.Normal) {
-			return new KillMethod(StandardKillMethod.NeckSnap);
+		public KillMethod? GenerateKillFromSet(List<KillMethod> kills, Spin spin, Mission mission, Target target, Disguise disguise, bool variant = false) {
+			var legalKills = kills.Where(k => IsLegalForSpin(spin, mission, target, disguise, k)).ToList();
+			if (legalKills.Count == 0) return null;
+			var kill = legalKills[random.Next(legalKills.Count)];
+			if (kill.Category == KillMethodCategory.Weapon) {
+				if (kill.IsExplosive && !ruleset.Rules.AnyExplosives)
+					variant = true;
+			}
+			if (variant) {
+				return kill.Category switch {
+					KillMethodCategory.Melee => GenerateMeleeKillVariant(spin, mission, target, disguise, kill) ?? kill,
+					KillMethodCategory.Weapon => GenerateWeaponKillVariant(spin, mission, target, disguise, kill) ?? kill,
+					_ => kill,
+				};
+			}
+			return kill;
 		}
 
-		public KillMethod GenerateKillMethod(Target target) {
-			if (target.Type == TargetType.Soders) return GenerateSodersKillMethod();
+		public KillMethodVariant? GenerateWeaponKillVariant(Spin spin, Mission mission, Target target, Disguise disguise, KillMethod method) {
+			var variants = method.Variants.Where(v => IsLegalForSpin(spin, mission, target, disguise, v)).ToList();
+			if (variants.Count == 0) return null;
+			return variants[random.Next(variants.Count)];
+		}
 
+		public KillMethodVariant? GenerateMeleeKillVariant(Spin spin, Mission mission, Target target, Disguise disguise, KillMethod method) {
+			var variants = method.Variants.Where(v => 
+				(!v.IsMelee || ruleset.Rules.MeleeKillTypes)
+				&& (!v.IsThrown || ruleset.Rules.ThrownKillTypes)
+				&& IsLegalForSpin(spin, mission, target, disguise, v)
+			).ToList();
+			if (variants.Count == 0) return null;
+			return variants[random.Next(variants.Count)];
+		}
+
+		public SpinKillMethod GenerateKill(Spin spin, Mission mission, Target target, Disguise disguise) {
 			// Pick random type of kill method, skip map-specific type if the mission has no such items
-			KillMethodType type;
-			var types = Enum.GetValues(typeof(KillMethodType));
-			do type = (KillMethodType)types.GetValue(random.Next(types.Length));
-			while (type == KillMethodType.Specific && mission.Methods.Count == 0);
+			var uniqueKills = this.uniqueKills.Where(k => k.Target == target.Name).ToList();
+			var hasUniqueKills = uniqueKills.Count > 0;
+			var category = KillMethodCategory.Standard;
+			List<KillMethodCategory> categories = [KillMethodCategory.Standard, KillMethodCategory.Weapon];
 
-			// Pick a random method of the generated type
-			var method = new KillMethod(type);
-			var shouldGenerateKillType = random.Next(101) > ruleset.Rules.KillTypeChance;
+			if (hasUniqueKills && target.Type == TargetType.Unique)
+				categories = [KillMethodCategory.Unique, KillMethodCategory.Weapon];
 
-			switch (method.Type) {
-				case KillMethodType.Standard:
-					method.Standard = KillMethod.StandardList[random.Next(KillMethod.StandardList.Count)];
-					break;
-				case KillMethodType.Firearm:
-					method.Firearm = KillMethod.WeaponList[random.Next(KillMethod.WeaponList.Count)];
+			if (target.Type != TargetType.Unique && mission.Methods.Count > 0)
+				categories.Add(KillMethodCategory.Melee);
 
-					// Randomly apply kill types to explosive
-					if (method.Firearm == FirearmKillMethod.Explosive) {
-						if (!shouldGenerateKillType && ruleset.Rules.AnyExplosives)
-							break;
+			var standardKills = this.standardKills.ToList();
+			if (hasUniqueKills && target.Type != TargetType.Unique)
+				standardKills = [..standardKills, ..uniqueKills];
 
-						List<KillType> explosiveKillTypes = [ KillType.Loud ];
-						if (ruleset.Rules.ImpactExplosives)
-							explosiveKillTypes.Add(KillType.Impact);
-						if (ruleset.Rules.RemoteExplosives)
-							explosiveKillTypes.Add(KillType.Remote);
-						if (ruleset.Rules.LoudRemoteExplosives)
-							explosiveKillTypes.Add(KillType.LoudRemote);
-						method.KillType = explosiveKillTypes[random.Next(explosiveKillTypes.Count)];
-					}
-					// Randomly apply loud or silenced to other firearms
-					else if (shouldGenerateKillType)
-						method.KillType = (new[]{ KillType.Loud, KillType.Silenced })[random.Next(2)];
-					break;
-				case KillMethodType.Specific:
-					List<SpecificKillMethod> methods = [..mission.Methods, ..(target.ID == TargetID.SierraKnox ? KillMethod.SierraKillsList : [])];
+			KillMethod? method = null;
 
-					while (true) {
-						method.Specific = methods[random.Next(methods.Count)];
+			do {
+				// Pick a random type
+				category = categories[random.Next(categories.Count)];
 
-						// Skip easter egg conditions unless enabled
-						if (!ruleset.Rules.Banned.Contains("EasterEgg")) {
-							var easterEggMethods = Mission.GetEasterEggMethods(mission.ID);
-							if (easterEggMethods.Contains(method.Specific.Value))
-								continue;
-						}
+				// Pick a random method of the generated type
+				var shouldGenerateType = random.Next(1, 101) <= ruleset.Rules.KillTypeChance;
 
-						break;
-					}
-
-					// Randomly apply thrown or melee to specific melee kills if enabled
-					if (shouldGenerateKillType && KillMethod.IsSpecificKillMethodMelee((SpecificKillMethod)method.Specific)) {
-						List<KillType> killTypes = [ ];
-						if (ruleset.Rules.MeleeKillTypes) killTypes.Add(KillType.Melee);
-						if (ruleset.Rules.ThrownKillTypes) killTypes.Add(KillType.Thrown);
-						method.KillType = killTypes.Count > 0 ? killTypes[random.Next(killTypes.Count)] : KillType.Any;
-					}
-					break;
-			}
+				method = category switch {
+					KillMethodCategory.Standard => GenerateKillFromSet(standardKills, spin, mission, target, disguise),
+					KillMethodCategory.Weapon => GenerateKillFromSet(weaponKills, spin, mission, target, disguise, shouldGenerateType),
+					KillMethodCategory.Melee => GenerateKillFromSet(mission.Methods.Select(m => m as KillMethod).ToList(), spin, mission, target, disguise, shouldGenerateType),
+					KillMethodCategory.Unique => GenerateKillFromSet(uniqueKills, spin, mission, target, disguise, shouldGenerateType),
+					_ => throw new NotImplementedException()
+				};
+			} while (method == null);
 
 			// If live complications enabled and valid for the kill method, randomly apply it
-			if (ruleset.Rules.LiveComplications && CanMethodHaveLiveComplication(method)) {
-				if (random.Next(100) + 1 <= ruleset.Rules.LiveComplicationChance)
-					method.Complication = KillComplication.Live;
-			}
+			var complication = KillComplication.None;
+			var tryGenerateLive = ruleset.Rules.LiveComplications && random.Next(1, 101) <= ruleset.Rules.LiveComplicationChance;
 
-			return method;
-		}
+			if (tryGenerateLive
+				&& target.Type != TargetType.Unique && method.CanHaveLiveComplication(ruleset)
+				&& IsLegalForSpin(spin, mission, target, disguise, method, KillComplication.Live))
+					complication = KillComplication.Live;
 
-		private static KillMethod GenerateSodersKillMethod() {
-			// Pick random type of kill method, skip map-specific type if the mission has no such items
-			var types = new KillMethodType[] { KillMethodType.Firearm, KillMethodType.Specific };
-			KillMethod method = new((KillMethodType)types.GetValue(random.Next(types.Length)));
-			
-			var shouldGenerateKillType = random.Next(2) != 0;
-
-			// Pick a random method of the generated type
-			switch (method.Type) {
-				case KillMethodType.Firearm:
-					method.Firearm = KillMethod.FirearmList[random.Next(KillMethod.FirearmList.Count)];
-
-					if (!shouldGenerateKillType)
-						break;
-
-					// Randomly apply loud or silenced
-					method.KillType = (new []{ KillType.Loud, KillType.Silenced })[random.Next(2)];
-					break;
-				case KillMethodType.Specific:
-					method.Specific = KillMethod.SodersKillsList[random.Next(KillMethod.SodersKillsList.Count)];
-					break;
-			}
-
-			return method;
-		}
-
-		public bool IsLegalForSpin(Spin spin, Target target, Disguise disguise, KillMethod method) {
-			if (IsLargeFirearm(method) && CountLargeFirearms(spin) > 0) return false;
-			if (spin.HasMethod(method)) return false;
-			var tags = ruleset.GetMethodTags(target.ID, method);
-			if (tags.Contains("OnlyLoud") && method.IsSilencedWeapon) return false;
-			if (DoTagsViolateRules(tags)) return false;
-			tags = ruleset.TestRules(target.ID, disguise, method, mission);
-			if (DoTagsViolateRules(tags)) return false;
-			return true;
-		}
-
-		private bool IsLargeFirearm(KillMethod method) {
-			if (ruleset.Rules.LoudSMGIsLargeFirearm && method.IsLoudWeapon && method.Firearm == FirearmKillMethod.SMG)
-				return true;
-			return method.IsLargeFirearm;
-		}
-
-		private int CountLargeFirearms(Spin spin) {
-			return spin.Conditions.Count(c => IsLargeFirearm(c.Method));
-		}
-		
-		private bool DoTagsViolateRules(List<string> tags) {
-			if (tags.Count == 0 || ruleset.Rules.Banned.Count == 0) return false;
-			foreach (var tag in tags) {
-				if (ruleset.Rules.Banned.Contains(tag))
-					return true;
-			}
-			return false;
-		}
-		
-		private bool CanMethodHaveLiveComplication(KillMethod method) {
-			switch (method.Type) {
-				case KillMethodType.Firearm:
-					// Allow all firearm kills except explosive (unless enabled)
-					if (method.Firearm == FirearmKillMethod.Explosive)
-						return !ruleset.Rules.LiveComplicationsExcludeStandard;
-					return true;
-				case KillMethodType.Specific:
-					// Allow all specific melee kills
-					return KillMethod.IsSpecificKillMethodMelee((SpecificKillMethod)method.Specific);
-				case KillMethodType.Standard:
-					// Disallow for standard kills for which it doesn't make sense
-					if (KillMethod.IsStandardMethodLiveOnly((StandardKillMethod)method.Standard)) break;
-					// Exception for neck snaps, allow based on being 'melee' kills
-					if (method.Standard == StandardKillMethod.NeckSnap) return true;
-					// Allow all other standard kills if exclude option not enabled
-					return !ruleset.Rules.LiveComplicationsExcludeStandard;
-			}
-
-			return false;
+			return new SpinKillMethod(method, complication);
 		}
 	}
 }

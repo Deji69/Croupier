@@ -21,6 +21,7 @@
 		<UseWPF>true</UseWPF>
 		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
 		<Platforms>AnyCPU;x64</Platforms>
+		<Nullable>enable</Nullable>
 	</PropertyGroup>
 	<PropertyGroup>
 		<ApplicationIcon>Resources\CroupierLogoIconsFlatLg.ico</ApplicationIcon>

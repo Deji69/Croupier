@@ -9,34 +9,13 @@ using System.Threading.Tasks;
 
 namespace Croupier {
 	class Config {
-		public static event EventHandler<int> OnSave;
+		public static event EventHandler<int>? OnSave;
 
 		public static Config Default = new();
 
 		public List<string> CustomMissionPool { get; set; } = [];
 		public MissionPoolPresetID MissionPool { get; set; } = MissionPoolPresetID.MainMissions;
 		public string Ruleset { get; set; } = "";
-		public RulesetConfig Ruleset_Custom { get; set; } = null;
-		public bool Ruleset_GenericEliminations { get; set; } = false;
-		public bool Ruleset_LiveComplications { get; set; } = true;
-		public bool Ruleset_LiveComplicationsExcludeStandard { get; set; } = true;
-		public int Ruleset_LiveComplicationChance { get; set; } = 25;
-		public bool Ruleset_MeleeKillTypes { get; set; } = false;
-		public bool Ruleset_ThrownKillTypes { get; set; } = false;
-		public bool Ruleset_BannedMedium { get; set; } = false;
-		public bool Ruleset_BannedHard { get; set; } = false;
-		public bool Ruleset_BannedExtreme { get; set; } = false;
-		public bool Ruleset_BannedImpossible { get; set; } = false;
-		public bool Ruleset_BannedBuggy { get; set; } = false;
-		public bool Ruleset_BannedEasterEgg { get; set; } = false;
-		public bool Ruleset_AnyExplosiveKillTypes { get; set; } = false;
-		public bool Ruleset_RemoteExplosiveKillTypes { get; set; } = false;
-		public bool Ruleset_LoudRemoteExplosiveKillTypes { get; set; } = false;
-		public bool Ruleset_ImpactExplosiveKillTypes { get; set; } = false;
-		public bool Ruleset_SuitOnlyMode { get; set; } = false;
-		public bool Ruleset_AllowDuplicateDisguises { get; set; } = false;
-		public bool Ruleset_EnableAnyDisguise { get; set; } = false;
-		public bool Ruleset_LoudSMGIsLargeFirearm { get; set; } = false;
 		public bool SpinIsRandom { get; set; } = false;
 		public List<string> SpinHistory { get; set; } = [];
 		public List<string> Bookmarks { get; set; } = [];
@@ -76,7 +55,7 @@ namespace Croupier {
 		{
 			try {
 				var json = File.ReadAllText("config.json");
-				Default = JsonSerializer.Deserialize<Config>(json, jsonSerializerOptions);
+				Default = JsonSerializer.Deserialize<Config>(json, jsonSerializerOptions)!;
 			}
 			catch (FileNotFoundException) { }
 			return true;
@@ -93,6 +72,7 @@ namespace Croupier {
 			AllowTrailingCommas = true,
 			WriteIndented = true,
 			IncludeFields = true,
+			ReadCommentHandling = JsonCommentHandling.Skip
 		};
 	}
 }

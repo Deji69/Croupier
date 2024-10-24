@@ -15,12 +15,10 @@ namespace Croupier
 {
 	public class TargetNameFormatEntry(TargetNameFormat id, string name) : INotifyPropertyChanged {
 		public TargetNameFormat ID { get; set; } = id;
-		public int Index { get { return (int)ID; } }
+		public int Index => (int)ID;
 		public string Name { get; set; } = name;
 		public bool IsSelected {
-			get {
-				return TargetNameFormatMethods.FromString(Config.Default.TargetNameFormat) == ID;
-			}
+			get => TargetNameFormatMethods.FromString(Config.Default.TargetNameFormat) == ID;
 			set {
 				Config.Default.TargetNameFormat = value.ToString();
 				OnPropertyChanged(nameof(IsSelected));
@@ -32,7 +30,7 @@ namespace Croupier
 			OnPropertyChanged(nameof(Name));
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 
 		protected virtual void OnPropertyChanged(string propertyName) {
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -46,7 +44,7 @@ namespace Croupier
 		private int _index = index;
 
 		public string Name {
-			get { return _name; }
+			get => _name;
 			set {
 				_name = value;
 				OnPropertyChanged(nameof(Name));
@@ -54,21 +52,21 @@ namespace Croupier
 		}
 
 		public int Index {
-			get { return _index; }
+			get => _index;
 			set {
 				_index = value;
 				OnPropertyChanged(nameof(Index));
 			}
 		}
 		public bool IsSelected {
-			get { return isSelected; }
+			get => isSelected;
 			set {
 				isSelected = value;
 				OnPropertyChanged(nameof(IsSelected));
 			}
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 
 		protected virtual void OnPropertyChanged(string propertyName) {
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -81,7 +79,7 @@ namespace Croupier
 	public partial class MainWindow : Window, INotifyPropertyChanged {
 
 		private const int MAX_HISTORY_ENTRIES = 30;
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 
 		public static readonly RoutedUICommand CheckUpdateCommand = new("Check Update", "CheckUpdate", typeof(MainWindow));
 		public static readonly RoutedUICommand CheckDailySpinsCommand = new("Check Daily Spins", "CheckDailySpins", typeof(MainWindow));
@@ -91,6 +89,7 @@ namespace Croupier
 		public static readonly RoutedUICommand CopySpinCommand = new("Copy Spin", "CopySpin", typeof(MainWindow), [
 			new KeyGesture(Key.C, ModifierKeys.Control),
 		]);
+		public static readonly RoutedUICommand CopySpinLinkCommand = new("Copy Spin Link", "CopySpinLink", typeof(MainWindow));
 		public static readonly RoutedUICommand PasteSpinCommand = new("Paste Spin", "PasteSpin", typeof(MainWindow), [
 			new KeyGesture(Key.V, ModifierKeys.Control),
 		]);
@@ -146,18 +145,18 @@ namespace Croupier
 		private static readonly List<Spin> spinHistory = [];
 		private static int spinHistoryIndex = 1;
 
-		private DebugWindow DebugWindowInst;
-		private EditMapPoolWindow EditMapPoolWindowInst;
-		private EditRulesetWindow EditRulesetWindowInst;
-		private TimerSettingsWindow TimerSettingsWindowInst;
-		private StatisticsWindow StatisticsWindowInst;
-		private EditSpinWindow EditSpinWindowInst;
-		private HitmapsWindow HitmapsWindowInst;
-		private LiveSplitWindow LiveSplitWindowInst;
+		private DebugWindow? DebugWindowInst;
+		private EditMapPoolWindow? EditMapPoolWindowInst;
+		private EditRulesetWindow? EditRulesetWindowInst;
+		private TimerSettingsWindow? TimerSettingsWindowInst;
+		private StatisticsWindow? StatisticsWindowInst;
+		private EditSpinWindow? EditSpinWindowInst;
+		private HitmapsWindow? HitmapsWindowInst;
+		private LiveSplitWindow? LiveSplitWindowInst;
 		private TargetNameFormat _targetNameFormat = TargetNameFormat.Initials;
-		private DailySpinData dailySpin1 = null;
-		private DailySpinData dailySpin2 = null;
-		private DailySpinData dailySpin3 = null;
+		private DailySpinData? dailySpin1 = null;
+		private DailySpinData? dailySpin2 = null;
+		private DailySpinData? dailySpin3 = null;
 		private double _spinFontSize = 16;
 		private bool _rightToLeft = false;
 		private bool _topmostEnabled = false;
@@ -174,11 +173,10 @@ namespace Croupier
 		private bool _timerFractions = true;
 
 		public TargetNameFormat TargetNameFormat {
-			get { return _targetNameFormat; }
+			get => _targetNameFormat;
 			set {
 				_targetNameFormat = value;
 				Config.Default.TargetNameFormat = value.ToString();
-				Config.Save();
 				OnPropertyChanged(nameof(TargetNameFormat));
 				SyncHistoryEntries();
 				foreach (var entry in TargetNameFormatEntries)
@@ -186,18 +184,15 @@ namespace Croupier
 			}
 		}
 		public bool AutoUpdateCheck {
-			get {
-				return Config.Default.CheckUpdate;
-			}
+			get => Config.Default.CheckUpdate;
 			set {
 				Config.Default.CheckUpdate = value;
-				Config.Save();
 				OnPropertyChanged(nameof(AutoUpdateCheck));
 			}
 		}
 
 		public double SpinFontSize {
-			get { return _spinFontSize; }
+			get => _spinFontSize;
 			private set {
 				if (_spinFontSize != value) {
 					_spinFontSize = value;
@@ -206,35 +201,27 @@ namespace Croupier
 			}
 		}
 
-		public bool ShuffleButtonEnabled {
-			get {
-				return missionPool.Count > 0;
-			}
-		}
+		public bool ShuffleButtonEnabled => missionPool.Count > 0;
 
 		public bool TopmostEnabled {
-			get {
-				return _topmostEnabled;
-			}
+			get => _topmostEnabled;
 			set {
 				_topmostEnabled = value;
 				Topmost = value;
 				Config.Default.AlwaysOnTop = value;
-				Config.Save();
 				OnPropertyChanged(nameof(TopmostEnabled));
 			}
 		}
 		public bool VerticalDisplay {
-			get { return _verticalDisplay; }
+			get => _verticalDisplay;
 			set {
 				_verticalDisplay = value;
 				Config.Default.VerticalDisplay = value;
-				Config.Save();
 				OnPropertyChanged(nameof(VerticalDisplay));
 			}
 		}
 		public bool SpinLock {
-			get { return _spinLock; }
+			get => _spinLock;
 			set {
 				if (value == _spinLock) return;
 				_spinLock = value;
@@ -248,10 +235,8 @@ namespace Croupier
 			set {
 				if (value == _rightToLeft) return;
 				_rightToLeft = value;
-				if (value != Config.Default.RightToLeft) {
+				if (value != Config.Default.RightToLeft)
 					Config.Default.RightToLeft = value;
-					Config.Save();
-				}
 				OnPropertyChanged(nameof(RightToLeft));
 				OnPropertyChanged(nameof(RightToLeftFlowDir));
 				OnPropertyChanged(nameof(ContentGridFlowDir));
@@ -265,10 +250,8 @@ namespace Croupier
 				if (value == _staticSize) return;
 				_staticSize = value;
 
-				if (value != Config.Default.StaticSize) {
+				if (value != Config.Default.StaticSize)
 					Config.Default.StaticSize = value;
-					Config.Save();
-				}
 
 				OnPropertyChanged(nameof(ContentGridAlign));
 				OnPropertyChanged(nameof(StaticSize));
@@ -285,10 +268,8 @@ namespace Croupier
 			set {
 				if (value == _staticSizeLHS) return;
 				_staticSizeLHS = value;
-				if (value != Config.Default.StaticSizeLHS) {
+				if (value != Config.Default.StaticSizeLHS)
 					Config.Default.StaticSizeLHS = value;
-					Config.Save();
-				}
 				OnPropertyChanged(nameof(ContentGridAlign));
 				OnPropertyChanged(nameof(StaticSize));
 				OnPropertyChanged(nameof(SpinAlignHorz));
@@ -304,10 +285,8 @@ namespace Croupier
 			set {
 				if (value == _killValidations) return;
 				_killValidations = value;
-				if (value != Config.Default.KillValidations) {
+				if (value != Config.Default.KillValidations)
 					Config.Default.KillValidations = value;
-					Config.Save();
-				}
 
 				OnPropertyChanged(nameof(KillValidations));
 
@@ -315,9 +294,8 @@ namespace Croupier
 					cond.ForceUpdate();
 			}
 		}
-		public bool ShowSpinLabels {
-			get => !_editMode;
-		}
+		public bool ShowSpinLabels => !_editMode;
+		public bool ShowStatusBar => ShowTimer || ShowStreak;
 		public bool EditMode {
 			get => _editMode;
 			set {
@@ -327,17 +305,12 @@ namespace Croupier
 				OnPropertyChanged(nameof(ShowSpinLabels));
 			}
 		}
-		public bool ShowStatusBar {
-			get => ShowTimer || ShowStreak;
-		}
 		public bool ShowTimer {
 			get => _showTimer;
 			set {
 				_showTimer = value;
-				if (value != Config.Default.Timer) {
+				if (value != Config.Default.Timer)
 					Config.Default.Timer = value;
-					Config.Save();
-				}
 				OnPropertyChanged(nameof(ShowStatusBar));
 				OnPropertyChanged(nameof(ShowTimer));
 				RefitWindow();
@@ -347,10 +320,8 @@ namespace Croupier
 			get => _showStreak;
 			set {
 				_showStreak = value;
-				if (value != Config.Default.Streak) {
+				if (value != Config.Default.Streak)
 					Config.Default.Streak = value;
-					Config.Save();
-				}
 				OnPropertyChanged(nameof(ShowStatusBar));
 				OnPropertyChanged(nameof(ShowStreak));
 				RefitWindow();
@@ -360,22 +331,18 @@ namespace Croupier
 			get => _showStreakPB;
 			set {
 				_showStreakPB = value;
-				if (value != Config.Default.ShowStreakPB) {
+				if (value != Config.Default.ShowStreakPB)
 					Config.Default.ShowStreakPB = value;
-					Config.Save();
-				}
 				OnPropertyChanged(nameof(ShowStreakPB));
-				UpdateStreakStatus();
+				UpdateStreakStatus(false);
 			}
 		}
 		public bool TimerMultiSpin {
 			get => _timerMultiSpin;
 			set {
 				_timerMultiSpin = value;
-				if (value != Config.Default.TimerMultiSpin) {
+				if (value != Config.Default.TimerMultiSpin)
 					Config.Default.TimerMultiSpin = value;
-					Config.Save();
-				}
 				OnPropertyChanged(nameof(TimerMultiSpin));
 			}
 		}
@@ -383,71 +350,33 @@ namespace Croupier
 			get => _timerFractions;
 			set {
 				_timerFractions = value;
-				if (value != Config.Default.TimerFractions) {
+				if (value != Config.Default.TimerFractions)
 					Config.Default.TimerFractions = value;
-					Config.Save();
-				}
 				OnPropertyChanged(nameof(TimerFractions));
 			}
 		}
-		public FlowDirection RightToLeftFlowDir {
-			get {
-				if (ContentGridFlowDir == FlowDirection.RightToLeft)
-					return RightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
-				return RightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
-			}
-		}
-		public HorizontalAlignment ContentGridAlign {
-			get {
-				if (!StaticSize)
-					return HorizontalAlignment.Stretch;
-				return StaticSizeLHS ? HorizontalAlignment.Left : HorizontalAlignment.Right;
-			}
-		}
-		public TextAlignment SpinTextAlignment {
-			get {
-				return RightToLeft ? TextAlignment.Right : TextAlignment.Left;
-			}
-		}
-		public FlowDirection ContentGridFlowDir {
-			get {
-				if (!StaticSize)
-					return FlowDirection.LeftToRight;
-				return StaticSizeLHS ? FlowDirection.LeftToRight : FlowDirection.RightToLeft;
-			}
-		}
-		public HorizontalAlignment SpinAlignHorz {
-			get {
-				if (!StaticSize) return HorizontalAlignment.Stretch;
-				return StaticSizeLHS ? HorizontalAlignment.Left : HorizontalAlignment.Right;
-			}
-		}
-		public bool StatusAlignLeft {
-			get {
-				return StaticSize ? StaticSizeLHS : !RightToLeft;
-			}
-		}
-		public double SpinGridWidth {
-			get {
-				if (!StaticSize) return double.NaN;
-				return (VerticalDisplay ? Width : Width / 2) - 6;
-			}
-		}
-		public double SpinGridHeight {
-			get {
-				if (!StaticSize)
-					return double.NaN;
-				return SpinGridWidth * 0.33;
-			}
-		}
+		public FlowDirection RightToLeftFlowDir
+			=> ContentGridFlowDir == FlowDirection.RightToLeft
+				? (RightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight)
+				: (RightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight);
+		public HorizontalAlignment ContentGridAlign
+			=> !StaticSize ? HorizontalAlignment.Stretch : (StaticSizeLHS ? HorizontalAlignment.Left : HorizontalAlignment.Right);
+		public TextAlignment SpinTextAlignment => RightToLeft ? TextAlignment.Right : TextAlignment.Left;
+		public FlowDirection ContentGridFlowDir
+			=> !StaticSize ? FlowDirection.LeftToRight : (StaticSizeLHS ? FlowDirection.LeftToRight : FlowDirection.RightToLeft);
+		public HorizontalAlignment SpinAlignHorz
+			=> !StaticSize ? HorizontalAlignment.Stretch : (StaticSizeLHS ? HorizontalAlignment.Left : HorizontalAlignment.Right);
+		public bool StatusAlignLeft => StaticSize ? StaticSizeLHS : !RightToLeft;
+		public double SpinGridWidth => !StaticSize ? double.NaN : (VerticalDisplay ? Width : Width / 2) - 6;
+		public double SpinGridHeight => !StaticSize ? double.NaN : SpinGridWidth * 0.33;
 
 		public string DailySpin1Label {
 			get {
 				if (dailySpin1 == null) return "Spin #1";
-				if (!SpinParser.Parse(dailySpin1.spin, out var spin)) return "Spin #1";
-				var stats = Config.Default.Stats.GetSpinStats(spin);
+				if (!SpinParser.TryParse(dailySpin1.spin, out var spin)) return "Spin #1";
+				var stats = Config.Default.Stats.GetSpinStats(spin!);
 				var completion = stats.GetFastestIGTCompletion();
-				var location = new Mission(spin.Mission).Location;
+				var location = Mission.Get(spin!.Mission).Location;
 				if (completion == null) return $"Spin #{dailySpin1.id}: {location}";
 				return $"Spin #{dailySpin1.id}: {location} ({TimeFormatter.FormatSecondsTime(completion.IGT)})";
 			}
@@ -463,8 +392,8 @@ namespace Croupier
 		public bool DailySpin1Completed {
 			get {
 				if (dailySpin1 == null) return false;
-				if (!SpinParser.Parse(dailySpin1.spin, out var spin)) return false;
-				var stats = Config.Default.Stats.GetSpinStats(spin);
+				if (!SpinParser.TryParse(dailySpin1.spin, out var spin)) return false;
+				var stats = Config.Default.Stats.GetSpinStats(spin!);
 				return stats.Completions.Count > 0;
 			}
 		}
@@ -472,10 +401,10 @@ namespace Croupier
 		public string DailySpin2Label {
 			get {
 				if (dailySpin2 == null) return "Spin #2";
-				if (!SpinParser.Parse(dailySpin2.spin, out var spin)) return "Spin #2";
-				var stats = Config.Default.Stats.GetSpinStats(spin);
+				if (!SpinParser.TryParse(dailySpin2.spin, out var spin)) return "Spin #2";
+				var stats = Config.Default.Stats.GetSpinStats(spin!);
 				var completion = stats.GetFastestIGTCompletion();
-				var location = new Mission(spin.Mission).Location;
+				var location = Mission.Get(spin!.Mission).Location;
 				if (completion == null) return $"Spin #{dailySpin2.id}: {location}";
 				return $"Spin #{dailySpin2.id}: {location} ({TimeFormatter.FormatSecondsTime(completion.IGT)})";
 			}
@@ -491,8 +420,8 @@ namespace Croupier
 		public bool DailySpin2Completed {
 			get {
 				if (dailySpin2 == null) return false;
-				if (!SpinParser.Parse(dailySpin2.spin, out var spin)) return false;
-				var stats = Config.Default.Stats.GetSpinStats(spin);
+				if (!SpinParser.TryParse(dailySpin2.spin, out var spin)) return false;
+				var stats = Config.Default.Stats.GetSpinStats(spin!);
 				return stats.Completions.Count > 0;
 			}
 		}
@@ -500,10 +429,10 @@ namespace Croupier
 		public string DailySpin3Label {
 			get {
 				if (dailySpin3 == null) return "Spin #3";
-				if (!SpinParser.Parse(dailySpin3.spin, out var spin)) return "Spin #3";
-				var stats = Config.Default.Stats.GetSpinStats(spin);
+				if (!SpinParser.TryParse(dailySpin3.spin, out var spin)) return "Spin #3";
+				var stats = Config.Default.Stats.GetSpinStats(spin!);
 				var completion = stats.GetFastestIGTCompletion();
-				var location = new Mission(spin.Mission).Location;
+				var location = Mission.Get(spin!.Mission).Location;
 				if (completion == null) return $"Spin #{dailySpin3.id}: {location}";
 				return $"Spin #{dailySpin3.id}: {location} ({TimeFormatter.FormatSecondsTime(completion.IGT)})";
 			}
@@ -519,15 +448,13 @@ namespace Croupier
 		public bool DailySpin3Completed {
 			get {
 				if (dailySpin3 == null) return false;
-				if (!SpinParser.Parse(dailySpin3.spin, out var spin)) return false;
-				var stats = Config.Default.Stats.GetSpinStats(spin);
+				if (!SpinParser.TryParse(dailySpin3.spin, out var spin)) return false;
+				var stats = Config.Default.Stats.GetSpinStats(spin!);
 				return stats.Completions.Count > 0;
 			}
 		}
 
-		public Spin CurrentSpin {
-			get => spin;
-		}
+		public Spin? CurrentSpin => spin;
 
 		public ObservableCollection<SpinHistoryEntry> HistoryEntries = [];
 		public ObservableCollection<SpinHistoryEntry> BookmarkEntries = [
@@ -541,48 +468,12 @@ namespace Croupier
 		];
 
 		private readonly List<SpinCondition> conditions = [];
-		private readonly List<Mission> missions = [
-			new Mission(MissionID.ICAFACILITY_FREEFORM),
-			new Mission(MissionID.ICAFACILITY_FINALTEST),
-			new Mission(MissionID.PARIS_SHOWSTOPPER),
-			new Mission(MissionID.SAPIENZA_WORLDOFTOMORROW),
-			new Mission(MissionID.MARRAKESH_GILDEDCAGE),
-			new Mission(MissionID.BANGKOK_CLUB27),
-			new Mission(MissionID.COLORADO_FREEDOMFIGHTERS),
-			new Mission(MissionID.HOKKAIDO_SITUSINVERSUS),
-			new Mission(MissionID.BANGKOK_THESOURCE),
-			new Mission(MissionID.SAPIENZA_THEAUTHOR),
-			new Mission(MissionID.HOKKAIDO_PATIENTZERO),
-			new Mission(MissionID.PARIS_HOLIDAYHOARDERS),
-			new Mission(MissionID.SAPIENZA_THEICON),
-			new Mission(MissionID.SAPIENZA_LANDSLIDE),
-			new Mission(MissionID.MARRAKESH_HOUSEBUILTONSAND),
-			new Mission(MissionID.HOKKAIDO_SNOWFESTIVAL),
-			new Mission(MissionID.HAWKESBAY_NIGHTCALL),
-			new Mission(MissionID.MIAMI_FINISHLINE),
-			new Mission(MissionID.SANTAFORTUNA_THREEHEADEDSERPENT),
-			new Mission(MissionID.MUMBAI_CHASINGAGHOST),
-			new Mission(MissionID.WHITTLETON_ANOTHERLIFE),
-			new Mission(MissionID.ISLEOFSGAIL_THEARKSOCIETY),
-			new Mission(MissionID.NEWYORK_GOLDENHANDSHAKE),
-			new Mission(MissionID.HAVEN_THELASTRESORT),
-			new Mission(MissionID.MIAMI_ASILVERTONGUE),
-			new Mission(MissionID.SANTAFORTUNA_EMBRACEOFTHESERPENT),
-			new Mission(MissionID.MUMBAI_ILLUSIONSOFGRANDEUR),
-			new Mission(MissionID.WHITTLETON_ABITTERPILL),
-			new Mission(MissionID.DUBAI_ONTOPOFTHEWORLD),
-			new Mission(MissionID.DARTMOOR_DEATHINTHEFAMILY),
-			new Mission(MissionID.BERLIN_APEXPREDATOR),
-			new Mission(MissionID.CHONGQING_ENDOFANERA),
-			new Mission(MissionID.MENDOZA_THEFAREWELL),
-			new Mission(MissionID.CARPATHIAN_UNTOUCHABLE),
-			new Mission(MissionID.AMBROSE_SHADOWSINTHEWATER),
-		];
+		private List<Mission> missions = [];
 		private readonly ObservableCollection<Ruleset> rulesets = [];
 
 		private readonly List<MissionID> missionPool = [];
-		private Mission currentMission = null;
-		private Entrance usedEntrance = null;
+		private Mission? currentMission = null;
+		private Entrance? usedEntrance = null;
 		private string[] loadout = [];
 		private bool disableClientUpdate = false;
 		private bool timerStopped = true;
@@ -590,20 +481,20 @@ namespace Croupier
 		private DateTime timerStart = DateTime.Now;
 		private TimeSpan? timeElapsed = null;
 		private int streak = 0;
-		private Spin spin = null;
+		private Spin? spin = null;
 		private bool spinCompleted = false;
 		private bool hasRestartedSinceSpin = false;
-		private List<TargetID> trackedValidKills = [];
+		private List<Target> trackedValidKills = [];
 		private DateTime? autoSpinSchedule = null;
 		private MissionID autoSpinMission = MissionID.NONE;
 		private readonly LiveSplitClient liveSplit;
-		private readonly DispatcherTimer timer = null;
+		private readonly DispatcherTimer timer;
 
 		private ObservableCollection<MissionComboBoxItem> MissionListItems {
 			get {
 				var items = new ObservableCollection<MissionComboBoxItem>();
 				var group = MissionGroup.None;
-				missions.ForEach(mission => {
+				Mission.All.ForEach(mission => {
 					if (mission.Group != group) {
 						items.Add(new() {
 							Name = mission.Group.GetName(),
@@ -632,29 +523,73 @@ namespace Croupier
 			((App)Application.Current).WindowPlace.Register(this);
 			Focus();
 
-			var logoVer = Version.Parse(Assembly.GetExecutingAssembly().GetName().Version.ToString());
-			var logoVerStr = logoVer.Major + "." + logoVer.Minor;
-			if (logoVer.Build != 0)
-				logoVerStr += "." + logoVer.Build;
-			Logo.ToolTip = "Croupier v" + logoVerStr;
-
-			if (Config.Default.SpinHistory.Count > 0) {
-				string[] history = new string[Config.Default.SpinHistory.Count];
-				Config.Default.SpinHistory.CopyTo(history, 0);
-
-				foreach (var item in history.Reverse()) {
-					if (SpinParser.Parse(item, out var spin))
-						PushSpinToHistory(spin);
-				}
+			var ver = Assembly.GetExecutingAssembly().GetName().Version;
+			if (ver != null) {
+				var logoVer = Version.Parse(ver.ToString());
+				var logoVerStr = logoVer.Major + "." + logoVer.Minor;
+				if (logoVer.Build != 0)
+					logoVerStr += "." + logoVer.Build;
+				Logo.ToolTip = "Croupier v" + logoVerStr;
 			}
 
 			LoadSettings();
+
+			missions.AddRange([
+				Mission.Get(MissionID.ICAFACILITY_FREEFORM),
+				Mission.Get(MissionID.ICAFACILITY_FINALTEST),
+				Mission.Get(MissionID.PARIS_SHOWSTOPPER),
+				Mission.Get(MissionID.SAPIENZA_WORLDOFTOMORROW),
+				Mission.Get(MissionID.MARRAKESH_GILDEDCAGE),
+				Mission.Get(MissionID.BANGKOK_CLUB27),
+				Mission.Get(MissionID.COLORADO_FREEDOMFIGHTERS),
+				Mission.Get(MissionID.HOKKAIDO_SITUSINVERSUS),
+				Mission.Get(MissionID.BANGKOK_THESOURCE),
+				Mission.Get(MissionID.SAPIENZA_THEAUTHOR),
+				Mission.Get(MissionID.HOKKAIDO_PATIENTZERO),
+				Mission.Get(MissionID.PARIS_HOLIDAYHOARDERS),
+				Mission.Get(MissionID.SAPIENZA_THEICON),
+				Mission.Get(MissionID.SAPIENZA_LANDSLIDE),
+				Mission.Get(MissionID.MARRAKESH_HOUSEBUILTONSAND),
+				Mission.Get(MissionID.HOKKAIDO_SNOWFESTIVAL),
+				Mission.Get(MissionID.HAWKESBAY_NIGHTCALL),
+				Mission.Get(MissionID.MIAMI_FINISHLINE),
+				Mission.Get(MissionID.SANTAFORTUNA_THREEHEADEDSERPENT),
+				Mission.Get(MissionID.MUMBAI_CHASINGAGHOST),
+				Mission.Get(MissionID.WHITTLETON_ANOTHERLIFE),
+				Mission.Get(MissionID.ISLEOFSGAIL_THEARKSOCIETY),
+				Mission.Get(MissionID.NEWYORK_GOLDENHANDSHAKE),
+				Mission.Get(MissionID.HAVEN_THELASTRESORT),
+				Mission.Get(MissionID.MIAMI_ASILVERTONGUE),
+				Mission.Get(MissionID.SANTAFORTUNA_EMBRACEOFTHESERPENT),
+				Mission.Get(MissionID.MUMBAI_ILLUSIONSOFGRANDEUR),
+				Mission.Get(MissionID.WHITTLETON_ABITTERPILL),
+				Mission.Get(MissionID.DUBAI_ONTOPOFTHEWORLD),
+				Mission.Get(MissionID.DARTMOOR_DEATHINTHEFAMILY),
+				Mission.Get(MissionID.BERLIN_APEXPREDATOR),
+				Mission.Get(MissionID.CHONGQING_ENDOFANERA),
+				Mission.Get(MissionID.MENDOZA_THEFAREWELL),
+				Mission.Get(MissionID.CARPATHIAN_UNTOUCHABLE),
+				Mission.Get(MissionID.AMBROSE_SHADOWSINTHEWATER),
+			]);
+
+			MissionSelect.ItemsSource = MissionListItems;
+			ContextMenuTargetNameFormat.ItemsSource = TargetNameFormatEntries;
+			ContextMenuTargetNameFormat.DataContext = this;
+			ContextMenuHistory.ItemsSource = HistoryEntries;
+			ContextMenuHistory.DataContext = this;
+			ContextMenuBookmarks.ItemsSource = BookmarkEntries;
+			ContextMenuBookmarks.DataContext = this;
+
+			var idx = MissionListItems.ToList().FindIndex(item => item.ID == currentMission?.ID);
+			MissionSelect.SelectedIndex = idx;
+
+			LoadSpinHistory();
 
 			if (spinHistory.Count > 0)
 				SetSpinHistory(1);
 			else {
 				SetMission(missions[0].ID);
-				Spin(currentMission.ID);
+				Spin();
 			}
 
 			PropertyChanged += MainWindow_PropertyChanged;
@@ -662,7 +597,7 @@ namespace Croupier
 			timer = new DispatcherTimer {
 				Interval = TimeSpan.FromMilliseconds(1)
 			};
-			timer.Tick += (object sender, EventArgs e) => {
+			timer.Tick += (object? sender, EventArgs e) => {
 				var diff = timeElapsed ?? DateTime.Now - timerStart;
 
 				if (autoSpinSchedule.HasValue) {
@@ -683,15 +618,15 @@ namespace Croupier
 			};
 			timer.Start();
 
-			CroupierSocketServer.Connected += (object sender, int _) => {
+			CroupierSocketServer.Connected += (object? sender, int _) => {
 				SendMissionsToClient();
 				SendSpinToClient();
 				SendSpinLockToClient();
 				SendStreakToClient();
 				SendTimerToClient();
 			};
-			CroupierSocketServer.Respin += (object sender, MissionID id) => Spin(id);
-			CroupierSocketServer.AutoSpin += (object sender, MissionID id) => {
+			CroupierSocketServer.Respin += (object? sender, MissionID id) => Spin(id);
+			CroupierSocketServer.AutoSpin += (object? sender, MissionID id) => {
 				if (SpinLock) return;
 				if (Config.Default.AutoSpinCountdown > 0) {
 					autoSpinSchedule = DateTime.Now + TimeSpan.FromSeconds(Config.Default.AutoSpinCountdown);
@@ -699,29 +634,29 @@ namespace Croupier
 				}
 				else AutoSpin(id);
 			};
-			CroupierSocketServer.Random += (object sender, int _) => Shuffle();
-			CroupierSocketServer.ToggleSpinLock += (object sender, int _) => {
+			CroupierSocketServer.Random += (object? sender, int _) => Shuffle();
+			CroupierSocketServer.ToggleSpinLock += (object? sender, int _) => {
 				SpinLock = !SpinLock;
 			};
-			CroupierSocketServer.ToggleTimer += (object sender, bool enable) => {
+			CroupierSocketServer.ToggleTimer += (object? sender, bool enable) => {
 				ShowTimer = enable;
 			};
-			CroupierSocketServer.PauseTimer += (object sender, bool pause) => {
+			CroupierSocketServer.PauseTimer += (object? sender, bool pause) => {
 				if (pause) StopTimer();
 				else ResumeTimer();
 				timerManuallyStopped = pause;
 			};
-			CroupierSocketServer.ResetTimer += (object sender, int _) => {
+			CroupierSocketServer.ResetTimer += (object? sender, int _) => {
 				StopTimer();
 				ResetTimer();
 			};
-			CroupierSocketServer.ResetStreak += (object sender, int _) => {
+			CroupierSocketServer.ResetStreak += (object? sender, int _) => {
 				ResetStreak();
 			};
-			CroupierSocketServer.MissionStart += (object sender, MissionStart start) => {
+			CroupierSocketServer.MissionStart += (object? sender, MissionStart start) => {
 				TrackGameMissionAttempt(start);
 			};
-			CroupierSocketServer.MissionComplete += (object sender, MissionCompletion arg) => {
+			CroupierSocketServer.MissionComplete += (object? sender, MissionCompletion arg) => {
 				spinCompleted = true;
 				arg.KillsValidated = CheckSpinKillsValid();
 				if (arg.SA && (arg.KillsValidated || Config.Default.StreakRequireValidKills == false)) IncrementStreak();
@@ -730,7 +665,7 @@ namespace Croupier
 				StopTimer();
 				TrackGameMissionCompletion(arg);
 			};
-			CroupierSocketServer.MissionFailed += (object sender, int _) => {
+			CroupierSocketServer.MissionFailed += (object? sender, int _) => {
 				if (spinCompleted) return;
 
 				if (hasRestartedSinceSpin || (DateTime.Now - timerStart).TotalSeconds > Config.Default.StreakReplanWindow)
@@ -738,27 +673,27 @@ namespace Croupier
 
 				hasRestartedSinceSpin = true;
 			};
-			CroupierSocketServer.Missions += (object sender, List<MissionID> missions) => {
+			CroupierSocketServer.Missions += (object? sender, List<MissionID> missions) => {
 				missionPool.Clear();
 				missionPool.AddRange(missions);
 				EditMapPoolWindowInst?.UpdateMissionPool(missionPool);
 			};
-			CroupierSocketServer.Prev += (object sender, int _) => {
+			CroupierSocketServer.Prev += (object? sender, int _) => {
 				disableClientUpdate = true;
 				PreviousSpin();
 				disableClientUpdate = false;
 				SendSpinToClient();
 			};
-			CroupierSocketServer.Next += (object sender, int _) => {
+			CroupierSocketServer.Next += (object? sender, int _) => {
 				disableClientUpdate = true;
 				NextSpin();
 				disableClientUpdate = false;
 				SendSpinToClient();
 			};
-			CroupierSocketServer.SpinData += (object sender, string data) => {
-				if (SpinParser.Parse(data, out var spin)) {
+			CroupierSocketServer.SpinData += (object? sender, string data) => {
+				if (SpinParser.TryParse(data, out var spin)) {
 					disableClientUpdate = true;
-					SetSpin(spin);
+					SetSpin(spin!);
 					UpdateSpinHistory();
 					PostConditionUpdate();
 					ResetCurrentSpinProgress();
@@ -766,14 +701,14 @@ namespace Croupier
 					disableClientUpdate = false;
 				}
 			};
-			CroupierSocketServer.LoadStarted += (object sender, int _) => {
+			CroupierSocketServer.LoadStarted += (object? sender, int _) => {
 				StopTimer();
 			};
-			CroupierSocketServer.LoadFinished += (object sender, int _) => {
+			CroupierSocketServer.LoadFinished += (object? sender, int _) => {
 				if (!spinCompleted) ResumeTimer();
 				SendTimerToClient();
 			};
-			CroupierSocketServer.KillValidation += (object sender, string data) => {
+			CroupierSocketServer.KillValidation += (object? sender, string data) => {
 				if (data.Length == 0) return;
 
 				var firstLine = data.Split("\n")[0];
@@ -782,24 +717,26 @@ namespace Croupier
 				foreach (var v in validationStrings) {
 					var segments = v.Split(":");
 					if (segments.Length != 4) return;
+					var target = Roulette.Main.GetTargetByInitials(segments[0]);
+					var specificTarget = Roulette.Main.GetTargetByInitials(segments[3]);
 					var kv = new KillValidation {
-						target = (TargetID)int.Parse(segments[0]),
+						target = target,
 						killValidation = (KillValidationType)int.Parse(segments[1]),
 						disguiseValidation = int.Parse(segments[2]) != 0,
-						specificTarget = (TargetID)int.Parse(segments[3]),
+						specificTarget = specificTarget,
 					};
 					for (var i = 0; i < conditions.Count; ++i) {
 						var cond = conditions[i];
-						if (cond.Target.ID != kv.target) continue;
+						if (cond.Target != kv.target) continue;
 						cond.KillValidation = kv;
 					}
 				}
 
 				TrackKillValidation();
 			};
-			HitmapsSpinLink.ReceiveNewSpinData += (object sender, string data) => {
-				if (SpinParser.Parse(data, out var spin)) {
-					SetSpin(spin);
+			HitmapsSpinLink.ReceiveNewSpinData += (object? sender, string data) => {
+				if (SpinParser.TryParse(data, out var spin)) {
+					SetSpin(spin!);
 					UpdateSpinHistory();
 					PostConditionUpdate();
 					ResetCurrentSpinProgress();
@@ -812,7 +749,7 @@ namespace Croupier
 			SendSpinToClient();
 		}
 
-		private void MainWindow_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		private void MainWindow_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == nameof(VerticalDisplay)
 				|| e.PropertyName == nameof(StaticSize)) {
 				RefitWindow();
@@ -822,12 +759,24 @@ namespace Croupier
 		}
 
 		private void LoadRulesetConfiguration() {
+			try {
+				Roulette.Main.Load();
+			} catch (Exception e) {
+				MessageBox.Show(
+					this,
+					$"Config error: {e.Message}",
+					"Config Error - Croupier",
+					MessageBoxButton.OK,
+					MessageBoxImage.Exclamation
+				);
+			}
+
 			var files = Directory.GetFiles("rulesets", "*.json");
-			
+
 			rulesets.Clear();
 
 			foreach (var file in files.Reverse()) {
-				var ruleset = Ruleset.LoadConfig(file);
+				var ruleset = Ruleset.LoadFromFile(Roulette.Main, file);
 				if (rulesets.Any(r => r.Name == ruleset.Name))
 					continue;
 				if (ruleset.Name == "Custom")
@@ -836,47 +785,28 @@ namespace Croupier
 					rulesets.Add(ruleset);
 			}
 
-			var custom = rulesets.FirstOrDefault(r => r.Name == "Custom");
-			var fallbackDefaultRuleset = rulesets.FirstOrDefault(r => r.Name == "RRWC2024");
+			var activeRuleset = rulesets.FirstOrDefault(r => r.Name == Config.Default.Ruleset)
+				?? rulesets.FirstOrDefault(r => r.Name == "RRWC2024")
+				?? rulesets.FirstOrDefault();
 
-			if (custom == null) {
-				custom = new("Custom", new() {
-					AllowDuplicateMethod = false,
-					AllowDuplicateDisguise = Config.Default.Ruleset_AllowDuplicateDisguises,
-					AnyDisguise = Config.Default.Ruleset_EnableAnyDisguise,
-					AnyExplosives = Config.Default.Ruleset_AnyExplosiveKillTypes,
-					Banned = ["Slow", "Hard", "Extreme", "Impossible", "Buggy", "EasterEgg"],
-					GenericEliminations = Config.Default.Ruleset_GenericEliminations,
-					ImpactExplosives = Config.Default.Ruleset_ImpactExplosiveKillTypes,
-					LiveComplications = Config.Default.Ruleset_LiveComplications,
-					LiveComplicationChance = Config.Default.Ruleset_LiveComplicationChance,
-					LiveComplicationsExcludeStandard = Config.Default.Ruleset_LiveComplicationsExcludeStandard,
-					LoudRemoteExplosives = Config.Default.Ruleset_LoudRemoteExplosiveKillTypes,
-					LoudSMGIsLargeFirearm = Config.Default.Ruleset_LoudSMGIsLargeFirearm,
-					MeleeKillTypes = Config.Default.Ruleset_MeleeKillTypes,
-					RemoteExplosives = Config.Default.Ruleset_RemoteExplosiveKillTypes,
-					SuitOnly = Config.Default.Ruleset_SuitOnlyMode,
-					ThrownKillTypes = Config.Default.Ruleset_ThrownKillTypes,
-				}, fallbackDefaultRuleset?.Tags);
-				custom.Save();
-				rulesets.Add(custom);
+			if (activeRuleset != null) {
+				Ruleset.Current = activeRuleset;
+				Config.Default.Ruleset = Ruleset.Current.Name;
 			}
-			//new("RR14", RulesetPreset.RR14),
-			//new("RRWC 2023", RulesetPreset.RRWC2023),
-			//new("RR12", RulesetPreset.RR12),
-			//new("RR11", RulesetPreset.RR11),
-			//new("Croupier", RulesetPreset.Croupier),
-			//new("Custom", RulesetPreset.Custom),
+		}
 
-			var newRuleset = rulesets.FirstOrDefault(r => r.Name == Config.Default.Ruleset);
-			if (newRuleset != null)
-				Ruleset.Current = newRuleset;
-			else if (rulesets.Count > 0) {
-				Ruleset.Current = rulesets.First();
-				Config.Default.Ruleset = Ruleset.Current?.Name ?? "Custom";
+		private void LoadSpinHistory() {
+			if (Config.Default.SpinHistory.Count > 0) {
+				string[] history = new string[Config.Default.SpinHistory.Count];
+				Config.Default.SpinHistory.CopyTo(history, 0);
+
+				foreach (var item in history.Reverse()) {
+					if (SpinParser.TryParse(item, out var spin))
+						PushSpinToHistory(spin!, true);
+				}
+
+				SyncHistoryEntries();
 			}
-			else
-				Config.Default.Ruleset = Ruleset.Current?.Name ?? "Custom";
 		}
 
 		private void LoadSettings() {
@@ -899,7 +829,7 @@ namespace Croupier
 			KillValidations = Config.Default.KillValidations;
 			TargetNameFormat = TargetNameFormatMethods.FromString(Config.Default.TargetNameFormat);
 			LoadMissionPool();
-			UpdateStreakStatus();
+			UpdateStreakStatus(false);
 
 			foreach (var bookmark in Config.Default.Bookmarks) {
 				BookmarkEntries.Add(new(bookmark, BookmarkEntries.Count));
@@ -907,14 +837,15 @@ namespace Croupier
 		}
 
 		private bool CheckSpinKillsValid() {
+			if (spin == null) return true;
 			foreach (var cond in spin.Conditions) {
 				if (!cond.KillValidation.IsValid) return false;
 			}
 			return true;
 		}
 
-		private void EditSpinWindow_SetCondition(object _sender, SpinCondition condition) {
-			if (currentMission.ID != condition.Target.Mission) return;
+		private void EditSpinWindow_SetCondition(object? _sender, SpinCondition condition) {
+			if (currentMission != condition.Target.Mission) return;
 			for (var i = 0; i < conditions.Count; i++) {
 				if (conditions[i].Target != condition.Target) continue;
 				conditions[i] = condition;
@@ -925,7 +856,7 @@ namespace Croupier
 			PostConditionUpdate();
 		}
 
-		private void EditMapPoolWindow_AddMissionToPool(object sender, MissionID e) {
+		private void EditMapPoolWindow_AddMissionToPool(object? sender, MissionID e) {
 			if (missionPool.Contains(e)) return;
 			missionPool.Add(e);
 			SendMissionsToClient();
@@ -933,7 +864,7 @@ namespace Croupier
 			SaveCustomMissionPool();
 		}
 
-		private void EditMapPoolWindow_RemoveMissionFromPool(object sender, MissionID e) {
+		private void EditMapPoolWindow_RemoveMissionFromPool(object? sender, MissionID e) {
 			missionPool.Remove(e);
 			SendMissionsToClient();
 			OnPropertyChanged(nameof(ShuffleButtonEnabled));
@@ -947,10 +878,11 @@ namespace Croupier
 			Config.Default.CustomMissionPool ??= [];
 			Config.Default.CustomMissionPool.Clear();
 
-			foreach (var mission in missionPool) {
-				if (!Mission.GetMissionCodename(mission, out var name))
+			foreach (var missionID in missionPool) {
+				var mission = Mission.TryGet(missionID);
+				if (mission == null)
 					continue;
-				Config.Default.CustomMissionPool.Add(name);
+				Config.Default.CustomMissionPool.Add(mission.Codename);
 			}
 		}
 
@@ -966,17 +898,6 @@ namespace Croupier
 
 			ThemeManager.SetCurrentTheme(this, new Uri("/Croupier;component/Resources/DarkTheme.xaml", UriKind.Relative));
 
-			MissionSelect.ItemsSource = MissionListItems;
-			ContextMenuTargetNameFormat.ItemsSource = TargetNameFormatEntries;
-			ContextMenuTargetNameFormat.DataContext = this;
-			ContextMenuHistory.ItemsSource = HistoryEntries;
-			ContextMenuHistory.DataContext = this;
-			ContextMenuBookmarks.ItemsSource = BookmarkEntries;
-			ContextMenuBookmarks.DataContext = this;
-
-			var idx = MissionListItems.ToList().FindIndex(item => item.ID == currentMission.ID);
-			MissionSelect.SelectedIndex = idx;
-
 			if (Config.Default.CheckUpdate) {
 				DoUpdateCheck();
 				CheckDailySpinsAsync();
@@ -991,16 +912,23 @@ namespace Croupier
 		}
 
 		public void Spin(MissionID id = MissionID.NONE) {
-			if (id == MissionID.NONE) id = currentMission.ID;
-			if (!SetMission(id)) return;
+			if (Ruleset.Current == null) {
+				MessageBox.Show("No ruleset active. Please select a ruleset from the ruleset window.");
+				return;
+			}
+
+			if (id == MissionID.NONE && spin != null)
+				id = spin.Mission;
+			if (id != MissionID.NONE && !SetMission(id))
+				return;
 
 			if (!spinCompleted)
 				ResetStreak();
 
 			autoSpinSchedule = null;
 
-			Generator gen = new(Ruleset.Current, currentMission);
-			spin = gen.GenerateSpin();
+			var gen = Roulette.Main.CreateGenerator(Ruleset.Current);
+			spin = gen.Spin(Mission.Get(currentMission!.ID));
 			SetSpin(spin);
 			spinHistoryIndex = 1;
 			PushCurrentSpinToHistory();
@@ -1026,6 +954,8 @@ namespace Croupier
 		}
 
 		public bool SetMission(MissionID id) {
+			if (id == MissionID.NONE)
+				return false;
 			currentMission = missions.Find(m => m.ID == id);
 			if (currentMission == null) return false;
 			var idx = MissionListItems.ToList().FindIndex(item => item.ID == id);
@@ -1033,7 +963,7 @@ namespace Croupier
 			return idx != -1;
 		}
 
-		public bool PushSpinToHistory(Spin spin) {
+		public bool PushSpinToHistory(Spin spin, bool skipSync = false) {
 			if (spin == null || spin.Conditions.Count == 0) return false;
 			if (spin.Conditions == conditions) return false;
 			if (spinHistory.Count > 0 && spinHistory[^1].ToString() == spin.ToString())
@@ -1044,7 +974,7 @@ namespace Croupier
 				HistoryEntries.Insert(0, new(spin.ToString(), spinHistory.Count - 1));
 			while (spinHistory.Count > MAX_HISTORY_ENTRIES)
 				spinHistory.RemoveAt(0);
-			SyncHistoryEntries();
+			if (!skipSync) SyncHistoryEntries();
 			return true;
 		}
 
@@ -1095,6 +1025,8 @@ namespace Croupier
 		}
 
 		public void SyncHistoryEntries() {
+			if (spinHistory.Count == 0) return;
+
 			var fwdIndex = spinHistory.Count - spinHistoryIndex;
 
 			Config.Default.SpinHistory.Clear();
@@ -1141,7 +1073,7 @@ namespace Croupier
 			RefitWindow();
 		}
 
-		private void UpdateStreakStatus() {
+		private void UpdateStreakStatus(bool save = true) {
 			SendStreakToClient();
 
 			Config.Default.StreakCurrent = streak;
@@ -1157,7 +1089,7 @@ namespace Croupier
 			else
 				Streak.Text = "Streak: " + streak;
 
-			Config.Save();
+			if (save) Config.Save();
 		}
 
 		private void IncrementStreak() {
@@ -1171,6 +1103,8 @@ namespace Croupier
 		}
 
 		private void TrackNewSpin() {
+			if (spin == null) return;
+
 			var stats = Config.Default.Stats;
 			var spinStats = stats.GetSpinStats(spin);
 			var missionStats = stats.GetMissionStats(spin.Mission);
@@ -1202,15 +1136,17 @@ namespace Croupier
 		}
 
 		private void TrackKillValidation() {
+			if (spin == null) return;
+
 			var stats = Config.Default.Stats;
 
 			foreach (var cond in spin.Conditions) {
 				if (!cond.KillValidation.IsValid)
 					continue;
-				if (trackedValidKills.Contains(cond.Target.ID))
+				if (trackedValidKills.Contains(cond.Target))
 					continue;
 
-				trackedValidKills.Add(cond.Target.ID);
+				trackedValidKills.Add(cond.Target);
 				++stats.NumValidKills;
 			}
 
@@ -1218,6 +1154,8 @@ namespace Croupier
 		}
 
 		private void TrackGameMissionAttempt(MissionStart start) {
+			if (spin == null) return;
+
 			var stats = Config.Default.Stats;
 			var locationId = start.Location.ToLower();
 			loadout = start.Loadout;
@@ -1248,10 +1186,14 @@ namespace Croupier
 			if (!mc.SA) {
 				if (mc.KillsValidated)
 					++stats.NumNonSAWins;
+				Config.Save();
 				return;
 			}
 
 			if (!mc.KillsValidated)
+				return;
+
+			if (spin == null)
 				return;
 
 			var spinStats = stats.GetSpinStats(spin);
@@ -1352,9 +1294,9 @@ namespace Croupier
 			if (disableClientUpdate) return;
 			var missions = "";
 			missionPool.ForEach(mission => {
-				if (!Mission.GetMissionCodename(mission, out var name))
-					return;
-				missions += missions.Length > 0 ? $",{name}" : name;
+				var miss = Mission.TryGet(mission);
+				if (miss == null) return;
+				missions += missions.Length > 0 ? $",{miss.Codename}" : miss.Codename;
 			});
 			CroupierSocketServer.Send("Missions:" + missions);
 		}
@@ -1364,14 +1306,14 @@ namespace Croupier
 			CroupierSocketServer.Send($"Streak:{streak}");
 		}
 
-		private void OnMouseDown(object sender, MouseButtonEventArgs e) {
+		private void OnMouseDown(object? sender, MouseButtonEventArgs e) {
 			if (e.ChangedButton == MouseButton.Left)
 				this.DragMove();
 		}
 
-		private void MissionSelect_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+		private void MissionSelect_SelectionChanged(object? sender, SelectionChangedEventArgs e) {
 			if (e.AddedItems.Count == 0) return;
-			var item = (MissionComboBoxItem)e.AddedItems[0];
+			var item = (MissionComboBoxItem)e.AddedItems[0]!;
 			if (currentMission == null || currentMission.ID != item.ID)
 				Spin(item.ID);
 		}
@@ -1381,26 +1323,20 @@ namespace Croupier
 			Spin(missionPool[random.Next(missionPool.Count)]);
 		}
 
-		private ICommand _historyEntrySelectCommand;
-		private ICommand _bookmarkEntrySelectCommand;
-		private ICommand _targetNameFormatSelectCommand;
+		private ICommand? _historyEntrySelectCommand;
+		private ICommand? _bookmarkEntrySelectCommand;
+		private ICommand? _targetNameFormatSelectCommand;
 
 		public ICommand HistoryEntrySelectCommand {
-			get {
-				return _historyEntrySelectCommand ??= new RelayCommand(param => this.HistoryEntrySelected(param));
-			}
+			get => _historyEntrySelectCommand ??= new RelayCommand(param => this.HistoryEntrySelected(param));
 		}
 
 		public ICommand BookmarkEntrySelectCommand {
-			get {
-				return _bookmarkEntrySelectCommand ??= new RelayCommand(param => this.BookmarkEntrySelected(param));
-			}
+			get => _bookmarkEntrySelectCommand ??= new RelayCommand(param => this.BookmarkEntrySelected(param));
 		}
 
 		public ICommand TargetNameFormatSelectCommand {
-			get {
-				return _targetNameFormatSelectCommand ??= new RelayCommand(param => this.TargetNameFormatSelected(param));
-			}
+			get => _targetNameFormatSelectCommand ??= new RelayCommand(param => this.TargetNameFormatSelected(param));
 		}
 
 		private void HistoryEntrySelected(object param) {
@@ -1428,8 +1364,8 @@ namespace Croupier
 				}
 				SyncBookmarks();
 			}
-			else if (SpinParser.Parse(BookmarkEntries[index.Value].Name, out var spin)) {
-				SetSpin(spin);
+			else if (SpinParser.TryParse(BookmarkEntries[index.Value].Name, out var spin)) {
+				SetSpin(spin!);
 				SyncHistoryEntries();
 				SendSpinToClient();
 			}
@@ -1442,16 +1378,16 @@ namespace Croupier
 			TargetNameFormat = TargetNameFormatEntries[index.Value].ID;
 		}
 
-		private void ContextMenu_Exit(object sender, RoutedEventArgs e) {
+		private void ContextMenu_Exit(object? sender, RoutedEventArgs e) {
 			Application.Current.Shutdown();
 		}
 
-		private void Window_Deactivated(object sender, EventArgs e) {
-			Window window = (Window)sender;
+		private void Window_Deactivated(object? sender, EventArgs e) {
+			Window window = (Window)sender!;
 			window.Topmost = TopmostEnabled;
 		}
 
-		private void OnSizeChange(object sender, SizeChangedEventArgs e) {
+		private void OnSizeChange(object? sender, SizeChangedEventArgs e) {
 			if (e.WidthChanged) {
 				var numColumns = GetNumColumns();
 				if (!StaticSize) {
@@ -1473,7 +1409,7 @@ namespace Croupier
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
-		private void Window_Loaded(object sender, RoutedEventArgs e) {
+		private void Window_Loaded(object? sender, RoutedEventArgs e) {
 			RefitWindow();
 		}
 
@@ -1575,17 +1511,19 @@ namespace Croupier
 			SpinFontSize = Math.Max(10, v);
 		}
 
-		private void Window_Closing(object sender, CancelEventArgs e) {
+		private void Window_Closing(object? sender, CancelEventArgs e) {
 			timer.Stop();
 			StatisticsWindowInst?.Close();
 			Config.Save(true);
 		}
 
-		private void CopySpinCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
+		private void CopySpinCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
+			var text = new Spin(conditions).ToString();
+
 			// Have a few attempts at accessing the clipboard. In Windows this is usually a data race vs. other processes.
 			for (var i = 0; i < 10; ++i) {
 				try {
-					Clipboard.SetText(new Spin(conditions).ToString());
+					Clipboard.SetText(text);
 					return;
 				} catch {
 				}
@@ -1599,10 +1537,33 @@ namespace Croupier
 			);
 		}
 
-		private void PasteSpinCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
+		private void CopySpinLinkCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
+			var text = new Spin(conditions).ToString();
+			var url = "https://croupier.nbeatz.net/?spin=" + Strings.URLCharacterRegex.Replace(text, "-").Replace("--", "-");
+
+			// Have a few attempts at accessing the clipboard. In Windows this is usually a data race vs. other processes.
+			for (var i = 0; i < 10; ++i) {
+				try {
+					Clipboard.SetText(url);
+					return;
+				} catch {
+				}
+				System.Threading.Thread.Sleep(10);
+			}
+
+			// Give up for now and inform the use to retry.
+			MessageBox.Show(
+				"Clipboard access failed. Another process may have attempted to access the clipboard at the same time. Please try again.",
+				"Copy Spin Link Failed",
+				MessageBoxButton.OK,
+				MessageBoxImage.Warning
+			);
+		}
+
+		private void PasteSpinCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
 			var text = Clipboard.GetText();
-			if (SpinParser.Parse(text, out var spin)) {
-				if (this.spin == null || this.spin.ToString() == spin.ToString())
+			if (SpinParser.TryParse(text, out var spin)) {
+				if (this.spin == null || this.spin.ToString() == spin!.ToString())
 					return;
 				SetSpin(spin);
 				spinHistoryIndex = 1;
@@ -1614,7 +1575,7 @@ namespace Croupier
 			}
 		}
 
-		private void EditMapPoolCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
+		private void EditMapPoolCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
 			if (EditMapPoolWindowInst != null) {
 				EditMapPoolWindowInst.Activate();
 				return;
@@ -1625,14 +1586,14 @@ namespace Croupier
 			};
 			EditMapPoolWindowInst.AddMissionToPool += EditMapPoolWindow_AddMissionToPool;
 			EditMapPoolWindowInst.RemoveMissionFromPool += EditMapPoolWindow_RemoveMissionFromPool;
-			EditMapPoolWindowInst.Closed += (object sender, EventArgs e) => {
+			EditMapPoolWindowInst.Closed += (object? sender, EventArgs e) => {
 				EditMapPoolWindowInst = null;
 			};
 			EditMapPoolWindowInst.UpdateMissionPool(missionPool);
 			EditMapPoolWindowInst.Show();
 		}
 
-		private void EditRulesetsCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
+		private void EditRulesetsCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
 			LoadRulesetConfiguration();
 
 			if (EditRulesetWindowInst != null) {
@@ -1643,17 +1604,17 @@ namespace Croupier
 				Owner = this,
 				WindowStartupLocation = WindowStartupLocation.CenterOwner
 			};
-			EditRulesetWindowInst.Closed += (object sender, EventArgs e) => {
+			EditRulesetWindowInst.Closed += (object? sender, EventArgs e) => {
 				EditRulesetWindowInst = null;
 			};
 			EditRulesetWindowInst.Show();
 		}
 
-		private void ResetStreakCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
+		private void ResetStreakCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
 			ResetStreak();
 		}
 
-		private void ShowStatisticsWindowCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
+		private void ShowStatisticsWindowCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
 			if (StatisticsWindowInst != null) {
 				StatisticsWindowInst.Activate();
 				return;
@@ -1662,17 +1623,17 @@ namespace Croupier
 				Owner = null,
 				WindowStartupLocation = WindowStartupLocation.CenterOwner
 			};
-			StatisticsWindowInst.Closed += (object sender, EventArgs e) => {
+			StatisticsWindowInst.Closed += (object? sender, EventArgs e) => {
 				StatisticsWindowInst = null;
 			};
 			StatisticsWindowInst.Show();
 		}
 
-		private void StreakSettingsCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
+		private void StreakSettingsCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
 			TimerSettingsCommand_Executed(sender, e);
 		}
 
-		private void TimerSettingsCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
+		private void TimerSettingsCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
 			if (TimerSettingsWindowInst != null) {
 				TimerSettingsWindowInst.Activate();
 				return;
@@ -1681,21 +1642,22 @@ namespace Croupier
 				Owner = this,
 				WindowStartupLocation = WindowStartupLocation.CenterOwner
 			};
-			TimerSettingsWindowInst.Closed += (object sender, EventArgs e) => {
+			TimerSettingsWindowInst.Closed += (object? sender, EventArgs e) => {
 				TimerSettingsWindowInst = null;
 			};
-			TimerSettingsWindowInst.ResetStreak += (object sender, int _) => ResetStreak();
-			TimerSettingsWindowInst.ResetStreakPB += (object sender, int _) => UpdateStreakStatus();
+			TimerSettingsWindowInst.ResetStreak += (object? sender, int _) => ResetStreak();
+			TimerSettingsWindowInst.ResetStreakPB += (object? sender, int _) => UpdateStreakStatus();
 			TimerSettingsWindowInst.Show();
 		}
 
-		private void CheckDailySpinsCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
+		private void CheckDailySpinsCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
 			CheckDailySpinsAsync();
 		}
 
-		private void DailySpin1Command_Executed(object sender, ExecutedRoutedEventArgs e) {
-			if (SpinParser.Parse(dailySpin1.spin, out var spin)) {
-				SetSpin(spin);
+		private void DailySpin1Command_Executed(object? sender, ExecutedRoutedEventArgs e) {
+			if (dailySpin1 == null) return;
+			if (SpinParser.TryParse(dailySpin1.spin, out var spin)) {
+				SetSpin(spin!);
 				spinHistoryIndex = 1;
 				PushCurrentSpinToHistory();
 				PostConditionUpdate();
@@ -1705,9 +1667,10 @@ namespace Croupier
 			}
 		}
 		
-		private void DailySpin2Command_Executed(object sender, ExecutedRoutedEventArgs e) {
-			if (SpinParser.Parse(dailySpin2.spin, out var spin)) {
-				SetSpin(spin);
+		private void DailySpin2Command_Executed(object? sender, ExecutedRoutedEventArgs e) {
+			if (dailySpin2 == null) return;
+			if (SpinParser.TryParse(dailySpin2.spin, out var spin)) {
+				SetSpin(spin!);
 				spinHistoryIndex = 1;
 				PushCurrentSpinToHistory();
 				PostConditionUpdate();
@@ -1717,9 +1680,10 @@ namespace Croupier
 			}
 		}
 
-		private void DailySpin3Command_Executed(object sender, ExecutedRoutedEventArgs e) {
-			if (SpinParser.Parse(dailySpin3.spin, out var spin)) {
-				SetSpin(spin);
+		private void DailySpin3Command_Executed(object? sender, ExecutedRoutedEventArgs e) {
+			if (dailySpin3 == null) return;
+			if (SpinParser.TryParse(dailySpin3.spin, out var spin)) {
+				SetSpin(spin!);
 				spinHistoryIndex = 1;
 				PushCurrentSpinToHistory();
 				PostConditionUpdate();
@@ -1729,25 +1693,25 @@ namespace Croupier
 			}
 		}
 
-		private void DailySpin1Command_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
-			e.CanExecute = dailySpin1 != null && SpinParser.Parse(dailySpin1.spin, out _);
+		private void DailySpin1Command_CanExecute(object? sender, CanExecuteRoutedEventArgs e) {
+			e.CanExecute = dailySpin1 != null && SpinParser.TryParse(dailySpin1.spin, out _);
 		}
 
-		private void DailySpin2Command_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
-			e.CanExecute = dailySpin2 != null && SpinParser.Parse(dailySpin2.spin, out _);
+		private void DailySpin2Command_CanExecute(object? sender, CanExecuteRoutedEventArgs e) {
+			e.CanExecute = dailySpin2 != null && SpinParser.TryParse(dailySpin2.spin, out _);
 		}
 
-		private void DailySpin3Command_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
-			e.CanExecute = dailySpin3 != null && SpinParser.Parse(dailySpin3.spin, out _);
+		private void DailySpin3Command_CanExecute(object? sender, CanExecuteRoutedEventArgs e) {
+			e.CanExecute = dailySpin3 != null && SpinParser.TryParse(dailySpin3.spin, out _);
 		}
 
-		private void DebugWindowCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
+		private void DebugWindowCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e) {
 #if DEBUG
 			e.CanExecute = true;
 #endif
 		}
 
-		private void DebugWindowCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
+		private void DebugWindowCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
 			if (DebugWindowInst != null) {
 				DebugWindowInst.Activate();
 				return;
@@ -1756,13 +1720,13 @@ namespace Croupier
 				Owner = this,
 				WindowStartupLocation = WindowStartupLocation.CenterOwner
 			};
-			DebugWindowInst.Closed += (object sender, EventArgs e) => {
+			DebugWindowInst.Closed += (object? sender, EventArgs e) => {
 				DebugWindowInst = null;
 			};
 			DebugWindowInst.Show();
 		}
 
-		private void ShowHitmapsWindowCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
+		private void ShowHitmapsWindowCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
 			if (HitmapsWindowInst != null) {
 				HitmapsWindowInst.Activate();
 				return;
@@ -1771,13 +1735,13 @@ namespace Croupier
 				Owner = this,
 				WindowStartupLocation = WindowStartupLocation.CenterOwner
 			};
-			HitmapsWindowInst.Closed += (object sender, EventArgs e) => {
+			HitmapsWindowInst.Closed += (object? sender, EventArgs e) => {
 				HitmapsWindowInst = null;
 			};
 			HitmapsWindowInst.Show();
 		}
 
-		private void ShowLiveSplitWindowCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
+		private void ShowLiveSplitWindowCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
 			if (LiveSplitWindowInst != null) {
 				LiveSplitWindowInst.Activate();
 				return;
@@ -1786,13 +1750,13 @@ namespace Croupier
 				Owner = this,
 				WindowStartupLocation = WindowStartupLocation.CenterOwner
 			};
-			LiveSplitWindowInst.Closed += (object sender, EventArgs e) => {
+			LiveSplitWindowInst.Closed += (object? sender, EventArgs e) => {
 				LiveSplitWindowInst = null;
 			};
 			LiveSplitWindowInst.Show();
 		}
 
-		private void EditSpinCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
+		private void EditSpinCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
 			if (EditSpinWindowInst != null) {
 				EditSpinWindowInst.Activate();
 				return;
@@ -1802,98 +1766,107 @@ namespace Croupier
 				WindowStartupLocation = WindowStartupLocation.CenterOwner
 			};
 			EditSpinWindowInst.SetCondition += EditSpinWindow_SetCondition;
-			EditSpinWindowInst.Closed += (object sender, EventArgs e) => {
+			EditSpinWindowInst.Closed += (object? sender, EventArgs e) => {
 				EditSpinWindowInst = null;
 			};
 			EditSpinWindowInst.Show();
 		}
 
-		private void PrevSpinCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
+		private void PrevSpinCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
 			PreviousSpin();
 		}
 
-		private void PrevSpinCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
+		private void PrevSpinCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = spinHistory.Count > 1 && spinHistoryIndex < spinHistory.Count;
 		}
 
-		private void NextSpinCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
+		private void NextSpinCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = spinHistoryIndex > 1;
 		}
 
-		private void NextSpinCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
+		private void NextSpinCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
 			NextSpin();
 		}
 
-		private void RespinCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
+		private void RespinCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
 			Spin();
 		}
 
-		private void ShuffleCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
+		private void ShuffleCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
 			Shuffle();
 		}
 
-		private void ResetTimerCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
+		private void ResetTimerCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
 			timerManuallyStopped = false;
 			StopTimer();
 			ResetTimer();
 		}
 
-		private void StartTimerCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
+		private void StartTimerCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
 			timerManuallyStopped = false;
 			StartTimer();
 		}
 
-		private void StartTimerCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
+		private void StartTimerCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = timerStopped;
 		}
 
-		private void StopTimerCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
+		private void StopTimerCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
 			timerManuallyStopped = true;
 			StopTimer();
 		}
 
-		private void StopTimerCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
+		private void StopTimerCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = !timerManuallyStopped;
 		}
 
-		private void ShuffleCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
+		private void ShuffleCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = ShuffleButtonEnabled;
 		}
 
-		private void PasteSpinCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
+		private void PasteSpinCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e) {
 			//e.CanExecute = Croupier.Spin.Parse(Clipboard.GetText(), out _);
-			e.CanExecute = SpinParser.Parse(Clipboard.GetText(), out _);
+			e.CanExecute = SpinParser.TryParse(Clipboard.GetText(), out _);
 		}
 
-		private void CheckUpdateCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
+		private void CheckUpdateCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
 			DoUpdateCheck(true);
 		}
 
-		private void Command_AlwaysCanExecute(object sender, CanExecuteRoutedEventArgs e) {
+		private void Command_AlwaysCanExecute(object? sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = true;
 		}
 
 		private async void CheckDailySpinsAsync() {
-			var result = await DailySpinChecker.CheckForDailySpinsAsync();
+			try {
+				var result = await DailySpinChecker.CheckForDailySpinsAsync();
 
-			for (var i = 0; i < result.Length; ++i) {
-				var spin = result[i];
-				if (i == 0) dailySpin1 = spin;
-				else if (i == 1) dailySpin2 = spin;
-				else if (i == 2) dailySpin3 = spin;
+				for (var i = 0; i < result.Length; ++i) {
+					var spin = result[i];
+					if (i == 0) dailySpin1 = spin;
+					else if (i == 1) dailySpin2 = spin;
+					else if (i == 2) dailySpin3 = spin;
+				}
+
+				OnPropertyChanged(nameof(DailySpin1Completed));
+				OnPropertyChanged(nameof(DailySpin2Completed));
+				OnPropertyChanged(nameof(DailySpin3Completed));
+
+				OnPropertyChanged(nameof(DailySpin1Label));
+				OnPropertyChanged(nameof(DailySpin2Label));
+				OnPropertyChanged(nameof(DailySpin3Label));
+
+				OnPropertyChanged(nameof(DailySpin1Tooltip));
+				OnPropertyChanged(nameof(DailySpin2Tooltip));
+				OnPropertyChanged(nameof(DailySpin3Tooltip));
+			} catch (Exception e) {
+				MessageBox.Show(
+					$"Error checking for daily spins.\n{e.Message}",
+					"Daily Spin Check",
+					MessageBoxButton.OK,
+					MessageBoxImage.Error
+				);
 			}
-
-			OnPropertyChanged(nameof(DailySpin1Completed));
-			OnPropertyChanged(nameof(DailySpin2Completed));
-			OnPropertyChanged(nameof(DailySpin3Completed));
-
-			OnPropertyChanged(nameof(DailySpin1Label));
-			OnPropertyChanged(nameof(DailySpin2Label));
-			OnPropertyChanged(nameof(DailySpin3Label));
-
-			OnPropertyChanged(nameof(DailySpin1Tooltip));
-			OnPropertyChanged(nameof(DailySpin2Tooltip));
-			OnPropertyChanged(nameof(DailySpin3Tooltip));
 		}
 
 		private static async void DoUpdateCheck(bool informOnFail = false) {

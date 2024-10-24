@@ -27,9 +27,7 @@ namespace Croupier
 
 		private static void CurrentThemeChanged(DependencyObject p_DependencyObject, DependencyPropertyChangedEventArgs p_Args)
 		{
-			var s_Element = p_DependencyObject as FrameworkElement;
-
-			if (s_Element != null)
+			if (p_DependencyObject is FrameworkElement s_Element)
 				ApplyTheme(s_Element, GetCurrentTheme(s_Element));
 		}
 
@@ -38,7 +36,7 @@ namespace Croupier
 			if (p_TargetElement == null)
 				return;
 
-			ThemeResourceDictionary s_ThemeDictionary = null;
+			ThemeResourceDictionary? s_ThemeDictionary = null;
 
 			if (p_DictionaryUri != null)
 			{

@@ -87,7 +87,7 @@ auto CroupierClient::reconnect() -> bool {
 		connectInfo.ai_socktype = SOCK_STREAM;
 		connectInfo.ai_protocol = IPPROTO_TCP;
 
-		if (getaddrinfo("127.0.0.1", "8898", &connectInfo, &addressInfo) != 0) {
+		if (getaddrinfo("127.0.0.1", "4747", &connectInfo, &addressInfo) != 0) {
 			addressInfo = nullptr;
 			Logger::Error("getaddrinfo failed");
 		}

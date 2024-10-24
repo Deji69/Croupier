@@ -11,7 +11,7 @@ namespace Croupier {
 		public MissionID Mission { get; set; } = mission;
 	}
 
-	public class Entrance(string id, string name, string disguise = "", List<MissionID> missions = null) {
+	public class Entrance(string id, string name, string disguise = "", List<MissionID>? missions = null) {
 		public string ID { get; set; } = id;
 		public string Name { get; set; } = name;
 		public string Disguise { get; set; } = disguise;

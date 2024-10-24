@@ -8,25 +8,22 @@ using System.Windows.Input;
 
 namespace Croupier {
 	public class StatisticsViewModel : ViewModel {
-		public string Name { get; set; }
-		public string Description { get; set; }
-		public object Value { get; set; }
+		public required string Name { get; set; }
+		public required string Description { get; set; }
+		public required object Value { get; set; }
 	}
 
 	public class HistoryViewModel(SpinCompletionStats stats) : ViewModel, IEditableObject {
-		public string Mission { get; set; }
-		public string Spin { get; set; }
-		public string IGT { get; set; }
-		public string RTA { get; set; }
-		public string Entrance { get; set; }
+		public required string Mission { get; set; }
+		public required string Spin { get; set; }
+		public required string IGT { get; set; }
+		public string? RTA { get; set; }
+		public string? Entrance { get; set; }
 
 		public string Comment {
 			get => comment;
 			set {
-				if (value.Length > 1000)
-					comment = value[0..1000];
-				else
-					comment = value;
+				comment = value.Length > 1000 ? value[0..1000] : value;
 			}
 		}
 
@@ -60,13 +57,8 @@ namespace Croupier {
 	public class StatisticsWindowViewModel : ViewModel {
 		public ObservableCollection<StatisticsViewModel> MainStats { get; set; } = [];
 		public ObservableCollection<HistoryViewModel> History { get; set; } = [];
-		public string Title {
-			get {
-				if (FilterMissionID == MissionID.NONE)
-					return "Stats";
-				return Mission.GetMissionName(FilterMissionID) + " Stats";
-			}
-		}
+		public string Title => FilterMissionID == MissionID.NONE ? "Stats" : Mission.Get(FilterMissionID).Name + " Stats";
+		public Visibility MissionColumnVisibility => FilterMissionID != MissionID.NONE ? Visibility.Visible : Visibility.Hidden;
 
 		public bool MissionColumnEnabled {
 			get => _missionColumnEnabled;
@@ -105,12 +97,6 @@ namespace Croupier {
 			set {
 				_commentColumnEnabled = value;
 				UpdateProperty(nameof(CommentColumnEnabled));
-			}
-		}
-
-		public Visibility MissionColumnVisibility {
-			get {
-				return FilterMissionID != MissionID.NONE ? Visibility.Visible : Visibility.Hidden;
 			}
 		}
 
@@ -167,7 +153,7 @@ namespace Croupier {
 			Update();
 			UpdateHistory();
 
-			Config.OnSave += (object sender, int _) => {
+			Config.OnSave += (object? sender, int _) => {
 				Update();
 				UpdateHistory();
 			};
@@ -184,7 +170,7 @@ namespace Croupier {
 						Entrance = Locations.GetEntranceCommonName(c.StartLocation),
 						IGT = this.FormatSecondsTime(c.IGT),
 						RTA = this.FormatSecondsTime(c.RTA),
-						Mission = Mission.GetMissionName(c.Mission),
+						Mission = Mission.Get(c.Mission).Name,
 						Spin = spin.Key,
 						Comment = c.Comment ?? "",
 					});
@@ -267,8 +253,9 @@ namespace Croupier {
 
 			var fastestIGTSpinStats = Config.Default.Stats.GetFastestIGTSpinStats();
 			if (fastestIGTSpinStats != null) {
-				fastestIGT = FormatSecondsTime(fastestIGTSpinStats.GetFastestIGTCompletion().IGT);
-				fastestIGTMission = Mission.GetMissionName(fastestIGTSpinStats.Mission);
+				var completion = fastestIGTSpinStats.GetFastestIGTCompletion();
+				if (completion != null) fastestIGT = FormatSecondsTime(completion.IGT);
+				fastestIGTMission = Mission.Get(fastestIGTSpinStats.Mission).Name;
 				fastestIGTSpin = fastestIGTSpinStats.Spin;
 			}
 
@@ -278,8 +265,9 @@ namespace Croupier {
 
 			var longestIGTSpinStats = Config.Default.Stats.GetSlowestIGTSpinStats();
 			if (longestIGTSpinStats != null) {
-				longestIGT = FormatSecondsTime(longestIGTSpinStats.GetFastestIGTCompletion().IGT);
-				longestIGTMission = Mission.GetMissionName(longestIGTSpinStats.Mission);
+				var completion = longestIGTSpinStats.GetFastestIGTCompletion();
+				if (completion != null) longestIGT = FormatSecondsTime(completion.IGT);
+				longestIGTMission = Mission.Get(longestIGTSpinStats.Mission).Name;
 				longestIGTSpin = longestIGTSpinStats.Spin;
 			};
 
@@ -321,17 +309,17 @@ namespace Croupier {
 
 			var mostSpunMissionStats = Config.Default.Stats.GetMostSpunMissionStats();
 			if (mostSpunMissionStats != null) {
-				mostSpunMission = Mission.GetMissionName(mostSpunMissionStats.Mission) + $" ({mostSpunMissionStats.NumSpins})";
+				mostSpunMission = Mission.Get(mostSpunMissionStats.Mission).Name + $" ({mostSpunMissionStats.NumSpins})";
 			}
 
 			var mostPlayedMissionStats = Config.Default.Stats.GetMostPlayedMissionStats();
 			if (mostPlayedMissionStats != null) {
-				mostPlayedMission = Mission.GetMissionName(mostPlayedMissionStats.Mission) + $" ({mostPlayedMissionStats.NumAttempts})";
+				mostPlayedMission = Mission.Get(mostPlayedMissionStats.Mission).Name + $" ({mostPlayedMissionStats.NumAttempts})";
 			}
 
 			var mostWonMissionStats = Config.Default.Stats.GetMostWonMissionStats();
 			if (mostWonMissionStats != null) {
-				mostWonMission = Mission.GetMissionName(mostWonMissionStats.Mission) + $" ({mostWonMissionStats.NumWins})";
+				mostWonMission = Mission.Get(mostWonMissionStats.Mission).Name + $" ({mostWonMissionStats.NumWins})";
 			}
 
 			MainStats.Add(new() {
@@ -395,7 +383,8 @@ namespace Croupier {
 
 			var fastestIGTSpinStats = Config.Default.Stats.GetFastestIGTSpinStats(mission);
 			if (fastestIGTSpinStats != null) {
-				fastestIGT = FormatSecondsTime(fastestIGTSpinStats.GetFastestIGTCompletion().IGT);
+				var completion = fastestIGTSpinStats.GetFastestIGTCompletion();
+				if (completion != null) fastestIGT = FormatSecondsTime(completion.IGT);
 				fastestIGTSpin = fastestIGTSpinStats.Spin;
 			}
 
@@ -404,7 +393,8 @@ namespace Croupier {
 
 			var longestIGTSpinStats = Config.Default.Stats.GetSlowestIGTSpinStats(mission);
 			if (longestIGTSpinStats != null) {
-				longestIGT = FormatSecondsTime(longestIGTSpinStats.GetFastestIGTCompletion().IGT);
+				var completion = longestIGTSpinStats.GetFastestIGTCompletion();
+				if (completion != null) longestIGT = FormatSecondsTime(completion.IGT);
 				longestIGTSpin = longestIGTSpinStats.Spin;
 			};
 
@@ -443,7 +433,8 @@ namespace Croupier {
 
 			var fastestRTASpinStats = Config.Default.Stats.GetFastestRTASpinStats(mission);
 			if (fastestRTASpinStats != null) {
-				fastestRTA = FormatSecondsTime(fastestRTASpinStats.GetFastestRTACompletion().RTA);
+				var completion = fastestRTASpinStats.GetFastestRTACompletion();
+				if (completion != null) fastestRTA = FormatSecondsTime(completion.RTA);
 				fastestRTASpin = fastestRTASpinStats.Spin;
 			}
 
@@ -463,7 +454,8 @@ namespace Croupier {
 
 			var longestRTASpinStats = Config.Default.Stats.GetSlowestRTASpinStats(mission);
 			if (longestRTASpinStats != null) {
-				longestRTA = FormatSecondsTime(longestRTASpinStats.GetFastestRTACompletion().RTA);
+				var completion = longestRTASpinStats.GetFastestRTACompletion();
+				if (completion != null) longestRTA = FormatSecondsTime(completion.RTA);
 				longestRTASpin = longestRTASpinStats.Spin;
 			}
 
@@ -494,7 +486,7 @@ namespace Croupier {
 			viewModel.PropertyChanged += ViewModel_PropertyChanged;
 		}
 
-		private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			switch (e.PropertyName) {
 				case nameof(StatisticsWindowViewModel.MissionColumnEnabled):
 				case nameof(StatisticsWindowViewModel.EntranceColumnEnabled):
@@ -524,30 +516,30 @@ namespace Croupier {
 			
 		}
 
-		private void MissionFilterComboBox_Selected(object sender, SelectionChangedEventArgs e) {
+		private void MissionFilterComboBox_Selected(object? sender, SelectionChangedEventArgs e) {
 			var items = e.AddedItems;
 			if (items.Count == 0)
 				return;
-			var item = (MissionComboBoxItem)items[0];
-			viewModel.FilterMissionID = item.ID;
+			var item = (MissionComboBoxItem?)items[0];
+			viewModel.FilterMissionID = item?.ID ?? MissionID.NONE;
 			viewModel.Update();
 			viewModel.UpdateHistory();
 		}
 
-		private void DataGridCell_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
-			var cell = (DataGridCell)sender;
-			var item = (HistoryViewModel)cell.DataContext;
+		private void DataGridCell_MouseDoubleClick(object? sender, MouseButtonEventArgs e) {
+			var cell = (DataGridCell?)sender;
+			var item = (HistoryViewModel?)cell?.DataContext;
 		}
 
-		private void HistoryTable_PreviewMouseWheel(object sender, MouseWheelEventArgs e) {
+		private void HistoryTable_PreviewMouseWheel(object? sender, MouseWheelEventArgs e) {
 			//what we're doing here, is that we're invoking the "MouseWheel" event of the parent ScrollViewer.
 
 			//first, we make the object with the event arguments (using the values from the current event)
-			var args = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
-
-			//then we need to set the event that we're invoking.
-			//the ScrollViewer control internally does the scrolling on MouseWheelEvent, so that's what we're going to use:
-			args.RoutedEvent = ScrollViewer.MouseWheelEvent;
+			var args = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta) {
+				//then we need to set the event that we're invoking.
+				//the ScrollViewer control internally does the scrolling on MouseWheelEvent, so that's what we're going to use:
+				RoutedEvent = ScrollViewer.MouseWheelEvent
+			};
 
 			//and finally, we raise the event on the parent ScrollViewer.
 			WindowScrollViewer.RaiseEvent(args);

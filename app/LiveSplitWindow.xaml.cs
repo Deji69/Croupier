@@ -46,9 +46,7 @@ namespace Croupier {
 		public LiveSplitWindow() {
 			var client = ((App)App.Current).LiveSplitClient;
 
-			client.OnStatusChange += (object sender, string status) => {
-				viewModel.StatusText = status;
-			};
+			client.OnStatusChange += (object? sender, string status) =>viewModel.StatusText = status;
 
 			viewModel.StatusText = client.CurrentStatus;
 			viewModel.Enabled = Config.Default.LiveSplitEnabled;
@@ -67,7 +65,7 @@ namespace Croupier {
 				viewModel.IP = "127.0.0.1";
 			else if (viewModel.IP.Equals("localhost", StringComparison.CurrentCultureIgnoreCase))
 				viewModel.IP = "localhost";
-			else if (IPAddress.TryParse(viewModel.IP, out IPAddress ipAddress))
+			else if (IPAddress.TryParse(viewModel.IP, out IPAddress? ipAddress))
 				viewModel.IP = ipAddress.ToString();
 			else {
 				MessageBox.Show("Invalid IP address.");

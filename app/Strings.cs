@@ -7,6 +7,7 @@ namespace Croupier {
 	public static partial class Strings {
 		public static readonly Regex TokenCharacterRegex = GenerateTokenCharacterRegex();
 		public static readonly Regex TokenCharacterWithSpacesRegex = GenerateTokenCharacterWithSpacesRegex();
+		public static readonly Regex URLCharacterRegex = GenerateURLCharacterRegex();
 
 		static Dictionary<string, string> foreign_characters = new(){
 			{ "äæǽ", "ae" },
@@ -137,5 +138,8 @@ namespace Croupier {
 
 		[GeneratedRegex("[^\\sa-zA-Z0-9]")]
 		private static partial Regex GenerateTokenCharacterWithSpacesRegex();
+
+		[GeneratedRegex("[^a-zA-Z0-9]+")]
+		private static partial Regex GenerateURLCharacterRegex();
 	}
 }

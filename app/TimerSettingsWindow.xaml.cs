@@ -63,24 +63,25 @@ namespace Croupier {
 	}
 	
 	public partial class TimerSettingsWindow : Window {
-		public event EventHandler<int> ResetStreak;
-		public event EventHandler<int> ResetStreakPB;
+		public event EventHandler<int>? ResetStreak;
+		public event EventHandler<int>? ResetStreakPB;
 
 		private readonly TimerSettingsWindowViewModel viewModel = new();
-		private readonly List<Mission> missions = [
-			new Mission(MissionID.NONE),
-			new Mission(MissionID.ICAFACILITY_FREEFORM),
-			new Mission(MissionID.PARIS_SHOWSTOPPER),
-			new Mission(MissionID.HAWKESBAY_NIGHTCALL),
-			new Mission(MissionID.MIAMI_FINISHLINE),
-			new Mission(MissionID.DUBAI_ONTOPOFTHEWORLD),
+		private readonly List<MissionID> missions = [
+			MissionID.NONE,
+			MissionID.ICAFACILITY_FREEFORM,
+			MissionID.PARIS_SHOWSTOPPER,
+			MissionID.HAWKESBAY_NIGHTCALL,
+			MissionID.MIAMI_FINISHLINE,
+			MissionID.DUBAI_ONTOPOFTHEWORLD,
 		];
 
 		private ObservableCollection<MissionComboBoxItem> ResetMissionListItems {
 			get {
 				var items = new ObservableCollection<MissionComboBoxItem>();
 				var group = MissionGroup.None;
-				missions.ForEach(mission => {
+				missions.ForEach(id => {
+					var mission = Mission.Get(id);
 					if (mission.Group != group) {
 						items.Add(new() {
 							Name = mission.Group.GetName(),
@@ -113,16 +114,16 @@ namespace Croupier {
 			ResetMissionSelect.SelectedIndex = idx != -1 ? idx : 0;
 		}
 
-		private void OnPropertyChanged(object sender, PropertyChangedEventArgs e) {
+		private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			Config.Default.TimerResetMission = viewModel.ResetMission;
 			Config.Default.AutoSpinCountdown = viewModel.AutoSpinCountdown;
 			Config.Save();
 		}
 
-		private void ResetOnMissionSelect_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+		private void ResetOnMissionSelect_SelectionChanged(object? sender, SelectionChangedEventArgs e) {
 			var items = e.AddedItems;
 			if (items.Count == 0) return;
-			var item = (MissionComboBoxItem)items[0];
+			var item = (MissionComboBoxItem)items[0]!;
 			viewModel.ResetMission = item.ID;
 		}
 

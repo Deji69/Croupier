@@ -18,11 +18,7 @@ namespace Croupier {
 			viewModel.PropertyChanged += OnPropertyChanged;
 		}
 
-		public override void OnApplyTemplate() {
-			base.OnApplyTemplate();
-		}
-
-		private void OnPropertyChanged(object sender, PropertyChangedEventArgs e) {
+		private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			Config.Save();
 		}
 
@@ -48,17 +44,18 @@ namespace Croupier {
 
 		private void ValidKills_Click(object sender, RoutedEventArgs e) {
 			var msg = "";
-			foreach (var cond in mainWindow.CurrentSpin.Conditions) {
+			foreach (var cond in mainWindow.CurrentSpin?.Conditions ?? []) {
 				if (msg.Length > 0) msg += ",";
-				msg += $"{(int)cond.Target.ID}:2:1:{(int)cond.Target.ID}";
+				msg += $"{cond.Target.Initials}:2:1:{cond.Target.Initials}";
 			}
 
 			CroupierSocketServer.SpoofMessage($"KillValidation:{msg}");
 		}
 
 		private void AutoSpin_Click(object sender, RoutedEventArgs e) {
-			if (Mission.GetMissionCodename(Mission.GetRandomMainMissionID(), out var codename))
-				CroupierSocketServer.SpoofMessage($"AutoSpin:{codename}");
+			var mission = Mission.Get(Mission.GetRandomMajorMissionID());
+			if (mission != null)
+				CroupierSocketServer.SpoofMessage($"AutoSpin:{mission.Codename}");
 		}
 	}
 }

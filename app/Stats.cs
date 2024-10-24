@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace Croupier {
 	public class MissionStart {
-		public string Location { get; set; }
+		public string Location { get; set; } = "";
 		public string[] Loadout { get; set; } = [];
 	}
 
 	public class MissionCompletion {
-		public double IGT { get; set; }
-		public bool SA { get; set; }
+		public double IGT { get; set; } = 0;
+		public bool SA { get; set; } = false;
 		public bool KillsValidated { get; set; } = false;
 	}
 
@@ -43,8 +43,8 @@ namespace Croupier {
 		public int DailyID { get; set; } = 0;
 		public List<SpinCompletionStats> Completions { get; set; } = [];
 
-		public SpinCompletionStats GetFastestIGTCompletion() {
-			SpinCompletionStats best = null;
+		public SpinCompletionStats? GetFastestIGTCompletion() {
+			SpinCompletionStats? best = null;
 			foreach (var c in Completions) {
 				if (c.IGT > 0 && (best == null || c.IGT < best.IGT))
 					best = c;
@@ -52,8 +52,8 @@ namespace Croupier {
 			return best;
 		}
 
-		public SpinCompletionStats GetFastestRTACompletion() {
-			SpinCompletionStats best = null;
+		public SpinCompletionStats? GetFastestRTACompletion() {
+			SpinCompletionStats? best = null;
 			foreach (var c in Completions) {
 				if (c.RTA > 0 && (best == null || c.RTA < best.RTA))
 					best = c;
@@ -76,34 +76,34 @@ namespace Croupier {
 		public int NumValidKills { get; set; } = 0;
 		public int TopStreak { get; set; } = 0;
 
-		public MissionStats GetMostSpunMissionStats() {
-			MissionStats best = null;
+		public MissionStats? GetMostSpunMissionStats() {
+			MissionStats? best = null;
 			foreach (var item in MissionStats) {
 				if (best == null || item.Value.NumSpins > best.NumSpins)
 					best = item.Value;
 			}
-			return best.NumSpins > 0 ? best : null;
+			return best?.NumSpins > 0 ? best : null;
 		}
 
-		public MissionStats GetMostPlayedMissionStats() {
-			MissionStats best = null;
+		public MissionStats? GetMostPlayedMissionStats() {
+			MissionStats? best = null;
 			foreach (var item in MissionStats) {
 				if (best == null || item.Value.NumAttempts > best.NumAttempts)
 					best = item.Value;
 			}
-			return best.NumAttempts > 0 ? best : null;
+			return best?.NumAttempts > 0 ? best : null;
 		}
 
-		public MissionStats GetMostWonMissionStats() {
-			MissionStats best = null;
+		public MissionStats? GetMostWonMissionStats() {
+			MissionStats? best = null;
 			foreach (var item in MissionStats) {
 				if (best == null || item.Value.NumWins > best.NumWins)
 					best = item.Value;
 			}
-			return best.NumWins > 0 ? best : null;
+			return best?.NumWins > 0 ? best : null;
 		}
 
-		public Entrance GetMostUsedEntrance() {
+		public Entrance? GetMostUsedEntrance() {
 			Dictionary<string, int> scoreBook = [];
 			foreach (var item in SpinStats) {
 				foreach (var completion in item.Value.Completions) {
@@ -121,14 +121,14 @@ namespace Croupier {
 			return Locations.Entrances.Find(e => e.ID == key);
 		}
 
-		public SpinStats GetFastestIGTSpinStats(MissionID mission = MissionID.NONE) {
-			SpinStats bestStats = null;
-			SpinCompletionStats bestCompletionStats = null;
+		public SpinStats? GetFastestIGTSpinStats(MissionID mission = MissionID.NONE) {
+			SpinStats? bestStats = null;
+			SpinCompletionStats? bestCompletionStats = null;
 			foreach (var item in SpinStats.Where(s => s.Value.Completions.Count > 0 && (mission == MissionID.NONE || s.Value.Mission == mission))) {
 				var completion = item.Value.GetFastestIGTCompletion();
 				if (completion == null)
 					continue;
-				if (completion.IGT > 0 && (bestStats == null || completion.IGT < bestCompletionStats.IGT)) {
+				if (completion.IGT > 0 && (bestStats == null || completion.IGT < bestCompletionStats?.IGT)) {
 					bestStats = item.Value;
 					bestCompletionStats = completion;
 				}
@@ -136,14 +136,14 @@ namespace Croupier {
 			return bestStats;
 		}
 
-		public SpinStats GetFastestRTASpinStats(MissionID mission = MissionID.NONE) {
-			SpinStats bestStats = null;
-			SpinCompletionStats bestCompletionStats = null;
+		public SpinStats? GetFastestRTASpinStats(MissionID mission = MissionID.NONE) {
+			SpinStats? bestStats = null;
+			SpinCompletionStats? bestCompletionStats = null;
 			foreach (var item in SpinStats.Where(s => s.Value.Completions.Count > 0 && (mission == MissionID.NONE || s.Value.Mission == mission))) {
 				var completion = item.Value.GetFastestRTACompletion();
 				if (completion == null)
 					continue;
-				if (completion.RTA > 0 && (bestStats == null || completion.RTA < bestCompletionStats.RTA)) {
+				if (completion.RTA > 0 && (bestStats == null || completion.RTA < bestCompletionStats?.RTA)) {
 					bestStats = item.Value;
 					bestCompletionStats = completion;
 				}
@@ -151,14 +151,14 @@ namespace Croupier {
 			return bestStats;
 		}
 
-		public SpinStats GetSlowestIGTSpinStats(MissionID mission = MissionID.NONE) {
-			SpinStats bestStats = null;
-			SpinCompletionStats bestCompletionStats = null;
+		public SpinStats? GetSlowestIGTSpinStats(MissionID mission = MissionID.NONE) {
+			SpinStats? bestStats = null;
+			SpinCompletionStats? bestCompletionStats = null;
 			foreach (var item in SpinStats.Where(s => s.Value.Completions.Count > 0 && (mission == MissionID.NONE || s.Value.Mission == mission))) {
 				var completion = item.Value.GetFastestIGTCompletion();
 				if (completion == null)
 					continue;
-				if (completion.IGT > 0 && (bestStats == null || completion.IGT > bestCompletionStats.IGT)) {
+				if (completion.IGT > 0 && (bestStats == null || completion.IGT > bestCompletionStats?.IGT)) {
 					bestStats = item.Value;
 					bestCompletionStats = completion;
 				}
@@ -166,14 +166,14 @@ namespace Croupier {
 			return bestStats;
 		}
 
-		public SpinStats GetSlowestRTASpinStats(MissionID mission = MissionID.NONE) {
-			SpinStats bestStats = null;
-			SpinCompletionStats bestCompletionStats = null;
+		public SpinStats? GetSlowestRTASpinStats(MissionID mission = MissionID.NONE) {
+			SpinStats? bestStats = null;
+			SpinCompletionStats? bestCompletionStats = null;
 			foreach (var item in SpinStats.Where(s => s.Value.Completions.Count > 0 && (mission == MissionID.NONE || s.Value.Mission == mission))) {
 				var completion = item.Value.GetFastestRTACompletion();
 				if (completion == null)
 					continue;
-				if (completion.RTA > 0 && (bestStats == null || completion.RTA > bestCompletionStats.RTA)) {
+				if (completion.RTA > 0 && (bestStats == null || completion.RTA > bestCompletionStats?.RTA)) {
 					bestStats = item.Value;
 					bestCompletionStats = completion;
 				}

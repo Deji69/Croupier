@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 
 namespace Croupier {
 	public class DailySpinData {
-		public int id { get; set; }
-		public string date { get; set; }
-		public string spin { get; set; }
+		public required int id { get; set; }
+		public required string date { get; set; }
+		public required string spin { get; set; }
 	}
 
 	public class DailySpinChecker {
@@ -23,7 +23,7 @@ namespace Croupier {
 			client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 			client.DefaultRequestHeaders.Add("User-Agent", "Croupier");
 			var json = await client.GetStringAsync("https://croupier.nbeatz.net/api/daily");
-			return JsonSerializer.Deserialize<DailySpinData[]>(json, jsonSerializerOptions);
+			return JsonSerializer.Deserialize<DailySpinData[]>(json, jsonSerializerOptions)!;
 		}
 
 		private static readonly JsonSerializerOptions jsonSerializerOptions = new() {

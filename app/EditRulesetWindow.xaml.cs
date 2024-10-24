@@ -12,7 +12,7 @@ namespace Croupier
 	/// </summary>
 	public partial class EditRulesetWindow : Window, INotifyPropertyChanged
 	{
-		public Ruleset Ruleset { get; set; }
+		public Ruleset? Ruleset { get; set; }
 		private readonly ObservableCollection<Ruleset> Rulesets;
 
 		public EditRulesetWindow(ObservableCollection<Ruleset> rulesets) {
@@ -33,7 +33,7 @@ namespace Croupier
 		private void RulesetComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) {
 			var comboBox = (ComboBox)sender;
 			if (comboBox.SelectedValue == null) {
-				comboBox.SelectedIndex = Rulesets.IndexOf(Ruleset);
+				comboBox.SelectedIndex = Ruleset != null ? Rulesets.IndexOf(Ruleset) : -1;
 				return;
 			}
 
@@ -41,7 +41,8 @@ namespace Croupier
 			if (id >= 0 && id < Rulesets.Count)
 				Ruleset = Rulesets[id];
 
-			SelectRuleset(Ruleset);
+			if (Ruleset != null)
+				SelectRuleset(Ruleset);
 		}
 
 
@@ -57,7 +58,7 @@ namespace Croupier
 			Config.Save();
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 
 		protected virtual void OnPropertyChanged(string propertyName) {
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

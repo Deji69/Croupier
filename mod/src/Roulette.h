@@ -83,17 +83,6 @@ public:
 	Keyword(std::string keyword, Variant value, std::string alias = "") : keyword(keyword), value(value), alias(alias)
 	{ }
 
-	auto convertToSodersKill() {
-		if (auto killMethod = std::get_if<eKillMethod>(&this->value)) {
-			switch (*killMethod) {
-			case eKillMethod::Electrocution: return eMapKillMethod::Soders_Electrocution;
-			case eKillMethod::Explosion: return eMapKillMethod::Soders_Explosion;
-			case eKillMethod::ConsumedPoison: return eMapKillMethod::Soders_PoisonStemCells;
-			}
-		}
-		return eMapKillMethod::NONE;
-	}
-
 	static auto convertFromSodersKill(eMapKillMethod killMethod) -> Variant {
 		switch (killMethod) {
 		case eMapKillMethod::Soders_Electrocution: return eKillMethod::Electrocution;
@@ -150,6 +139,15 @@ struct KillMethod
 	KillMethod(KillMethod&&) noexcept = default;
 	KillMethod(const KillMethod&) = default;
 	auto operator=(KillMethod&&) noexcept -> KillMethod& = default;
+
+	static auto convertToSodersKill(eKillMethod method) {
+		switch (method) {
+		case eKillMethod::Electrocution: return eMapKillMethod::Soders_Electrocution;
+		case eKillMethod::Explosion: return eMapKillMethod::Soders_Explosion;
+		case eKillMethod::ConsumedPoison: return eMapKillMethod::Soders_PoisonStemCells;
+		}
+		return eMapKillMethod::NONE;
+	}
 };
 
 class RouletteSpinMethod

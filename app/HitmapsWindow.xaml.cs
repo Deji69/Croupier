@@ -1,23 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
+﻿using System.Windows;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Croupier {
 	public class HitmapsWindowViewModel : ViewModel {
 		private static readonly Brush notInstalledBrush = new SolidColorBrush(Color.FromRgb(200, 20, 20));
 		private static readonly Brush installedBrush = new SolidColorBrush(Color.FromRgb(0, 200, 0));
 		private static readonly Brush statusBrush = new SolidColorBrush(Color.FromRgb(225, 225, 225));
-		private string hitmapsSpinLinkInput;
+		private string hitmapsSpinLinkInput = "";
 		private string spinLinkStatusText = "Enter a spin link URL and hit 'Start'.";
 		private string browserStatusText = "";
 
@@ -72,13 +61,13 @@ namespace Croupier {
 		{
 			DataContext = viewModel;
 			InitializeComponent();
-			((App)App.Current).HitmapsSpinLink.OnStatusChange += (object sender, string status) => {
+			((App)App.Current).HitmapsSpinLink.OnStatusChange += (object? sender, string status) => {
 				viewModel.SpinLinkStatusText = status;
 			};
-			((App)App.Current).HitmapsSpinLink.OnBrowserStatusChange += (object sender, string status) => {
+			((App)App.Current).HitmapsSpinLink.OnBrowserStatusChange += (object? sender, string status) => {
 				viewModel.BrowserInstallStatusText = status;
 			};
-			BrowserService.InstallStatusUpdate += (object sender, string status) => {
+			BrowserService.InstallStatusUpdate += (object? sender, string status) => {
 				viewModel.BrowserInstallStatusText = status;
 				if (status == "" || status == null) {
 					viewModel.IsBrowserInstalling = false;
