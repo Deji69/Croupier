@@ -89,6 +89,7 @@ namespace Croupier
 		public static readonly RoutedUICommand CopySpinCommand = new("Copy Spin", "CopySpin", typeof(MainWindow), [
 			new KeyGesture(Key.C, ModifierKeys.Control),
 		]);
+		public static readonly RoutedUICommand CopySpinLinkCommand = new("Copy Spin Link", "CopySpinLink", typeof(MainWindow));
 		public static readonly RoutedUICommand PasteSpinCommand = new("Paste Spin", "PasteSpin", typeof(MainWindow), [
 			new KeyGesture(Key.V, ModifierKeys.Control),
 		]);
@@ -1517,10 +1518,12 @@ namespace Croupier
 		}
 
 		private void CopySpinCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
+			var text = new Spin(conditions).ToString();
+
 			// Have a few attempts at accessing the clipboard. In Windows this is usually a data race vs. other processes.
 			for (var i = 0; i < 10; ++i) {
 				try {
-					Clipboard.SetText(new Spin(conditions).ToString());
+					Clipboard.SetText(text);
 					return;
 				} catch {
 				}
@@ -1531,6 +1534,29 @@ namespace Croupier
 			MessageBox.Show(
 				"Clipboard access failed. Another process may have attempted to access the clipboard at the same time. Please try again.",
 				"Copy Spin Failed"
+			);
+		}
+
+		private void CopySpinLinkCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
+			var text = new Spin(conditions).ToString();
+			var url = "https://croupier.nbeatz.net/?spin=" + Strings.URLCharacterRegex.Replace(text, "-").Replace("--", "-");
+
+			// Have a few attempts at accessing the clipboard. In Windows this is usually a data race vs. other processes.
+			for (var i = 0; i < 10; ++i) {
+				try {
+					Clipboard.SetText(url);
+					return;
+				} catch {
+				}
+				System.Threading.Thread.Sleep(10);
+			}
+
+			// Give up for now and inform the use to retry.
+			MessageBox.Show(
+				"Clipboard access failed. Another process may have attempted to access the clipboard at the same time. Please try again.",
+				"Copy Spin Link Failed",
+				MessageBoxButton.OK,
+				MessageBoxImage.Warning
 			);
 		}
 
