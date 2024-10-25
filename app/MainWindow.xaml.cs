@@ -1538,7 +1538,7 @@ namespace Croupier
 		}
 
 		private void CopySpinLinkCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
-			var text = new Spin(conditions).ToString().Replace("'", "");
+			var text = new Spin(conditions).ToString();
 			var url = "https://croupier.nbeatz.net/?spin=" + Strings.URLCharacterRegex.Replace(text, "-").Replace("--", "-");
 
 			// Have a few attempts at accessing the clipboard. In Windows this is usually a data race vs. other processes.
