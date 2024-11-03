@@ -81,6 +81,15 @@ namespace Croupier {
 				var items = new ObservableCollection<MissionComboBoxItem>();
 				var group = MissionGroup.None;
 				missions.ForEach(id => {
+					if (id == MissionID.NONE) {
+						items.Add(new() {
+							ID = MissionID.NONE,
+							Name = "(NONE)",
+							Location = "",
+							IsSeparator = false
+						});
+						return;
+					}
 					var mission = Mission.Get(id);
 					if (mission.Group != group) {
 						items.Add(new() {
@@ -91,7 +100,7 @@ namespace Croupier {
 					}
 					items.Add(new() {
 						ID = mission.ID,
-						Name = mission.ID != MissionID.NONE ? mission.Name : "(NONE)",
+						Name = mission.Name,
 						Location = mission.Location,
 						IsSeparator = false
 					});
