@@ -2258,8 +2258,13 @@ DEFINE_PLUGIN_DETOUR(Croupier, void, OnWinHttpCallback, void* dwContext, void* h
 		auto url = narrow(wstr);
 		std::string_view sv = url;
 
-		if (sv.starts_with("https://hm3-service.hitman.io/profiles/page/Planning?contractid=")) {
-			auto rest = sv.substr(sizeof("https://hm3-service.hitman.io/profiles/page/Planning?contractid="));
+		auto isLocal = sv.starts_with("http://127.0.0.1/");
+		auto isPlanning = isLocal
+			? sv.starts_with("http://127.0.0.1/profiles/page/Planning?contractid=")
+			: sv.starts_with("https://hm3-service.hitman.io/profiles/page/Planning?contractid=");
+
+		if (isPlanning) {
+			auto rest = sv.substr(isLocal ? sizeof("http://127.0.0.1/profiles/page/Planning?contractid=") : sizeof("https://hm3-service.hitman.io/profiles/page/Planning?contractid="));
 			auto contractId = rest.substr(0, rest.find_first_of('&'));
 			auto mission = getMissionByContractId(std::string(contractId));
 
