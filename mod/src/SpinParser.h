@@ -94,7 +94,8 @@ public:
 
  			if (target.getID() == eTargetID::ErichSoders && killMethod != eKillMethod::NONE && mapMethod == eMapKillMethod::NONE) {
 				mapMethod = KillMethod::convertToSodersKill(killMethod);
-				killMethod = eKillMethod::NONE;
+				if (mapMethod != eMapKillMethod::NONE)
+					killMethod = eKillMethod::NONE;
 			}
 
 			spin.add(RouletteSpinCondition{target, *disguise, KillMethod{killMethod}, MapKillMethod{mapMethod}, context.killType, context.complication});
