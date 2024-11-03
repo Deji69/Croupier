@@ -677,7 +677,7 @@ auto Croupier::SendKillValidationUpdate() -> void {
 			Keyword::getForTarget(cond.target.get().getName()),
 			static_cast<int>(kc.correctMethod),
 			kc.correctDisguise ? 1 : 0,
-			static_cast<int>(kc.specificTarget)
+			Keyword::getForTarget(kc.specificTarget)
 		);
 	}
 	this->client->send(eClientMessage::KillValidation, { data });

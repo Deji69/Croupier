@@ -68,6 +68,7 @@ private:
 	static std::unordered_map<std::string, Variant> keywordMap;
 	static std::unordered_map<std::string, std::string> targetKeyMap;
 	static std::unordered_map<std::string, std::string> keyTargetMap;
+	static std::unordered_map<eTargetID, std::string> targetIDKeyMap;
 
 public:
 	std::string keyword;
@@ -108,6 +109,12 @@ public:
 			if (keyword.value != method) continue;
 			return keyword.keyword;
 		}
+		return "";
+	}
+
+	static auto getForTarget(eTargetID id) -> std::string_view {
+		auto it = targetIDKeyMap.find(id);
+		if (it != end(targetIDKeyMap)) return it->second;
 		return "";
 	}
 
