@@ -33,6 +33,15 @@
 				</ContentPresenter.Style>
 			</ContentPresenter>
 		</DataTemplate>
+		<DataTemplate x:Key="TimingModeSelectTemplate" DataType="{x:Type local:TimingModeComboBoxItem}">
+			<ContentPresenter Content="{Binding}" HorizontalAlignment="Stretch">
+				<ContentPresenter.Style>
+					<Style TargetType="{x:Type ContentPresenter}">
+						<Setter Property="ContentTemplate" Value="{StaticResource ComboBoxItemTemplate}" />
+					</Style>
+				</ContentPresenter.Style>
+			</ContentPresenter>
+		</DataTemplate>
 	</Window.Resources>
 	<ScrollViewer UseLayoutRounding="True" Margin="0" Background="Black">
 		<StackPanel Orientation="Vertical">
@@ -232,6 +241,42 @@
 				</Grid.RowDefinitions>
 				<StackPanel Orientation="Vertical" Margin="5,0,5,8">
 					<TextBlock
+						Text="Timing Mode"
+						Foreground="White"
+						FontWeight="Bold"
+						/>
+					<ComboBox Name="TimingModeSelect"
+						ItemTemplate="{StaticResource TimingModeSelectTemplate}"
+						SelectionChanged="TimingModeSelect_SelectionChanged"
+					>
+						<ComboBox.ItemContainerStyle>
+							<Style TargetType="ComboBoxItem">
+								<Style.Triggers>
+									<DataTrigger Binding="{Binding IsSeparator}" Value="True">
+										<Setter Property="HorizontalAlignment" Value="Center" />
+										<Setter Property="IsEnabled" Value="False"/>
+									</DataTrigger>
+								</Style.Triggers>
+							</Style>
+						</ComboBox.ItemContainerStyle>
+					</ComboBox>
+				</StackPanel>
+				<TextBlock
+					Grid.Column="1"
+					Foreground="White"
+					Margin="5,0,0,5"
+					TextWrapping="WrapWithOverflow"
+					FontWeight="Normal"
+					VerticalAlignment="Top">
+					Choose preferred timing mode. <LineBreak />
+					LRT = Times in real-time minus loads. <LineBreak />
+					RTA = Times in real-time including loads. <LineBreak />
+					IGT = Times using in-game time. <LineBreak />
+					Spin = Times in real-time minus loads. Pauses after spin completion and resumes on fresh spin.
+				</TextBlock>
+
+				<StackPanel Orientation="Vertical" Margin="5,0,5,8" Grid.Row="1">
+					<TextBlock
 						Text="Reset On Mission Select"
 						Foreground="White"
 						FontWeight="Bold"
@@ -253,7 +298,7 @@
 					</ComboBox>
 				</StackPanel>
 				<TextBlock
-					Grid.Row="0"
+					Grid.Row="1"
 					Grid.Column="1"
 					Foreground="White"
 					Margin="5,0,0,5"
@@ -264,7 +309,7 @@
 				</TextBlock>
 
 				<StackPanel
-					Grid.Row="1"
+					Grid.Row="2"
 					Orientation="Vertical"
 					Margin="5,0,5,8">
 					<TextBlock
@@ -297,7 +342,7 @@
 					</Grid>
 				</StackPanel>
 				<TextBlock
-					Grid.Row="1"
+					Grid.Row="2"
 					Grid.Column="1"
 					Foreground="White"
 					Margin="5,0,0,5"

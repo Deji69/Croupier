@@ -662,7 +662,7 @@ namespace Croupier
 				if (arg.SA && (arg.KillsValidated || Config.Default.StreakRequireValidKills == false)) IncrementStreak();
 				else ResetStreak();
 				liveSplit.Split();
-				StopTimer();
+				HandleTimingOnSpinComplete(arg);
 				TrackGameMissionCompletion(arg);
 			};
 			CroupierSocketServer.MissionFailed += (object? sender, int _) => {
@@ -702,11 +702,10 @@ namespace Croupier
 				}
 			};
 			CroupierSocketServer.LoadStarted += (object? sender, int _) => {
-				StopTimer();
+				HandleTimingOnLoadStart();
 			};
 			CroupierSocketServer.LoadFinished += (object? sender, int _) => {
-				if (!spinCompleted) ResumeTimer();
-				SendTimerToClient();
+				HandleTimingOnLoadFinish();
 			};
 			CroupierSocketServer.KillValidation += (object? sender, string data) => {
 				if (data.Length == 0) return;
@@ -934,13 +933,7 @@ namespace Croupier
 			PushCurrentSpinToHistory();
 			PostConditionUpdate();
 
-			if (!TimerMultiSpin || Config.Default.TimerResetMission == id) {
-				ResetTimer();
-				StopTimer();
-			}
-
-			ResetCurrentSpinProgress();
-			StartTimer();
+			HandleTimingOnNewSpin(id);
 
 			Config.Default.SpinIsRandom = true;
 			Config.Save();
@@ -1232,12 +1225,21 @@ namespace Croupier
 			liveSplit.Resume();
 
 			if (TimerMultiSpin && !timerStopped) {
-				timeElapsed = DateTime.Now - timerStart;
+				switch (Config.Default.TimingMode) {
+					case TimingMode.LRT:
+					case TimingMode.RTA:
+					case TimingMode.Spin:
+						timeElapsed = DateTime.Now - timerStart;
+						break;
+				}
 			}
 
 			timerStopped = false;
 			timerStart = timeElapsed.HasValue ? DateTime.Now - timeElapsed.Value : DateTime.Now;
-			timeElapsed = null;
+			
+			if (Config.Default.TimingMode != TimingMode.IGT)
+				timeElapsed = null;
+
 			SendTimerToClient();
 		}
 
@@ -1245,9 +1247,11 @@ namespace Croupier
 			liveSplit.Pause();
 
 			if (timerStopped) return;
-			timeElapsed = DateTime.Now - timerStart;
+
+			if (Config.Default.TimingMode != TimingMode.IGT)
+				timeElapsed = DateTime.Now - timerStart;
+
 			timerStopped = true;
-			SendTimerToClient();
 		}
 
 		private void ResumeTimer() {
@@ -1266,6 +1270,57 @@ namespace Croupier
 
 			timeElapsed = null;
 			timerStart = DateTime.Now;
+		}
+
+		private void HandleTimingOnLoadStart() {
+			switch (Config.Default.TimingMode) {
+				case TimingMode.LRT:
+				case TimingMode.Spin:
+					StopTimer();
+					break;
+			}
+
+			SendTimerToClient();
+		}
+
+		private void HandleTimingOnLoadFinish() {
+			switch (Config.Default.TimingMode) {
+				case TimingMode.LRT:
+					ResumeTimer();
+					break;
+				case TimingMode.Spin:
+					if (!spinCompleted)
+						ResumeTimer();
+					break;
+			}
+			
+			SendTimerToClient();
+		}
+
+		private void HandleTimingOnNewSpin(MissionID mission) {
+			if (!TimerMultiSpin || Config.Default.TimerResetMission == mission) {
+				ResetTimer();
+				StopTimer();
+			}
+
+			ResetCurrentSpinProgress();
+
+			StartTimer();
+
+			SendTimerToClient();
+		}
+
+		private void HandleTimingOnSpinComplete(MissionCompletion completion) {
+			switch (Config.Default.TimingMode) {
+				case TimingMode.IGT:
+					timeElapsed = (timeElapsed ?? TimeSpan.Zero) + TimeSpan.FromSeconds(completion.IGT);
+					SendTimerToClient();
+					break;
+				case TimingMode.Spin:
+					StopTimer();
+					break;
+			}
+
 			SendTimerToClient();
 		}
 

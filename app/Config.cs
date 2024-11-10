@@ -31,6 +31,7 @@ namespace Croupier {
 		public bool TimerMultiSpin { get; set; } = false;
 		public bool TimerFractions { get; set; } = false;
 		public MissionID TimerResetMission { get; set; } = MissionID.NONE;
+		public TimingMode TimingMode { get; set; } = TimingMode.LRT;
 
 		public bool Streak { get; set; } = false;
 		public bool ShowStreakPB { get; set; } = false;

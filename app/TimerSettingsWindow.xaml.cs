@@ -7,13 +7,26 @@ using System.Windows;
 using System.Windows.Controls;
 
 namespace Croupier {
+	public enum TimingMode {
+		RTA,
+		IGT,
+		LRT,
+		Spin,
+	}
+
 	public class TimerSettingsWindowViewModel : ViewModel {
 		private MissionID resetMission = MissionID.NONE;
+		private TimingMode timingMode = TimingMode.LRT;
 		private int autoSpinCountdown = 0;
 
 		public MissionID ResetMission {
 			get => resetMission;
 			set => SetProperty(ref resetMission, value);
+		}
+
+		public TimingMode TimingMode {
+			get => timingMode;
+			set => SetProperty(ref timingMode, value);
 		}
 
 		public int AutoSpinCountdown {
@@ -61,7 +74,11 @@ namespace Croupier {
 			}
 		}
 	}
-	
+	public class TimingModeComboBoxItem {
+		public TimingMode TimingMode { get; set; }
+		public required string Name { get; set; }
+	}
+
 	public partial class TimerSettingsWindow : Window {
 		public event EventHandler<int>? ResetStreak;
 		public event EventHandler<int>? ResetStreakPB;
@@ -75,6 +92,15 @@ namespace Croupier {
 			MissionID.MIAMI_FINISHLINE,
 			MissionID.DUBAI_ONTOPOFTHEWORLD,
 		];
+
+		private ObservableCollection<TimingModeComboBoxItem> TimingModeItems {
+			get => [
+				new() { Name = "LRT (Real Time, Loads Removed)", TimingMode = TimingMode.LRT },
+				new() { Name = "RTA (Real Time, Loads Included)", TimingMode = TimingMode.RTA },
+				new() { Name = "IGT (In-Game Time, Accumulative)", TimingMode = TimingMode.IGT },
+				new() { Name = "Spin (Real Time, Loads + Post-Mission Removed)", TimingMode = TimingMode.Spin },
+			];
+		}
 
 		private ObservableCollection<MissionComboBoxItem> ResetMissionListItems {
 			get {
@@ -118,14 +144,22 @@ namespace Croupier {
 
 		public override void OnApplyTemplate() {
 			base.OnApplyTemplate();
-			ResetMissionSelect.ItemsSource = ResetMissionListItems;
-			var idx = ResetMissionListItems.ToList().FindIndex(item => item.ID == Config.Default.TimerResetMission);
-			ResetMissionSelect.SelectedIndex = idx != -1 ? idx : 0;
+			{
+				TimingModeSelect.ItemsSource = TimingModeItems;
+				var idx = TimingModeItems.ToList().FindIndex(item => item.TimingMode == Config.Default.TimingMode);
+				TimingModeSelect.SelectedIndex = idx != -1 ? idx : 0;
+			}
+			{
+				ResetMissionSelect.ItemsSource = ResetMissionListItems;
+				var idx = ResetMissionListItems.ToList().FindIndex(item => item.ID == Config.Default.TimerResetMission);
+				ResetMissionSelect.SelectedIndex = idx != -1 ? idx : 0;
+			}
 		}
 
 		private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			Config.Default.TimerResetMission = viewModel.ResetMission;
 			Config.Default.AutoSpinCountdown = viewModel.AutoSpinCountdown;
+			Config.Default.TimingMode = viewModel.TimingMode;
 			Config.Save();
 		}
 
@@ -134,6 +168,14 @@ namespace Croupier {
 			if (items.Count == 0) return;
 			var item = (MissionComboBoxItem)items[0]!;
 			viewModel.ResetMission = item.ID;
+		}
+
+		private void TimingModeSelect_SelectionChanged(object? sender, SelectionChangedEventArgs e) {
+			var items = e.AddedItems;
+			if (items.Count == 0)
+				return;
+			var item = (TimingModeComboBoxItem)items[0]!;
+			viewModel.TimingMode = item.TimingMode;
 		}
 
 		private void ResetCurrentStreak_Click(object sender, RoutedEventArgs e) {
