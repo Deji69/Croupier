@@ -396,7 +396,7 @@ namespace Croupier {
 			try {
 				var parser = Get();
 				spin = parser.Parse(input);
-			} catch (Exception e) {
+			} catch (Exception) {
 				spin = null;
 				return false;
 			}
