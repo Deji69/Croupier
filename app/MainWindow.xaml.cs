@@ -661,7 +661,7 @@ namespace Croupier
 				arg.KillsValidated = CheckSpinKillsValid();
 				if (arg.SA && (arg.KillsValidated || Config.Default.StreakRequireValidKills == false)) IncrementStreak();
 				else ResetStreak();
-				liveSplit.Split();
+				
 				HandleTimingOnSpinComplete(arg);
 				TrackGameMissionCompletion(arg);
 			};
@@ -1311,6 +1311,8 @@ namespace Croupier
 		}
 
 		private void HandleTimingOnSpinComplete(MissionCompletion completion) {
+			liveSplit.Split();
+
 			switch (Config.Default.TimingMode) {
 				case TimingMode.IGT:
 					timeElapsed = (timeElapsed ?? TimeSpan.Zero) + TimeSpan.FromSeconds(completion.IGT);
