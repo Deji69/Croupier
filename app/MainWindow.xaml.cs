@@ -489,28 +489,30 @@ namespace Croupier
 		private MissionID autoSpinMission = MissionID.NONE;
 		private readonly LiveSplitClient liveSplit;
 		private readonly DispatcherTimer timer;
+		private readonly ObservableCollection<MissionComboBoxItem> missionListItems = [];
 
 		private ObservableCollection<MissionComboBoxItem> MissionListItems {
 			get {
-				var items = new ObservableCollection<MissionComboBoxItem>();
-				var group = MissionGroup.None;
-				Mission.All.ForEach(mission => {
-					if (mission.Group != group) {
-						items.Add(new() {
-							Name = mission.Group.GetName(),
-							IsSeparator = true,
+				if (missionListItems.Count == 0) {
+					var group = MissionGroup.None;
+					Mission.All.ForEach(mission => {
+						if (mission.Group != group) {
+							missionListItems.Add(new() {
+								Name = mission.Group.GetName(),
+								IsSeparator = true,
+							});
+							group = mission.Group;
+						}
+						missionListItems.Add(new() {
+							ID = mission.ID,
+							Name = mission.Name,
+							Image = mission.ImagePath,
+							Location = mission.Location,
+							IsSeparator = false
 						});
-						group = mission.Group;
-					}
-					items.Add(new() {
-						ID = mission.ID,
-						Name = mission.Name,
-						Image = mission.ImagePath,
-						Location = mission.Location,
-						IsSeparator = false
 					});
-				});
-				return items;
+				}
+				return missionListItems;
 			}
 		}
 
