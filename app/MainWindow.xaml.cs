@@ -468,7 +468,6 @@ namespace Croupier
 		];
 
 		private readonly List<SpinCondition> conditions = [];
-		private List<Mission> missions = [];
 		private readonly ObservableCollection<Ruleset> rulesets = [];
 
 		private readonly List<MissionID> missionPool = [];
@@ -536,44 +535,6 @@ namespace Croupier
 
 			LoadSettings();
 
-			missions.AddRange([
-				Mission.Get(MissionID.ICAFACILITY_FREEFORM),
-				Mission.Get(MissionID.ICAFACILITY_FINALTEST),
-				Mission.Get(MissionID.PARIS_SHOWSTOPPER),
-				Mission.Get(MissionID.SAPIENZA_WORLDOFTOMORROW),
-				Mission.Get(MissionID.MARRAKESH_GILDEDCAGE),
-				Mission.Get(MissionID.BANGKOK_CLUB27),
-				Mission.Get(MissionID.COLORADO_FREEDOMFIGHTERS),
-				Mission.Get(MissionID.HOKKAIDO_SITUSINVERSUS),
-				Mission.Get(MissionID.BANGKOK_THESOURCE),
-				Mission.Get(MissionID.SAPIENZA_THEAUTHOR),
-				Mission.Get(MissionID.HOKKAIDO_PATIENTZERO),
-				Mission.Get(MissionID.PARIS_HOLIDAYHOARDERS),
-				Mission.Get(MissionID.SAPIENZA_THEICON),
-				Mission.Get(MissionID.SAPIENZA_LANDSLIDE),
-				Mission.Get(MissionID.MARRAKESH_HOUSEBUILTONSAND),
-				Mission.Get(MissionID.HOKKAIDO_SNOWFESTIVAL),
-				Mission.Get(MissionID.HAWKESBAY_NIGHTCALL),
-				Mission.Get(MissionID.MIAMI_FINISHLINE),
-				Mission.Get(MissionID.SANTAFORTUNA_THREEHEADEDSERPENT),
-				Mission.Get(MissionID.MUMBAI_CHASINGAGHOST),
-				Mission.Get(MissionID.WHITTLETON_ANOTHERLIFE),
-				Mission.Get(MissionID.ISLEOFSGAIL_THEARKSOCIETY),
-				Mission.Get(MissionID.NEWYORK_GOLDENHANDSHAKE),
-				Mission.Get(MissionID.HAVEN_THELASTRESORT),
-				Mission.Get(MissionID.MIAMI_ASILVERTONGUE),
-				Mission.Get(MissionID.SANTAFORTUNA_EMBRACEOFTHESERPENT),
-				Mission.Get(MissionID.MUMBAI_ILLUSIONSOFGRANDEUR),
-				Mission.Get(MissionID.WHITTLETON_ABITTERPILL),
-				Mission.Get(MissionID.DUBAI_ONTOPOFTHEWORLD),
-				Mission.Get(MissionID.DARTMOOR_DEATHINTHEFAMILY),
-				Mission.Get(MissionID.BERLIN_APEXPREDATOR),
-				Mission.Get(MissionID.CHONGQING_ENDOFANERA),
-				Mission.Get(MissionID.MENDOZA_THEFAREWELL),
-				Mission.Get(MissionID.CARPATHIAN_UNTOUCHABLE),
-				Mission.Get(MissionID.AMBROSE_SHADOWSINTHEWATER),
-			]);
-
 			MissionSelect.ItemsSource = MissionListItems;
 			ContextMenuTargetNameFormat.ItemsSource = TargetNameFormatEntries;
 			ContextMenuTargetNameFormat.DataContext = this;
@@ -590,7 +551,7 @@ namespace Croupier
 			if (spinHistory.Count > 0)
 				SetSpinHistory(1);
 			else {
-				SetMission(missions[0].ID);
+				SetMission(MissionID.PARIS_SHOWSTOPPER);
 				Spin();
 			}
 
@@ -951,7 +912,7 @@ namespace Croupier
 		public bool SetMission(MissionID id) {
 			if (id == MissionID.NONE)
 				return false;
-			currentMission = missions.Find(m => m.ID == id);
+			currentMission = Mission.All.Find(m => m.ID == id);
 			if (currentMission == null) return false;
 			var idx = MissionListItems.ToList().FindIndex(item => item.ID == id);
 			MissionSelect.SelectedIndex = idx;
