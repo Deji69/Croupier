@@ -1461,7 +1461,7 @@ namespace Croupier
 			ContentGrid.Children.Clear();
 			var thisCodeIsStupid = false;
 
-			if (StaticSize && !StaticSizeLHS) {
+			if (StaticSize && !StaticSizeLHS && !VerticalDisplay) {
 				thisCodeIsStupid = true;
 				switch (conditions.Count) {
 					case 3:
