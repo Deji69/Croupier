@@ -715,7 +715,10 @@ namespace Croupier
 			if (e.PropertyName == nameof(VerticalDisplay)
 				|| e.PropertyName == nameof(StaticSize)) {
 				RefitWindow();
-				Task.Delay(10).ContinueWith(task => RefitWindow(), TaskScheduler.FromCurrentSynchronizationContext());
+				Task.Delay(10).ContinueWith(task => {
+					SetupSpinUI();
+					RefitWindow();
+				}, TaskScheduler.FromCurrentSynchronizationContext());
 				return;
 			}
 		}
@@ -1456,15 +1459,48 @@ namespace Croupier
 			var numColumns = GetNumColumns();
 			ContentGrid.Columns = numColumns;
 			ContentGrid.Children.Clear();
+			var thisCodeIsStupid = false;
 
-			foreach (var condition in conditions) {
-				var control = new ContentPresenter {
-					Content = condition,
-					DataContext = condition,
-					ContentTemplate = (DataTemplate)Resources["SpinConditionDataTemplate"],
-				};
-				ContentGrid.Children.Add(control);
+			if (StaticSize && !StaticSizeLHS) {
+				thisCodeIsStupid = true;
+				switch (conditions.Count) {
+					case 3:
+						SetupSpinUI_AddCondition(conditions[1]);
+						SetupSpinUI_AddCondition(conditions[0]);
+						SetupSpinUI_AddCondition(conditions[2]);
+						break;
+					case 4:
+						SetupSpinUI_AddCondition(conditions[1]);
+						SetupSpinUI_AddCondition(conditions[0]);
+						SetupSpinUI_AddCondition(conditions[3]);
+						SetupSpinUI_AddCondition(conditions[2]);
+						break;
+					case 5:
+						SetupSpinUI_AddCondition(conditions[1]);
+						SetupSpinUI_AddCondition(conditions[0]);
+						SetupSpinUI_AddCondition(conditions[3]);
+						SetupSpinUI_AddCondition(conditions[2]);
+						SetupSpinUI_AddCondition(conditions[4]);
+						break;
+					default:
+						thisCodeIsStupid = false;
+						break;
+				}
 			}
+			if (!thisCodeIsStupid) {
+				foreach (var condition in conditions) {
+					SetupSpinUI_AddCondition(condition);
+				}
+			}
+		}
+
+		private void SetupSpinUI_AddCondition(SpinCondition condition) {
+			var control = new ContentPresenter {
+				Content = condition,
+				DataContext = condition,
+				ContentTemplate = (DataTemplate)Resources["SpinConditionDataTemplate"],
+			};
+			ContentGrid.Children.Add(control);
 		}
 
 		private void RefitWindow(bool keepSize = false) {
