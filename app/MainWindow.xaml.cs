@@ -1308,7 +1308,7 @@ namespace Croupier
 			var spinData = "";
 			conditions.ForEach(condition => {
 				if (spinData.Length > 0) spinData += ", ";
-				spinData += $"{condition}";
+				spinData += $"{condition.ToString(TargetNameFormat.Initials)}";
 			});
 			CroupierSocketServer.Send("SpinData:" + spinData);
 		}
