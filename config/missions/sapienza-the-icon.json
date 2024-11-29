@@ -1,0 +1,48 @@
+{
+	"Name": "The Icon",
+	"Location": "Sapienza",
+	"Image": "sapienza-the-icon.jpg",
+	"Group": "Season 1 Bonus",
+	"Codename": "COPPERHEAD",
+	"IsMajor": false,
+	"Keywords": ["theicon", "icon"],
+	"Targets": [
+		{
+			"Name": "Dino Bosco",
+			"Initials": "DB",
+			"ShortName": "Dino",
+			"Image": "copperhead_roman_strauss_levine.jpg",
+			"Keywords": ["dinobosco", "dino", "bosco", "icon"]
+		}
+	],
+	"KillMethods": [
+		"Battle Axe", "Cleaver", "Fire Axe", "Kitchen Knife", "Screwdriver"
+	],
+	"Disguises": [
+		{
+			"Name": "Suit",
+			"Image": "outfit_cad53cde-4d4a-41cb-9259-87b544f718ad_0.jpg",
+			"Suit": true
+		},
+		{
+			"Name": "Kitchen Assistant",
+			"Image": "outfit_10601c6b-1f65-44ed-92a1-bf843f023d3f_0.jpg",
+			"Keywords": ["kitchenassistant", "kitchenstaff", "kitchenass", "kitchensass", "kitchensassistant", "rocco"]
+		},
+		{
+			"Name": "Movie Crew",
+			"Image": "outfit_79a767f7-5473-4380-b778-e93028e4fc2f_0.jpg",
+			"Keywords": ["moviecrew", "movie"]
+		},
+		{
+			"Name": "Security",
+			"Image": "outfit_94a0d283-bea4-468d-ad8f-ec2735008511_0.jpg",
+			"Keywords": ["security"]
+		},
+		{
+			"Name": "SFX Crew",
+			"Image": "outfit_2fd2437d-a5eb-4bfd-bd2d-a4f240a8f0ce_0.jpg",
+			"Keywords": ["sfxcrew", "crew", "sfx"]
+		}
+	]
+}

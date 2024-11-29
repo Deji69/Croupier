@@ -1,0 +1,99 @@
+{
+	"Name": "Freedom Fighters",
+	"Location": "Colorado",
+	"Image": "colorado-freedom-fighters.jpg",
+	"Group": "Season 1",
+	"Codename": "BULL",
+	"IsMajor": true,
+	"Keywords": ["freedomfighters", "colorado", "freedom", "fighters"],
+	"Targets": [
+		{
+			"Name": "Sean Rose",
+			"Initials": "SR",
+			"ShortName": "Sean",
+			"Image": "freedom_fighters_sean_rose.jpg",
+			"Keywords": ["seanrose", "sean", "rose", "sr"]
+		},
+		{
+			"Name": "Penelope Graves",
+			"Initials": "PG",
+			"ShortName": "Penelope",
+			"Image": "freedom_fighters_penelope_graves.jpg",
+			"Keywords": ["penelopegraves", "penelope", "graves", "pene", "pen", "penny", "pennylope", "penne", "pg"]
+		},
+		{
+			"Name": "Ezra Berg",
+			"Initials": "EB",
+			"ShortName": "Ezra",
+			"Image": "freedom_fighters_ezra_berg.jpg",
+			"Keywords": ["ezraberg", "ezra", "berg", "ez", "eb"]
+		},
+		{
+			"Name": "Maya Parvati",
+			"Initials": "MP",
+			"ShortName": "Maya",
+			"Image": "freedom_fighters_maya_parvati.jpg",
+			"Keywords": ["mayaparvati", "maya", "parvati", "mp"]
+		}
+	],
+	"KillMethods": [
+		"Cleaver", "Kitchen Knife", "Old Axe", "Screwdriver"
+	],
+	"Disguises": [
+		{
+			"Name": "Suit",
+			"Image": "outfit_dd9792ec-4a1d-4c29-a928-a556fc0b6692_0.jpg",
+			"Suit": true,
+			"Hostile": true
+		},
+		{
+			"Name": "Explosives Specialist",
+			"Image": "outfit_59c4f7db-f065-4fac-bc6c-5c7ac3758eed_0.jpg ",
+			"Keywords": [
+				"explosivesspecialist", "explosivespecialist", "explosivespec", "explosivesexpert", "demolitions", "demolition", "specialist",
+				"explspec", "explexpert", "explosives", "expexpert", "expspec"
+			]
+		},
+		{
+			"Name": "Hacker",
+			"Image": "outfit_aab7f28d-84d9-47d1-be52-d142f5970086_0.jpg",
+			"Keywords": ["hacker", "hack", "haxor", "h4x0r", "h4xor", "hax0r"]
+		},
+		{
+			"Name": "Militia Cook",
+			"Image": "outfit_dac13714-a012-47cf-b76a-150cfc4cece5_0.jpg",
+			"Keywords": ["militiacook", "cook", "chef"]
+		},
+		{
+			"Name": "Militia Elite",
+			"Image": "outfit_d878b5ee-90cd-4222-8503-1e9ae193d556_0.jpg",
+			"Keywords": ["militiaelite", "elite"]
+		},
+		{
+			"Name": "Militia Soldier",
+			"Image": "outfit_3dd1467a-72d2-4590-93d8-10807c9f1645_0.jpg",
+			"Keywords": ["militiasoldier", "soldier", "sold", "milsoldier"]
+		},
+		{
+			"Name": "Militia Spec Ops",
+			"Image": "outfit_ed1a4bf9-0641-4e70-9af1-d6e68cbb84d6_0.jpg",
+			"Keywords": ["militiaspecops", "specops", "militiaspec"]
+		},
+		{
+			"Name": "Militia Technician",
+			"Image": "outfit_143c62fc-4bf6-474a-9542-1e81bf93a044_0.jpg",
+			"Keywords": ["militiatechnician", "militiatech", "technician", "tech"]
+		},
+		{
+			"Name": "Point Man",
+			"Image": "outfit_338021a8-0c61-4732-a991-559e25e49efe_0.jpg",
+			"Keywords": ["pointman", "thepointman", "burgess"]
+		},
+		{
+			"Name": "Scarecrow",
+			"Image": "outfit_fd5d2b9d-dcef-4596-a98a-5266a148c40c_0.jpg",
+			"Keywords": ["scarecrow"],
+			"Hostile": true
+		}
+	]
+}

@@ -1,0 +1,138 @@
+{
+	"Name": "Chasing a Ghost",
+	"Location": "Mumbai",
+	"Image": "mumbai-chasing-a-ghost.jpg",
+	"Group": "Season 2",
+	"Codename": "MONGOOSE",
+	"IsMajor": true,
+	"Keywords": ["chasingaghost", "mumbai", "india"],
+	"Targets": [
+		{
+			"Name": "Wazir Kale",
+			"Initials": "WK",
+			"ShortName": "Wazir",
+			"Image": "mongoose_wazir_kale_identified.jpg",
+			"Keywords": ["wazirkale", "wazir", "kale", "wk", "waz"]
+		},
+		{
+			"Name": "Vanya Shah",
+			"Initials": "VS",
+			"ShortName": "Vanya",
+			"Image": "mongoose_vanya_shah.jpg",
+			"Keywords": ["vanyashah", "vanya", "shah", "vs", "van"]
+		},
+		{
+			"Name": "Dawood Rangan",
+			"Initials": "DR",
+			"ShortName": "Dawood",
+			"Image": "mongoose_dawood_rangan.jpg",
+			"Keywords": ["dawoodrangan", "dawood", "rangan", "dr", "daw"]
+		}
+	],
+	"KillMethods": [
+		"Amputation Knife", "Barber Razor", "Beak Staff", "Cleaver", "Fire Axe", "Folding Knife", "Kitchen Knife", "Letter Opener", "Old Axe",
+		"Saber", "Scissors", "Screwdriver"
+	],
+	"Disguises": [
+		{
+			"Name": "Suit",
+			"Image": "outfit_5a77f988-62b8-4414-bd8f-b47fd457d0bd_0.jpg",
+			"Suit": true
+		},
+		{
+			"Name": "Barber",
+			"Image": "outfit_c4011c75-39ff-4bff-aff5-fe902ae4b83b_0.jpg",
+			"Keywords": ["barber"]
+		},
+		{
+			"Name": "Bollywood Bodyguard",
+			"Image": "outfit_06fb2890-e820-45f2-aef3-0cb7d0528ee1_0.jpg",
+			"Keywords": ["bollywoodbodyguard", "bodyguard", "bollywood"]
+		},
+		{
+			"Name": "Bollywood Crew",
+			"Image": "outfit_6d3d59b4-571c-4dbb-9737-205fb34a1ffa_0.jpg",
+			"Keywords": ["bollywoodcrew", "bollywood", "crew"]
+		},
+		{
+			"Name": "Dancer",
+			"Image": "outfit_88adef78-2a19-45fb-9c95-988e82c056f1_0.jpg",
+			"Keywords": ["dancer"]
+		},
+		{
+			"Name": "Elite Thug",
+			"Image": "outfit_e9e143e1-f5a6-40a5-af56-947cbf32e20a_0.jpg",
+			"Keywords": ["elitethug", "elite"]
+		},
+		{
+			"Name": "Food Vendor",
+			"Image": "outfit_e9dffefc-e896-46e4-b158-1b401b015764_0.jpg",
+			"Keywords": ["foodvendor", "vendor"]
+		},
+		{
+			"Name": "Holy Man",
+			"Image": "outfit_e4581e1a-a45a-4c42-ba25-3527bd75c0f7_0.jpg",
+			"Keywords": ["holyman", "holy"]
+		},
+		{
+			"Name": "Kashmirian",
+			"Image": "outfit_6f875d32-869e-437a-8935-368e0c2cc8bc_0.jpg",
+			"Keywords": ["kashmirian", "kashmoneyman", "kashmerian"]
+		},
+		{
+			"Name": "Laundry Foreman",
+			"Image": "outfit_eeefa90a-6665-4eb1-8bc9-3e08c222abae_0.jpg",
+			"Keywords": ["laundryforeman", "foreman", "laundryforman", "forman"]
+		},
+		{
+			"Name": "Laundry Worker",
+			"Image": "outfit_c5c8e251-bb30-4e9e-b146-74ed96c7048f_0.jpg",
+			"Keywords": ["laundryworker"]
+		},
+		{
+			"Name": "Lead Actor",
+			"Image": "outfit_446ace07-c9c6-49fc-b157-fa58e812fcef_0.jpg",
+			"Keywords": ["leadactor", "actor", "gregoryarthur", "gregory"]
+		},
+		{
+			"Name": "Local Security",
+			"Image": "outfit_d136699a-a244-4789-b332-9a3afc4e3f48_0.jpg",
+			"Keywords": ["localsecurity", "security"]
+		},
+		{
+			"Name": "Metal Worker",
+			"Image": "outfit_48afc44d-cf8a-44ba-9436-663a6979c908_0.jpg",
+			"Keywords": ["metalworker", "metal", "forger"]
+		},
+		{
+			"Name": "Painter",
+			"Image": "outfit_81f55bbc-a120-4757-a778-b73fd775d1a4_0.jpg",
+			"Keywords": ["painter", "paint", "artist"]
+		},
+		{
+			"Name": "Queen's Bodyguard",
+			"Image": "outfit_6edb224d-0970-4d1d-8740-5e86d1e7af59_0.jpg",
+			"Keywords": ["queensbodyguard", "queenbodyguard"]
+		},
+		{
+			"Name": "Queen's Guard",
+			"Image": "outfit_b36075a1-b352-4e0f-9d84-84f2bdac6a86_0.jpg",
+			"Keywords": ["queensguard", "queenguard"]
+		},
+		{
+			"Name": "Tailor",
+			"Image": "outfit_b384ff35-9c38-4b08-ab0b-e333cfd7bc6a_0.jpg",
+			"Keywords": ["tailor"]
+		},
+		{
+			"Name": "Thug",
+			"Image": "outfit_a2cef12c-77d6-4062-9596-cf9d1a47d1b5_0.jpg",
+			"Keywords": ["thug"]
+		},
+		{
+			"Name": "Vanya's Servant",
+			"Image": "outfit_ae320bab-bb37-42a5-86a1-df283ada49c0_0.jpg",
+			"Keywords": ["vanyasservant", "servant", "vanyaservant"]
+		}
+	]
+}

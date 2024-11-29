@@ -1,0 +1,96 @@
+{
+	"Name": "On Top of the World",
+	"Location": "Dubai",
+	"Image": "dubai-on-top-of-the-world.jpg",
+	"Group": "Season 3",
+	"Codename": "GECKO",
+	"IsMajor": true,
+	"Keywords": ["ontopoftheworld", "ontop", "topoftheworld", "dubai", "uae", "unitedarabemirates"],
+	"Targets": [
+		{
+			"Name": "Carl Ingram",
+			"Initials": "CI",
+			"ShortName": "Carl",
+			"Image": "golden_carl_ingram.jpg",
+			"Keywords": ["carlingram", "carl", "ingram", "ci"]
+		},
+		{
+			"Name": "Marcus Stuyvesant",
+			"Initials": "MS",
+			"ShortName": "Marcus",
+			"Image": "golden_marcus_stuyvesant.jpg",
+			"Keywords": ["marcusstuyvesant", "marcus", "stuyvesant", "marc", "ms"]
+		}
+	],
+	"KillMethods": [
+		"Cleaver", "Fire Axe", "Folding Knife", "Kitchen Knife", "Letter Opener", "Ornate Scimitar", "Scissors", "Screwdriver"
+	],
+	"Disguises": [
+		{
+			"Name": "Suit",
+			"Image": "outfit_07ab08e1-013e-439d-a98b-3b7e8c9f13bc_0.jpg",
+			"Suit": true
+		},
+		{
+			"Name": "Art Crew",
+			"Image": "outfit_2c649c52-f85a-4b29-838a-31c2525cc862_0.jpg",
+			"Keywords": ["artcrew", "art", "crew"]
+		},
+		{
+			"Name": "Event Security",
+			"Image": "outfit_eb12cc2b-6dcf-4831-ba4e-ef8e53180e2f_0.jpg",
+			"Keywords": ["eventsecurity", "security"]
+		},
+		{
+			"Name": "Event Staff",
+			"Image": "outfit_77fb4c80-0b81-4672-be65-12c16c3ac7ac_0.jpg",
+			"Keywords": ["eventstaff"]
+		},
+		{
+			"Name": "Famous Chef",
+			"Image": "outfit_6dcf16f6-6620-410f-b51c-179f75de938c_0.jpg",
+			"Keywords": ["famouschef", "famous", "chef", "cook"]
+		},
+		{
+			"Name": "Helicopter Pilot",
+			"Image": "outfit_ea5b1cea-c305-4f60-9512-78b2e6cd5030_0.jpg",
+			"Keywords": ["helicopterpilot", "helipilot", "helicopter", "heli", "pilot"]
+		},
+		{
+			"Name": "Ingram's Bodyguard",
+			"Image": "outfit_bdbd806d-eb11-4167-bd2d-f5f015c3fe86_0.jpg",
+			"Keywords": ["ingramsbodyguard", "ingrambodyguard", "ingramguard", "carlsguard", "carlsbodyguard", "carlguard", "carlbodyguard", "cibodyguard", "ciguard"]
+		},
+		{
+			"Name": "Kitchen Staff",
+			"Image": "outfit_eb15e523-713f-41ba-ad67-d33b02de43c6_0.jpg",
+			"Keywords": ["kitchenstaff", "kitchen"]
+		},
+		{
+			"Name": "Maintenance Staff",
+			"Image": "outfit_e65f04b2-47a6-4d3d-b36c-9fb7fa08a00b_0.jpg",
+			"Keywords": ["maintenancestaff", "maintenance"]
+		},
+		{
+			"Name": "Penthouse Guard",
+			"Image": "outfit_f0a52fef-608a-4fa8-9fd6-bd5c15506188_0.jpg",
+			"Keywords": ["penthouseguard", "pentguard", "penthouse", "penthousesecurity", "highguard"]
+		},
+		{
+			"Name": "Penthouse Staff",
+			"Image": "outfit_a745ca17-3a7e-4c15-8219-6a5d6245ac7f_0.jpg",
+			"Keywords": ["penthousestaff", "pentstaff"]
+		},
+		{
+			"Name": "Skydiving Suit",
+			"Image": "outfit_c4146f27-81a9-42ef-b3c7-87a9d60b87fe_0.jpg",
+			"Keywords": ["skydivingsuit", "skydiving", "divingsuit", "diving"],
+			"Hostile": true
+		},
+		{
+			"Name": "The Assassin",
+			"Image": "outfit_ef9dddc5-25c7-450f-afcb-ac1b8f9569c9_0.jpg",
+			"Keywords": ["theassassin", "assassin", "asesino", "thevulture", "vulture"]
+		}
+	]
+}

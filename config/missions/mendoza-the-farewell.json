@@ -1,0 +1,107 @@
+{
+	"Name": "The Farewell",
+	"Location": "Mendoza",
+	"Image": "mendoza-the-farewell.jpg",
+	"Group": "Season 3",
+	"Codename": "LLAMA",
+	"IsMajor": true,
+	"Keywords": ["thefarewell", "farewell", "mendoza", "argentina"],
+	"Targets": [
+		{
+			"Name": "Don Archibald Yates",
+			"Initials": "DY",
+			"ShortName": "Don",
+			"Image": "elegant_yates.jpg",
+			"Keywords": ["donarchibaldyates", "donyates", "donarchibald", "don", "archibald", "yates", "dy", "day"]
+		},
+		{
+			"Name": "Tamara Vidal",
+			"Initials": "TV",
+			"ShortName": "Tamara",
+			"Image": "elegant_vidal.jpg",
+			"Keywords": ["tamaravidal", "tamara", "vidal", "tv", "tam", "tammy"]
+		}
+	],
+	"KillMethods": [
+		"Broadsword", "Combat Knife", "Fire Axe", "Garden Fork", "Grape Knife", "Hatchet", "Hobbdy Knife",
+		"Icicle", "Jarl's Pirate Saber", "Kitchen Knife",
+		{
+			"Name": "Letter Opener",
+			"Tags": ["EasterEgg"]
+		},
+		"Machete", "Sapper's Axe",
+		"Screwdriver", "Shears", "Old Axe"
+	],
+	"Disguises": [
+		{
+			"Name": "Suit",
+			"Image": "outfit_6c129ec5-41cb-43f1-837d-ebff54f260c6_0.jpg",
+			"Suit": true
+		},
+		{
+			"Name": "Asado Chef",
+			"Image": "outfit_8d105591-dfbe-46aa-8520-f00f986b57e2_0.jpg",
+			"Keywords": ["asadochef", "asado", "chef"]
+		},
+		{
+			"Name": "Bodyguard",
+			"Image": "outfit_aa7dc754-702a-401b-8f84-e806e958869c_0.jpg",
+			"Keywords": ["bodyguard"]
+		},
+		{
+			"Name": "Chief Winemaker",
+			"Image": "outfit_af56d687-ba1b-44c8-8061-fd4a4a1222a3_0.jpg",
+			"Keywords": ["chiefwinemaker", "chief", "winemaker", "cw"]
+		},
+		{
+			"Name": "Corvo Black",
+			"Image": "outfit_214b2143-3277-44cd-b20f-344747fc23d9_0.jpg",
+			"Keywords": ["corvoblack", "corvo", "black", "corv"]
+		},
+		{
+			"Name": "Gaucho",
+			"Image": "outfit_e887e53a-6b02-455d-88be-284af6d88e94_0.jpg",
+			"Keywords": ["gaucho"]
+		},
+		{
+			"Name": "Head of Security",
+			"Image": "outfit_16df6808-97ac-4c3a-8d4b-7ddacfc8a7ea_0.jpg",
+			"Keywords": ["headofsecurity", "headsecurity", "hos", "juancortazar", "cortazar", "head"]
+		},
+		{
+			"Name": "Lawyer",
+			"Image": "outfit_521ed265-2115-4977-8db0-45404b067102_0.jpg",
+			"Keywords": ["lawyer", "lawer", "law"]
+		},
+		{
+			"Name": "Mercenary",
+			"Image": "outfit_69d4d32b-0fc9-4fde-8817-fafd98c13365_0.jpg",
+			"Keywords": ["mercenary", "merc"]
+		},
+		{
+			"Name": "Providence Herald",
+			"Image": "outfit_f5b24132-7a6b-4a3f-868d-193b8692a52b_0.jpg",
+			"Keywords": ["providenceherald", "providence", "herald", "provi"]
+		},
+		{
+			"Name": "Sommelier",
+			"Image": "outfit_7fed7c24-08b2-468b-8e49-22b5ad59b56b_0.jpg",
+			"Keywords": ["sommelier", "somm", "som"]
+		},
+		{
+			"Name": "Tango Musician",
+			"Image": "outfit_6ab03e04-9e88-4237-a596-96e3135420ab_0.jpg",
+			"Keywords": ["tangomusician", "tango", "musician"]
+		},
+		{
+			"Name": "Waiter",
+			"Image": "outfit_cac0081e-9eb0-4fbf-ba23-70c2815f0874_0.jpg",
+			"Keywords": ["waiter"]
+		},
+		{
+			"Name": "Winery Worker",
+			"Image": "outfit_bbdfca80-abef-4b43-953e-9a46c3eee2eb_0.jpg",
+			"Keywords": ["wineryworker", "winery", "worker"]
+		}
+	]
+}

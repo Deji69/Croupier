@@ -1,0 +1,91 @@
+{
+	"Name": "End of an Era",
+	"Location": "Chongqing",
+	"Image": "chongqing-end-of-an-era.jpg",
+	"Group": "Season 3",
+	"Codename": "RAT",
+	"IsMajor": true,
+	"Keywords": ["endofanera", "era", "chongqing", "china"],
+	"Targets": [
+		{
+			"Name": "Hush",
+			"Initials": "H",
+			"ShortName": "Hush",
+			"Image": "wet_hush.jpg",
+			"Keywords": ["hush", "thebastard", "h"]
+		},
+		{
+			"Name": "Imogen Royce",
+			"Initials": "IR",
+			"ShortName": "Imogen",
+			"Image": "wet_imogen_royce.jpg",
+			"Keywords": ["imogenroyce", "imogen", "royce", "imo", "ir"]
+		}
+	],
+	"KillMethods": [
+		"Cleaver", "Fire Axe", "Garden Fork", "Hobby Knife", "Kitchen Knife", "Letter Opener", "Scissors", "Scrap Sword",
+		"Screwdriver", "Tanto"
+	],
+	"Disguises": [
+		{
+			"Name": "Suit",
+			"Image": "outfit_90ad022f-0789-413f-bf3d-603c1237c9b1_0.jpg",
+			"Suit": true
+		},
+		{
+			"Name": "Block Guard",
+			"Image": "outfit_4dd90d10-ac5f-404f-9c20-4428653ca7ba_0.jpg",
+			"Keywords": ["blockguard", "blocksecurity", "block"]
+		},
+		{
+			"Name": "Dumpling Cook",
+			"Image": "outfit_c5f6dd2a-3600-40be-9a82-bbf5d360c379_0.jpg",
+			"Keywords": ["dumplingcook", "dumpling", "cook", "chef"]
+		},
+		{
+			"Name": "Facility Analyst",
+			"Image": "outfit_9c07a86c-2d03-417b-b46f-cb433481080e_0.jpg",
+			"Keywords": ["facilityanalyst", "analyst"]
+		},
+		{
+			"Name": "Facility Engineer",
+			"Image": "outfit_8fc343f2-6e9a-4e06-9342-705e5b171895_0.jpg",
+			"Keywords": ["facilityengineer", "engineer"]
+		},
+		{
+			"Name": "Facility Guard",
+			"Image": "outfit_f5c73d58-a24f-4957-b80d-5efb6771ad9b_0.jpg",
+			"Keywords": ["facilityguard"]
+		},
+		{
+			"Name": "Facility Security",
+			"Image": "outfit_b3515a1e-4a32-475c-bd61-4fdae243a7e5_0.jpg",
+			"Keywords": ["facilitysecurity", "facilitysec"]
+		},
+		{
+			"Name": "Homeless Person",
+			"Image": "outfit_ba4e595e-da3b-4902-8622-40889fc088db_0.jpg",
+			"Keywords": ["homelessperson", "homeless", "person", "hobo", "bum"]
+		},
+		{
+			"Name": "Perfect Test Subject",
+			"Image": "outfit_9cd5fbd7-903c-4ab7-afe8-01eb755ce9da_0.jpg",
+			"Keywords": ["perfectestsubject", "perfectsubject", "testsubject", "subject", "perfect", "test"]
+		},
+		{
+			"Name": "Researcher",
+			"Image": "outfit_553bb399-2ee0-41bb-a76b-b7ec6d49f5a3_0.jpg",
+			"Keywords": ["researcher", "research"]
+		},
+		{
+			"Name": "Street Guard",
+			"Image": "outfit_86bdb741-6810-4610-8e21-799c93c71849_0.jpg",
+			"Keywords": ["streetguard", "street"]
+		},
+		{
+			"Name": "The Board Member",
+			"Image": "outfit_fd1d39d8-db06-47b3-8f4b-eb1febf5ccb7_0.jpg",
+			"Keywords": ["theboardmember", "boardmember", "board", "member", "mrpritchard", "pritchard"]
+		}
+	]
+}

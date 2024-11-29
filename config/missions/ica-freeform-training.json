@@ -1,0 +1,51 @@
+{
+	"Name": "Freeform Training",
+	"Location": "ICA Facility",
+	"Image": "ica-facility-freeform-training.jpg",
+	"Group": "Prologue",
+	"Codename": "POLARBEAR",
+	"IsMajor": false,
+	"Keywords": ["freeformtraining", "freeform", "training"],
+	"Targets": [
+		{
+			"Name": "Kalvin Ritter",
+			"Initials": "KR",
+			"ShortName": "Kalvin",
+			"Image": "polarbear2_sparrow.jpg",
+			"Keywords": ["kalvinritter", "kr", "kal", "kalvin", "ritter"]
+		}
+	],
+	"KillMethods": [],
+	"Disguises": [
+		{
+			"Name": "Suit",
+			"Image": "outfit_22725852-7989-463a-822a-5848b1b2c6cf_0.jpg",
+			"Suit": true
+		},
+		{
+			"Name": "Bodyguard",
+			"Image": "outfit_cf170965-5582-48d7-8dd7-774ae0a144dd_0.jpg",
+			"Keywords": ["bodyguard"]
+		},
+		{
+			"Name": "Mechanic",
+			"Image": "outfit_e222cc14-8d48-42de-9af6-1b745dbb3614_0.jpg",
+			"Keywords": ["mechanic"]
+		},
+		{
+			"Name": "Terry Norfolk",
+			"Image": "outfit_63d2164f-efa3-4a19-aaa0-279a0029dd74_0.jpg",
+			"Keywords": ["terrynorfolk", "terry", "norfolk"]
+		},
+		{
+			"Name": "Yacht Crew",
+			"Image": "outfit_bbffa24b-fa46-4f9d-a73d-71de56ff3bfe_0.jpg",
+			"Keywords": ["yachtcrew", "crew"]
+		},
+		{
+			"Name": "Yacht Security",
+			"Image": "outfit_f7acaf86-205c-4ac4-98c7-2c418007299c_0.jpg",
+			"Keywords": ["yachtsecurity", "security", "yachtguard", "guard"]
+		}
+	]
+}

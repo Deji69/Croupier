@@ -1,0 +1,70 @@
+{
+	"Name": "A House Built On Sand",
+	"Location": "Marrakesh",
+	"Image": "marrakesh-a-house-built-on-sand.jpg",
+	"Group": "Season 1 Bonus",
+	"Codename": "PYTHON",
+	"IsMajor": false,
+	"Keywords": ["ahousebuiltonsand", "housebuiltonsand", "ahbos"],
+	"Targets": [
+		{
+			"Name": "Kong Tuo-Kwang",
+			"Initials": "KTK",
+			"ShortName": "King",
+			"Image": "python_kong_tou_kwang_briefing.jpg",
+			"Keywords": ["kongtuokwang", "kongtuo", "tuokwang", "kong", "kwang", "ktk"]
+		},
+		{
+			"Name": "Matthieu Mendola",
+			"Initials": "MM",
+			"ShortName": "Matthieu",
+			"Image": "python_matthieu_mendola_briefing.jpg",
+			"Keywords": ["matthieumendola", "matthieu", "mendola", "mm"]
+		}
+	],
+	"KillMethods": [
+		"Battle Axe", "Cleaver", "Folding Knife", "Kitchen Knife", "Scissors", "Screwdriver"
+	],
+	"Disguises": [
+		{
+			"Name": "Suit",
+			"Image": "outfit_cb105877-743d-4a3b-bdad-28a022630306_0.jpg",
+			"Suit": true
+		},
+		{
+			"Name": "Bodyguard",
+			"Image": "outfit_97536da8-64a5-4675-a108-08ff7be41c1f_0.jpg ",
+			"Keywords": ["bodyguard", "cicada"]
+		},
+		{
+			"Name": "Food Vendor",
+			"Image": "outfit_98b1c1f6-2634-4c29-b9e6-fa8d7633100a_0.jpg",
+			"Keywords": ["foodvendor", "vendor"]
+		},
+		{
+			"Name": "Fortune Teller",
+			"Image": "outfit_dc4762e0-e58e-4336-a3c1-40646087267a_0.jpg",
+			"Keywords": ["fortuneteller", "fortune", "ft", "teller"]
+		},
+		{
+			"Name": "Handyman",
+			"Image": "outfit_eb48ed16-195a-4de1-bae6-d7e7ec92046c_0.jpg",
+			"Keywords": ["handyman", "repairman", "repairguy"]
+		},
+		{
+			"Name": "Military Soldier",
+			"Image": "outfit_955bca9e-bc91-46da-a4df-3dfc787c8aff_0.jpg",
+			"Keywords": ["militarysoldier", "streetsoldier", "streetguard"]
+		},
+		{
+			"Name": "Shopkeeper",
+			"Image": "outfit_ecf1b752-0cd6-4283-a1a5-743fc0249525_0.jpg",
+			"Keywords": ["shopkeeper", "storekeeper"]
+		},
+		{
+			"Name": "Waiter",
+			"Image": "outfit_6348cc33-665f-4470-80b4-a0ad836df702_0.jpg",
+			"Keywords": ["waiter"]
+		}
+	]
+}

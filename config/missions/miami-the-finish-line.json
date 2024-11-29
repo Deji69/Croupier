@@ -1,0 +1,180 @@
+{
+	"Name": "The Finish Line",
+	"Location": "Miami",
+	"Image": "miami-the-finish-line.jpg",
+	"Group": "Season 2",
+	"Codename": "FLAMINGO",
+	"IsMajor": true,
+	"Keywords": ["thefinishline", "miami", "finishline", "race", "florida"],
+	"Targets": [
+		{
+			"Name": "Sierra Knox",
+			"Initials": "SK",
+			"ShortName": "Sierra",
+			"Image": "flamingo_sierra_knox.jpg",
+			"Keywords": ["sierraknox", "sierra", "sk"]
+		},
+		{
+			"Name": "Robert Knox",
+			"Initials": "RK",
+			"ShortName": "Robert",
+			"Image": "flamingo_robert_knox.jpg",
+			"Keywords": ["robertknox", "robert", "rk", "bobknox", "bob", "bobert", "bobby", "robby", "rob", "robbie"]
+		}
+	],
+	"KillMethods": [
+		"Amputation Knife", "Battle Axe", "Cleaver", "Fire Axe", "Kitchen Knife", "Old Axe", "Scissors", "Screwdriver", "Starfish"
+	],
+	"Disguises": [
+		{
+			"Name": "Suit",
+			"Image": "outfit_1ad1ec9b-1e96-4fac-b0e6-8817a46da9db_0.jpg",
+			"Suit": true
+		},
+		{
+			"Name": "Aeon Driver",
+			"Image": "outfit_6fca97a0-cb80-4bd7-9a8f-106fa20a5d04_0.jpg",
+			"Keywords": ["aeondriver"]
+		},
+		{
+			"Name": "Aeon Mechanic",
+			"Image": "outfit_da951ccc-1d8b-4d84-b30a-72e74ac2a312_0.jpg",
+			"Keywords": ["aeonmechanic"]
+		},
+		{
+			"Name": "Blue Seed Driver",
+			"Image": "outfit_46dedef3-bbcf-438c-af2b-c97dd853aac1_0.jpg",
+			"Keywords": ["blueseeddriver", "blueseed"]
+		},
+		{
+			"Name": "Crashed Kronstadt Driver",
+			"Image": "outfit_8980597c-1559-46a7-ba8d-bc5d95d5936a_0.jpg",
+			"Keywords": ["crashedkronstadtdriver", "crasheddriver", "crashedkronstadt", "crashdriver", "crashedkrondriver", "crashkrondriver"]
+		},
+		{
+			"Name": "Event Crew",
+			"Image": "outfit_d86e4379-4aad-42cf-a7cf-38d0fa7e727b_0.jpg",
+			"Keywords": ["eventcrew", "eventstaff", "event", "crew"]
+		},
+		{
+			"Name": "Event Security",
+			"Image": "outfit_dc5b1ccd-0997-4834-93a0-db7543e729cc_0.jpg",
+			"Keywords": ["eventsecurity", "eventguard", "cop", "security", "eventsec"]
+		},
+		{
+			"Name": "Florida Man",
+			"Image": "outfit_f8ef3523-2500-410c-98fb-b6926a832df4_0.jpg",
+			"Keywords": ["floridaman", "florida", "flman"]
+		},
+		{
+			"Name": "Food Vendor",
+			"Image": "outfit_e9ed2969-146a-472d-8e87-39c77bd1757d_0.jpg",
+			"Keywords": ["foodvendor", "vendor"]
+		},
+		{
+			"Name": "Journalist",
+			"Image": "outfit_723e73f3-9fa4-40d8-bb11-b66184c9a795_0.jpg",
+			"Keywords": ["journalist", "journo", "reporter", "photographer", "press"]
+		},
+		{
+			"Name": "Kitchen Staff",
+			"Image": "outfit_2a5a3dba-bafd-4a1f-8bbf-204668b32fe1_0.jpg",
+			"Keywords": ["kitchenstaff", "kitchen", "kitchenassistant", "kitchenass", "kitchensassistant", "kitchensass"]
+		},
+		{
+			"Name": "Kowoon Driver",
+			"Image": "outfit_12181b2f-8c74-4761-8d78-3bedfbf9281d_0.jpg",
+			"Keywords": ["kowoondriver", "kowdriver"]
+		},
+		{
+			"Name": "Kowoon Mechanic",
+			"Image": "outfit_fc829fad-5afc-4236-8662-65ab8698ef44_0.jpg",
+			"Keywords": ["kowoonmechanic", "kowoonmech", "kowmechanic", "kowmech"]
+		},
+		{
+			"Name": "Kronstadt Engineer",
+			"Image": "outfit_9bd53a5a-a152-488f-be20-7394b083d99a_0.jpg",
+			"Keywords": ["kronstadtengineer", "kronstadteng", "kronengineer", "kroneng", "engineer"]
+		},
+		{
+			"Name": "Kronstadt Mechanic",
+			"Image": "outfit_085e639e-2cf4-4e9b-bd9b-f9fd5b899676_0.jpg",
+			"Keywords": ["kronstadtmechanic", "kronstadtmech", "kronmechanic", "kronmech"]
+		},
+		{
+			"Name": "Kronstadt Researcher",
+			"Image": "outfit_ade47a03-a3ec-4d78-aefa-6057abceea28_0.jpg",
+			"Keywords": ["kronstadtresearcher", "researcher", "kronresearcher"]
+		},
+		{
+			"Name": "Kronstadt Security",
+			"Image": "outfit_d37ae121-69b4-4a9c-ab57-972063505e2f_0.jpg",
+			"Keywords": ["kronstadtsecurity", "kronstadtguard", "kronsecurity", "kronguard"]
+		},
+		{
+			"Name": "Mascot",
+			"Image": "outfit_124d145e-469e-485d-a628-ced82ddf1b75_0.jpg",
+			"Keywords": ["flamingo", "mascot", "bird"]
+		},
+		{
+			"Name": "Medic",
+			"Image": "outfit_b838226d-5fbf-4b5d-8e5f-98e5c8ddc1f2_0.jpg",
+			"Keywords": ["medic", "doctor", "paramedic"]
+		},
+		{
+			"Name": "Moses Lee",
+			"Image": "outfit_a45555d8-d68c-4cd7-8006-7d7f61b36c72_0.jpg",
+			"Keywords": ["moseslee", "moses", "lee"]
+		},
+		{
+			"Name": "Pale Rider",
+			"Image": "outfit_9df94442-ed1b-436c-942f-3195b1ef7e0e_0.jpg",
+			"Keywords": ["palerider", "pale", "rider"]
+		},
+		{
+			"Name": "Race Coordinator",
+			"Image": "outfit_be9dd1c4-af52-43db-b8f7-37c3c054c90f_0.jpg",
+			"Keywords": ["racecoordinator", "coordinator", "racecoord"]
+		},
+		{
+			"Name": "Race Marshal",
+			"Image": "outfit_a166a37e-a3f8-42d2-99d6-e0dd2cf5c090_0.jpg",
+			"Keywords": ["racemarshal", "marshal", "marshall", "racemarshall"]
+		},
+		{
+			"Name": "Sheik",
+			"Image": "outfit_a68b2030-d52f-4e52-907f-8657b867dd50_0.jpg",
+			"Keywords": ["sheikh", "sheik", "alghazali", "salman"]
+		},
+		{
+			"Name": "Sotteraneo Mechanic",
+			"Image": "outfit_981b7a3b-5548-4a6f-b568-f767784e6d91_0.jpg",
+			"Keywords": ["sotteraneomechanic", "sotteraneo", "sottmech", "sottmechanic", "sotmech", "sotmechanic", "sott", "soteraneo"]
+		},
+		{
+			"Name": "Street Musician",
+			"Image": "outfit_2018be7c-5f79-497e-a7e1-0e64f31e71f5_0.jpg",
+			"Keywords": ["streetmusician", "musician", "performer", "drummer"]
+		},
+		{
+			"Name": "Ted Mendez",
+			"Image": "outfit_d7d8d5e8-070c-4d6c-9a67-f1165a7bb29d_0.jpg",
+			"Keywords": ["tedmendez", "ted", "mendez"]
+		},
+		{
+			"Name": "Thwack Driver",
+			"Image": "outfit_bac37ceb-6f72-406f-bfa3-e49413436525_0.jpg",
+			"Keywords": ["thwackdriver", "thwdriver"]
+		},
+		{
+			"Name": "Thwack Mechanic",
+			"Image": "outfit_4376850a-3a37-4ad3-a886-168d0e24aa20_0.jpg",
+			"Keywords": ["thwackmechanic", "thwackmech", "thwmech"]
+		},
+		{
+			"Name": "Waiter",
+			"Image": "outfit_c7bbd142-7873-4a91-98c8-76a6900bea60_0.jpg",
+			"Keywords": ["waiter"]
+		}
+	]
+}

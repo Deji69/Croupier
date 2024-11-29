@@ -1,0 +1,121 @@
+{
+	"Name": "A Gilded Cage",
+	"Location": "Marrakesh",
+	"Image": "marrakesh-a-gilded-cage.jpg",
+	"Group": "Season 1",
+	"Codename": "SPIDER",
+	"IsMajor": true,
+	"Keywords": ["agildedcage", "marrakesh", "gildedcage", "gilded", "cage"],
+	"Targets": [
+		{
+			"Name": "Reza Zaydan",
+			"Initials": "RZ",
+			"ShortName": "Reza",
+			"Image": "tobigforjail_general_zaydan.jpg",
+			"Keywords": ["rezazaydan", "reza", "zaydan", "rz", "rez", "generalzaydan", "general"]
+		},
+		{
+			"Name": "Claus Hugo Strandberg",
+			"Initials": "CHS",
+			"ShortName": "Claus",
+			"Image": "tobigforjail_claus_hugo_stranberg.jpg",
+			"Keywords": ["claushugostrandberg", "claus", "clausstrandberg", "strandberg", "hugo", "chs"]
+		}
+	],
+	"KillMethods": [
+		"Battle Axe", "Cleaver", "Fire Axe", "Kitchen Knife", "Letter Opener", "Saber", "Scissors", "Screwdriver"
+	],
+	"Disguises": [
+		{
+			"Name": "Suit",
+			"Image": "outfit_cb105877-743d-4a3b-bdad-28a022630306_0.jpg",
+			"Suit": true
+		},
+		{
+			"Name": "Bodyguard",
+			"Image": "outfit_97536da8-64a5-4675-a108-08ff7be41c1f_0.jpg ",
+			"Keywords": ["bodyguard", "cicada"]
+		},
+		{
+			"Name": "Cameraman",
+			"Image": "outfit_e0fc86fb-a852-4652-bb5c-b591f7bfeb29_0.jpg",
+			"Keywords": ["cameraman", "camera", "photographer"]
+		},
+		{
+			"Name": "Consulate Intern",
+			"Image": "outfit_65f23b45-f5ab-4ede-82ec-46e4de38c0e9_0.jpg",
+			"Keywords": ["consulateintern", "intern", "stevetheintern", "internsteve", "steve"]
+		},
+		{
+			"Name": "Consulate Janitor",
+			"Image": "outfit_1b87edd3-fb1e-4adf-9463-efcb380cbd6b_0.jpg",
+			"Keywords": ["consulatejanitor", "janitor"]
+		},
+		{
+			"Name": "Consulate Security",
+			"Image": "outfit_e0fc86fc-a852-4652-bb5c-b591f7bfeb29_0.jpg",
+			"Keywords": ["consulatesecurity", "security"]
+		},
+		{
+			"Name": "Elite Soldier",
+			"Image": "outfit_e5bb3c6b-2fcd-4e36-a30d-03955cb05088_0.jpg",
+			"Keywords": ["elitesoldier", "elite", "soldier"]
+		},
+		{
+			"Name": "Food Vendor",
+			"Image": "outfit_98b1c1f6-2634-4c29-b9e6-fa8d7633100a_0.jpg",
+			"Keywords": ["foodvendor", "vendor"]
+		},
+		{
+			"Name": "Fortune Teller",
+			"Image": "outfit_dc4762e0-e58e-4336-a3c1-40646087267a_0.jpg",
+			"Keywords": ["fortuneteller", "fortune", "ft", "teller"]
+		},
+		{
+			"Name": "Handyman",
+			"Image": "outfit_eb48ed16-195a-4de1-bae6-d7e7ec92046c_0.jpg",
+			"Keywords": ["handyman", "repairman", "repairguy"]
+		},
+		{
+			"Name": "Headmaster",
+			"Image": "outfit_6136fa6a-3f1f-4606-9b87-fde9538966dc_0.jpg",
+			"Keywords": ["headmaster", "teacher"]
+		},
+		{
+			"Name": "Local Printing Crew",
+			"Image": "outfit_ff6668af-dde5-48c3-ac9a-f47b860122d0_0.jpg",
+			"Keywords": ["localprintingcrew", "printingcrew", "printcrew", "crew", "printer"]
+		},
+		{
+			"Name": "Masseur",
+			"Image": "outfit_138eda40-501a-48b8-affc-928321566a4e_0.jpg",
+			"Keywords": ["masseur", "masseuse", "mass"]
+		},
+		{
+			"Name": "Military Officer",
+			"Image": "outfit_65d860f4-998e-4f92-a1d7-9f40c04a2474_0.jpg",
+			"Keywords": ["militaryofficer", "officer", "redberet"]
+		},
+		{
+			"Name": "Military Soldier",
+			"Image": "outfit_955bca9e-bc91-46da-a4df-3dfc787c8aff_0.jpg",
+			"Keywords": ["militarysoldier", "streetsoldier", "streetguard"]
+		},
+		{
+			"Name": "Prisoner",
+			"Image": "outfit_fdb4aade-4d5f-47e2-896f-fc1addf64d52_0.jpg",
+			"Keywords": ["mansionsecurity", "housesecurity", "mansionguard", "villasecurity", "houseguard", "villaguard", "guard", "security"],
+			"Hostile": true
+		},
+		{
+			"Name": "Shopkeeper",
+			"Image": "outfit_ecf1b752-0cd6-4283-a1a5-743fc0249525_0.jpg",
+			"Keywords": ["shopkeeper", "storekeeper"]
+		},
+		{
+			"Name": "Waiter",
+			"Image": "outfit_6348cc33-665f-4470-80b4-a0ad836df702_0.jpg",
+			"Keywords": ["waiter"]
+		}
+	]
+}
