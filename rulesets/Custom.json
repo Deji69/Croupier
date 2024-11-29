@@ -1,0 +1,569 @@
+{
+  "Name": "Custom",
+  "Rules": {
+    "GenericEliminations": false,
+    "MeleeKillTypes": false,
+    "ThrownKillTypes": false,
+    "AnyExplosives": false,
+    "ImpactExplosives": false,
+    "RemoteExplosives": false,
+    "LoudRemoteExplosives": false,
+    "LiveComplications": true,
+    "LiveComplicationsExcludeStandard": true,
+    "LiveComplicationChance": 25,
+    "LoudSMGIsLargeFirearm": false,
+    "AllowDuplicateDisguise": false,
+    "AllowDuplicateMethod": false,
+    "SuitOnly": false,
+    "AnyDisguise": false,
+    "Banned": [
+      "Slow",
+      "Hard",
+      "Extreme",
+      "Impossible",
+      "Buggy",
+      "EasterEgg"
+    ]
+  },
+  "Tags": {
+    "KR": {
+      "Impossible": [
+        "Electrocution",
+        "Fire",
+        "InjectedPoison",
+        "SMG",
+        "Sniper",
+        "ImpactExplosive"
+      ],
+      "OnlyLoud": [
+        "AssaultRifle",
+        "Shotgun"
+      ]
+    },
+    "JK": {
+      "Impossible": [
+        "Electrocution",
+        "Fire",
+        "InjectedPoison",
+        "SMG",
+        "Sniper",
+        "Explosive"
+      ],
+      "OnlyLoud": [
+        "AssaultRifle",
+        "Shotgun"
+      ]
+    },
+    "VN": {
+      "Banned": [
+        "Fire"
+      ],
+      "Extreme": [
+        "Fire"
+      ],
+      "DuplicateOnlySameDisguise": [
+        "Fire"
+      ]
+    },
+    "DM": {
+      "Banned": [
+        "Fire"
+      ],
+      "Extreme": [
+        "Fire"
+      ],
+      "DuplicateOnlySameDisguise": [
+        "Fire"
+      ]
+    },
+    "HSB": {
+      "Banned": [
+        "Fire"
+      ],
+      "Extreme": [
+        "Fire"
+      ],
+      "DuplicateOnlySameDisguise": [
+        "Fire"
+      ]
+    },
+    "MSG": {
+      "Banned": [
+        "Fire"
+      ],
+      "Extreme": [
+        "Fire"
+      ],
+      "DuplicateOnlySameDisguise": [
+        "Fire"
+      ]
+    },
+    "SC": {
+      "Banned": [
+        "ConsumedPoison",
+        "Fire"
+      ],
+      "Buggy": [
+        "ConsumedPoison"
+      ],
+      "Impossible": [
+        "Fire"
+      ]
+    },
+    "FDS": {
+      "Banned": [
+        "Fire"
+      ],
+      "Impossible": [
+        "Fire"
+      ]
+    },
+    "DB": {},
+    "MA": {
+      "Banned": [
+        "Fire"
+      ],
+      "Impossible": [
+        "Fire"
+      ]
+    },
+    "CB": {
+      "Banned": [
+        "Fire"
+      ],
+      "Impossible": [
+        "Fire"
+      ]
+    },
+    "BA": {
+      "Banned": [
+        "Fire"
+      ],
+      "Impossible": [
+        "Fire"
+      ]
+    },
+    "RZ": {
+      "Banned": [
+        "Drowning",
+        "Electrocution"
+      ],
+      "Extreme": [
+        "Drowning",
+        "Electrocution"
+      ]
+    },
+    "CHS": {
+      "Banned": [
+        "HostileNonRemote",
+        "FallingObject"
+      ],
+      "Hard": [
+        "FallingObject",
+        "HostileNonRemote"
+      ]
+    },
+    "KTK": {},
+    "MM": {},
+    "JC": {
+      "Banned": [
+        "Fire",
+        "HostileNonRemote"
+      ],
+      "Hard": [
+        "HostileNonRemote"
+      ],
+      "Extreme": [
+        "Fire"
+      ]
+    },
+    "KM": {
+      "Banned": [
+        "Fire",
+        "HostileNonRemote"
+      ],
+      "Hard": [
+        "HostileNonRemote"
+      ],
+      "Extreme": [
+        "Fire"
+      ]
+    },
+    "ON": {
+      "Banned": [
+        "FallingObject"
+      ],
+      "Extreme": [
+        "FallingObject"
+      ]
+    },
+    "SY": {
+      "Banned": [
+        "FallingObject"
+      ],
+      "Extreme": [
+        "FallingObject"
+      ]
+    },
+    "SR": {
+      "Banned": [
+        "Drowning",
+        "LoudLive"
+      ],
+      "Hard": [
+        "LoudLive"
+      ],
+      "Extreme": [
+        "Drowning"
+      ],
+      "Impossible": [
+        "ConsumedPoison"
+      ]
+    },
+    "PG": {
+      "Banned": [
+        "Drowning",
+        "Fire",
+        "LoudLive"
+      ],
+      "Hard": [
+        "Fire",
+        "LoudLive"
+      ],
+      "Extreme": [
+        "Drowning",
+        "Hard"
+      ]
+    },
+    "EB": {
+      "Banned": [
+        "ConsumedPoison",
+        "Drowning",
+        "Electrocution"
+      ],
+      "Extreme": [
+        "Drowning",
+        "Electrocution"
+      ],
+      "Impossible": [
+        "ConsumedPoison"
+      ]
+    },
+    "MP": {
+      "Banned": [
+        "Drowning"
+      ],
+      "Extreme": [
+        "Drowning"
+      ]
+    },
+    "YY": {},
+    "OC": {
+      "Banned": [
+        "Drowning"
+      ],
+      "Extreme": [
+        "Drowning"
+      ]
+    },
+    "KL": {},
+    "DF": {},
+    "AR": {
+      "Banned": [
+        "FallingObject",
+        "Fire"
+      ],
+      "Impossible": [
+        "FallingObject",
+        "Fire"
+      ]
+    },
+    "SK": {},
+    "RK": {
+      "Banned": [
+        "Fire"
+      ],
+      "Extreme": [
+        "Fire"
+      ]
+    },
+    "AJ": {},
+    "RD": {
+      "Banned": [
+        "ConsumedPoison"
+      ],
+      "Extreme": [
+        "ConsumedPoison"
+      ]
+    },
+    "JF": {
+      "Banned": [
+        "FallingObject"
+      ],
+      "Extreme": [
+        "FallingObject"
+      ]
+    },
+    "AM": {
+      "Banned": [
+        "Fire"
+      ],
+      "Hard": [
+        "Fire"
+      ]
+    },
+    "BR": {},
+    "WK": {
+      "Banned": [
+        "Drowning",
+        "Fire",
+        "LoudLive"
+      ],
+      "Extreme": [
+        "Drowning",
+        "Fire",
+        "LoudLive"
+      ]
+    },
+    "VS": {
+      "Banned": [
+        "ConsumedPoison",
+        "Drowning"
+      ],
+      "Extreme": [
+        "ConsumedPoison",
+        "Drowning"
+      ]
+    },
+    "DR": {
+      "Banned": [
+        "ConsumedPoison",
+        "Fire"
+      ],
+      "Extreme": [
+        "ConsumedPoison",
+        "Fire"
+      ]
+    },
+    "BC": {},
+    "J": {
+      "Banned": [
+        "FallingObject",
+        "Fire",
+        "BattleAxe",
+        "BeakStaff"
+      ],
+      "Impossible": [
+        "FallingObject",
+        "Fire"
+      ],
+      "Slow": [
+        "BattleAxe",
+        "BeakStaff"
+      ]
+    },
+    "NC": {
+      "Banned": [
+        "Fire",
+        "BattleAxe",
+        "BeakStaff",
+        "FallingObject"
+      ],
+      "Impossible": [
+        "Fire"
+      ],
+      "Slow": [
+        "BattleAxe",
+        "BeakStaff",
+        "FallingObject"
+      ]
+    },
+    "GV": {},
+    "ZW": {
+      "Banned": [
+        "ConsumedPoison",
+        "HostileNonRemote"
+      ],
+      "Extreme": [
+        "HostileNonRemote"
+      ],
+      "Impossible": [
+        "ConsumedPoison"
+      ]
+    },
+    "SW": {
+      "Banned": [
+        "ConsumedPoison",
+        "Drowning",
+        "Fire",
+        "HostileNonRemote"
+      ],
+      "Hard": [
+        "Drowning",
+        "Fire"
+      ],
+      "Extreme": [
+        "ConsumedPoison",
+        "HostileNonRemote"
+      ]
+    },
+    "AS": {
+      "Banned": [
+        "Fire"
+      ],
+      "Impossible": [
+        "Fire"
+      ]
+    },
+    "TW": {
+      "Banned": [
+        "ConsumedPoison",
+        "Fire"
+      ],
+      "Extreme": [
+        "ConsumedPoison"
+      ],
+      "Impossible": [
+        "Fire"
+      ]
+    },
+    "SB": {
+      "Banned": [
+        "ConsumedPoison",
+        "Fire"
+      ],
+      "Extreme": [
+        "ConsumedPoison"
+      ],
+      "Impossible": [
+        "Fire"
+      ]
+    },
+    "LV": {
+      "Banned": [
+        "FallingObject",
+        "Fire"
+      ],
+      "Hard": [
+        "FallingObject"
+      ],
+      "Impossible": [
+        "Fire"
+      ]
+    },
+    "CI": {
+      "Banned": [
+        "ConsumedPoison",
+        "Fire"
+      ],
+      "Buggy": [
+        "ConsumedPoison"
+      ],
+      "Extreme": [
+        "Fire"
+      ]
+    },
+    "MS": {
+      "Banned": [
+        "ConsumedPoison",
+        "Fire"
+      ],
+      "Buggy": [
+        "ConsumedPoison"
+      ],
+      "Extreme": [
+        "Fire"
+      ]
+    },
+    "AC": {
+      "Banned": [
+        "Fire"
+      ],
+      "Impossible": [
+        "Fire"
+      ]
+    },
+    "H": {
+      "Banned": [
+        "ConsumedPoison",
+        "Fire",
+        "LoudLive"
+      ],
+      "Slow": [
+        "ConsumedPoison"
+      ],
+      "Hard": [
+        "LoudLive"
+      ],
+      "Impossible": [
+        "Fire"
+      ]
+    },
+    "IR": {
+      "Banned": [
+        "ConsumedPoison",
+        "FallingObject",
+        "Fire"
+      ],
+      "Hard": [
+        "ConsumedPoison",
+        "Fire"
+      ],
+      "Extreme": [
+        "FallingObject"
+      ]
+    },
+    "DY": {
+      "Banned": [
+        "ConsumedPoison",
+        "Fire"
+      ],
+      "Hard": [
+        "ConsumedPoison"
+      ],
+      "Extreme": [
+        "Fire"
+      ]
+    },
+    "TV": {
+      "Banned": [
+        "ConsumedPoison",
+        "FallingObject",
+        "Fire"
+      ],
+      "Hard": [
+        "ConsumedPoison",
+        "FallingObject"
+      ],
+      "Extreme": [
+        "Fire"
+      ]
+    },
+    "AE": {
+      "Banned": [
+        "Drowning",
+        "ConsumedPoison",
+        "Electrocution",
+        "Explosion",
+        "FallingObject",
+        "Fire",
+        "Sniper",
+        "RemoteExplosive",
+        "ImpactExplosive"
+      ],
+      "Impossible": [
+        "Drowning",
+        "ConsumedPoison",
+        "Electrocution",
+        "Explosion",
+        "FallingObject",
+        "Fire",
+        "Sniper",
+        "RemoteExplosive",
+        "ImpactExplosive"
+      ]
+    },
+    "NCR": {},
+    "SV": {}
+  }
+}

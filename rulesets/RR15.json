@@ -10,92 +10,92 @@
 		 * Default: false
 		 */
 		"GenericEliminations": false,
-		
+
 		/**
 		 * Allow 'Melee' to be a kill type for melee weapons.
 		 * Default: false
 		 */
 		"MeleeKillTypes": false,
-		
+
 		/**
 		 * Allow 'Thrown' to be a kill type for melee weapons.
 		 * Default: false
 		 */
 		"ThrownKillTypes": false,
-		
+
 		/**
 		 * Allow vanilla 'Explosive' (with no kill type).
 		 * Default: true
 		 */
 		"AnyExplosives": false,
-		
+
 		/**
 		 * Allow 'Impact' to be a kill type for 'Explosive'.
 		 * Default: true
 		 */
 		"ImpactExplosives": true,
-		
+
 		/**
 		 * Allow 'Remote' to be a kill type for 'Explosive'.
 		 * Default: true
 		 */
 		"RemoteExplosives": true,
-		
+
 		/**
 		 * Allow 'Loud Remote' to be a kill type for 'Explosive'.
 		 * Default: false
 		 */
 		"LoudRemoteExplosives": false,
-		
+
 		/**
 		 * Enable the 'Live' (No Target KO) complication.
 		 * Default: true
 		 */
 		"LiveComplications": true,
-		
+
 		/**
 		 * Prevent 'Standard' kills from having live complications.
 		 * Default: true
 		 */
 		"LiveComplicationsExcludeStandard": true,
-		
+
 		/**
 		 * Percentage chance of spinning a 'Live' complication.
 		 * Default: 25
 		 */
 		"LiveComplicationChance": 25,
-		
+
 		/**
 		 * If true, Loud SMG cannot be spun in a spin that already has a large firearm.
 		 * Default: true
 		 */
 		"LoudSMGIsLargeFirearm": false,
-		
+
 		/**
 		 * If true, spins can be generated where two or more targets require the same disguise.
 		 * Default: false
 		 */
 		"AllowDuplicateDisguise": false,
-		
+
 		/**
 		 * If true, spins can be generated where two or more targets require the same kill method.
 		 * Default: false
 		 */
 		"AllowDuplicateMethod": false,
-		
+
 		/**
 		 * If true, 'Suit' will always be chosen as the disguise for a kill.
 		 * Default: false
 		 */
 		"SuitOnly": false,
-		
+
 		/**
 		 * If true, spins can be generated with 'Any Disguise' in the disguise condition.
 		 * Croupier will validate only the kill method and ignore the disguise in this case.
 		 * Default: false
 		 */
 		"AnyDisguise": false,
-		
+
 		/**
 		 * The per-target tags that Croupier should avoid generating in spins.
 		 * Default: ["Banned", "Slow", "Hard", "Extreme", "Impossible", "Buggy", "EasterEgg"]
@@ -238,7 +238,10 @@
 			"Banned": ["Drowning"],
 			"Extreme": ["Drowning"]
 		},
-		/** Erich Soders omitted as he's handled specially by Croupier. **/
+		/** Erich Soders **/
+		"ES": {
+			"Banned": ["Explosive"]
+		},
 		/** Yuki Yamazaki **/
 		"YY": {},
 		/** Owen Cage **/
@@ -288,13 +291,13 @@
 		},
 		/** Vanya Shah **/
 		"VS": {
-			"Banned": ["ConsumedPoison", "Drowning"],
-			"Extreme": ["ConsumedPoison", "Drowning"]
+			"Banned": ["ConsumedPoison", "Drowning", "LoudLive"],
+			"Extreme": ["ConsumedPoison", "Drowning", "LoudLive"]
 		},
 		/** Dawood Rangan **/
 		"DR": {
-			"Banned": ["ConsumedPoison", "Fire"],
-			"Extreme": ["ConsumedPoison", "Fire"]
+			"Banned": ["ConsumedPoison", "Fire", "LoudLive"],
+			"Extreme": ["ConsumedPoison", "Fire", "LoudLive"]
 		},
 		/** Basil Carnaby **/
 		"BC": {},
@@ -355,7 +358,14 @@
 		},
 		/** Marcus Stuyvesant **/
 		"MS": {
-			"Banned": ["ConsumedPoison", "Fire"],
+			"Banned": [
+				"ConsumedPoison",
+				"Fire",
+				{
+					"Method": "Drowning",
+					"Disguises": ["Skydiving Suit"]
+				}
+			],
 			"Buggy": ["ConsumedPoison"],
 			"Extreme": ["Fire"]
 		},
