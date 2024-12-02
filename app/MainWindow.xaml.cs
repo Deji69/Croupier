@@ -382,12 +382,7 @@ namespace Croupier
 			}
 		}
 
-		public string DailySpin1Tooltip {
-			get {
-				if (dailySpin1 == null) return "";
-				return dailySpin1.spin;
-			}
-		}
+		public string DailySpin1Tooltip => dailySpin1 != null ? dailySpin1.spin : "";
 
 		public bool DailySpin1Completed {
 			get {
@@ -410,12 +405,7 @@ namespace Croupier
 			}
 		}
 
-		public string DailySpin2Tooltip {
-			get {
-				if (dailySpin2 == null) return "";
-				return dailySpin2.spin;
-			}
-		}
+		public string DailySpin2Tooltip => dailySpin2 != null ? dailySpin2.spin : "";
 
 		public bool DailySpin2Completed {
 			get {
@@ -438,12 +428,7 @@ namespace Croupier
 			}
 		}
 
-		public string DailySpin3Tooltip {
-			get {
-				if (dailySpin3 == null) return "";
-				return dailySpin3.spin;
-			}
-		}
+		public string DailySpin3Tooltip => dailySpin3 != null ? dailySpin3.spin : "";
 
 		public bool DailySpin3Completed {
 			get {
@@ -1881,7 +1866,6 @@ namespace Croupier
 		}
 
 		private void PasteSpinCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e) {
-			//e.CanExecute = Croupier.Spin.Parse(Clipboard.GetText(), out _);
 			e.CanExecute = SpinParser.TryParse(Clipboard.GetText(), out _);
 		}
 

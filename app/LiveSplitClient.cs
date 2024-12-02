@@ -12,9 +12,7 @@ namespace Croupier {
 		private bool needToStop = false;
 		private Socket? socket = null;
 
-		public string CurrentStatus {
-			get => status;
-		}
+		public string CurrentStatus => status;
 
 		public async Task StartAsync() {
 			if (!Config.Default.LiveSplitEnabled)
