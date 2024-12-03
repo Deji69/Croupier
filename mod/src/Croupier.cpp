@@ -1536,6 +1536,20 @@ auto Croupier::SetupEvents() -> void {
 		this->SendKillValidationUpdate();
 		this->SendMissionComplete();
 	});
+	events.listen<Events::FacilityExitEvent>([this](const ServerEvent<Events::FacilityExitEvent>& ev) {
+		this->sharedSpin.playerExit(ev.Timestamp);
+
+		// Mark any unfulfilled kill methods as invalid (never killed a Berlin agent with correct requirements, destroyed heart instead of killing Soders or vice-versa, etc.)
+		auto const& conds = spin.getConditions();
+		for (auto& kv : this->sharedSpin.killValidations)
+		{
+			if (kv.correctMethod == eKillValidationType::Incomplete)
+				kv.correctMethod = eKillValidationType::Invalid;
+		}
+
+		this->SendKillValidationUpdate();
+		this->SendMissionComplete();
+	});
 	events.listen<Events::ContractEnd>([this](const ServerEvent<Events::ContractEnd>& ev) {
 		if (!this->sharedSpin.isFinished) {
 			this->sharedSpin.playerExit(ev.Timestamp);

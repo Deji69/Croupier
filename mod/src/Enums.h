@@ -44,6 +44,7 @@ enum class Events {
 	Door_Unlocked,
 	Drain_Pipe_Climbed,
 	ExitGate,
+	FacilityExitEvent,
 	FirstMissedShot,
 	FirstNonHeadshot,
 	HeroSpawn_Location,
