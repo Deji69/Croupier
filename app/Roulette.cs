@@ -145,14 +145,7 @@ namespace Croupier {
 		public Generator CreateGenerator(Ruleset ruleset) {
 			if (StandardMethods.Count == 0) throw new Exception("No Standard kill methods loaded.");
 			if (WeaponMethods.Count == 0) throw new Exception("No Weapon kill methods loaded.");
-			return new(ruleset, StandardMethods, WeaponMethods, UniqueMethods, Missions);
+			return new(ruleset, StandardMethods, WeaponMethods, UniqueMethods);
 		}
-
-		private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
-			AllowTrailingCommas = true,
-			WriteIndented = true,
-			IncludeFields = true,
-			ReadCommentHandling = JsonCommentHandling.Skip,
-		};
 	}
 }

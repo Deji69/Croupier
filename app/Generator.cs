@@ -6,14 +6,13 @@ using System.Threading.Tasks;
 
 namespace Croupier
 {
-	public class Generator(Ruleset ruleset, List<KillMethod>? standardKills = null, List<KillMethod>? weaponKills = null, List<KillMethod>? uniqueKills = null, List<Mission>? missions = null)
+	public class Generator(Ruleset ruleset, List<KillMethod>? standardKills = null, List<KillMethod>? weaponKills = null, List<KillMethod>? uniqueKills = null)
 	{
 		private static readonly Random random = new();
 		private readonly Ruleset ruleset = ruleset;
 		private readonly List<KillMethod> standardKills = standardKills ?? [];
 		private readonly List<KillMethod> weaponKills = weaponKills ?? [];
 		private readonly List<KillMethod> uniqueKills = uniqueKills ?? [];
-		private readonly List<Mission> missions = missions ?? [];
 
 		public Spin Spin(Mission? mission = null) {
 			mission ??= Mission.Get(Mission.GetRandomMissionID());
