@@ -82,8 +82,7 @@ namespace Croupier
 			clientMessages.Add(new(message));
 		}
 
-		private static void OnExit(object sender, System.Windows.ExitEventArgs e)
-		{
+		private static void OnExit(object sender, System.Windows.ExitEventArgs e) {
 			CancelConnection.Cancel();
 		}
 
@@ -138,101 +137,84 @@ namespace Croupier
 			var cmd = firstSplit.First();
 			var rest = firstSplit.Length > 1 ? firstSplit.Last().Split("\t", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries) : [];
 
-			if (cmd == "Respin") {
-				var mission = rest.Length > 0 ? MissionIDMethods.FromKey(rest.First()) : MissionID.NONE;
-				App.Current.Dispatcher.Invoke(new Action(() => Respin?.Invoke(null, mission)));
-				return;
-			}
-			else if (cmd == "Random") {
-				App.Current.Dispatcher.Invoke(new Action(() => Random?.Invoke(null, 0)));
-				return;
-			}
-			else if (cmd == "Missions") {
-				List<MissionID> missions = [];
-				if (rest.Length > 0) {
-					foreach (var token in rest.First().Split(",")) {
-						var mission = MissionIDMethods.FromName(token);
-						if (mission == MissionID.NONE) continue;
-						missions.Add(mission);
+			switch (cmd) {
+				case "Respin":
+					var mission = rest.Length > 0 ? MissionIDMethods.FromKey(rest.First()) : MissionID.NONE;
+					App.Current.Dispatcher.Invoke(new Action(() => Respin?.Invoke(null, mission)));
+					return;
+				case "Random":
+					App.Current.Dispatcher.Invoke(new Action(() => Random?.Invoke(null, 0)));
+					return;
+				case "Missions":
+					List<MissionID> missions = [];
+					if (rest.Length > 0) {
+						foreach (var token in rest.First().Split(",")) {
+							var mission1 = MissionIDMethods.FromName(token);
+							if (mission1 == MissionID.NONE) continue;
+							missions.Add(mission1);
+						}
 					}
-				}
-				App.Current.Dispatcher.Invoke(new Action(() => Missions?.Invoke(null, missions)));
-				return;
-			}
-			else if (cmd == "AutoSpin") {
-				var mission = rest.Length > 0 ? MissionIDMethods.FromKey(rest.First()) : MissionID.NONE;
-				App.Current.Dispatcher.Invoke(new Action(() => AutoSpin?.Invoke(null, mission)));
-				return;
-			}
-			else if (cmd == "Prev") {
-				App.Current.Dispatcher.Invoke(new Action(() => Prev?.Invoke(null, 0)));
-				return;
-			}
-			else if (cmd == "Next") {
-				App.Current.Dispatcher.Invoke(new Action(() => Next?.Invoke(null, 0)));
-				return;
-			}
-			else if (cmd == "SpinData") {
-				App.Current.Dispatcher.Invoke(new Action(() => SpinData?.Invoke(null, rest.First())));
-				return;
-			}
-			else if (cmd == "MissionStart") {
-				App.Current.Dispatcher.Invoke(new Action(() => MissionStart?.Invoke(null, new() {
-					Location = rest.First(),
-					Loadout = JsonSerializer.Deserialize<string[]>(rest[1])!,
-				})));
-				return;
-			}
-			else if (cmd == "MissionComplete") {
-				App.Current.Dispatcher.Invoke(new Action(() => MissionComplete?.Invoke(null, new() {
-					SA = int.Parse(rest.First()) == 1,
-					IGT = double.Parse(rest[1])
-				})));
-				return;
-			}
-			else if (cmd == "MissionOutroBegin") {
-				App.Current.Dispatcher.Invoke(new Action(() => MissionOutroBegin?.Invoke(null, 0)));
-				return;
-			}
-			else if (cmd == "MissionFailed") {
-				App.Current.Dispatcher.Invoke(new Action(() => MissionFailed?.Invoke(null, 0)));
-				return;
-			}
-			else if (cmd == "ToggleSpinLock") {
-				App.Current.Dispatcher.Invoke(new Action(() => ToggleSpinLock?.Invoke(null, 0)));
-				return;
-			}
-			else if (cmd == "ResetStreak") {
-				App.Current.Dispatcher.Invoke(new Action(() => ResetStreak?.Invoke(null, 0)));
-				return;
-			}
-			else if (cmd == "ResetTimer") {
-				App.Current.Dispatcher.Invoke(new Action(() => ResetTimer?.Invoke(null, 0)));
-				return;
-			}
-			else if (cmd == "PauseTimer") {
-				var data = rest.Length > 0 ? rest.First() : "";
-				var pause = data.Length > 0 && data[0] != '0';
-				App.Current.Dispatcher.Invoke(new Action(() => PauseTimer?.Invoke(null, pause)));
-				return;
-			}
-			else if (cmd == "ToggleTimer") {
-				var data = rest.Length > 0 ? rest.First() : "";
-				var enable = data.Length > 0 && data[0] != '0';
-				App.Current.Dispatcher.Invoke(new Action(() => ToggleTimer?.Invoke(null, enable)));
-				return;
-			}
-			else if (cmd == "LoadStarted") {
-				App.Current.Dispatcher.Invoke(new Action(() => LoadStarted?.Invoke(null, 0)));
-				return;
-			}
-			else if (cmd == "LoadFinished") {
-				App.Current.Dispatcher.Invoke(new Action(() => LoadFinished?.Invoke(null, 0)));
-				return;
-			}
-			else if (cmd == "KillValidation") {
-				App.Current.Dispatcher.Invoke(new Action(() => KillValidation?.Invoke(null, rest.First())));
-				return;
+					App.Current.Dispatcher.Invoke(new Action(() => Missions?.Invoke(null, missions)));
+					return;
+				case "AutoSpin":
+					var mission2 = rest.Length > 0 ? MissionIDMethods.FromKey(rest.First()) : MissionID.NONE;
+					App.Current.Dispatcher.Invoke(new Action(() => AutoSpin?.Invoke(null, mission2)));
+					return;
+				case "Prev":
+					App.Current.Dispatcher.Invoke(new Action(() => Prev?.Invoke(null, 0)));
+					return;
+				case "Next":
+					App.Current.Dispatcher.Invoke(new Action(() => Next?.Invoke(null, 0)));
+					return;
+				case "SpinData":
+					App.Current.Dispatcher.Invoke(new Action(() => SpinData?.Invoke(null, rest.First())));
+					return;
+				case "MissionStart":
+					App.Current.Dispatcher.Invoke(new Action(() => MissionStart?.Invoke(null, new() {
+						Location = rest.First(),
+						Loadout = JsonSerializer.Deserialize<string[]>(rest[1])!,
+					})));
+					return;
+				case "MissionComplete":
+					App.Current.Dispatcher.Invoke(new Action(() => MissionComplete?.Invoke(null, new() {
+						SA = int.Parse(rest.First()) == 1,
+						IGT = double.Parse(rest[1])
+					})));
+					return;
+				case "MissionOutroBegin":
+					App.Current.Dispatcher.Invoke(new Action(() => MissionOutroBegin?.Invoke(null, 0)));
+					return;
+				case "MissionFailed":
+					App.Current.Dispatcher.Invoke(new Action(() => MissionFailed?.Invoke(null, 0)));
+					return;
+				case "ToggleSpinLock":
+					App.Current.Dispatcher.Invoke(new Action(() => ToggleSpinLock?.Invoke(null, 0)));
+					return;
+				case "ResetStreak":
+					App.Current.Dispatcher.Invoke(new Action(() => ResetStreak?.Invoke(null, 0)));
+					return;
+				case "ResetTimer":
+					App.Current.Dispatcher.Invoke(new Action(() => ResetTimer?.Invoke(null, 0)));
+					return;
+				case "PauseTimer":
+					var data = rest.Length > 0 ? rest.First() : "";
+					var pause = data.Length > 0 && data[0] != '0';
+					App.Current.Dispatcher.Invoke(new Action(() => PauseTimer?.Invoke(null, pause)));
+					return;
+				case "ToggleTimer":
+					var data1 = rest.Length > 0 ? rest.First() : "";
+					var enable = data1.Length > 0 && data1[0] != '0';
+					App.Current.Dispatcher.Invoke(new Action(() => ToggleTimer?.Invoke(null, enable)));
+					return;
+				case "LoadStarted":
+					App.Current.Dispatcher.Invoke(new Action(() => LoadStarted?.Invoke(null, 0)));
+					return;
+				case "LoadFinished":
+					App.Current.Dispatcher.Invoke(new Action(() => LoadFinished?.Invoke(null, 0)));
+					return;
+				case "KillValidation":
+					App.Current.Dispatcher.Invoke(new Action(() => KillValidation?.Invoke(null, rest.First())));
+					return;
 			}
 		}
 	}
