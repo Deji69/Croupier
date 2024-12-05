@@ -175,12 +175,5 @@ namespace Croupier
 			}) ?? throw new Exception($"Unable to read file '{path}'.");
 			return FromJson(roulette, json);
 		}
-
-		private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
-			AllowTrailingCommas = true,
-			WriteIndented = true,
-			IncludeFields = true,
-			ReadCommentHandling = JsonCommentHandling.Skip,
-		};
 	}
 }
