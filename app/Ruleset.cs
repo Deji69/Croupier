@@ -155,7 +155,7 @@ namespace Croupier
 						"HostileNonRemote" => (Disguise d, KillMethod k, Mission m, KillComplication c) => d.Hostile && !k.IsRemote,
 						"RemoteExplosive" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsExplosive && k.IsRemote,
 						"ImpactExplosive" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsExplosive && k.IsImpact,
-						"Explosive" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsExplosive,
+						"IsExplosive" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsExplosive,
 						_ => null,
 					};
 					if (func == null) continue;

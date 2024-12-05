@@ -123,7 +123,7 @@
 		},
 		/** Jasper Knight **/
 		"JK": {
-			"Impossible": ["Electrocution", "Fire", "InjectedPoison", "SMG", "Sniper", "Explosive"],
+			"Impossible": ["Electrocution", "Fire", "InjectedPoison", "SMG", "Sniper", "IsExplosive"],
 			"OnlyLoud": ["AssaultRifle", "Shotgun"]
 		},
 		/** Viktor Novikov **/
@@ -240,7 +240,7 @@
 		},
 		/** Erich Soders **/
 		"ES": {
-			"Banned": ["Explosive"]
+			"Banned": ["IsExplosive"]
 		},
 		/** Yuki Yamazaki **/
 		"YY": {
