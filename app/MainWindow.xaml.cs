@@ -613,6 +613,10 @@ namespace Croupier
 				HandleTimingOnSpinComplete(arg);
 				TrackGameMissionCompletion(arg);
 			};
+			CroupierSocketServer.MissionOutroBegin += (object? sender, int _) => {
+				if (Config.Default.TimerPauseDuringOutro)
+					StopTimer();
+			};
 			CroupierSocketServer.MissionFailed += (object? sender, int _) => {
 				if (spinCompleted) return;
 
@@ -1263,6 +1267,11 @@ namespace Croupier
 
 		private void HandleTimingOnSpinComplete(MissionCompletion completion) {
 			liveSplit.Split();
+
+			if (Config.Default.TimingMode != TimingMode.IGT && Config.Default.TimingMode != TimingMode.Spin) {
+				if (timerStopped && !timerManuallyStopped)
+					ResumeTimer();
+			}
 
 			switch (Config.Default.TimingMode) {
 				case TimingMode.IGT:

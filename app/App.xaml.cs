@@ -1,6 +1,4 @@
-﻿using Croupier.Properties;
-using RestoreWindowPlace;
-using System.Threading;
+﻿using RestoreWindowPlace;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -23,7 +21,7 @@ namespace Croupier
 		private void Application_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
 		{
 			MessageBox.Show("An unhandled exception just occurred: " + e.Exception.Message, "Exception", MessageBoxButton.OK, MessageBoxImage.Error);
-			e.Handled = true;
+			//e.Handled = true;
 		}
 
 		protected override void OnExit(ExitEventArgs e)

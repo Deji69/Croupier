@@ -228,6 +228,7 @@ public:
 	auto SendMissionStart(const std::string& locationId, const std::string& entranceId, const std::vector<LoadoutItemEventValue>& loadout) -> void;
 	auto SendMissionFailed() -> void;
 	auto SendMissionComplete() -> void;
+	auto SendMissionOutroBegin() -> void;
 	auto SendKillValidationUpdate() -> void;
 	auto SendResetStreak() -> void;
 	auto SendResetTimer() -> void;

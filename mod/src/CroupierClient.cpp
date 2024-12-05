@@ -54,6 +54,7 @@ std::map<std::string, eClientMessage> clientMessageTypeMapRev = {
 	{"KillValidation", eClientMessage::KillValidation},
 	{"MissionStart", eClientMessage::MissionStart},
 	{"MissionComplete", eClientMessage::MissionComplete},
+	{"MissionOutroBegin", eClientMessage::MissionOutroBegin},
 	{"MissionFailed", eClientMessage::MissionFailed},
 	{"Streak", eClientMessage::Streak},
 	{"ResetStreak", eClientMessage::ResetStreak},

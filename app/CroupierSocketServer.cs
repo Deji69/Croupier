@@ -30,6 +30,7 @@ namespace Croupier
 		public static event EventHandler<int>? ToggleSpinLock;
 		public static event EventHandler<MissionStart>? MissionStart;
 		public static event EventHandler<MissionCompletion>? MissionComplete;
+		public static event EventHandler<int>? MissionOutroBegin;
 		public static event EventHandler<int>? MissionFailed;
 		public static event EventHandler<int>? ResetTimer;
 		public static event EventHandler<int>? ResetStreak;
@@ -187,6 +188,10 @@ namespace Croupier
 					SA = int.Parse(rest.First()) == 1,
 					IGT = double.Parse(rest[1])
 				})));
+				return;
+			}
+			else if (cmd == "MissionOutroBegin") {
+				App.Current.Dispatcher.Invoke(new Action(() => MissionOutroBegin?.Invoke(null, 0)));
 				return;
 			}
 			else if (cmd == "MissionFailed") {

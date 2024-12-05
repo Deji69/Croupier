@@ -491,6 +491,12 @@ struct Event<Events::ExitGate> {
 };
 
 template<>
+struct Event<Events::ExitTango> {
+	static auto constexpr Name = "ExitTango";
+	using EventValue = VoidEventValue;
+};
+
+template<>
 struct Event<Events::FacilityExitEvent> {
 	static auto constexpr Name = "FACILITY_EXIT_EVENT";
 	using EventValue = VoidEventValue;

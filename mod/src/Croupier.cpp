@@ -657,6 +657,10 @@ auto Croupier::SendMissionComplete() -> void {
 	this->client->send(eClientMessage::MissionComplete, {this->sharedSpin.isSA ? "1" : "0", std::to_string(this->sharedSpin.exitIGT)});
 }
 
+auto Croupier::SendMissionOutroBegin() -> void {
+	this->client->send(eClientMessage::MissionOutroBegin);
+}
+
 auto Croupier::SendMissionStart(const std::string& locationId, const std::string& entranceId, const std::vector<LoadoutItemEventValue>& loadout) -> void {
 	std::string loadoutStr = "";
 	for (const auto& item : loadout) {
@@ -1535,6 +1539,9 @@ auto Croupier::SetupEvents() -> void {
 
 		this->SendKillValidationUpdate();
 		this->SendMissionComplete();
+	});
+	events.listen<Events::ExitTango>([this](const ServerEvent<Events::ExitTango>& ev) {
+		this->SendMissionOutroBegin();
 	});
 	events.listen<Events::FacilityExitEvent>([this](const ServerEvent<Events::FacilityExitEvent>& ev) {
 		this->sharedSpin.playerExit(ev.Timestamp);

@@ -26,6 +26,7 @@ enum class eClientMessage {
 	MissionStart,
 	MissionFailed,
 	MissionComplete,
+	MissionOutroBegin,
 	ResetStreak,
 	ResetTimer,
 	StartTimer,

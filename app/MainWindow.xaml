@@ -568,39 +568,39 @@
 					</MenuItem.ItemContainerStyle>
 				</MenuItem>
 				<MenuItem Header="Display Options" StaysOpenOnClick="True">
-				<MenuItem
-					Header="Always On _Top"
-					IsChecked="{Binding TopmostEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-					IsCheckable="True"
+					<MenuItem
+						Header="Always On _Top"
+						IsChecked="{Binding TopmostEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						IsCheckable="True"
 						StaysOpenOnClick="True"
-				/>
-				<MenuItem
-					Header="Right to Left"
-					IsChecked="{Binding RightToLeft, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-					IsCheckable="True"
+					/>
+					<MenuItem
+						Header="Right to Left"
+						IsChecked="{Binding RightToLeft, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						IsCheckable="True"
 						StaysOpenOnClick="True"
-				/>
-				<MenuItem
-					Header="Vertical Display"
-					IsChecked="{Binding VerticalDisplay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-					IsCheckable="True"
+					/>
+					<MenuItem
+						Header="Vertical Display"
+						IsChecked="{Binding VerticalDisplay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						IsCheckable="True"
 						StaysOpenOnClick="True"
-				/>
-				<MenuItem
-					Header="Static Size"
-					IsChecked="{Binding StaticSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-					IsCheckable="True"
-					ToolTip="The Croupier window will keep a consistent width. Recommended for stream overlay capture."
+					/>
+					<MenuItem
+						Header="Static Size"
+						IsChecked="{Binding StaticSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						IsCheckable="True"
+						ToolTip="The Croupier window will keep a consistent width. Recommended for stream overlay capture."
 						StaysOpenOnClick="True"
-				/>
-				<MenuItem
-					Header="Static Size Align Left"
-					IsChecked="{Binding StaticSizeLHS, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-					IsCheckable="True"
-					IsEnabled="{Binding StaticSize, UpdateSourceTrigger=PropertyChanged}"
-					ToolTip="The layout will be arranged in a way that's optimised to be an overlay on the opposite side of the screen."
+					/>
+					<MenuItem
+						Header="Static Size Align Left"
+						IsChecked="{Binding StaticSizeLHS, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						IsCheckable="True"
+						IsEnabled="{Binding StaticSize, UpdateSourceTrigger=PropertyChanged}"
+						ToolTip="The layout will be arranged in a way that's optimised to be an overlay on the opposite side of the screen."
 						StaysOpenOnClick="True"
-				/>
+					/>
 				</MenuItem>
 				<Separator />
 				<MenuItem
