@@ -374,7 +374,7 @@
 						Grid.Column="1"
 						Margin="0,0,0,5"
 						ToolTip="Pause timer during the tango mission outro in Mendoza."
-						IsChecked="{Binding TimerPauseDuringOutro, Mode=TwoWay}"
+						IsChecked="{Binding PauseDuringOutro, Mode=TwoWay}"
 						/>
 				</Grid>
 				<TextBlock

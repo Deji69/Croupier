@@ -73,6 +73,14 @@ namespace Croupier {
 				UpdateProperty(nameof(ReplanWindow));
 			}
 		}
+
+		public bool PauseDuringOutro {
+			get => Config.Default.TimerPauseDuringOutro;
+			set {
+				Config.Default.TimerPauseDuringOutro = value;
+				UpdateProperty(nameof(PauseDuringOutro));
+			}
+		}
 	}
 	public class TimingModeComboBoxItem {
 		public TimingMode TimingMode { get; set; }
@@ -160,6 +168,7 @@ namespace Croupier {
 			Config.Default.TimerResetMission = viewModel.ResetMission;
 			Config.Default.AutoSpinCountdown = viewModel.AutoSpinCountdown;
 			Config.Default.TimingMode = viewModel.TimingMode;
+			Config.Default.TimerPauseDuringOutro = viewModel.PauseDuringOutro;
 			Config.Save();
 		}
 
