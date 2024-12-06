@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Text.Json;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Croupier {
 	class Config {
@@ -27,7 +29,11 @@ namespace Croupier {
 		public bool TimerMultiSpin { get; set; } = false;
 		public bool TimerFractions { get; set; } = false;
 		public MissionID TimerResetMission { get; set; } = MissionID.NONE;
+
+		[DefaultValue(TimingMode.LRT)]
 		public TimingMode TimingMode { get; set; } = TimingMode.LRT;
+		
+		[DefaultValue(true)]
 		public bool TimerPauseDuringOutro { get; set; } = true;
 
 		public bool Streak { get; set; } = false;
@@ -70,7 +76,8 @@ namespace Croupier {
 			AllowTrailingCommas = true,
 			WriteIndented = true,
 			IncludeFields = true,
-			ReadCommentHandling = JsonCommentHandling.Skip
+			ReadCommentHandling = JsonCommentHandling.Skip,
+			PreferredObjectCreationHandling = System.Text.Json.Serialization.JsonObjectCreationHandling.Populate,
 		};
 	}
 }
