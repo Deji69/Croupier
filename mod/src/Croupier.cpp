@@ -2279,20 +2279,26 @@ DEFINE_PLUGIN_DETOUR(Croupier, void, OnWinHttpCallback, void* dwContext, void* h
 		auto url = narrow(wstr);
 		std::string_view sv = url;
 
-		auto isLocal = sv.starts_with("http://127.0.0.1/");
-		auto isPlanning = isLocal
-			? sv.starts_with("http://127.0.0.1/profiles/page/Planning?contractid=")
-			: sv.starts_with("https://hm3-service.hitman.io/profiles/page/Planning?contractid=");
+		auto isHttps = sv.starts_with("https://");
+		if (isHttps || sv.starts_with("http://")) {
+			auto urlNoProto = sv.substr(isHttps ? sizeof("https://") : sizeof("http://"));
 
-		if (isPlanning) {
-			auto rest = sv.substr(isLocal ? sizeof("http://127.0.0.1/profiles/page/Planning?contractid=") : sizeof("https://hm3-service.hitman.io/profiles/page/Planning?contractid="));
-			auto contractId = rest.substr(0, rest.find_first_of('&'));
-			auto mission = getMissionByContractId(std::string(contractId));
+			auto isLocal = urlNoProto.starts_with("127.0.0.1/") || urlNoProto.starts_with("localhost/");
 
-			if (mission != eMission::NONE) {
-				this->OnMissionSelect(mission);
-				if (!this->sharedSpin.isPlaying)
-					this->sharedSpin.playerStart();
+			if (isLocal || urlNoProto.starts_with("hm3-service.hitman.io/")) {
+				auto urlPath = isLocal ? urlNoProto.substr(sizeof("localhost/" /* == sizeof("127.0.0.1/") */)) : urlNoProto.substr(sizeof("hm3-service.hitman.io/"));
+
+				if (urlPath.starts_with("profiles/page/Planning?contractid=")) {
+					auto rest = urlPath.substr(sizeof("profiles/page/Planning?contractid="));
+					auto contractId = rest.substr(0, rest.find_first_of('&'));
+					auto mission = getMissionByContractId(std::string(contractId));
+
+					if (mission != eMission::NONE) {
+						this->OnMissionSelect(mission);
+						if (!this->sharedSpin.isPlaying)
+							this->sharedSpin.playerStart();
+					}
+				}
 			}
 		}
 	}
