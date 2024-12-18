@@ -43,8 +43,8 @@ namespace Croupier {
 		private readonly Dictionary<string, KillMethod> methodKeywordMap = [];
 		private readonly Dictionary<string, List<MissionKillMethod>> missionMethodKeywordMap = [];
 		private readonly Dictionary<string, List<Mission>> missionIdentifyingKeywordMap = [];
+		private readonly Roulette roulette;
 		private KillMethod? neckSnap = null;
-		private Roulette roulette;
 
 		public static readonly Dictionary<string, string> Substitutions = new() {
 			{"bg", "bodyguard"},
