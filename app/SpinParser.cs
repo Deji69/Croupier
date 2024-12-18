@@ -33,7 +33,7 @@ namespace Croupier {
 	}
 
 	public class SpinParser {
-		public static readonly List<string> IgnoreKeywords = ["as", "in", "with", "target", "using", "eliminate", "wear"];
+		public static readonly List<string> IgnoreKeywords = ["in", "with", "target", "using", "eliminate", "wear"];
 		public static readonly List<string> SuitKeywords = ["suit"];
 		public static readonly List<string> AnyDisguiseKeywords = ["anydisg", "anydisguise"];
 		public static SpinParser? Main { get; private set; }
