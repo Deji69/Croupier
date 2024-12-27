@@ -5,7 +5,7 @@
 			"name": "base",
 			"displayName": "Basic Config",
 			"description": "Basic build using Ninja generator",
-			"generator": "Ninja",
+			"generator": "Visual Studio 17 2022",
 			"hidden": true,
 			"binaryDir": "${sourceDir}/_build/${presetName}",
 			"architecture": {
@@ -17,7 +17,8 @@
 				"CMAKE_CXX_COMPILER": "cl.exe",
 				"VCPKG_TARGET_TRIPLET": "x64-windows-static",
 				"VCPKG_HOST_TRIPLET": "x64-windows-static",
-				"CMAKE_POLICY_DEFAULT_CMP0091": "NEW"
+				"CMAKE_POLICY_DEFAULT_CMP0091": "NEW",
+				"ZHMMODSDK_DIR": "U:/Dev/project/hitman-tools/ZHMModSDK"
 			},
 			"toolset": {
 				"value": "host=x64",
