@@ -53,6 +53,13 @@ namespace Croupier {
 		public string LiveSplitIP { get; set; } = "127.0.0.1";
 		public int LiveSplitPort { get; set; } = 16834;
 
+		public Keybind RespinKeybind { get; set; } = new();
+		public Keybind ShuffleKeybind { get; set; } = new();
+		public Keybind NextSpinKeybind { get; set; } = new();
+		public Keybind PrevSpinKeybind { get; set; } = new();
+		public Keybind NextMapKeybind { get; set; } = new();
+		public Keybind PrevMapKeybind { get; set; } = new();
+
 		public Stats Stats { get; set; } = new Stats();
 
 		static public bool Load()

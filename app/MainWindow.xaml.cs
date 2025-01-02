@@ -108,6 +108,7 @@ namespace Croupier
 		public static readonly RoutedUICommand EditRulesetsCommand = new("Edit Rulesets", "EditRulesets", typeof(MainWindow), [
 			new KeyGesture(Key.R, ModifierKeys.Alt),
 		]);
+		public static readonly RoutedUICommand EditHotkeysCommand = new("Edit Hotkeys", "EditHotkeys", typeof(MainWindow));
 		public static readonly RoutedUICommand ShowStatisticsWindowCommand = new("Show Statistics Window", "ShowStatisticsWindow", typeof(MainWindow), [
 			new KeyGesture(Key.S, ModifierKeys.Alt),
 		]);
@@ -129,6 +130,12 @@ namespace Croupier
 		public static readonly RoutedUICommand NextSpinCommand = new("Next Spin", "NextSpin", typeof(MainWindow), [
 			new KeyGesture(Key.Right, ModifierKeys.Alt),
 		]);
+		public static readonly RoutedUICommand PrevMapCommand = new("Previous Map", "PrevMap", typeof(MainWindow), [
+			new KeyGesture(Key.Up, ModifierKeys.Alt),
+		]);
+		public static readonly RoutedUICommand NextMapCommand = new("Next Map", "NextMap", typeof(MainWindow), [
+			new KeyGesture(Key.Down, ModifierKeys.Alt),
+		]);
 		public static readonly RoutedUICommand ShuffleCommand = new("Shuffle", "Shuffle", typeof(MainWindow), [
 			new KeyGesture(Key.Space, ModifierKeys.Control),
 		]);
@@ -148,6 +155,7 @@ namespace Croupier
 		private DebugWindow? DebugWindowInst;
 		private EditMapPoolWindow? EditMapPoolWindowInst;
 		private EditRulesetWindow? EditRulesetWindowInst;
+		private EditHotkeys? EditHotkeysWindowInst;
 		private TimerSettingsWindow? TimerSettingsWindowInst;
 		private StatisticsWindow? StatisticsWindowInst;
 		private EditSpinWindow? EditSpinWindowInst;
@@ -531,15 +539,6 @@ namespace Croupier
 			var idx = MissionListItems.ToList().FindIndex(item => item.ID == currentMission?.ID);
 			MissionSelect.SelectedIndex = idx;
 
-			LoadSpinHistory();
-
-			if (spinHistory.Count > 0)
-				SetSpinHistory(1);
-			else {
-				SetMission(MissionID.PARIS_SHOWSTOPPER);
-				Spin();
-			}
-
 			PropertyChanged += MainWindow_PropertyChanged;
 
 			timer = new DispatcherTimer {
@@ -565,6 +564,60 @@ namespace Croupier
 				//	Timer.Text = diff.ToString(@"ss\.ff");
 			};
 			timer.Start();
+
+
+			var respinHotkey = Hotkeys.Add("Respin", () => RespinCommand.Execute(this, this));
+			var shuffleHotkey = Hotkeys.Add("Random Map", () => ShuffleCommand.Execute(this, null));
+			var nextSpinHotkey = Hotkeys.Add("Next Spin", () => {
+				if (NextSpinCommand.CanExecute(this, this))
+					NextSpinCommand.Execute(this, this);
+			});
+			var prevSpinHotkey = Hotkeys.Add("Previous Spin", () => {
+				if (PrevSpinCommand.CanExecute(this, this))
+					PrevSpinCommand.Execute(this, this);
+			});
+			var nextMapHotkey = Hotkeys.Add("Next Map", () => {
+				if (NextMapCommand.CanExecute(this, this))
+					NextMapCommand.Execute(this, this);
+			});
+			var prevMapHotkey = Hotkeys.Add("Previous Map", () => {
+				if (PrevMapCommand.CanExecute(this, this))
+					PrevMapCommand.Execute(this, this);
+			});
+
+			respinHotkey.Keybind = Config.Default.RespinKeybind;
+			shuffleHotkey.Keybind = Config.Default.ShuffleKeybind;
+			nextSpinHotkey.Keybind = Config.Default.NextSpinKeybind;
+			prevSpinHotkey.Keybind = Config.Default.PrevSpinKeybind;
+			nextMapHotkey.Keybind = Config.Default.NextMapKeybind;
+			prevMapHotkey.Keybind = Config.Default.PrevMapKeybind;
+
+			Hotkeys.RegisterAll();
+
+			respinHotkey.RebindAction = (Keybind bind) => {
+				Config.Default.RespinKeybind = bind;
+				Config.Save();
+			};
+			shuffleHotkey.RebindAction = (Keybind bind) => {
+				Config.Default.ShuffleKeybind = bind;
+				Config.Save();
+			};
+			nextSpinHotkey.RebindAction = (Keybind bind) => {
+				Config.Default.NextSpinKeybind = bind;
+				Config.Save();
+			};
+			prevSpinHotkey.RebindAction = (Keybind bind) => {
+				Config.Default.PrevSpinKeybind = bind;
+				Config.Save();
+			};
+			nextMapHotkey.RebindAction = (Keybind bind) => {
+				Config.Default.NextMapKeybind = bind;
+				Config.Save();
+			};
+			prevMapHotkey.RebindAction = (Keybind bind) => {
+				Config.Default.PrevMapKeybind = bind;
+				Config.Save();
+			};
 
 			CroupierSocketServer.Connected += (object? sender, int _) => {
 				SendMissionsToClient();
@@ -695,6 +748,15 @@ namespace Croupier
 					TrackNewSpin();
 				}
 			};
+
+			LoadSpinHistory();
+
+			if (spinHistory.Count > 0)
+				SetSpinHistory(1);
+			else {
+				SetMission(MissionID.PARIS_SHOWSTOPPER);
+				Spin();
+			}
 
 			SendMissionsToClient();
 			SendSpinToClient();
@@ -1660,6 +1722,22 @@ namespace Croupier
 			EditRulesetWindowInst.Show();
 		}
 
+		private void EditHotkeysCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
+			if (EditHotkeysWindowInst != null) {
+				EditHotkeysWindowInst.Activate();
+				return;
+			}
+
+			EditHotkeysWindowInst = new() {
+				Owner = this,
+				WindowStartupLocation= WindowStartupLocation.CenterOwner,
+			};
+			EditHotkeysWindowInst.Closed += (object? sender, EventArgs e) => {
+				EditHotkeysWindowInst = null;
+			};
+			EditHotkeysWindowInst.Show();
+		}
+
 		private void ResetStreakCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
 			ResetStreak();
 		}
@@ -1836,6 +1914,52 @@ namespace Croupier
 
 		private void NextSpinCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
 			NextSpin();
+		}
+
+		private void PrevMapCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e) {
+			e.CanExecute = true;
+		}
+
+		private void NextMapCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e) {
+			e.CanExecute = true;
+		}
+
+		private void NextMapCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
+			if (spin == null) return;
+			var nextMission = MissionID.NONE;
+			var nextMissionGroupOrderDiff = -1;
+			var current = spin.Mission.GetGroupOrder();
+			for (var i = 0; i < missionPool.Count; ++i) {
+				var diff = missionPool[i].GetGroupOrder() - current;
+				if (diff <= 0) continue;
+				if (nextMission != MissionID.NONE && nextMissionGroupOrderDiff < diff)
+					continue;
+				nextMission = missionPool[i];
+				nextMissionGroupOrderDiff = diff;
+			}
+
+			if (nextMission != MissionID.NONE)
+				Spin(nextMission);
+		}
+
+		private void PrevMapCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
+			if (spin == null)
+				return;
+			var nextMission = MissionID.NONE;
+			var nextMissionGroupOrderDiff = -1;
+			var current = spin.Mission.GetGroupOrder();
+			for (var i = 0; i < missionPool.Count; ++i) {
+				var diff = missionPool[i].GetGroupOrder() - current;
+				if (diff >= 0)
+					continue;
+				if (nextMission != MissionID.NONE && nextMissionGroupOrderDiff > diff)
+					continue;
+				nextMission = missionPool[i];
+				nextMissionGroupOrderDiff = diff;
+			}
+
+			if (nextMission != MissionID.NONE)
+				Spin(nextMission);
 		}
 
 		private void RespinCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {

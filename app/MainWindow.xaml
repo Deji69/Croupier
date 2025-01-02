@@ -31,11 +31,14 @@
 		<CommandBinding Command="{x:Static local:MainWindow.ShowLiveSplitWindowCommand}" CanExecute="Command_AlwaysCanExecute" Executed="ShowLiveSplitWindowCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.EditMapPoolCommand}" CanExecute="Command_AlwaysCanExecute" Executed="EditMapPoolCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.EditRulesetsCommand}" CanExecute="Command_AlwaysCanExecute" Executed="EditRulesetsCommand_Executed" />
+		<CommandBinding Command="{x:Static local:MainWindow.EditHotkeysCommand}" CanExecute="Command_AlwaysCanExecute" Executed="EditHotkeysCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.StreakSettingsCommand}" CanExecute="Command_AlwaysCanExecute" Executed="StreakSettingsCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.ResetStreakCommand}" CanExecute="Command_AlwaysCanExecute" Executed="ResetStreakCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.TimerSettingsCommand}" CanExecute="Command_AlwaysCanExecute" Executed="TimerSettingsCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.PrevSpinCommand}" CanExecute="PrevSpinCommand_CanExecute" Executed="PrevSpinCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.NextSpinCommand}" CanExecute="NextSpinCommand_CanExecute" Executed="NextSpinCommand_Executed" />
+		<CommandBinding Command="{x:Static local:MainWindow.PrevMapCommand}" CanExecute="PrevMapCommand_CanExecute" Executed="PrevMapCommand_Executed" />
+		<CommandBinding Command="{x:Static local:MainWindow.NextMapCommand}" CanExecute="NextMapCommand_CanExecute" Executed="NextMapCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.ShuffleCommand}" CanExecute="ShuffleCommand_CanExecute" Executed="ShuffleCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.RespinCommand}" CanExecute="Command_AlwaysCanExecute" Executed="RespinCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.ResetTimerCommand}" CanExecute="Command_AlwaysCanExecute" Executed="ResetTimerCommand_Executed" />
@@ -622,6 +625,10 @@
 				<MenuItem
 					Header="_Rulesets"
 					Command="{x:Static local:MainWindow.EditRulesetsCommand}"
+				/>
+				<MenuItem
+					Header="Hot_keys"
+					Command="{x:Static local:MainWindow.EditHotkeysCommand}"
 				/>
 				<Separator />
 				<MenuItem Name="ContextMenuDailySpins" Header="Daily Spins" StaysOpenOnClick="True">
