@@ -449,18 +449,18 @@
 		"Keywords": ["xmasstar", "christmasstar", "holidaystar", "star"]
 	},
 	{
-		"Name": "Shoot Silvio Through the Telescope",
+		"Name": "Shoot Through the Telescope",
 		"Image": "octopus_sign_silvio_telescope.jpg",
 		"Category": "Unique",
 		"Target": "Silvio Caruso",
-		"Keywords": ["shoot", "telescope", "shootsilviothroughtelescope", "throughthetelescope"]
+		"Keywords": ["shootthroughtelescope", "shootthroughthetelescope", "shootsilviothroughtelescope", "shootsilviothroughthetelescope", "throughthetelescope", "shootthetelescope", "shoot", "telescope"]
 	},
 	{
-		"Name": "Shoot Silvio Through the Telescope",
+		"Name": "Explosive Watch Battery",
 		"Image": "colorado_doomsday_watch.jpg",
 		"Category": "Unique",
 		"Target": "Sean Rose",
-		"Keywords": ["explosivewatch", "watchbattery", "explosivewatchbattery"]
+		"Keywords": ["explosivewatch", "watchbattery", "explosivewatchbattery", "battery"]
 	},
 	{
 		"Name": "Electrocution",
