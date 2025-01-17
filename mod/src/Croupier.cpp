@@ -2281,12 +2281,12 @@ DEFINE_PLUGIN_DETOUR(Croupier, void, OnWinHttpCallback, void* dwContext, void* h
 
 		auto isHttps = sv.starts_with("https://");
 		if (isHttps || sv.starts_with("http://")) {
-			auto urlNoProto = sv.substr(isHttps ? sizeof("https://") : sizeof("http://"));
+			auto urlNoProto = sv.substr((isHttps ? sizeof("https://") : sizeof("http://")) - 1);
 
 			auto isLocal = urlNoProto.starts_with("127.0.0.1/") || urlNoProto.starts_with("localhost/");
 
 			if (isLocal || urlNoProto.starts_with("hm3-service.hitman.io/")) {
-				auto urlPath = isLocal ? urlNoProto.substr(sizeof("localhost/" /* == sizeof("127.0.0.1/") */)) : urlNoProto.substr(sizeof("hm3-service.hitman.io/"));
+				auto urlPath = isLocal ? urlNoProto.substr(sizeof("localhost/" /* == sizeof("127.0.0.1/") */) - 1) : urlNoProto.substr(sizeof("hm3-service.hitman.io/") - 1);
 
 				if (urlPath.starts_with("profiles/page/Planning?contractid=")) {
 					auto rest = urlPath.substr(sizeof("profiles/page/Planning?contractid="));
