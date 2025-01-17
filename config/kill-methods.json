@@ -449,6 +449,20 @@
 		"Keywords": ["xmasstar", "christmasstar", "holidaystar", "star"]
 	},
 	{
+		"Name": "Shoot Silvio Through the Telescope",
+		"Image": "octopus_sign_silvio_telescope.jpg",
+		"Category": "Unique",
+		"Target": "Silvio Caruso",
+		"Keywords": ["shoot", "telescope", "shootsilviothroughtelescope", "throughthetelescope"]
+	},
+	{
+		"Name": "Shoot Silvio Through the Telescope",
+		"Image": "colorado_doomsday_watch.jpg",
+		"Category": "Unique",
+		"Target": "Sean Rose",
+		"Keywords": ["explosivewatch", "watchbattery", "explosivewatchbattery"]
+	},
+	{
 		"Name": "Electrocution",
 		"Image": "snowcrane_sign_soders_electrocute.jpg",
 		"Category": "Unique",
@@ -507,5 +521,19 @@
 			"explodecar", "carexplode", "carexplosion", "carexplosive", "explosivecar", "explosiveoncar",
 			"viaexplosive"
 		]
+	},
+	{
+		"Name": "Athena Savalas' Award",
+		"Image": "athena_award.jpg",
+		"Category": "Unique",
+		"Target": "Athena Savalas",
+		"Keywords": ["award", "athenasavalasaward"]
+	},
+	{
+		"Name": "Bomb Water Scooter",
+		"Image": "stingray_opp_jetski.jpg",
+		"Category": "Unique",
+		"Target": "Steven Bradley",
+		"Keywords": ["bombthejetski", "bombthewaterscooter", "explosiveonjetski", "explosiveonwaterscooter", "jetski", "waterscooter", "explodejetski", "explodewaterscooter", "jetskiexplosion", "waterscooterexplosion"]
 	}
 ]
