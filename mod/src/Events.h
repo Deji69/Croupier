@@ -84,6 +84,8 @@ struct PacifyEventValue {
 	std::vector<std::string> DamageEvents;
 	int PlayerId;
 	std::string OutfitRepositoryId;
+	std::string SetPieceId;
+	std::string SetPieceType;
 	bool OutfitIsHitmanSuit;
 	std::string KillMethodBroad;
 	std::string KillMethodStrict;
@@ -116,6 +118,8 @@ struct PacifyEventValue {
 		DamageEvents(json["DamageEvents"].get<std::vector<std::string>>()),
 		PlayerId(json.value("PlayerId", -1)),
 		OutfitRepositoryId(json.value("OutfitRepositoryId", "")),
+		SetPieceId(json.value("SetPieceId", "")),
+		SetPieceType(json.value("SetPieceType", "")),
 		OutfitIsHitmanSuit(json.value("OutfitIsHitmanSuit", false)),
 		KillMethodBroad(json.value("KillMethodBroad", "")),
 		KillMethodStrict(json.value("KillMethodStrict", "")),

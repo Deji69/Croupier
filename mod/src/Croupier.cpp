@@ -2003,6 +2003,20 @@ auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Ki
 
 auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Kill>& ev, eMapKillMethod method, eKillType type) -> eKillValidationType {
 	if (!isSpecificKillMethodMelee(method)) {
+		if (target == eTargetID::SilvioCaruso) {
+			if (method == eMapKillMethod::Silvio_ShootThroughTelescope) {
+				return ev.Value.SetPieceId == "a84ba351-285a-4f07-8758-2d7640401aad"
+					? eKillValidationType::Valid
+					: eKillValidationType::Invalid;
+			}
+		}
+		if (target == eTargetID::SeanRose) {
+			if (method == eMapKillMethod::Sean_ExplosiveWatchBattery) {
+				return ev.Value.SetPieceId == "66d7a0d3-7ee8-4065-9475-8765fca06faa"
+					? eKillValidationType::Valid
+					: eKillValidationType::Invalid;
+			}
+		}
 		if (target == eTargetID::SierraKnox) {
 			auto const haveDamageEvents = !ev.Value.DamageEvents.empty();
 			auto const killContext = ev.Value.KillContext;
@@ -2020,6 +2034,29 @@ auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Ki
 				&& isKillClassUnknown
 				&& killContext == EDeathContext::eDC_HIDDEN)
 				return eKillValidationType::Valid;
+		}
+		if (target == eTargetID::AthenaSavalas) {
+			if (method == eMapKillMethod::Athena_Award) {
+				// setpiece_raccoon_unique.template -> SetpieceHelpers_ContextKill_CustomSequence2
+				return ev.Value.SetPieceId == "1a29d28c-be03-4149-b49c-b0c38d060772"
+					? eKillValidationType::Valid
+					: eKillValidationType::Invalid;
+			}
+		}
+		if (target == eTargetID::StevenBradley) {
+			if (method == eMapKillMethod::Steven_BombWaterScooter) {
+				// 'Legit' water scooter kill
+				// setpiece_stingray_unique.template -> Setpiece_Trap_WaterScooterRide
+				if (ev.Value.SetPieceId == "0bd4c163-9674-403a-aa3d-a714be3d7a09")
+					return eKillValidationType::Valid;
+				// Accident explosion via water scooter
+				// Technically this can validate even if Steven is killed in an unrelated accident explosion and the scooter
+				// also gets blown up around the same time, but fuck it
+				auto const setpiece = this->sharedSpin.getSetpieceEventAtTimestamp(ev.Timestamp, 0.3);
+				return setpiece != nullptr && setpiece->id == "2f4a7b8f-a5f1-4c59-8a0e-678b3c2ee32f"
+					? ValidateKillMethod(target, ev, eKillMethod::Explosion, type)
+					: eKillValidationType::Invalid;
+			}
 		}
 	}
 	if (!ev.Value.KillItemRepositoryId.empty()) {

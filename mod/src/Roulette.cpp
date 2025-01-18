@@ -510,6 +510,20 @@ std::vector<Keyword> Keyword::keywords = {
 	{ "VikingAxe", eMapKillMethod::VikingAxe },
 	{ "HolidayFireAxe", eMapKillMethod::HolidayFireAxe },
 	{ "XmasStar", eMapKillMethod::XmasStar },
+	// Map Kill Method - Silvio Caruso
+	{ "ShootThroughTelescope", eMapKillMethod::Silvio_ShootThroughTelescope },
+	{ "ShootSilvioThroughTheTelescope", eMapKillMethod::Silvio_ShootThroughTelescope, "ShootThroughTelescope" },
+	{ "ShootThroughTheTelescope", eMapKillMethod::Silvio_ShootThroughTelescope, "ShootThroughTelescope" },
+	{ "Telescope", eMapKillMethod::Silvio_ShootThroughTelescope, "ShootThroughTelescope" },
+	{ "ShootTelescope", eMapKillMethod::Silvio_ShootThroughTelescope, "ShootThroughTelescope" },
+	{ "ThroughTheTelescope", eMapKillMethod::Silvio_ShootThroughTelescope, "ShootThroughTelescope" },
+	{ "ThroughTelescope", eMapKillMethod::Silvio_ShootThroughTelescope, "ShootThroughTelescope" },
+	// Map Kill Method - Sean Rose
+	{ "ExplosiveWatchBattery", eMapKillMethod::Sean_ExplosiveWatchBattery },
+	{ "ExplosiveWatch", eMapKillMethod::Sean_ExplosiveWatchBattery, "ExplosiveWatchBattery" },
+	{ "WatchBattery", eMapKillMethod::Sean_ExplosiveWatchBattery, "ExplosiveWatchBattery" },
+	{ "ExplosiveBattery", eMapKillMethod::Sean_ExplosiveWatchBattery, "ExplosiveWatchBattery" },
+	{ "Battery", eMapKillMethod::Sean_ExplosiveWatchBattery, "ExplosiveWatchBattery" },
 	// Map Kill Method - Soders
 	{ "PoisonStemCells", eMapKillMethod::Soders_PoisonStemCells, "Poison" },
 	{ "StemCells", eMapKillMethod::Soders_PoisonStemCells, "Poison" },
@@ -522,6 +536,22 @@ std::vector<Keyword> Keyword::keywords = {
 	{ "ShootCar", eMapKillMethod::Sierra_ShootCar, "ShootTheCar" },
 	{ "BombTheCar", eMapKillMethod::Sierra_BombCar },
 	{ "BombCar", eMapKillMethod::Sierra_BombCar, "BombTheCar" },
+	// Map Kill Method - Athena Savalas
+	{ "AthenaSavalasAward", eMapKillMethod::Athena_Award },
+	{ "AthenasAward", eMapKillMethod::Athena_Award, "AthenaSavalasAward" },
+	{ "AthenaAward", eMapKillMethod::Athena_Award, "AthenaSavalasAward" },
+	{ "Award", eMapKillMethod::Athena_Award, "AthenaSavalasAward" },
+	// Map Kill Method - Steven Bradley
+	{ "BombWaterScooter", eMapKillMethod::Steven_BombWaterScooter },
+	{ "BombJetski", eMapKillMethod::Steven_BombWaterScooter, "BombWaterScooter" },
+	{ "Jetski", eMapKillMethod::Steven_BombWaterScooter, "BombWaterScooter" },
+	{ "WaterScooter", eMapKillMethod::Steven_BombWaterScooter, "BombWaterScooter" },
+	{ "Scooter", eMapKillMethod::Steven_BombWaterScooter, "BombWaterScooter" },
+	{ "ExplosiveOnJetski", eMapKillMethod::Steven_BombWaterScooter, "BombWaterScooter" },
+	{ "ExplosiveOnWaterScooter", eMapKillMethod::Steven_BombWaterScooter, "BombWaterScooter" },
+	{ "ExplosiveOnTheJetski", eMapKillMethod::Steven_BombWaterScooter, "BombWaterScooter" },
+	{ "ExplosiveOnTheScooter", eMapKillMethod::Steven_BombWaterScooter, "BombWaterScooter" },
+	{ "ExplosiveOnTheWater", eMapKillMethod::Steven_BombWaterScooter, "BombWaterScooter" },
 };
 
 const std::vector<eKillMethod> RouletteSpinGenerator::standardKillMethods = {
@@ -653,6 +683,10 @@ auto isSpecificKillMethodMelee(eMapKillMethod method) -> bool {
 	case eMapKillMethod::Yuki_SabotageCableCar:
 	case eMapKillMethod::Sierra_BombCar:
 	case eMapKillMethod::Sierra_ShootCar:
+	case eMapKillMethod::Silvio_ShootThroughTelescope:
+	case eMapKillMethod::Sean_ExplosiveWatchBattery:
+	case eMapKillMethod::Athena_Award:
+	case eMapKillMethod::Steven_BombWaterScooter:
 		return false;
 	}
 	return true;
@@ -795,6 +829,10 @@ auto getSpecificKillMethodNameAndImage(eMapKillMethod method) -> std::pair<std::
 	case eMapKillMethod::VikingAxe: return {"Viking Axe", "item_perspective_9a7711c7-ede9-4230-853e-ab94c65fc0c9_0.jpg"};
 	case eMapKillMethod::HolidayFireAxe: return {"Holiday Fire Axe", "item_perspective_2add9602-cda7-43fd-9758-6269c8fbb233_0.jpg"};
 	case eMapKillMethod::XmasStar: return { "Xmas Star", "item_perspective_1a852006-e632-401f-aedc-d0cf76521b1f_0.jpg" };
+	case eMapKillMethod::Silvio_ShootThroughTelescope: return { "Shoot Through Telescope", "octopus_sign_silvio_telescope.jpg" };
+	case eMapKillMethod::Sean_ExplosiveWatchBattery: return { "Explosive Watch Battery", "colorado_doomsday_watch.jpg" };
+	case eMapKillMethod::Athena_Award: return { "Athena Savalas' Award", "athena_award.jpg" };
+	case eMapKillMethod::Steven_BombWaterScooter: return { "Bomb Water Scooter", "stingray_opp_jetski.jpg" };
 	case eMapKillMethod::Soders_Electrocution: return {"Electrocution", "snowcrane_sign_soders_electrocute.jpg"};
 	case eMapKillMethod::Soders_Explosion: return {"Explosion", "condition_killmethod_accident_explosion.jpg"};
 	case eMapKillMethod::Soders_PoisonStemCells: return {"Poison Stem Cells", "snowcrane_soders_poison.jpg"};

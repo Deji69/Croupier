@@ -90,9 +90,17 @@ struct SharedRouletteSpin {
 		return nullptr;
 	}
 
-	auto getSetpieceEventAtTimestamp(double timestamp) const -> const KillSetpieceEvent* {
+	auto getSetpieceByName(std::string_view name) const -> const KillSetpieceEvent* {
 		for (auto i = killSetpieceEvents.size(); i > 0; --i) {
-			if (std::abs(killSetpieceEvents[i - 1].timestamp - timestamp) < 0.1)
+			if (killSetpieceEvents[i - 1].name == name)
+				return &killSetpieceEvents[i - 1];
+		}
+		return nullptr;
+	}
+
+	auto getSetpieceEventAtTimestamp(double timestamp, double margin = 0.1) const -> const KillSetpieceEvent* {
+		for (auto i = killSetpieceEvents.size(); i > 0; --i) {
+			if (std::abs(killSetpieceEvents[i - 1].timestamp - timestamp) < margin)
 				return &killSetpieceEvents[i - 1];
 		}
 		return nullptr;
