@@ -87,7 +87,11 @@ namespace Croupier
 		}
 
 		public KillMethodVariant? GenerateWeaponKillVariant(Spin spin, Mission mission, Target target, Disguise disguise, KillMethod method) {
-			var variants = method.Variants.Where(v => IsLegalForSpin(spin, mission, target, disguise, v)).ToList();
+			var variants = method.Variants.Where(v =>
+				(!v.IsExplosive || !v.IsRemoteOnly || ruleset.Rules.RemoteExplosives)
+				&& (!v.IsExplosive || !v.IsRemoteOnly || !v.IsLoud || ruleset.Rules.LoudRemoteExplosives)
+				&& IsLegalForSpin(spin, mission, target, disguise, v)
+			).ToList();
 			if (variants.Count == 0) return null;
 			return variants[random.Next(variants.Count)];
 		}
