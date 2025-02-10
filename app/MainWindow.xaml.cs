@@ -567,7 +567,7 @@ namespace Croupier
 
 
 			var respinHotkey = Hotkeys.Add("Respin", () => RespinCommand.Execute(this, this));
-			var shuffleHotkey = Hotkeys.Add("Random Map", () => ShuffleCommand.Execute(this, null));
+			var shuffleHotkey = Hotkeys.Add("Random Map", () => ShuffleCommand.Execute(this, this));
 			var nextSpinHotkey = Hotkeys.Add("Next Spin", () => {
 				if (NextSpinCommand.CanExecute(this, this))
 					NextSpinCommand.Execute(this, this);
