@@ -6,7 +6,7 @@ project(Croupier CXX C)
 # Set ZHMMODSDK_DIR variable to a local directory to use a local copy of the ZHMModSDK.
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH};${PROJECT_SOURCE_DIR}/deps)
-set(ZHMMODSDK_VER "v2.0.0")
+set(ZHMMODSDK_VER "v3.1.1")
 include(cmake/setup-zhmmodsdk.cmake)
 
 # Set C++ standard to C++23.
