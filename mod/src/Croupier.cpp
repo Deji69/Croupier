@@ -958,7 +958,6 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 		if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) ImGui::SetTooltip("Respin Current Map");
 
 		ImGui::PopFont();
-		ImGui::SetWindowFontScale(1.0);
 
 		if (!connected && !this->spinHistory.empty()) {
 			ImGui::SameLine();
@@ -966,6 +965,8 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 			if (ImGui::Button(ICON_MD_ARROW_LEFT))
 				this->PreviousSpin();
 		}
+
+		ImGui::SetWindowFontScale(1.0);
 		ImGui::PopFont();
 	}
 

@@ -65,7 +65,7 @@ namespace Croupier
 					
 					foreach (var key in Config.Default.CustomMissionPool) {
 						var id = MissionIDMethods.FromKey(key);
-						if (id != MissionID.NONE) {
+						if (id == MissionID.NONE) {
 							toRemove.Add(key);
 							continue;
 						}
@@ -236,9 +236,7 @@ namespace Croupier
 		];
 
 		public ObservableCollection<MissionPoolGroup> MissionPoolList {
-			get {
-				return _MissionPoolList;
-			}
+			get => _MissionPoolList;
 		}
 
 		private static readonly MissionPoolPresetEntry customMissionPoolPresetEntry = new() { Name = $"Custom ({Config.Default.CustomMissionPool?.Count ?? 0})", Preset = MissionPoolPresetID.Custom };
@@ -254,7 +252,7 @@ namespace Croupier
 
 		private bool _IsCustomPoolSelected = false;
 		public bool IsCustomPoolSelected {
-			get { return _IsCustomPoolSelected; }
+			get => _IsCustomPoolSelected;
 			set { _IsCustomPoolSelected = value; OnPropertyChanged(nameof(IsCustomPoolSelected)); }
 		}
 

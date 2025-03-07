@@ -902,6 +902,8 @@ namespace Croupier
 					continue;
 				Config.Default.CustomMissionPool.Add(mission.Codename);
 			}
+
+			Config.Save();
 		}
 
 		private void LoadMissionPool()
