@@ -199,12 +199,22 @@ namespace Croupier
 			}
 		}
 
+		public double SpinSmallFontSize {
+			get => _spinFontSize * 0.8;
+		}
+
+		public double SpinNTKOHeight {
+			get => _spinFontSize * 1.1;
+		}
+
 		public double SpinFontSize {
 			get => _spinFontSize;
 			private set {
 				if (_spinFontSize != value) {
 					_spinFontSize = value;
 					OnPropertyChanged(nameof(SpinFontSize));
+					OnPropertyChanged(nameof(SpinSmallFontSize));
+					OnPropertyChanged(nameof(SpinNTKOHeight));
 				}
 			}
 		}
@@ -482,6 +492,7 @@ namespace Croupier
 		private readonly LiveSplitClient liveSplit;
 		private readonly DispatcherTimer timer;
 		private readonly ObservableCollection<MissionComboBoxItem> missionListItems = [];
+		public event EventHandler<Spin>? SpinChanged;
 
 		private ObservableCollection<MissionComboBoxItem> MissionListItems {
 			get {
@@ -1085,6 +1096,8 @@ namespace Croupier
 			SendSpinToClient();
 			SetupSpinUI();
 			RefitWindow();
+			if (this.spin != null)
+				this.SpinChanged?.Invoke(this, this.spin);
 		}
 
 		private void UpdateStreakStatus(bool save = true) {

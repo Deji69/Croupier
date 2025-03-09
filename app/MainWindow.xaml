@@ -173,19 +173,35 @@
 							HorizontalAlignment="Stretch"
 							/>
 					</Grid>
-					<TextBlock
-						Grid.Column="1"
-						Text="{Binding MethodName}"
-						TextWrapping="Wrap"
-						FlowDirection="LeftToRight"
-						VerticalAlignment="Stretch"
-						HorizontalAlignment="Stretch"
-						TextAlignment="{Binding DataContext.SpinTextAlignment, RelativeSource={RelativeSource AncestorType=UniformGrid}}"
-						Foreground="White"
-						Padding="5,0"
-						FontSize="{Binding DataContext.SpinFontSize, RelativeSource={RelativeSource AncestorType=UniformGrid}}">
-						<Run FontSize=".01">i</Run>
-					</TextBlock>
+					<Grid Grid.Column="1">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="1*" />
+							<RowDefinition Height="{Binding DataContext.SpinNTKOHeight, RelativeSource={RelativeSource AncestorType=UniformGrid}}" />
+						</Grid.RowDefinitions>
+						<TextBlock
+							Grid.Row="0"
+							Text="{Binding MethodNameDisplay}"
+							TextWrapping="Wrap"
+							FlowDirection="LeftToRight"
+							VerticalAlignment="Stretch"
+							HorizontalAlignment="Stretch"
+							TextAlignment="{Binding DataContext.SpinTextAlignment, RelativeSource={RelativeSource AncestorType=UniformGrid}}"
+							Foreground="White"
+							Padding="5,0"
+							FontSize="{Binding DataContext.SpinFontSize, RelativeSource={RelativeSource AncestorType=UniformGrid}}">
+							<Run FontSize=".01">i</Run>
+						</TextBlock>
+						<TextBlock
+							Visibility="{Binding Path=IsLive, Converter={StaticResource VisibilityOfBool}}"
+							Grid.Row="1"
+							Background="{StaticResource NTKOBGBrush}"
+							Foreground="White"
+							FontWeight="Bold"
+							FontSize="{Binding DataContext.SpinSmallFontSize, RelativeSource={RelativeSource AncestorType=UniformGrid}}"
+							TextAlignment="Center"
+							Text="No KO"
+							/>
+					</Grid>
 					<Image
 						Grid.Row="1"
 						Source="{Binding DisguiseImagePath}"

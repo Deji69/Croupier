@@ -17,6 +17,7 @@
 		<SolidColorBrush x:Key="NormalBorderBrush" Color="#000" />
 		<SolidColorBrush x:Key="DisabledFGBrush" Color="#555" />
 		<SolidColorBrush x:Key="DisabledBGBrush" Color="#191919" />
+		<SolidColorBrush x:Key="NTKOBGBrush" Color="#FF0000" Opacity=".1" />
 		<SolidColorBrush x:Key="ComboBoxDisabledForegroundBrush" Color="#888" />
 		<SolidColorBrush x:Key="ComboBoxDisabledBackgroundBrush" Color="#EEE" />
 		<SolidColorBrush x:Key="ComboBoxDisabledBorderBrush" Color="#888" />

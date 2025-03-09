@@ -17,9 +17,12 @@ namespace Croupier {
 		public SpinKillMethod Kill { get; protected set; } = method;
 		public Disguise Disguise { get; protected set; } = disguise;
 
+		public bool IsLive => Kill.Complication == KillComplication.Live;
+
 		public string TargetName => Target.Name;
 		public string TargetImage => Target.Image;
 		public string MethodName => Kill.ToString();
+		public string MethodNameDisplay => Kill.Method.Name;
 		public string MethodImage => Kill.Method.Image;
 		public string DisguiseName => Disguise.Name;
 		public string DisguiseImage => Disguise.Image;

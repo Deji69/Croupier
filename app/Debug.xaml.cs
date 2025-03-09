@@ -4,6 +4,7 @@ using System.Windows;
 
 namespace Croupier {
 	public class DebugWindowViewModel : ViewModel {
+		public string LegalSpinText { get; set; }
 	}
 	
 	public partial class DebugWindow : Window {
@@ -16,6 +17,32 @@ namespace Croupier {
 			InitializeComponent();
 
 			viewModel.PropertyChanged += OnPropertyChanged;
+			main.SpinChanged += OnSpinChanged;
+		}
+
+		private void OnSpinChanged(object? sender, Spin e) {
+			if (IsSpinLegal(e))
+				viewModel.LegalSpinText = "Spin is Legal";
+			else
+				viewModel.LegalSpinText = "Spin is Illegal";
+		}
+
+		private bool IsSpinLegal(Spin spin) {
+			if (spin.LargeFirearmCount >= 2) return false;
+			var ruleset = Ruleset.Current;
+			if (ruleset == null) throw new Exception("No ruleset.");
+			var mission = Mission.Get(spin.Mission);
+			foreach (var cond in spin.Conditions) {
+				var tags = ruleset.GetMethodTags(cond.Target, cond.Kill.Method);
+				if (tags.Contains("OnlyLoud") && cond.Kill.IsSilencedWeapon)
+					return false;
+				if (ruleset.AreAnyOfTheseTagsBanned(tags))
+					return false;
+				tags = ruleset.TestRules(cond.Target, cond.Disguise, cond.Kill.Method, mission, cond.Kill.Complication);
+				if (ruleset.AreAnyOfTheseTagsBanned(tags))
+					return false;
+			}
+			return true;
 		}
 
 		private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {

@@ -123,7 +123,7 @@ namespace Croupier
 								disguises.Add(disguise.GetValue<string>());
 							}
 							tagRules.Add(new(
-								(Disguise d, KillMethod k, Mission m, KillComplication c) => k.Name == methodName && disguises.Contains(d.Name),
+								(Disguise d, KillMethod k, Mission m, KillComplication c) => k.Name == methodName && (disguises.Count == 0 || disguises.Contains(d.Name)),
 								[tag]
 							));
 							continue;

@@ -65,6 +65,7 @@
 					Click="StopLoad_Click"
 					/>
 			</StackPanel>
+			<TextBlock Text="{Binding LegalSpinText}" />
 		</StackPanel>
 	</ScrollViewer>
 </Window>
