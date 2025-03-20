@@ -4,7 +4,15 @@ using System.Windows;
 
 namespace Croupier {
 	public class DebugWindowViewModel : ViewModel {
-		public string LegalSpinText { get; set; }
+		private string legalSpinText = "";
+
+		public string LegalSpinText {
+			get => legalSpinText;
+			set {
+				legalSpinText = value;
+				UpdateProperty(nameof(LegalSpinText));
+			}
+		}
 	}
 	
 	public partial class DebugWindow : Window {
@@ -12,8 +20,8 @@ namespace Croupier {
 		private readonly DebugWindowViewModel viewModel = new();
 
 		public DebugWindow(MainWindow main) {
-			mainWindow = main;
 			DataContext = viewModel;
+			mainWindow = main;
 			InitializeComponent();
 
 			viewModel.PropertyChanged += OnPropertyChanged;
