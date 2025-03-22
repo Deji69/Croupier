@@ -33,6 +33,8 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(directx-headers)
 
+target_compile_options(Croupier PRIVATE -utf-8)
+
 target_link_libraries(Croupier PRIVATE
 	ZHMModSDK
 	${ICONV_LIB_PATH}
