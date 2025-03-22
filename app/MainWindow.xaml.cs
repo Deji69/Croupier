@@ -168,6 +168,7 @@ namespace Croupier
 		private double _spinFontSize = 16;
 		private bool _rightToLeft = false;
 		private bool _topmostEnabled = false;
+		private bool _useNoKOBanner = true;
 		private bool _verticalDisplay = false;
 		private bool _spinLock = false;
 		private bool _editMode = false;
@@ -220,6 +221,17 @@ namespace Croupier
 		}
 
 		public bool ShuffleButtonEnabled => missionPool.Count > 0;
+
+		public bool UseNoKOBanner {
+			get => _useNoKOBanner;
+			set {
+				_useNoKOBanner = value;
+				Config.Default.UseNoKOBanner = value;
+				OnPropertyChanged(nameof(UseNoKOBanner));
+				OnPropertyChanged(nameof(SpinNTKOHeight));
+				RefitWindow();
+			}
+		}
 
 		public bool TopmostEnabled {
 			get => _topmostEnabled;
@@ -777,7 +789,8 @@ namespace Croupier
 
 		private void MainWindow_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == nameof(VerticalDisplay)
-				|| e.PropertyName == nameof(StaticSize)) {
+				|| e.PropertyName == nameof(StaticSize)
+				|| e.PropertyName == nameof(UseNoKOBanner)) {
 				RefitWindow();
 				Task.Delay(10).ContinueWith(task => {
 					SetupSpinUI();
@@ -846,6 +859,7 @@ namespace Croupier
 
 			VerticalDisplay = Config.Default.VerticalDisplay;
 			TopmostEnabled = Config.Default.AlwaysOnTop;
+			UseNoKOBanner = Config.Default.UseNoKOBanner;
 			RightToLeft = Config.Default.RightToLeft;
 			StaticSize = Config.Default.StaticSize;
 			StaticSizeLHS = Config.Default.StaticSizeLHS;

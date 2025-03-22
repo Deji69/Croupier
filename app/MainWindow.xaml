@@ -192,7 +192,7 @@
 							<Run FontSize=".01">i</Run>
 						</TextBlock>
 						<TextBlock
-							Visibility="{Binding Path=IsLive, Converter={StaticResource VisibilityOfBool}}"
+							Visibility="{Binding Path=IsLiveBanner, Converter={StaticResource VisibilityOfBool}}"
 							Grid.Row="1"
 							Background="{StaticResource NTKOBGBrush}"
 							Foreground="White"
@@ -587,6 +587,12 @@
 					</MenuItem.ItemContainerStyle>
 				</MenuItem>
 				<MenuItem Header="Display Options" StaysOpenOnClick="True">
+					<MenuItem
+						Header="Use 'No KO' Banner"
+						IsChecked="{Binding UseNoKOBanner, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						IsCheckable="True"
+						StaysOpenOnClick="True"
+					/>
 					<MenuItem
 						Header="Always On _Top"
 						IsChecked="{Binding TopmostEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"

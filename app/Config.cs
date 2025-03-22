@@ -19,6 +19,7 @@ namespace Croupier {
 		public List<string> Bookmarks { get; set; } = [];
 
 		public bool CheckUpdate { get; set; } = true;
+		public bool UseNoKOBanner { get; set; } = true;
 		public bool AlwaysOnTop { get; set; } = false;
 		public bool RightToLeft { get; set; } = false;
 		public bool StaticSize { get; set; } = false;
