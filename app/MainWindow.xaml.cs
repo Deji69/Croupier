@@ -493,7 +493,9 @@ namespace Croupier
 		private bool timerStopped = true;
 		private bool timerManuallyStopped = false;
 		private DateTime timerStart = DateTime.Now;
+		private DateTime spinTimerStart = DateTime.Now;
 		private TimeSpan? timeElapsed = null;
+		private TimeSpan? spinTimeElapsed = null;
 		private int streak = 0;
 		private Spin? spin = null;
 		private bool spinCompleted = false;
@@ -698,7 +700,7 @@ namespace Croupier
 			CroupierSocketServer.MissionFailed += (object? sender, int _) => {
 				if (spinCompleted) return;
 
-				if (hasRestartedSinceSpin || (DateTime.Now - timerStart).TotalSeconds > Config.Default.StreakReplanWindow)
+				if (hasRestartedSinceSpin || (DateTime.Now - spinTimerStart).TotalSeconds > Config.Default.StreakReplanWindow)
 					ResetStreak();
 
 				hasRestartedSinceSpin = true;
@@ -1247,7 +1249,7 @@ namespace Croupier
 
 			spinStats.Completions.Add(new() {
 				IGT = mc.IGT > 0 ? mc.IGT : 0,
-				RTA = (DateTime.Now - timerStart).TotalSeconds,
+				RTA = (DateTime.Now - spinTimerStart).TotalSeconds,
 				Mission = spin.Mission,
 				StartLocation = usedEntrance?.ID ?? "",
 				Loadout = [..loadout],
@@ -1278,15 +1280,19 @@ namespace Croupier
 					case TimingMode.RTA:
 					case TimingMode.Spin:
 						timeElapsed = DateTime.Now - timerStart;
+						spinTimeElapsed = DateTime.Now - spinTimerStart;
 						break;
 				}
 			}
 
 			timerStopped = false;
 			timerStart = timeElapsed.HasValue ? DateTime.Now - timeElapsed.Value : DateTime.Now;
-			
-			if (Config.Default.TimingMode != TimingMode.IGT)
+			spinTimerStart = spinTimeElapsed.HasValue ? DateTime.Now - spinTimeElapsed.Value : DateTime.Now;
+			spinTimeElapsed = null;
+
+			if (Config.Default.TimingMode != TimingMode.IGT) {
 				timeElapsed = null;
+			}
 
 			SendTimerToClient();
 		}
@@ -1296,8 +1302,10 @@ namespace Croupier
 
 			if (timerStopped) return;
 
-			if (Config.Default.TimingMode != TimingMode.IGT)
+			if (Config.Default.TimingMode != TimingMode.IGT) {
 				timeElapsed = DateTime.Now - timerStart;
+				spinTimeElapsed = DateTime.Now - spinTimerStart;
+			}
 
 			timerStopped = true;
 		}
@@ -1307,7 +1315,9 @@ namespace Croupier
 
 			if (!timerStopped) return;
 			timerStart = timeElapsed.HasValue ? DateTime.Now - timeElapsed.Value : DateTime.Now;
+			spinTimerStart = spinTimeElapsed.HasValue ? DateTime.Now - spinTimeElapsed.Value : DateTime.Now;
 			timeElapsed = null;
+			spinTimeElapsed = null;
 			timerStopped = false;
 		}
 
@@ -1317,7 +1327,9 @@ namespace Croupier
 				liveSplit.StartOrSplit();
 
 			timeElapsed = null;
+			spinTimeElapsed = null;
 			timerStart = DateTime.Now;
+			spinTimerStart = DateTime.Now;
 		}
 
 		private void HandleTimingOnLoadStart() {
@@ -1375,6 +1387,8 @@ namespace Croupier
 					StopTimer();
 					break;
 			}
+			
+			spinTimeElapsed = null;
 
 			SendTimerToClient();
 		}
