@@ -190,7 +190,7 @@
 						IsSnapToTickEnabled="True"
 						Minimum="0"
 						Value="{Binding ReplanWindow}"
-						Maximum="90"
+						Maximum="120"
 						SmallChange="5"
 						LargeChange="15"
 						MaxWidth="200"
@@ -204,7 +204,7 @@
 				</Grid>
 				<TextBlock
 					Grid.Column="2"
-					Text="Set a grace period in seconds after spin, during which you are allowed 1 replan/restart."
+					Text="Set a grace period in seconds after spin, during which you are allowed 1 replan/restart without losing streak."
 					Foreground="White"
 					TextWrapping="WrapWithOverflow"
 					/>
