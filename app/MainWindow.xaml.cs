@@ -205,7 +205,7 @@ namespace Croupier
 		}
 
 		public double SpinNTKOHeight {
-			get => _spinFontSize * 1.1;
+			get => _useNoKOBanner ? _spinFontSize * 1.1 : 0;
 		}
 
 		public double SpinFontSize {
