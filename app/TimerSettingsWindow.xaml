@@ -275,7 +275,7 @@
 					Spin = Times in real-time minus loads. Pauses after spin completion and resumes on fresh spin.
 				</TextBlock>
 
-				<StackPanel Orientation="Vertical" Margin="5,0,5,8" Grid.Row="1">
+				<StackPanel Orientation="Vertical" Margin="5,0,5,8" Grid.Row="2">
 					<TextBlock
 						Text="Reset On Mission Select"
 						Foreground="White"
@@ -298,7 +298,7 @@
 					</ComboBox>
 				</StackPanel>
 				<TextBlock
-					Grid.Row="1"
+					Grid.Row="2"
 					Grid.Column="1"
 					Foreground="White"
 					Margin="5,0,0,5"
@@ -309,7 +309,7 @@
 				</TextBlock>
 
 				<StackPanel
-					Grid.Row="2"
+					Grid.Row="3"
 					Orientation="Vertical"
 					Margin="5,0,5,8">
 					<TextBlock
@@ -342,7 +342,7 @@
 					</Grid>
 				</StackPanel>
 				<TextBlock
-					Grid.Row="2"
+					Grid.Row="3"
 					Grid.Column="1"
 					Foreground="White"
 					Margin="5,0,0,5"
@@ -351,7 +351,7 @@
 					Text="{Binding AutoSpinCountdownStatus, UpdateSourceTrigger=PropertyChanged}"
 					VerticalAlignment="Top" />
 
-				<Grid Grid.Row="3" Grid.Column="0">
+				<Grid Grid.Row="4">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="1*" />
 						<ColumnDefinition Width="32" />
@@ -366,19 +366,57 @@
 						Margin="5,0,0,5"
 						TextWrapping="WrapWithOverflow"
 						FontWeight="Bold"
-						ToolTip="Pause timer during the tango mission outro in Mendoza."
+						ToolTip="Only tell LiveSplit to split if the spin has been completed with Silent Assassin."
+						HorizontalAlignment="Left"
+						VerticalAlignment="Center">
+						Splits Require Silent Assassin
+					</TextBlock>
+					<CheckBox
+						Grid.Column="1"
+						Margin="0,0,0,5"
+						ToolTip="Only tell LiveSplit to split if the spin has been completed with Silent Assassin."
+						IsChecked="{Binding SplitRequiresSA, Mode=TwoWay}"
+						VerticalAlignment="Center"
+						/>
+				</Grid>
+				<TextBlock
+					Grid.Row="4"
+					Grid.Column="2"
+					Foreground="White"
+					Margin="5,0,0,5"
+					TextWrapping="WrapWithOverflow"
+					FontWeight="Normal"
+					Text="Require SA to split. If disabled, exiting when not SA will cause a split."
+					VerticalAlignment="Top" />
+				
+				<Grid Grid.Row="5" Grid.Column="0">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="1*" />
+						<ColumnDefinition Width="32" />
+					</Grid.ColumnDefinitions>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
+
+					<TextBlock
+						Grid.Column="0"
+						Foreground="White"
+						Margin="5,0,0,5"
+						TextWrapping="WrapWithOverflow"
+						FontWeight="Bold"
+						ToolTip="Pause timer during mission outros."
 						VerticalAlignment="Top">
 						Pause During Mission Outro
 					</TextBlock>
 					<CheckBox
 						Grid.Column="1"
 						Margin="0,0,0,5"
-						ToolTip="Pause timer during the tango mission outro in Mendoza."
+						ToolTip="Pause timer during mission outros."
 						IsChecked="{Binding PauseDuringOutro, Mode=TwoWay}"
 						/>
 				</Grid>
 				<TextBlock
-					Grid.Row="3"
+					Grid.Row="5"
 					Grid.Column="2"
 					Foreground="White"
 					Margin="5,0,0,5"

@@ -1371,7 +1371,8 @@ namespace Croupier
 		}
 
 		private void HandleTimingOnSpinComplete(MissionCompletion completion) {
-			liveSplit.Split();
+			if (!Config.Default.SplitRequiresSA || completion.SA)
+				liveSplit.Split();
 
 			if (Config.Default.TimingMode != TimingMode.IGT && Config.Default.TimingMode != TimingMode.Spin) {
 				if (timerStopped && !timerManuallyStopped)

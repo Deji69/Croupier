@@ -43,6 +43,7 @@ namespace Croupier {
 		public int StreakPB { get; set; } = 0;
 		public int StreakReplanWindow { get; set; } = 60;
 		public bool StreakRequireValidKills { get; set; } = true;
+		public bool SplitRequiresSA { get; set; } = true;
 
 		public string TargetNameFormat { get; set; } = "";
 		public int AutoSpinCountdown { get; set; } = 0;

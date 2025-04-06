@@ -58,6 +58,14 @@ namespace Croupier {
 			}
 		}
 
+		public bool SplitRequiresSA {
+			get => Config.Default.SplitRequiresSA;
+			set {
+				Config.Default.SplitRequiresSA = value;
+				UpdateProperty(nameof(SplitRequiresSA));
+			}
+		}
+
 		public bool StreakRequireValidKills {
 			get => Config.Default.StreakRequireValidKills;
 			set {
