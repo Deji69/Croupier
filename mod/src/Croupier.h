@@ -39,6 +39,13 @@ struct KillSetpieceEvent {
 	double timestamp;
 };
 
+struct LevelSetupEvent {
+	//std::string contractName;
+	//std::string location;
+	std::string event;
+	double timestamp;
+};
+
 struct SharedRouletteSpin {
 	const RouletteSpin& spin;
 	std::set<std::string, InsensitiveCompareLexicographic> killed;
@@ -46,6 +53,7 @@ struct SharedRouletteSpin {
 	std::vector<DisguiseChange> disguiseChanges;
 	std::vector<KillConfirmation> killValidations;
 	std::vector<KillSetpieceEvent> killSetpieceEvents;
+	std::vector<LevelSetupEvent> levelSetupEvents;
 	std::vector<LoadoutItemEventValue> loadout;
 	std::string locationId;
 	std::chrono::steady_clock::time_point timeStarted;
@@ -67,7 +75,7 @@ struct SharedRouletteSpin {
 	}
 
 	auto getTargetKillValidation(eTargetID target) const -> KillConfirmation {
-		if (hasLoadedGame) return KillConfirmation(target, eKillValidationType::Unknown);
+		//if (hasLoadedGame) return KillConfirmation(target, eKillValidationType::Unknown);
 		for (auto& kc : killValidations) {
 			if (kc.target == target)
 				return kc;
@@ -102,6 +110,22 @@ struct SharedRouletteSpin {
 		for (auto i = killSetpieceEvents.size(); i > 0; --i) {
 			if (std::abs(killSetpieceEvents[i - 1].timestamp - timestamp) < margin)
 				return &killSetpieceEvents[i - 1];
+		}
+		return nullptr;
+	}
+
+	auto getLevelSetupEventByEvent(std::string_view name) const -> const LevelSetupEvent* {
+		for (auto i = levelSetupEvents.size(); i > 0; --i) {
+			if (levelSetupEvents[i - 1].event == name)
+				return &levelSetupEvents[i - 1];
+		}
+		return nullptr;
+	}
+
+	auto getLevelSetupEventAtTimestamp(double timestamp, double margin = 0.1) const -> const LevelSetupEvent* {
+		for (auto i = levelSetupEvents.size(); i > 0; --i) {
+			if (std::abs(levelSetupEvents[i - 1].timestamp - timestamp) < margin)
+				return &levelSetupEvents[i - 1];
 		}
 		return nullptr;
 	}
@@ -172,6 +196,7 @@ struct SharedRouletteSpin {
 		killValidations.resize(spin.getConditions().size());
 		disguiseChanges.clear();
 		killSetpieceEvents.clear();
+		levelSetupEvents.clear();
 
 		for (auto& kv : killValidations)
 			kv = KillConfirmation {};

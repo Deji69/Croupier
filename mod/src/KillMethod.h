@@ -105,13 +105,16 @@ enum class eMapKillMethod {
 	Soders_ShootHeart,
 	Soders_TrashHeart,
 
-	Yuki_SabotageCableCar,
+	Silvio_SeaPlane,
 	Silvio_ShootThroughTelescope,
 	Sean_ExplosiveWatchBattery,
+	Yuki_Sauna,
+	Yuki_SabotageCableCar,
 	Sierra_BombCar,
 	Sierra_ShootCar,
 	Athena_Award,
 	Steven_BombWaterScooter,
+	//Noel_BridgeTrap,
 };
 
 inline static const std::set<std::string, InsensitiveCompareLexicographic> nonLoudExplosives = {

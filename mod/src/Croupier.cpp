@@ -1732,6 +1732,17 @@ auto Croupier::SetupEvents() -> void {
 	events.listen<Events::Level_Setup_Events>([this](const ServerEvent<Events::Level_Setup_Events>& ev) {
 		auto const& conditions = this->sharedSpin.spin.getConditions();
 		auto mission = this->sharedSpin.spin.getMission();
+
+
+		if (this->spinCompleted) return;
+
+		LevelSetupEvent data {};
+		//data.contractName = ev.Value.Contract_Name_metricvalue;
+		//data.location = ev.Value.Location_MetricValue;
+		data.event = ev.Value.Event_metricvalue;
+		data.timestamp = ev.Timestamp;
+		this->sharedSpin.levelSetupEvents.push_back(std::move(data));
+
 		if (!mission || mission->getMission() != eMission::HOKKAIDO_SITUSINVERSUS) return;
 		if (ev.Value.Contract_Name_metricvalue != "SnowCrane") return;
 
@@ -2005,11 +2016,23 @@ auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Ki
 auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Kill>& ev, eMapKillMethod method, eKillType type) -> eKillValidationType {
 	if (!isSpecificKillMethodMelee(method)) {
 		if (target == eTargetID::SilvioCaruso) {
+			// {"Timestamp":128.182587,"Name":"Level_Setup_Events","ContractSessionId":"2516591008337813079-9ea716b6-6798-4687-ba22-3bb8d89cce9b","ContractId":"00000000-0000-0000-0000-000000000600","Value":{"Contract_Name_metricvalue":"Octopus","Location_MetricValue":"Sapienza","Event_metricvalue":"Silvio_InPlane"},"UserId":"b1585b4d-36f0-48a0-8ffa-1b72f01759da","SessionId":"61e82efa0bcb4a3088825dd75e115f61-468215834","Origin":"gameclient","Id":"e07d8e6d-dfa1-434b-a36d-30e055320e2e"}
+			// {"Timestamp":173.116608,"Name":"Kill","ContractSessionId":"2516591008337813079-9ea716b6-6798-4687-ba22-3bb8d89cce9b","ContractId":"00000000-0000-0000-0000-000000000600","Value":{"RepositoryId":"0dfaea51-3c36-4722-9eff-f1e7ef139878","ActorId":2739847461.000000,"ActorName":"Silvio Caruso","ActorType":0.000000,"KillType":4.000000,"KillContext":3.000000,"KillClass":"unknown","Accident":true,"WeaponSilenced":false,"Explosive":false,"ExplosionType":0.000000,"Projectile":false,"Sniper":false,"IsHeadshot":false,"IsTarget":true,"ThroughWall":false,"BodyPartId":-1.000000,"TotalDamage":100000.000000,"IsMoving":false,"RoomId":182.000000,"ActorPosition":"-105.703, -175.75, -0.775244","HeroPosition":"-110.366, -119.28, 16.0837","DamageEvents":[],"PlayerId":4294967295.000000,"OutfitRepositoryId":"fd56a934-f402-4b52-bdca-8bbc737400ff","OutfitIsHitmanSuit":false,"EvergreenRarity":-1.000000,"KillMethodBroad":"","KillMethodStrict":"","IsReplicated":true,"History":[]},"UserId":"b1585b4d-36f0-48a0-8ffa-1b72f01759da","SessionId":"61e82efa0bcb4a3088825dd75e115f61-468215834","Origin":"gameclient","Id":"c5d04012-68a1-473a-8769-3a0c3b9da097"}
+			if (method == eMapKillMethod::Silvio_SeaPlane) {
+				// Best we can really do is just check Silvio ever entered the plane and the kill was an accident...
+				auto lse = this->sharedSpin.getLevelSetupEventByEvent("Silvio_InPlane");
+				return lse != nullptr && ev.Value.Accident
+					? eKillValidationType::Valid
+					: eKillValidationType::Invalid;
+			}
 			if (method == eMapKillMethod::Silvio_ShootThroughTelescope) {
 				return ev.Value.SetPieceId == "a84ba351-285a-4f07-8758-2d7640401aad"
 					? eKillValidationType::Valid
 					: eKillValidationType::Invalid;
 			}
+		}
+		if (target == eTargetID::JordanCross) {
+			// Smother in Cake: be8452d0-3ce9-4f41-b1c2-a381d7e95e15
 		}
 		if (target == eTargetID::SeanRose) {
 			if (method == eMapKillMethod::Sean_ExplosiveWatchBattery) {
@@ -2017,6 +2040,24 @@ auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Ki
 					? eKillValidationType::Valid
 					: eKillValidationType::Invalid;
 			}
+		}
+		if (target == eTargetID::YukiYamazaki) {
+			if (method == eMapKillMethod::Yuki_Sauna) {
+				return ev.Value.SetPieceId == "9477e941-880c-4b05-932f-d431eaeb634e"
+					? eKillValidationType::Valid
+					: eKillValidationType::Invalid;
+			}
+			if (method == eMapKillMethod::Yuki_SabotageCableCar) {
+				auto lse = this->sharedSpin.getLevelSetupEventByEvent("Cablecar_Down");
+				return lse != nullptr
+					? eKillValidationType::Valid
+					: eKillValidationType::Invalid;
+			}
+
+			// Yoga: 40237d59-f3c8-46a7-9760-49eac05315d6
+		}
+		if (target == eTargetID::RobertKnox) {
+			// Push On Track: b6d26119-db90-4224-b50a-dcb04c3e159d
 		}
 		if (target == eTargetID::SierraKnox) {
 			auto const haveDamageEvents = !ev.Value.DamageEvents.empty();
@@ -2035,6 +2076,32 @@ auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Ki
 				&& isKillClassUnknown
 				&& killContext == EDeathContext::eDC_HIDDEN)
 				return eKillValidationType::Valid;
+		}
+		if (target == eTargetID::RicoDelgado) {
+			//if (method == eMapKillMethod::Hippo) {
+			//	return ev.Value.SetPieceId == "41f35d49-c74a-4de2-8119-d11cfef0b408"
+			//		? eKillValidationType::Valid
+			//		: eKillValidationType::Invalid;
+			//}
+		}
+		if (target == eTargetID::JorgeFranco) {
+			//if (method == eMapKillMethod::CocaineMachine) {
+			//	return ev.Value.SetPieceId == "803b6461-0c4c-4f3d-9d6a-d9219a9d3136"
+			//		? eKillValidationType::Valid
+			//		: eKillValidationType::Invalid;
+			//}
+			//if (method == eMapKillMethod::RarePlant) {
+			//	return ev.Value.SetPieceId == "eff668ff-341b-4a9d-850f-14c3b05bb1f7"
+			//		? eKillValidationType::Valid
+			//		: eKillValidationType::Invalid;
+			//}
+		}
+		if (target == eTargetID::AndreaMartinez) {
+			//if (method == eMapKillMethod::PiranhaFood) {
+			//	return ev.Value.SetPieceId == "7e9e7387-8c6a-4782-bb2a-cfc7c3574895"
+			//		? eKillValidationType::Valid
+			//		: eKillValidationType::Invalid;
+			//}
 		}
 		if (target == eTargetID::AthenaSavalas) {
 			if (method == eMapKillMethod::Athena_Award) {
