@@ -449,6 +449,13 @@
 		"Keywords": ["xmasstar", "christmasstar", "holidaystar", "star"]
 	},
 	{
+		"Name": "Sabotage Seaplane",
+		"Image": "octopus_sign_silvio_planedown.jpg",
+		"Category": "Unique",
+		"Target": "Silvio Caruso",
+		"Keywords": ["seaplane", "sabotageplane", "sabotageseaplane", "plane", "sabotage"]
+	},
+	{
 		"Name": "Shoot Through the Telescope",
 		"Image": "octopus_sign_silvio_telescope.jpg",
 		"Category": "Unique",
@@ -503,6 +510,20 @@
 		"Category": "Unique",
 		"Target": "Erich Soders",
 		"Keywords": ["trashheart", "trashcan", "throwheartinthetrash", "throwtheheartinthetrash", "throwheartintrash"]
+	},
+	{
+		"Name": "Sabotage Cable Car",
+		"Image": "snowcrane_sign_yamazaki_cablecar.jpg",
+		"Category": "Unique",
+		"Target": "Yuki Yamazaki",
+		"Keywords": ["cablecar", "sabotagecablecar", "sabotage", "cable", "gondola"]
+	},
+	{
+		"Name": "Lock in Sauna",
+		"Image": "snowcrane_exp_yamazaki_sauna.jpg",
+		"Category": "Unique",
+		"Target": "Yuki Yamazaki",
+		"Keywords": ["sauna", "lockinsauna", "trapinsauna", "lockyukiinthesauna", "lockyukiinsauna"]
 	},
 	{
 		"Name": "Shoot the Car",
