@@ -425,6 +425,12 @@ struct Event<Events::Actorsick> {
 };
 
 template<>
+struct Event<Events::C_Hungry_Hippo> {
+	static auto constexpr Name = "C_Hungry_Hippo";
+	using EventValue = VoidEventValue;
+};
+
+template<>
 struct Event<Events::Dart_Hit> {
 	static auto constexpr Name = "Dart_Hit";
 	struct EventValue {

@@ -3,7 +3,7 @@
 	 * Name of ruleset to appear in Croupier.
 	 * Special value: "Custom" - Croupier uses this to refer to the custom ruleset in the ruleset window.
 	 */
-	"Name": "RR14",
+	"Name": "RRWC 2024 w/ Experimental Conditions",
 	"Rules": {
 		/**
 		 * Enable 'Elimination', 'Silenced Elimination' and 'Loud Elimination'
@@ -69,7 +69,7 @@
 		 * If true, Loud SMG cannot be spun in a spin that already has a large firearm.
 		 * Default: true
 		 */
-		"LoudSMGIsLargeFirearm": true,
+		"LoudSMGIsLargeFirearm": false,
 
 		/**
 		 * If true, spins can be generated where two or more targets require the same disguise.
@@ -102,7 +102,7 @@
 		 * Special values:
 		 *   "EasterEgg" - Croupier only adds easter egg methods (e.g. Sacrificial Knife in SF/Sgail, Letter Opener in Mendoza, Battle Axe in WC) if this is not present.
 		 */
-		"Banned": ["Unique", "Banned", "Slow", "Hard", "Extreme", "Impossible", "Buggy", "EasterEgg"]
+		"Banned": ["Banned", "Slow", "Extreme", "Impossible", "Buggy", "EasterEgg"]
 	},
 	"Tags": {
 		/**
@@ -185,7 +185,7 @@
 		},
 		/** Claus Hugo Strandberg **/
 		"CHS": {
-			"Banned": ["HostileNonRemote"],
+			"Banned": ["HostileNonRemote", "FallingObject"],
 			"Hard": ["FallingObject", "HostileNonRemote"]
 		},
 		/** Kong Tuo Kwang **/
@@ -216,7 +216,7 @@
 		},
 		/** Sean Rose **/
 		"SR": {
-			"Banned": ["Drowning", "LoudLive"],
+			"Banned": ["ConsumedPoison", "Drowning"],
 			"Hard": ["LoudLive"],
 			"Extreme": ["Drowning"],
 			"Impossible": ["ConsumedPoison"]
@@ -243,7 +243,9 @@
 			"Banned": ["IsExplosive"]
 		},
 		/** Yuki Yamazaki **/
-		"YY": {},
+		"YY": {
+			"Banned": ["Fire"]
+		},
 		/** Owen Cage **/
 		"OC": {
 			"Banned": ["Drowning"],
@@ -259,7 +261,14 @@
 			"Impossible": ["FallingObject", "Fire"]
 		},
 		/** Sierra Knox **/
-		"SK": {},
+		"SK": {
+			"Banned": [
+				{
+					"Method": "ShootCar",
+					"Disguises": ["Moses Lee"]
+				}
+			]
+		},
 		/** Robert Knox **/
 		"RK": {
 			"Banned": ["Fire"],
@@ -286,18 +295,20 @@
 		"BR": {},
 		/** Wazir Kale **/
 		"WK": {
-			"Banned": ["Drowning", "Fire", "LoudLive"],
-			"Extreme": ["Drowning", "Fire", "LoudLive"]
+			"Banned": ["Drowning", "Fire"],
+			"Hard": ["LoudLive"],
+			"Extreme": ["Drowning", "Fire"]
 		},
 		/** Vanya Shah **/
 		"VS": {
 			"Banned": ["ConsumedPoison", "Drowning"],
+			"Hard": ["LoudLive"],
 			"Extreme": ["ConsumedPoison", "Drowning"]
 		},
 		/** Dawood Rangan **/
 		"DR": {
-			"Banned": ["ConsumedPoison", "Fire"],
-			"Extreme": ["ConsumedPoison", "Fire"]
+			"Banned": ["ConsumedPoison", "Drowning", "Fire", "LoudLive"],
+			"Extreme": ["ConsumedPoison", "Fire", "LoudLive"]
 		},
 		/** Basil Carnaby **/
 		"BC": {},
@@ -309,7 +320,7 @@
 		},
 		/** Nolan Cassidy **/
 		"NC": {
-			"Banned": ["Fire", "BattleAxe", "BeakStaff"],
+			"Banned": ["BattleAxe", "BeakStaff", "FallingObject", "Fire"],
 			"Impossible": ["Fire"],
 			"Slow": ["BattleAxe", "BeakStaff", "FallingObject"]
 		},
@@ -376,7 +387,7 @@
 		},
 		/** Hush **/
 		"H": {
-			"Banned": ["ConsumedPoison", "Fire", "LoudLive"],
+			"Banned": ["ConsumedPoison", "Fire"],
 			"Slow": ["ConsumedPoison"],
 			"Hard": ["LoudLive"],
 			"Impossible": ["Fire"]

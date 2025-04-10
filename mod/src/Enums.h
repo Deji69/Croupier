@@ -32,6 +32,7 @@ enum class Events {
 	BodyFound,
 	BodyHidden,
 	BrokenDisguiseCleared,
+	C_Hungry_Hippo,
 	ContractStart,
 	ContractLoad,
 	ContractEnd,

@@ -523,6 +523,12 @@ std::vector<Keyword> Keyword::keywords = {
 	{ "DestroySeaPlane", eMapKillMethod::Silvio_SeaPlane, "SeaPlane" },
 	{ "Plane", eMapKillMethod::Silvio_SeaPlane, "SeaPlane" },
 	{ "Escape", eMapKillMethod::Silvio_SeaPlane, "SeaPlane" },
+	// Map Kill Method - Jordan Cross
+	{ "CakeSmother", eMapKillMethod::Jordan_CakeSmother },
+	{ "Cake", eMapKillMethod::Jordan_CakeSmother, "CakeSmother"},
+	{ "Smother", eMapKillMethod::Jordan_CakeSmother, "CakeSmother" },
+	{ "SmotherCake", eMapKillMethod::Jordan_CakeSmother, "CakeSmother" },
+	{ "SmotherInCake", eMapKillMethod::Jordan_CakeSmother, "CakeSmother" },
 	// Map Kill Method - Sean Rose
 	{ "ExplosiveWatchBattery", eMapKillMethod::Sean_ExplosiveWatchBattery },
 	{ "ExplosiveWatch", eMapKillMethod::Sean_ExplosiveWatchBattery, "ExplosiveWatchBattery" },
@@ -550,6 +556,38 @@ std::vector<Keyword> Keyword::keywords = {
 	{ "ShootCar", eMapKillMethod::Sierra_ShootCar, "ShootTheCar" },
 	{ "BombTheCar", eMapKillMethod::Sierra_BombCar },
 	{ "BombCar", eMapKillMethod::Sierra_BombCar, "BombTheCar" },
+	// Map Kill Method - Rico Delgado
+	{ "FeedToHippo", eMapKillMethod::Rico_FeedToHippo },
+	{ "Feed", eMapKillMethod::Rico_FeedToHippo, "FeedToHippo" },
+	{ "Food", eMapKillMethod::Rico_FeedToHippo, "FeedToHippo" },
+	{ "Hippo", eMapKillMethod::Rico_FeedToHippo, "FeedToHippo" },
+	{ "HippoFood", eMapKillMethod::Rico_FeedToHippo, "FeedToHippo" },
+	{ "FeedHippo", eMapKillMethod::Rico_FeedToHippo, "FeedToHippo" },
+	{ "ElMijo", eMapKillMethod::Rico_FeedToHippo, "FeedToHippo" },
+	{ "Mijo", eMapKillMethod::Rico_FeedToHippo, "FeedToHippo" },
+	{ "FeedMijo", eMapKillMethod::Rico_FeedToHippo, "FeedToHippo" },
+	{ "FeedElMijo", eMapKillMethod::Rico_FeedToHippo, "FeedToHippo" },
+	// Map Kill Method - Jorge Franco
+	{ "CocaineMachine", eMapKillMethod::Jorge_CocaineMachine },
+	{ "PushIntoCocaineMachine", eMapKillMethod::Jorge_CocaineMachine, "CocaineMachine" },
+	{ "Cocaine", eMapKillMethod::Jorge_CocaineMachine, "CocaineMachine" },
+	{ "Machine", eMapKillMethod::Jorge_CocaineMachine, "CocaineMachine" },
+	{ "Shred", eMapKillMethod::Jorge_CocaineMachine, "CocaineMachine" },
+	{ "Shredder", eMapKillMethod::Jorge_CocaineMachine, "CocaineMachine" },
+	// Map Kill Method - Janus
+	{ "ImpaleOnSculpture", eMapKillMethod::Janus_Sculpture },
+	{ "Sculpture", eMapKillMethod::Janus_Sculpture, "ImpaleOnSculpture" },
+	{ "Impale", eMapKillMethod::Janus_Sculpture, "ImpaleOnSculpture" },
+	{ "ImpaleSculpture", eMapKillMethod::Janus_Sculpture, "ImpaleOnSculpture" },
+	{ "ImpaleStatue", eMapKillMethod::Janus_Sculpture, "ImpaleOnSculpture" },
+	{ "Statue", eMapKillMethod::Janus_Sculpture, "ImpaleOnSculpture" },
+	{ "HammerSickle", eMapKillMethod::Janus_Sculpture, "ImpaleOnSculpture" },
+	{ "HammerAndSickle", eMapKillMethod::Janus_Sculpture, "ImpaleOnSculpture" },
+	// Map Kill Method - Isle of Sgail
+	{ "AztecNecklace", eMapKillMethod::Sgail_AztecNecklace },
+	{ "Necklace", eMapKillMethod::Sgail_AztecNecklace, "AztecNecklace" },
+	{ "Aztec", eMapKillMethod::Sgail_AztecNecklace, "AztecNecklace" },
+	{ "CloudSerpent", eMapKillMethod::Sgail_AztecNecklace, "AztecNecklace" },
 	// Map Kill Method - Athena Savalas
 	{ "AthenaSavalasAward", eMapKillMethod::Athena_Award },
 	{ "AthenasAward", eMapKillMethod::Athena_Award, "AthenaSavalasAward" },
@@ -691,6 +729,7 @@ auto isSpecificKillMethodMelee(eMapKillMethod method) -> bool {
 		case eMapKillMethod::Silvio_SeaPlane:
 		case eMapKillMethod::Silvio_ShootThroughTelescope:
 		case eMapKillMethod::Sean_ExplosiveWatchBattery:
+		case eMapKillMethod::Jordan_CakeSmother:
 		case eMapKillMethod::Soders_Electrocution:
 		case eMapKillMethod::Soders_Explosion:
 		case eMapKillMethod::Soders_PoisonStemCells:
@@ -701,6 +740,9 @@ auto isSpecificKillMethodMelee(eMapKillMethod method) -> bool {
 		case eMapKillMethod::Yuki_Sauna:
 		case eMapKillMethod::Sierra_BombCar:
 		case eMapKillMethod::Sierra_ShootCar:
+		case eMapKillMethod::Rico_FeedToHippo:
+		case eMapKillMethod::Jorge_CocaineMachine:
+		case eMapKillMethod::Janus_Sculpture:
 		case eMapKillMethod::Athena_Award:
 		case eMapKillMethod::Steven_BombWaterScooter:
 		//case eMapKillMethod::Noel_BridgeTrap:
@@ -848,6 +890,7 @@ auto getSpecificKillMethodNameAndImage(eMapKillMethod method) -> std::pair<std::
 	case eMapKillMethod::XmasStar: return { "Xmas Star", "item_perspective_1a852006-e632-401f-aedc-d0cf76521b1f_0.jpg" };
 	case eMapKillMethod::Silvio_SeaPlane: return { "Sabotage Seaplane", "octopus_sign_silvio_planedown.jpg" };
 	case eMapKillMethod::Silvio_ShootThroughTelescope: return { "Shoot Through Telescope", "octopus_sign_silvio_telescope.jpg" };
+	case eMapKillMethod::Jordan_CakeSmother: return { "Smother in Cake", "tiger_sign_cross_deathday.jpg" };
 	case eMapKillMethod::Sean_ExplosiveWatchBattery: return { "Explosive Watch Battery", "colorado_doomsday_watch.jpg" };
 	case eMapKillMethod::Soders_Electrocution: return {"Electrocution", "snowcrane_sign_soders_electrocute.jpg"};
 	case eMapKillMethod::Soders_Explosion: return {"Explosion", "condition_killmethod_accident_explosion.jpg"};
@@ -859,6 +902,10 @@ auto getSpecificKillMethodNameAndImage(eMapKillMethod method) -> std::pair<std::
 	case eMapKillMethod::Yuki_Sauna: return { "Lock in Sauna", "snowcrane_exp_yamazaki_sauna.jpg" };
 	case eMapKillMethod::Sierra_BombCar: return {"Bomb the Car", "story_pitstop_flamingo.jpg"};
 	case eMapKillMethod::Sierra_ShootCar: return {"Shoot the Car", "helping_hand.jpg"};
+	case eMapKillMethod::Rico_FeedToHippo: return { "Feed to Hippo", "hippo_c_exp_hippo_fed.jpg" };
+	case eMapKillMethod::Jorge_CocaineMachine: return { "Cocaine Machine", "hippo_c_sign_franco_machine.jpg" };
+	case eMapKillMethod::Janus_Sculpture: return { "Impale on Sculpture", "skunk_memorabilia_kill.jpg" };
+	case eMapKillMethod::Sgail_AztecNecklace: return { "Aztec Necklace", "magpie_c_sign_necklace.jpg" };
 	case eMapKillMethod::Athena_Award: return { "Athena Savalas' Award", "athena_award.jpg" };
 	case eMapKillMethod::Steven_BombWaterScooter: return { "Bomb Water Scooter", "stingray_opp_jetski.jpg" };
 	}

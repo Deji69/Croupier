@@ -102,7 +102,7 @@
 		 * Special values:
 		 *   "EasterEgg" - Croupier only adds easter egg methods (e.g. Sacrificial Knife in SF/Sgail, Letter Opener in Mendoza, Battle Axe in WC) if this is not present.
 		 */
-		"Banned": ["Banned", "Slow", "Hard", "Extreme", "Impossible", "Buggy", "EasterEgg"]
+		"Banned": ["Unique", "Banned", "Slow", "Hard", "Extreme", "Impossible", "Buggy", "EasterEgg"]
 	},
 	"Tags": {
 		/**

@@ -1617,6 +1617,27 @@ auto Croupier::SetupEvents() -> void {
 			kc.isPacified = true;
 		}
 	});
+	events.listen<Events::C_Hungry_Hippo>([this](const ServerEvent<Events::C_Hungry_Hippo>& ev) {
+		if (this->spinCompleted) return;
+		auto const mission = this->sharedSpin.spin.getMission();
+		if (!mission) return;
+		if (mission->getMission() != eMission::SANTAFORTUNA_THREEHEADEDSERPENT) return;
+
+		auto const& conditions = this->sharedSpin.spin.getConditions();
+		if (conditions.empty()) return;
+
+		for (auto i = 0; i < conditions.size(); ++i) {
+			auto const& cond = conditions[i];
+			if (cond.target.get().getID() != eTargetID::RicoDelgado) continue;
+			if (cond.specificKillMethod.method != eMapKillMethod::Rico_FeedToHippo) return;
+			
+			auto const& target = cond.target.get();
+			auto& kc = this->sharedSpin.getKillConfirmation(i);
+			kc.correctMethod = eKillValidationType::Valid;
+			this->SendKillValidationUpdate();
+			break;
+		}
+	});
 	events.listen<Events::Kill>([this](const ServerEvent<Events::Kill>& ev) {
 		static auto isBerlinAgent = [](eTargetID id) -> bool {
 			switch (id) {
@@ -2014,119 +2035,136 @@ auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Ki
 }
 
 auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Kill>& ev, eMapKillMethod method, eKillType type) -> eKillValidationType {
-	if (!isSpecificKillMethodMelee(method)) {
-		if (target == eTargetID::SilvioCaruso) {
-			// {"Timestamp":128.182587,"Name":"Level_Setup_Events","ContractSessionId":"2516591008337813079-9ea716b6-6798-4687-ba22-3bb8d89cce9b","ContractId":"00000000-0000-0000-0000-000000000600","Value":{"Contract_Name_metricvalue":"Octopus","Location_MetricValue":"Sapienza","Event_metricvalue":"Silvio_InPlane"},"UserId":"b1585b4d-36f0-48a0-8ffa-1b72f01759da","SessionId":"61e82efa0bcb4a3088825dd75e115f61-468215834","Origin":"gameclient","Id":"e07d8e6d-dfa1-434b-a36d-30e055320e2e"}
-			// {"Timestamp":173.116608,"Name":"Kill","ContractSessionId":"2516591008337813079-9ea716b6-6798-4687-ba22-3bb8d89cce9b","ContractId":"00000000-0000-0000-0000-000000000600","Value":{"RepositoryId":"0dfaea51-3c36-4722-9eff-f1e7ef139878","ActorId":2739847461.000000,"ActorName":"Silvio Caruso","ActorType":0.000000,"KillType":4.000000,"KillContext":3.000000,"KillClass":"unknown","Accident":true,"WeaponSilenced":false,"Explosive":false,"ExplosionType":0.000000,"Projectile":false,"Sniper":false,"IsHeadshot":false,"IsTarget":true,"ThroughWall":false,"BodyPartId":-1.000000,"TotalDamage":100000.000000,"IsMoving":false,"RoomId":182.000000,"ActorPosition":"-105.703, -175.75, -0.775244","HeroPosition":"-110.366, -119.28, 16.0837","DamageEvents":[],"PlayerId":4294967295.000000,"OutfitRepositoryId":"fd56a934-f402-4b52-bdca-8bbc737400ff","OutfitIsHitmanSuit":false,"EvergreenRarity":-1.000000,"KillMethodBroad":"","KillMethodStrict":"","IsReplicated":true,"History":[]},"UserId":"b1585b4d-36f0-48a0-8ffa-1b72f01759da","SessionId":"61e82efa0bcb4a3088825dd75e115f61-468215834","Origin":"gameclient","Id":"c5d04012-68a1-473a-8769-3a0c3b9da097"}
-			if (method == eMapKillMethod::Silvio_SeaPlane) {
-				// Best we can really do is just check Silvio ever entered the plane and the kill was an accident...
-				auto lse = this->sharedSpin.getLevelSetupEventByEvent("Silvio_InPlane");
-				return lse != nullptr && ev.Value.Accident
-					? eKillValidationType::Valid
-					: eKillValidationType::Invalid;
-			}
-			if (method == eMapKillMethod::Silvio_ShootThroughTelescope) {
-				return ev.Value.SetPieceId == "a84ba351-285a-4f07-8758-2d7640401aad"
-					? eKillValidationType::Valid
-					: eKillValidationType::Invalid;
-			}
+	if (target == eTargetID::SilvioCaruso) {
+		// {"Timestamp":173.116608,"Name":"Kill","ContractSessionId":"2516591008337813079-9ea716b6-6798-4687-ba22-3bb8d89cce9b","ContractId":"00000000-0000-0000-0000-000000000600","Value":{"RepositoryId":"0dfaea51-3c36-4722-9eff-f1e7ef139878","ActorId":2739847461.000000,"ActorName":"Silvio Caruso","ActorType":0.000000,"KillType":4.000000,"KillContext":3.000000,"KillClass":"unknown","Accident":true,"WeaponSilenced":false,"Explosive":false,"ExplosionType":0.000000,"Projectile":false,"Sniper":false,"IsHeadshot":false,"IsTarget":true,"ThroughWall":false,"BodyPartId":-1.000000,"TotalDamage":100000.000000,"IsMoving":false,"RoomId":182.000000,"ActorPosition":"-105.703, -175.75, -0.775244","HeroPosition":"-110.366, -119.28, 16.0837","DamageEvents":[],"PlayerId":4294967295.000000,"OutfitRepositoryId":"fd56a934-f402-4b52-bdca-8bbc737400ff","OutfitIsHitmanSuit":false,"EvergreenRarity":-1.000000,"KillMethodBroad":"","KillMethodStrict":"","IsReplicated":true,"History":[]},"UserId":"b1585b4d-36f0-48a0-8ffa-1b72f01759da","SessionId":"61e82efa0bcb4a3088825dd75e115f61-468215834","Origin":"gameclient","Id":"c5d04012-68a1-473a-8769-3a0c3b9da097"}
+		if (method == eMapKillMethod::Silvio_SeaPlane) {
+			// Best we can really do is just check Silvio ever entered the plane
+			// and the kill was an accident (it is possible to kill him directly with explosive while he is in the plane).
+			auto lse = this->sharedSpin.getLevelSetupEventByEvent("Silvio_InPlane");
+			return lse != nullptr && ev.Value.Accident
+				? eKillValidationType::Valid
+				: eKillValidationType::Invalid;
 		}
-		if (target == eTargetID::JordanCross) {
-			// Smother in Cake: be8452d0-3ce9-4f41-b1c2-a381d7e95e15
-		}
-		if (target == eTargetID::SeanRose) {
-			if (method == eMapKillMethod::Sean_ExplosiveWatchBattery) {
-				return ev.Value.SetPieceId == "66d7a0d3-7ee8-4065-9475-8765fca06faa"
-					? eKillValidationType::Valid
-					: eKillValidationType::Invalid;
-			}
-		}
-		if (target == eTargetID::YukiYamazaki) {
-			if (method == eMapKillMethod::Yuki_Sauna) {
-				return ev.Value.SetPieceId == "9477e941-880c-4b05-932f-d431eaeb634e"
-					? eKillValidationType::Valid
-					: eKillValidationType::Invalid;
-			}
-			if (method == eMapKillMethod::Yuki_SabotageCableCar) {
-				auto lse = this->sharedSpin.getLevelSetupEventByEvent("Cablecar_Down");
-				return lse != nullptr
-					? eKillValidationType::Valid
-					: eKillValidationType::Invalid;
-			}
-
-			// Yoga: 40237d59-f3c8-46a7-9760-49eac05315d6
-		}
-		if (target == eTargetID::RobertKnox) {
-			// Push On Track: b6d26119-db90-4224-b50a-dcb04c3e159d
-		}
-		if (target == eTargetID::SierraKnox) {
-			auto const haveDamageEvents = !ev.Value.DamageEvents.empty();
-			auto const killContext = ev.Value.KillContext;
-			auto const& killClass = ev.Value.KillClass;
-			auto const isKillClassUnknown = killClass == "unknown";
-			// true for car kill
-			// EKillType_ItemTakeOutFront (4)
-			// KillClass == "unknown"
-			// killContext == eDC_HIDDEN (2)
-			// KillMethodBroad == ""
-			// KillMethodStrict == ""
-			auto const isContextKill = haveDamageEvents && ev.Value.DamageEvents[0] == "ContextKill";
-			if ((method == eMapKillMethod::Sierra_BombCar || method == eMapKillMethod::Sierra_ShootCar)
-				&& isContextKill
-				&& isKillClassUnknown
-				&& killContext == EDeathContext::eDC_HIDDEN)
-				return eKillValidationType::Valid;
-		}
-		if (target == eTargetID::RicoDelgado) {
-			//if (method == eMapKillMethod::Hippo) {
-			//	return ev.Value.SetPieceId == "41f35d49-c74a-4de2-8119-d11cfef0b408"
-			//		? eKillValidationType::Valid
-			//		: eKillValidationType::Invalid;
-			//}
-		}
-		if (target == eTargetID::JorgeFranco) {
-			//if (method == eMapKillMethod::CocaineMachine) {
-			//	return ev.Value.SetPieceId == "803b6461-0c4c-4f3d-9d6a-d9219a9d3136"
-			//		? eKillValidationType::Valid
-			//		: eKillValidationType::Invalid;
-			//}
-			//if (method == eMapKillMethod::RarePlant) {
-			//	return ev.Value.SetPieceId == "eff668ff-341b-4a9d-850f-14c3b05bb1f7"
-			//		? eKillValidationType::Valid
-			//		: eKillValidationType::Invalid;
-			//}
-		}
-		if (target == eTargetID::AndreaMartinez) {
-			//if (method == eMapKillMethod::PiranhaFood) {
-			//	return ev.Value.SetPieceId == "7e9e7387-8c6a-4782-bb2a-cfc7c3574895"
-			//		? eKillValidationType::Valid
-			//		: eKillValidationType::Invalid;
-			//}
-		}
-		if (target == eTargetID::AthenaSavalas) {
-			if (method == eMapKillMethod::Athena_Award) {
-				// setpiece_raccoon_unique.template -> SetpieceHelpers_ContextKill_CustomSequence2
-				return ev.Value.SetPieceId == "1a29d28c-be03-4149-b49c-b0c38d060772"
-					? eKillValidationType::Valid
-					: eKillValidationType::Invalid;
-			}
-		}
-		if (target == eTargetID::StevenBradley) {
-			if (method == eMapKillMethod::Steven_BombWaterScooter) {
-				// 'Legit' water scooter kill
-				// setpiece_stingray_unique.template -> Setpiece_Trap_WaterScooterRide
-				if (ev.Value.SetPieceId == "0bd4c163-9674-403a-aa3d-a714be3d7a09")
-					return eKillValidationType::Valid;
-				// Accident explosion via water scooter
-				// Technically this can validate even if Steven is killed in an unrelated accident explosion and the scooter
-				// also gets blown up around the same time, but fuck it
-				auto const setpiece = this->sharedSpin.getSetpieceEventAtTimestamp(ev.Timestamp, 0.3);
-				return setpiece != nullptr && setpiece->id == "2f4a7b8f-a5f1-4c59-8a0e-678b3c2ee32f"
-					? ValidateKillMethod(target, ev, eKillMethod::Explosion, type)
-					: eKillValidationType::Invalid;
-			}
+		if (method == eMapKillMethod::Silvio_ShootThroughTelescope) {
+			return ev.Value.SetPieceId == "a84ba351-285a-4f07-8758-2d7640401aad"
+				? eKillValidationType::Valid
+				: eKillValidationType::Invalid;
 		}
 	}
+	if (target == eTargetID::JordanCross) {
+		if (method == eMapKillMethod::Jordan_CakeSmother) {
+			return ev.Value.SetPieceId == "be8452d0-3ce9-4f41-b1c2-a381d7e95e15"
+				? eKillValidationType::Valid
+				: eKillValidationType::Invalid;
+		}
+	}
+	if (target == eTargetID::SeanRose) {
+		if (method == eMapKillMethod::Sean_ExplosiveWatchBattery) {
+			return ev.Value.SetPieceId == "66d7a0d3-7ee8-4065-9475-8765fca06faa"
+				? eKillValidationType::Valid
+				: eKillValidationType::Invalid;
+		}
+	}
+	if (target == eTargetID::YukiYamazaki) {
+		if (method == eMapKillMethod::Yuki_Sauna) {
+			return ev.Value.SetPieceId == "9477e941-880c-4b05-932f-d431eaeb634e"
+				? eKillValidationType::Valid
+				: eKillValidationType::Invalid;
+		}
+		if (method == eMapKillMethod::Yuki_SabotageCableCar) {
+			auto lse = this->sharedSpin.getLevelSetupEventByEvent("Cablecar_Down");
+			return lse != nullptr
+				? eKillValidationType::Valid
+				: eKillValidationType::Invalid;
+		}
+
+		// Yoga: 40237d59-f3c8-46a7-9760-49eac05315d6
+	}
+	if (target == eTargetID::RobertKnox) {
+		// Push On Track: b6d26119-db90-4224-b50a-dcb04c3e159d
+	}
+	if (target == eTargetID::SierraKnox) {
+		auto const haveDamageEvents = !ev.Value.DamageEvents.empty();
+		auto const killContext = ev.Value.KillContext;
+		auto const& killClass = ev.Value.KillClass;
+		auto const isKillClassUnknown = killClass == "unknown";
+		// true for car kill
+		// EKillType_ItemTakeOutFront (4)
+		// KillClass == "unknown"
+		// killContext == eDC_HIDDEN (2)
+		// KillMethodBroad == ""
+		// KillMethodStrict == ""
+		auto const isContextKill = haveDamageEvents && ev.Value.DamageEvents[0] == "ContextKill";
+		if ((method == eMapKillMethod::Sierra_BombCar || method == eMapKillMethod::Sierra_ShootCar)
+			&& isContextKill
+			&& isKillClassUnknown
+			&& killContext == EDeathContext::eDC_HIDDEN)
+			return eKillValidationType::Valid;
+	}
+	if (target == eTargetID::RicoDelgado) {
+		if (method == eMapKillMethod::Rico_FeedToHippo) {
+			// Method should already be validated by a separate event for dumping into enclosure.
+			// The following is specifically for the context kill push with cutscene.
+			return ev.Value.SetPieceId == "41f35d49-c74a-4de2-8119-d11cfef0b408"
+				? eKillValidationType::Valid
+				: eKillValidationType::Invalid;
+		}
+	}
+	if (target == eTargetID::JorgeFranco) {
+		if (method == eMapKillMethod::Jorge_CocaineMachine) {
+			// Context kill with cutscene.
+			if (ev.Value.SetPieceId == "803b6461-0c4c-4f3d-9d6a-d9219a9d3136")
+				return eKillValidationType::Valid;
+			// For KO and dump, it should be sufficient to check the kill happened inside a container.
+			auto const it = std::find(ev.Value.DamageEvents.cbegin(), ev.Value.DamageEvents.cend(), "InCloset");
+			return it != ev.Value.DamageEvents.cend()
+				? eKillValidationType::Valid
+				: eKillValidationType::Invalid;
+		}
+		//if (method == eMapKillMethod::RarePlant) {
+		//	return ev.Value.SetPieceId == "eff668ff-341b-4a9d-850f-14c3b05bb1f7"
+		//		? eKillValidationType::Valid
+		//		: eKillValidationType::Invalid;
+		//}
+	}
+	if (target == eTargetID::AndreaMartinez) {
+		//if (method == eMapKillMethod::PiranhaFood) {
+		//	return ev.Value.SetPieceId == "7e9e7387-8c6a-4782-bb2a-cfc7c3574895"
+		//		? eKillValidationType::Valid
+		//		: eKillValidationType::Invalid;
+		//}
+	}
+	if (target == eTargetID::Janus) {
+		if (method == eMapKillMethod::Janus_Sculpture) {
+			return ev.Value.SetPieceId == "2258f06a-76d0-49a1-ba01-b34d894760bf"
+				? eKillValidationType::Valid
+				: eKillValidationType::Invalid;
+		}
+	}
+	if (target == eTargetID::AthenaSavalas) {
+		if (method == eMapKillMethod::Athena_Award) {
+			// setpiece_raccoon_unique.template -> SetpieceHelpers_ContextKill_CustomSequence2
+			return ev.Value.SetPieceId == "1a29d28c-be03-4149-b49c-b0c38d060772"
+				? eKillValidationType::Valid
+				: eKillValidationType::Invalid;
+		}
+	}
+	if (target == eTargetID::StevenBradley) {
+		if (method == eMapKillMethod::Steven_BombWaterScooter) {
+			// 'Legit' water scooter kill
+			// setpiece_stingray_unique.template -> Setpiece_Trap_WaterScooterRide
+			if (ev.Value.SetPieceId == "0bd4c163-9674-403a-aa3d-a714be3d7a09")
+				return eKillValidationType::Valid;
+			// Accident explosion via water scooter
+			// Technically this can validate even if Steven is killed in an unrelated accident explosion and the scooter
+			// also gets blown up around the same time, but fuck it
+			auto const setpiece = this->sharedSpin.getSetpieceEventAtTimestamp(ev.Timestamp, 0.3);
+			return setpiece != nullptr && setpiece->id == "2f4a7b8f-a5f1-4c59-8a0e-678b3c2ee32f"
+				? ValidateKillMethod(target, ev, eKillMethod::Explosion, type)
+				: eKillValidationType::Invalid;
+		}
+	}
+
 	if (!ev.Value.KillItemRepositoryId.empty()) {
 		if (type == eKillType::Thrown && ev.Value.KillMethodBroad != "throw") {
 			Logger::Info("Kill validation failed. Expected 'throw', got '{}'.", ev.Value.KillMethodBroad);

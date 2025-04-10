@@ -23,6 +23,10 @@
 		}
 	],
 	"KillMethods": [
+		{
+			"Name": "Aztec Necklace",
+			"Tags": ["Unique"]
+		},
 		"Battle Axe", "Broadsword", "Circumcision Knife", "Cleaver", "Fire Axe", "Hatchet", "Kitchen Knife", "Letter Opener",
 		"Old Axe", "Saber",
 		{
