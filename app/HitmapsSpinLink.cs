@@ -44,7 +44,7 @@ namespace Croupier {
 			
 			installInProgress = true;
 			
-			using var browserFetcher = GetBrowserFetcher();
+			var browserFetcher = GetBrowserFetcher();
 
 			browserFetcher.DownloadProgressChanged += (object sender, System.Net.DownloadProgressChangedEventArgs e) => {
 				installProgressPercentage = e.ProgressPercentage;
