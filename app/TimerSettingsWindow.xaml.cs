@@ -160,6 +160,9 @@ namespace Croupier {
 
 		public override void OnApplyTemplate() {
 			base.OnApplyTemplate();
+			viewModel.SplitRequiresSA = Config.Default.SplitRequiresSA;
+			viewModel.AutoSpinCountdown = Config.Default.AutoSpinCountdown;
+			viewModel.PauseDuringOutro = Config.Default.TimerPauseDuringOutro;
 			{
 				TimingModeSelect.ItemsSource = TimingModeItems;
 				var idx = TimingModeItems.ToList().FindIndex(item => item.TimingMode == Config.Default.TimingMode);
@@ -173,10 +176,14 @@ namespace Croupier {
 		}
 
 		private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-			Config.Default.TimerResetMission = viewModel.ResetMission;
-			Config.Default.AutoSpinCountdown = viewModel.AutoSpinCountdown;
-			Config.Default.TimingMode = viewModel.TimingMode;
-			Config.Default.TimerPauseDuringOutro = viewModel.PauseDuringOutro;
+			if (e.PropertyName == nameof(viewModel.ResetMission))
+				Config.Default.TimerResetMission = viewModel.ResetMission;
+			if (e.PropertyName == nameof(viewModel.AutoSpinCountdown))
+				Config.Default.AutoSpinCountdown = viewModel.AutoSpinCountdown;
+			if (e.PropertyName == nameof(viewModel.TimingMode))
+				Config.Default.TimingMode = viewModel.TimingMode;
+			if (e.PropertyName == nameof(viewModel.PauseDuringOutro))
+				Config.Default.TimerPauseDuringOutro = viewModel.PauseDuringOutro;
 			Config.Save();
 		}
 
