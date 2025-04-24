@@ -1704,14 +1704,14 @@ auto Croupier::SetupEvents() -> void {
 			auto correctDisguise = false;
 			kc.target = target.getID();
 
-			kc.correctDisguise = reqDisguise.any || (reqDisguise.suit ? ev.Value.OutfitIsHitmanSuit : reqDisguise.repoId == disguiseRepoId);
-
 			// Target already killed? Confusion. Turn an invalid kill valid, but don't invalidate previously validated kills.
 			if (kc.correctMethod == eKillValidationType::Valid) {
 				if (!kc.correctDisguise)
 					kc.correctDisguise = reqDisguise.any || (reqDisguise.suit ? ev.Value.OutfitIsHitmanSuit : reqDisguise.repoId == disguiseRepoId);
 				break;
 			}
+
+			kc.correctDisguise = reqDisguise.any || (reqDisguise.suit ? ev.Value.OutfitIsHitmanSuit : reqDisguise.repoId == disguiseRepoId);
 
 			if (!kc.correctDisguise && !reqDisguise.suit) {
 				Logger::Info("Invalid disguise '{}' (expected: '{}')", disguiseRepoId, reqDisguise.repoId);
