@@ -599,6 +599,10 @@ auto Croupier::SendPauseTimer(bool pause) -> void {
 	this->client->send(eClientMessage::PauseTimer, {pause ? "1" : "0"});
 }
 
+auto Croupier::SendSplitTimer() -> void {
+	this->client->send(eClientMessage::SplitTimer);
+}
+
 auto Croupier::SendSpinData() -> void {
 	std::string data;
 	std::string prefixes;
@@ -837,7 +841,6 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 			if (ImGui::Checkbox("Timer", &this->config.timer))
 				this->SaveConfiguration();
 
-			if (this->config.timer) {
 				ImGui::SameLine(150.0);
 
 				if (ImGui::Button("Reset")) {
@@ -850,7 +853,18 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 					this->sharedSpin.timeStarted = std::chrono::steady_clock::now();
 					this->SendPauseTimer(false);
 				}
+
+			ImGui::SameLine();
+			if (ImGui::Button("Stop")) {
+				this->sharedSpin.timeStarted = std::chrono::steady_clock::now();
+				this->SendPauseTimer(true);
 			}
+
+			ImGui::SameLine();
+			if (ImGui::Button("Split")) {
+				this->sharedSpin.timeStarted = std::chrono::steady_clock::now();
+				this->SendSplitTimer();
+		}
 		}
 
 		if (connected) {

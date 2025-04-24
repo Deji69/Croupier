@@ -268,6 +268,7 @@ public:
 	auto SendStartTimer() -> void;
 	auto SendToggleTimer(bool enable) -> void;
 	auto SendPauseTimer(bool pause) -> void;
+	auto SendSplitTimer() -> void;
 	auto SendLoadStarted() -> void;
 	auto SendLoadFinished() -> void;
 

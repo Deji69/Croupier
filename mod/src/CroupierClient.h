@@ -31,6 +31,7 @@ enum class eClientMessage {
 	ResetTimer,
 	StartTimer,
 	StopTimer,
+	SplitTimer,
 	PauseTimer,
 	LoadStarted,
 	LoadFinished,
