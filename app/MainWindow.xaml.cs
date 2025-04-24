@@ -670,6 +670,7 @@ namespace Croupier
 			CroupierSocketServer.PauseTimer += (object? sender, bool pause) => {
 				if (pause) StopTimer();
 				else ResumeTimer();
+				isLoadRemoving = false;
 				timerManuallyStopped = pause;
 			};
 			CroupierSocketServer.ResetTimer += (object? sender, int _) => {
@@ -1332,7 +1333,13 @@ namespace Croupier
 			spinTimerStart = DateTime.Now;
 		}
 
+		private bool isLoadRemoving = false;
+
 		private void HandleTimingOnLoadStart() {
+			if (timerStopped)
+				return;
+			isLoadRemoving = true;
+
 			switch (Config.Default.TimingMode) {
 				case TimingMode.LRT:
 				case TimingMode.Spin:
@@ -1344,6 +1351,10 @@ namespace Croupier
 		}
 
 		private void HandleTimingOnLoadFinish() {
+			if (!isLoadRemoving)
+				return;
+			isLoadRemoving = false;
+
 			switch (Config.Default.TimingMode) {
 				case TimingMode.LRT:
 					ResumeTimer();
