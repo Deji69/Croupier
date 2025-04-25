@@ -14,6 +14,7 @@ namespace Croupier {
 		public int LiveComplicationChance { get; set; } = 25;
 		public int KillTypeChance { get; set; } = 50;
 		public bool LoudSMGIsLargeFirearm { get; set; } = true;
+		public int MaxLargeFirearms { get; set; } = 1;
 		public bool AllowDuplicateDisguise { get; set; } = false;
 		public bool AllowDuplicateMethod { get; set; } = false;
 		public bool SuitOnly { get; set; } = false;

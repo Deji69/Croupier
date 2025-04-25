@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
+using System.Reflection;
 
 namespace Croupier {
 	public class SpinCondition(Target target, Disguise disguise, SpinKillMethod method) : INotifyPropertyChanged {
@@ -91,6 +92,33 @@ namespace Croupier {
 		public Uri DisguiseImagePath => Disguise.ImageUri;
 
 		public Uri MethodImagePath => Kill.Method.ImageUri;
+
+		public bool IsLegal() {
+			if (Target.Mission == null) throw new Exception("Target does not have associated mission.");
+			return TestMethodTagLegality(Target.Mission, Target, Disguise, Kill.Method, Kill.Complication);
+		}
+
+		public static bool IsLegalForSpin(Spin spin, Mission mission, Target target, Disguise disguise, KillMethod kill, KillComplication complication = KillComplication.None) {
+			var ruleset = Ruleset.Current ?? throw new Exception("No ruleset.");
+			if (kill.IsLargeFirearm && spin.LargeFirearmCount > (ruleset.Rules.MaxLargeFirearms - 1))
+				return false;
+			if (spin.HasMethod(kill))
+				return false;
+			return TestMethodTagLegality(mission, target, disguise, kill, complication);
+		}
+
+		private static bool TestMethodTagLegality(Mission mission, Target target, Disguise disguise, KillMethod kill, KillComplication complication = KillComplication.None) {
+			var ruleset = Ruleset.Current ?? throw new Exception("No ruleset.");
+			var tags = ruleset.GetMethodTags(target, kill);
+			if (tags.Contains("OnlyLoud") && (kill.IsSilencedWeapon || tags.Contains("IsSilenced")))
+				return false;
+			if (ruleset.AreAnyOfTheseTagsBanned(tags))
+				return false;
+			tags = ruleset.TestRules(target, disguise, kill, mission, complication);
+			if (ruleset.AreAnyOfTheseTagsBanned(tags))
+				return false;
+			return true;
+		}
 
 		public string ToString(TargetNameFormat? format = null) {
 			format ??= TargetNameFormatMethods.FromString(Config.Default.TargetNameFormat);

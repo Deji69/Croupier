@@ -47,17 +47,6 @@ namespace Croupier
 			return new SpinCondition(target, disguise, kill);
 		}
 
-		public bool IsLegalForSpin(Spin spin, Mission mission, Target target, Disguise disguise, KillMethod kill, KillComplication complication = KillComplication.None) {
-			if (kill.IsLargeFirearm && spin.LargeFirearmCount > 0) return false;
-			if (spin.HasMethod(kill)) return false;
-			var tags = ruleset.GetMethodTags(target, kill);
-			if (tags.Contains("OnlyLoud") && kill.IsSilencedWeapon) return false;
-			if (ruleset.AreAnyOfTheseTagsBanned(tags)) return false;
-			tags = ruleset.TestRules(target, disguise, kill, mission, complication);
-			if (ruleset.AreAnyOfTheseTagsBanned(tags)) return false;
-			return true;
-		}
-
 		public Disguise GenerateDisguise(Mission mission) {
 			if (ruleset.Rules.AnyDisguise) {
 				var disguises = new List<Disguise>(mission.Disguises) {
@@ -69,7 +58,7 @@ namespace Croupier
 		}
 
 		public KillMethod? GenerateKillFromSet(List<KillMethod> kills, Spin spin, Mission mission, Target target, Disguise disguise, bool variant = false) {
-			var legalKills = kills.Where(k => IsLegalForSpin(spin, mission, target, disguise, k)).ToList();
+			var legalKills = kills.Where(k => Croupier.SpinCondition.IsLegalForSpin(spin, mission, target, disguise, k)).ToList();
 			if (legalKills.Count == 0) return null;
 			var kill = legalKills[random.Next(legalKills.Count)];
 			if (kill.Category == KillMethodCategory.Weapon) {
@@ -90,7 +79,7 @@ namespace Croupier
 			var variants = method.Variants.Where(v =>
 				(!v.IsExplosive || !v.IsRemoteOnly || ruleset.Rules.RemoteExplosives)
 				&& (!v.IsExplosive || !v.IsRemoteOnly || !v.IsLoud || ruleset.Rules.LoudRemoteExplosives)
-				&& IsLegalForSpin(spin, mission, target, disguise, v)
+				&& Croupier.SpinCondition.IsLegalForSpin(spin, mission, target, disguise, v)
 			).ToList();
 			if (variants.Count == 0) return null;
 			return variants[random.Next(variants.Count)];
@@ -100,7 +89,7 @@ namespace Croupier
 			var variants = method.Variants.Where(v => 
 				(!v.IsMelee || ruleset.Rules.MeleeKillTypes)
 				&& (!v.IsThrown || ruleset.Rules.ThrownKillTypes)
-				&& IsLegalForSpin(spin, mission, target, disguise, v)
+				&& Croupier.SpinCondition.IsLegalForSpin(spin, mission, target, disguise, v)
 			).ToList();
 			if (variants.Count == 0) return null;
 			return variants[random.Next(variants.Count)];
@@ -147,7 +136,7 @@ namespace Croupier
 
 			if (tryGenerateLive
 				&& target.Type != TargetType.Unique && method.CanHaveLiveComplication(ruleset)
-				&& IsLegalForSpin(spin, mission, target, disguise, method, KillComplication.Live))
+				&& Croupier.SpinCondition.IsLegalForSpin(spin, mission, target, disguise, method, KillComplication.Live))
 					complication = KillComplication.Live;
 
 			return new SpinKillMethod(method, complication);

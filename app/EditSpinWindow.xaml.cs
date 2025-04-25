@@ -36,6 +36,19 @@ namespace Croupier
 	}
 
 	public class EditSpinCondition(Target target, Disguise disguise, SpinKillMethod method) : SpinCondition(target, disguise, method), INotifyPropertyChanged {
+		private bool _isLegal = false;
+
+		public new bool IsEditLegal {
+			get => _isLegal;
+			set {
+				_isLegal = value;
+				OnPropertyChanged(nameof(IsEditLegal));
+				OnPropertyChanged(nameof(LegalityText));
+			}
+		}
+
+		public string LegalityText => IsEditLegal ? "" : "Illegal Condition";
+
 		public bool IsLiveKillChecked {
 			get => Kill.Complication == KillComplication.Live;
 			set {
@@ -169,9 +182,16 @@ namespace Croupier
 		{
 			viewModel.Conditions.Clear();
 			foreach (var cond in conds) {
-				var condition = new EditSpinCondition(cond.Target, cond.Disguise, cond.Kill);
+				var condition = new EditSpinCondition(cond.Target, cond.Disguise, cond.Kill) {
+					IsEditLegal = cond.IsLegal()
+				};
 				viewModel.Conditions.Add(condition);
-				condition.PropertyChanged += (object? sender, PropertyChangedEventArgs e) => SetCondition?.Invoke(sender, condition);
+				condition.PropertyChanged += (object? sender, PropertyChangedEventArgs e) => {
+					if (e.PropertyName != nameof(EditSpinCondition.IsEditLegal)
+						&& e.PropertyName != nameof(EditSpinCondition.LegalityText))
+						condition.IsEditLegal = condition.IsLegal();
+					SetCondition?.Invoke(sender, condition);
+				};
 			}
 
 			RefitWindow();

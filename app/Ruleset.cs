@@ -15,7 +15,7 @@ namespace Croupier
 
 		public bool MatchesKillMethod(KillMethod km) {
 			if (km is KillMethodVariant v)
-				return Name == WhitespaceRegex().Replace(v.Name + v.Method.Name, "")
+				return Name == WhitespaceRegex().Replace(v.Name, "")
 					|| Name == WhitespaceRegex().Replace(v.Method.Name, "");
 			return WhitespaceRegex().Replace(km.Name, "") == Name;
 		}

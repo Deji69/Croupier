@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Documents;
 
 namespace Croupier
 {
@@ -27,6 +28,24 @@ namespace Croupier
 
 		public int LargeFirearmCount { 
 			get => Conditions.Count(c => c.Kill.IsLargeFirearm);
+		}
+
+		public int LoudWeaponCount {
+			get => Conditions.Count(c => c.Kill.IsLoudWeapon);
+		}
+
+		public bool IsLegal() {
+			var ruleset = Ruleset.Current ?? throw new Exception("No ruleset.");
+			if (LargeFirearmCount > ruleset.Rules.MaxLargeFirearms)
+				return false;
+			var mission = Croupier.Mission.Get(Mission);
+			foreach (var cond in Conditions) {
+				if (cond.Target.Mission?.ID != mission.ID)
+					return false;
+				if (!cond.IsLegal())
+					return false;
+			}
+			return true;
 		}
 
 		public override string ToString() {
