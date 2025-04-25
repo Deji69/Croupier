@@ -1647,6 +1647,7 @@ auto Croupier::SetupEvents() -> void {
 			
 			auto const& target = cond.target.get();
 			auto& kc = this->sharedSpin.getKillConfirmation(i);
+			kc.target = eTargetID::RicoDelgado;
 			kc.correctMethod = eKillValidationType::Valid;
 			this->SendKillValidationUpdate();
 			break;
@@ -1720,8 +1721,10 @@ auto Croupier::SetupEvents() -> void {
 
 			// Target already killed? Confusion. Turn an invalid kill valid, but don't invalidate previously validated kills.
 			if (kc.correctMethod == eKillValidationType::Valid) {
-				if (!kc.correctDisguise)
+				if (!kc.correctDisguise) {
 					kc.correctDisguise = reqDisguise.any || (reqDisguise.suit ? ev.Value.OutfitIsHitmanSuit : reqDisguise.repoId == disguiseRepoId);
+					validationUpdated = true;
+				}
 				break;
 			}
 
