@@ -38,7 +38,7 @@ namespace Croupier
 	public class EditSpinCondition(Target target, Disguise disguise, SpinKillMethod method) : SpinCondition(target, disguise, method), INotifyPropertyChanged {
 		private bool _isLegal = false;
 
-		public new bool IsEditLegal {
+		public bool IsEditLegal {
 			get => _isLegal;
 			set {
 				_isLegal = value;
@@ -138,7 +138,7 @@ namespace Croupier
 					uniqueMethods.ForEach(km => items.Add(new MethodComboBoxItem(km)));
 				}
 
-				if (Target.Type == TargetType.Unique) {
+				if (Target.Type == TargetType.Unique && Roulette.Main.WeaponMethods.Count > 0) {
 					items.Add(new("Weapons", true));
 					Roulette.Main.WeaponMethods.ForEach(km => items.Add(new MethodComboBoxItem(km)));
 				}
@@ -146,11 +146,15 @@ namespace Croupier
 				if (Target.Type == TargetType.Unique)
 					return items;
 
-				items.Add(new("Standard", true));
-				Roulette.Main.StandardMethods.ForEach(km => items.Add(new MethodComboBoxItem(km)));
+				if (Roulette.Main.StandardMethods.Count > 0) {
+					items.Add(new("Standard", true));
+					Roulette.Main.StandardMethods.ForEach(km => items.Add(new MethodComboBoxItem(km)));
+				}
 
-				items.Add(new("Weapons", true));
-				Roulette.Main.WeaponMethods.ForEach(km => items.Add(new MethodComboBoxItem(km)));
+				if (Roulette.Main.WeaponMethods.Count > 0) {
+					items.Add(new("Weapons", true));
+					Roulette.Main.WeaponMethods.ForEach(km => items.Add(new MethodComboBoxItem(km)));
+				}
 				
 				if (Target.Mission != null && Target.Mission.Methods.Count > 0) {
 					items.Add(new("Lethal Melee", true));

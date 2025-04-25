@@ -83,6 +83,12 @@ namespace Croupier {
 		}
 
 		public void LoadKillMethodsFromJson(JsonNode json) {
+			UniqueMethods.Clear();
+			WeaponMethods.Clear();
+			StandardMethods.Clear();
+			KillMethods.Clear();
+			MethodKeywordMap.Clear();
+
 			var jsonArray = json.AsArray();
 			foreach (var item in jsonArray) {
 				var obj = item?.AsObject() ?? throw new Exception($"Invalid kill method entry.");
@@ -130,6 +136,8 @@ namespace Croupier {
 
 		public void Load() {
 			LoadKillMethodsFromFile("config/kill-methods.json");
+			Missions.Clear();
+			Mission.All.Clear();
 			foreach (var file in Directory.GetFiles("config/missions", "*.json", SearchOption.TopDirectoryOnly))
 				LoadMissionFromFile(file);
 			Mission.All.Sort();
