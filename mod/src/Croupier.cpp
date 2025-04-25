@@ -841,18 +841,18 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 			if (ImGui::Checkbox("Timer", &this->config.timer))
 				this->SaveConfiguration();
 
-				ImGui::SameLine(150.0);
+			ImGui::SameLine(150.0);
 
-				if (ImGui::Button("Reset")) {
-					this->sharedSpin.timeStarted = std::chrono::steady_clock::now();
-					this->SendResetTimer();
-				}
+			if (ImGui::Button("Reset")) {
+				this->sharedSpin.timeStarted = std::chrono::steady_clock::now();
+				this->SendResetTimer();
+			}
 
-				ImGui::SameLine();
-				if (ImGui::Button("Start")) {
-					this->sharedSpin.timeStarted = std::chrono::steady_clock::now();
-					this->SendPauseTimer(false);
-				}
+			ImGui::SameLine();
+			if (ImGui::Button("Start")) {
+				this->sharedSpin.timeStarted = std::chrono::steady_clock::now();
+				this->SendPauseTimer(false);
+			}
 
 			ImGui::SameLine();
 			if (ImGui::Button("Stop")) {
@@ -864,7 +864,7 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 			if (ImGui::Button("Split")) {
 				this->sharedSpin.timeStarted = std::chrono::steady_clock::now();
 				this->SendSplitTimer();
-		}
+			}
 		}
 
 		if (connected) {
@@ -2023,6 +2023,73 @@ auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Ki
 
 		return killMethodStrict == "accident_push" ? eKillValidationType::Valid : eKillValidationType::Invalid;
 	case eKillMethod::FallingObject:
+		// Special cases: sometimes (possibly for challenge reasons?) the game reports no specific kill method,
+		// but does report a setpiece repository ID of the falling object. Check for one of these objects...
+		if (killMethodStrict == "") {
+			// Only one proven to present this issue (the FO by the lead actor's puke spot)
+			// SetPiece_Mumbai_Falling_Sign_Shop_Electric_B_05
+			if (ev.Value.SetPieceId == "701a4dfc-fb62-4702-ac1d-a07188851642")
+				return eKillValidationType::Valid;
+
+			// But because of it we need to check every single one...
+			// SetPiece_Mumbai_Falling_Sign_Shop_Electric_D_02
+			if (ev.Value.SetPieceId == "52837b63-b731-45e5-b220-d6680ac5eb16")
+				return eKillValidationType::Valid;
+			// SetPiece_Mumbai_Falling_Sign_Shop_Electric_D_03
+			if (ev.Value.SetPieceId == "d785c660-6b7a-4804-979b-34921b75c138")
+				return eKillValidationType::Valid;
+			// SetPiece_Mumbai_Falling_Sign_Shop_Electric_D_08
+			if (ev.Value.SetPieceId == "4b19effc-09ae-476c-9124-c811a0f82d51")
+				return eKillValidationType::Valid;
+			// SetPiece_Mumbai_Falling_Sign_Shop_Electric_B_03
+			if (ev.Value.SetPieceId == "9c94f9ed-6083-4c4e-94a3-067dce5db327")
+				return eKillValidationType::Valid;
+			// SetPiece_Mumbai_Falling_Sign_Shop_Electric_D
+			if (ev.Value.SetPieceId == "3d937afc-e4c2-432f-b852-0daf0f73c855")
+				return eKillValidationType::Valid;
+			// SetPiece_Mumbai_Falling_Sign_Shop_Electric_D_01
+			if (ev.Value.SetPieceId == "8e474ae0-699f-44b5-8343-d09eadc9a8af")
+				return eKillValidationType::Valid;
+			// SetPiece_Mumbai_Falling_Sign_Shop_Electric_D_03
+			if (ev.Value.SetPieceId == "f97e7a1d-f188-4bb5-a46d-bc97505c667f")
+				return eKillValidationType::Valid;
+			// SetPiece_Mumbai_Falling_Sign_Shop_Electric_D_04
+			if (ev.Value.SetPieceId == "82864825-624e-40a4-9b17-0d51a7aa663d")
+				return eKillValidationType::Valid;
+			// SetPiece_Mumbai_Falling_Sign_Shop_Electric_D_05
+			if (ev.Value.SetPieceId == "205dfccf-c187-4867-890e-0a3f3856ed09")
+				return eKillValidationType::Valid;
+			// SetPiece_Mumbai_Falling_Sign_Shop_Electric_D_06
+			if (ev.Value.SetPieceId == "ed5d28f9-70b7-4460-b0db-8d1e0f3970e4")
+				return eKillValidationType::Valid;
+			// SetPiece_Mumbai_Falling_Sign_Shop_Electric_B_04
+			if (ev.Value.SetPieceId == "46d62cd5-6b7a-4ef1-b284-2e06391197d3")
+				return eKillValidationType::Valid;
+			// SetPiece_Mumbai_Falling_Sign_Shop_Electric_D_06
+			if (ev.Value.SetPieceId == "379402c3-0f48-440a-bb0c-e6d70ae16e77")
+				return eKillValidationType::Valid;
+			// SetPiece_Mumbai_Falling_Sign_Shop_Electric_D_03
+			if (ev.Value.SetPieceId == "1d5c45af-ef8a-45f2-aab2-262e337f2584")
+				return eKillValidationType::Valid;
+			// SetPiece_Mumbai_Falling_Sign_Shop_Electric_B_05
+			if (ev.Value.SetPieceId == "27ad6d30-1587-4411-8507-17c19b311c9e")
+				return eKillValidationType::Valid;
+			// SetPiece_Mumbai_Falling_Sign_Shop_Electric_B_04
+			if (ev.Value.SetPieceId == "3bf4a4c5-be0a-423a-b34b-fe29602ac499")
+				return eKillValidationType::Valid;
+			// SetPiece_Mumbai_Falling_Sign_Shop_Electric_B_05
+			if (ev.Value.SetPieceId == "e237df91-9ea7-4c96-b711-d29d11b70a73")
+				return eKillValidationType::Valid;
+			// SetPiece_Mumbai_Falling_Sign_Shop_Electric_D_03
+			if (ev.Value.SetPieceId == "d0eb2ff6-d95a-48b5-816c-394cadc7e3e5")
+				return eKillValidationType::Valid;
+			// SetPiece_Mumbai_Falling_Sign_Shop_Electric_D_04
+			if (ev.Value.SetPieceId == "6ea6dc37-beb1-465c-aa67-706be152b137")
+				return eKillValidationType::Valid;
+			// SetPiece_Mumbai_Falling_Sign_Shop_Electric_D_04
+			if (ev.Value.SetPieceId == "98be2403-5d97-4eea-840f-876adaa098c4")
+				return eKillValidationType::Valid;
+		}
 		return killMethodStrict == "accident_suspended_object" ? eKillValidationType::Valid : eKillValidationType::Invalid;
 	case eKillMethod::Fire:
 		{
