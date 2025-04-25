@@ -254,6 +254,10 @@ namespace Croupier
 			get => _spinLock;
 			set {
 				if (value == _spinLock) return;
+				
+				// Clear any active spin countdown timers.
+				if (value) CancelScheduledAutoSpin();
+
 				_spinLock = value;
 				OnPropertyChanged(nameof(SpinLock));
 				SendSpinLockToClient();
@@ -1278,13 +1282,15 @@ namespace Croupier
 			OnPropertyChanged(nameof(DailySpin3Label));
 		}
 
-		private void StartTimer(bool overrideManual = false) {
+		private async void StartTimer(bool overrideManual = false) {
 			if (!overrideManual && timerManuallyStopped) return;
 			else timerManuallyStopped = false;
 
-			if (spinCompleted) liveSplit.StartOrSplit();
-			else liveSplit.StartTimer();
-			liveSplit.Resume();
+			var liveSplitState = await liveSplit.GetSplitIndex();
+			if (liveSplitState == -1)
+				liveSplit.StartTimer();
+			else
+				liveSplit.Resume();
 
 			if (TimerMultiSpin && !timerStopped) {
 				switch (Config.Default.TimingMode) {
@@ -1322,8 +1328,12 @@ namespace Croupier
 			timerStopped = true;
 		}
 
-		private void ResumeTimer() {
-			liveSplit.Resume();
+		private async void ResumeTimer() {
+			var splitIdx = await liveSplit.GetSplitIndex();
+			if (splitIdx == -1)
+				liveSplit.StartTimer();
+			else
+				liveSplit.Resume();
 
 			if (!timerStopped) return;
 			timerStart = timeElapsed.HasValue ? DateTime.Now - timeElapsed.Value : DateTime.Now;
@@ -1342,6 +1352,10 @@ namespace Croupier
 			spinTimeElapsed = null;
 			timerStart = DateTime.Now;
 			spinTimerStart = DateTime.Now;
+		}
+
+		private void SplitTimer() {
+			liveSplit.Split();
 		}
 
 		private bool isLoadRemoving = false;

@@ -36,6 +36,7 @@ namespace Croupier
 		public static event EventHandler<int>? ResetStreak;
 		public static event EventHandler<bool>? PauseTimer;
 		public static event EventHandler<bool>? ToggleTimer;
+		public static event EventHandler<int>? SplitTimer;
 		public static event EventHandler<int>? LoadStarted;
 		public static event EventHandler<int>? LoadFinished;
 		public static event EventHandler<int>? Connected;
@@ -205,6 +206,9 @@ namespace Croupier
 					var data1 = rest.Length > 0 ? rest.First() : "";
 					var enable = data1.Length > 0 && data1[0] != '0';
 					App.Current.Dispatcher.Invoke(new Action(() => ToggleTimer?.Invoke(null, enable)));
+					return;
+				case "SplitTimer":
+					App.Current.Dispatcher.Invoke(new Action(() => SplitTimer?.Invoke(null, 0)));
 					return;
 				case "LoadStarted":
 					App.Current.Dispatcher.Invoke(new Action(() => LoadStarted?.Invoke(null, 0)));

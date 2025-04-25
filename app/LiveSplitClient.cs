@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System;
 using System.Text;
+using System.Linq;
 
 namespace Croupier {
 	public class LiveSplitClient {
@@ -44,7 +45,8 @@ namespace Croupier {
 
 				try {
 					while (socket.Connected && !needToStop) {
-						Send("ping");
+						if (await Receive("ping") != "pong")
+							throw new SocketException(-1, "Invalid ping response.");
 						await Task.Delay(2000);
 					}
 				} catch (SocketException e) {
@@ -77,43 +79,67 @@ namespace Croupier {
 			});
 		}
 
-		public bool Send(string command) {
-			if (!connected)
+		public async Task<bool> Send(string command) {
+			if (!connected || socket == null || !socket.Connected)
 				return false;
-			socket?.Send(Encoding.ASCII.GetBytes($"{command}\r\n"));
+			await socket.SendAsync(Encoding.ASCII.GetBytes($"{command}\r\n"));
 			return true;
 		}
 
-		public bool StartTimer() {
-			return Send("starttimer");
+		public async Task<string?> Receive(string command) {
+			if (!connected || socket == null || !socket.Connected)
+				return null;
+			var buffer = new byte[1024];
+
+			if (!await this.Send(command))
+				return null;
+
+			var size = socket.Receive(buffer);
+			if (size == 0)
+				return null;
+			var response = Encoding.ASCII.GetString(buffer, 0, size);
+			var resArr = response.Split("\n", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+			var result = resArr.Last();
+			return result;
 		}
 
-		public bool StartOrSplit() {
-			return Send("startorsplit");
+		public async void StartTimer() {
+			await Send("starttimer");
 		}
 
-		public bool Split() {
-			return Send("split");
+		public async void StartOrSplit() {
+			await Send("startorsplit");
 		}
 
-		public bool Unsplit() {
-			return Send("unsplit");
+		public async void Split() {
+			await Send("split");
 		}
 
-		public bool SkipSplint() {
-			return Send("skipsplit");
+		public async void Unsplit() {
+			await Send("unsplit");
 		}
 
-		public bool Pause() {
-			return Send("pause");
+		public async void SkipSplint() {
+			await Send("skipsplit");
 		}
 
-		public bool Resume() {
-			return Send("resume");
+		public async void Pause() {
+			await Send("pause");
 		}
 
-		public bool Reset() {
-			return Send("reset");
+		public async void Resume() {
+			await Send("resume");
+		}
+
+		public async void Reset() {
+			await Send("reset");
+		}
+
+		public async Task<int> GetSplitIndex() {
+			var res = await Receive("getsplitindex");
+			if (int.TryParse(res, out var splitIndex))
+				return splitIndex;
+			return -1;
 		}
 
 		protected void Status(string text) {
