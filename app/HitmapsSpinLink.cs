@@ -145,8 +145,10 @@ namespace Croupier {
 
 						page.Dispose();
 					};
-					await browser.CloseAsync();
-					browser = null;
+					if (browser != null) {
+						await browser.CloseAsync();
+						browser = null;
+					}
 				} catch (Exception ex) {
 					Status(ex.ToString());
 				}
