@@ -64,9 +64,6 @@ namespace Croupier {
 			((App)App.Current).HitmapsSpinLink.OnStatusChange += (object? sender, string status) => {
 				viewModel.SpinLinkStatusText = status;
 			};
-			((App)App.Current).HitmapsSpinLink.OnBrowserStatusChange += (object? sender, string status) => {
-				viewModel.BrowserInstallStatusText = status;
-			};
 			BrowserService.InstallStatusUpdate += (object? sender, string status) => {
 				viewModel.BrowserInstallStatusText = status;
 				if (status == "" || status == null) {

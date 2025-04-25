@@ -1,11 +1,8 @@
 ﻿using PuppeteerSharp;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Controls;
 
 namespace Croupier {
 	public static class BrowserService {
@@ -90,29 +87,30 @@ namespace Croupier {
 	public class HitmapsSpinLink {
 		public static event EventHandler<string>? ReceiveNewSpinData;
 		public event EventHandler<string>? OnStatusChange;
-		public event EventHandler<string>? OnBrowserStatusChange;
 		protected string url = "";
-		protected Thread? thread;
+		protected Task? task;
+		protected CancellationTokenSource cancel = new();
 		protected IBrowser? browser;
 		protected volatile bool awaitingPreviousThread = true;
 
 		public void SetLink(string url)
 		{
 			Stop();
-			awaitingPreviousThread = false;
 			this.url = url;
 
 			var browserFetcher = BrowserService.GetBrowserFetcher();
 			var res = browserFetcher.GetInstalledBrowsers();
 
-			thread = new Thread(async () => {
+			cancel = new();
+			var cancelToken = cancel.Token;
+			task = Task.Run(async () => {
 				var launchOptions = new LaunchOptions {
 					Headless = true,
 				};
 				var currentUrl = url;
 				Status("Launching browser");
 				try {
-					using (browser = await Puppeteer.LaunchAsync(launchOptions))
+					using (browser ??= await Puppeteer.LaunchAsync(launchOptions))
 					using (var page = await browser.NewPageAsync()) {
 						Status($"Navigating to URL {url}");
 						var res = await page.GoToAsync(url);
@@ -121,7 +119,10 @@ namespace Croupier {
 							return;
 						}
 
-						var elem = await page.WaitForSelectorAsync(".targets,.spin-container,.spin", new() { Timeout = 15000 });
+						Status($"Parsing web page.");
+						await page.WaitForNetworkIdleAsync(new WaitForNetworkIdleOptions() { Timeout = 15000 });
+
+						var elem = await page.WaitForSelectorAsync(".targets,.spin-container,.spin,#container", new() { Timeout = 500 });
 						try {
 							var overlayElem = await page.WaitForSelectorAsync(".overlay-targets,.spin,.viewer-spin", new() { Timeout = 500 });
 							if (overlayElem != null) elem = overlayElem;
@@ -134,50 +135,43 @@ namespace Croupier {
 
 						Status("Success. Watching for updates...");
 
-						try {
-							while (!awaitingPreviousThread) {
-								var text = await page.EvaluateFunctionAsync<string>("elem => elem.innerText", elem);
-								App.Current.Dispatcher.Invoke(new Action(() => ReceiveNewSpinData?.Invoke(this, text)));
+						while (!cancelToken.IsCancellationRequested) {
+							var text = await page.EvaluateFunctionAsync<string>("elem => elem.innerText", elem);
+							App.Current.Dispatcher.Invoke(new Action(() => ReceiveNewSpinData?.Invoke(this, text)));
 
-								while (!awaitingPreviousThread && text == await page.EvaluateFunctionAsync<string>("elem => elem.innerText", elem))
-									await page.WaitForTimeoutAsync(1000);
-							}
-						} catch (ThreadInterruptedException) {}
+							while (!cancelToken.IsCancellationRequested && text == await page.EvaluateFunctionAsync<string>("elem => elem.innerText", elem))
+								await page.WaitForTimeoutAsync(1000);
+						}
 
-						await browser.CloseAsync();
+						page.Dispose();
 					};
+					await browser.CloseAsync();
+					browser = null;
 				} catch (Exception ex) {
 					Status(ex.ToString());
 				}
-			});
-			thread.Start();
-			thread.IsBackground = true;
+			}, cancelToken);
 		}
 
-		public void Stop()
+		public async void Stop()
 		{
 			url = "";
-			if (thread == null) return;
-			awaitingPreviousThread = true;
-			thread.Interrupt();
-			thread.Join(2000);
-			thread = null;
+			if (task == null) return;
+			await cancel.CancelAsync();
+			task = null;
 			Status("Stopped watching spin link.");
 		}
 
 		public void ForceStop()
 		{
+			Stop();
 			browser?.CloseAsync();
+			browser = null;
 		}
 
 		protected void Status(string text)
 		{
 			App.Current.Dispatcher.Invoke(new Action(() => OnStatusChange?.Invoke(this, text)));
-		}
-
-		protected void BrowserStatus(string text)
-		{
-			App.Current.Dispatcher.Invoke(new Action(() => OnBrowserStatusChange?.Invoke(this, text)));
 		}
 	}
 }
