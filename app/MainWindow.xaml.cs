@@ -759,7 +759,7 @@ namespace Croupier
 					};
 					for (var i = 0; i < conditions.Count; ++i) {
 						var cond = conditions[i];
-						if (cond.Target != kv.target) continue;
+						if (cond.Target.Initials != kv.target?.Initials) continue;
 						cond.KillValidation = kv;
 					}
 				}
