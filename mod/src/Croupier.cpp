@@ -1653,6 +1653,28 @@ auto Croupier::SetupEvents() -> void {
 			break;
 		}
 	});
+	events.listen<Events::TargetEscapeFoiled>([this](const ServerEvent<Events::TargetEscapeFoiled>& ev) {
+		if (this->spinCompleted) return;
+		auto const mission = this->sharedSpin.spin.getMission();
+		if (!mission) return;
+		if (mission->getMission() != eMission::HOKKAIDO_SITUSINVERSUS) return;
+
+		auto const& conditions = this->sharedSpin.spin.getConditions();
+		if (conditions.empty()) return;
+
+		for (auto i = 0; i < conditions.size(); ++i) {
+			auto const& cond = conditions[i];
+			if (cond.target.get().getID() != eTargetID::YukiYamazaki) continue;
+			if (cond.specificKillMethod.method != eMapKillMethod::Yuki_SabotageCableCar) return;
+			
+			auto const& target = cond.target.get();
+			auto& kc = this->sharedSpin.getKillConfirmation(i);
+			kc.target = eTargetID::YukiYamazaki;
+			kc.correctMethod = eKillValidationType::Valid;
+			this->SendKillValidationUpdate();
+			break;
+		}
+	});
 	events.listen<Events::Kill>([this](const ServerEvent<Events::Kill>& ev) {
 		static auto isBerlinAgent = [](eTargetID id) -> bool {
 			switch (id) {
