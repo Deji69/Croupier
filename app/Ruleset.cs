@@ -24,6 +24,11 @@ namespace Croupier
 		private static partial Regex WhitespaceRegex();
 	}
 
+	public class DisguiseTags(string name, StringCollection? tags) {
+		public string Name { get; set; } = name;
+		public StringCollection Tags { get; set; } = tags ?? [];
+	}
+
 	public class RulesetRule(Func<Disguise, KillMethod, Mission, KillComplication, bool> func, StringCollection? tags = null) {
 		public Func<Disguise, KillMethod, Mission, KillComplication, bool> Func { get; private set; } = func;
 		public StringCollection Tags { get; private set; } = tags ?? [];
@@ -105,6 +110,7 @@ namespace Croupier
 				if (target == null) continue;
 
 				List<KillMethodTags> methodTags = [];
+				List<DisguiseTags> disguiseTags = [];
 				List<RulesetRule> tagRules = [];
 				Dictionary<string, StringCollection> rulesConfig = [];
 
@@ -116,14 +122,20 @@ namespace Croupier
 						if (cond.GetValueKind() == JsonValueKind.Object) {
 							var condJson = cond.AsObject();
 							var methodName = condJson["Method"]?.GetValue<string>();
-							if (methodName == null) continue;
 							StringCollection disguises = [];
 							foreach (var disguise in condJson["Disguises"]?.AsArray() ?? []) {
 								if (disguise == null) continue;
 								disguises.Add(disguise.GetValue<string>());
 							}
+							if (methodName == null && disguises.Count == 0)
+								continue;
 							tagRules.Add(new(
-								(Disguise d, KillMethod k, Mission m, KillComplication c) => k.Name == methodName && (disguises.Count == 0 || disguises.Contains(d.Name)),
+								(Disguise d, KillMethod k, Mission m, KillComplication c) =>
+									(methodName == null || k.Name == methodName)
+									&& (
+										disguises.Count == 0
+										|| disguises.Contains(d.Name)
+									),
 								[tag]
 							));
 							continue;
@@ -150,15 +162,24 @@ namespace Croupier
 				}
 
 				foreach (var (key, tags) in rulesConfig) {
+					if (tags == null) continue;
 					Func<Disguise, KillMethod, Mission, KillComplication, bool>? func = key switch {
 						"LoudLive" => (Disguise d, KillMethod k, Mission m, KillComplication c) => c == KillComplication.Live && k.IsLoud && k.IsFirearm,
+						"OnlyLoud" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsLoud,
+						"OnlySilenced" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsSilenced,
 						"HostileNonRemote" => (Disguise d, KillMethod k, Mission m, KillComplication c) => d.Hostile && !k.IsRemote,
 						"RemoteExplosive" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsExplosive && k.IsRemote,
 						"ImpactExplosive" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsExplosive && k.IsImpact,
 						"IsExplosive" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsExplosive,
 						_ => null,
 					};
-					if (func == null) continue;
+					if (func == null) {
+						var disguise = target.Mission?.Disguises.Find(d => d.Name == key);
+						if (disguise == null)
+							continue;
+						func = (Disguise d, KillMethod k, Mission m, KillComplication c) => d.Name == disguise.Name;
+					}
+					
 					tagRules.Add(new(func, tags));
 				}
 
