@@ -575,7 +575,7 @@ namespace Croupier
 				if (autoSpinSchedule.HasValue) {
 					Timer.Text = (DateTime.Now - autoSpinSchedule.Value).ToString(@"\-s");
 					if (DateTime.Now > autoSpinSchedule.Value) {
-						autoSpinSchedule = null;
+						CancelScheduledAutoSpin();
 						AutoSpin(autoSpinMission);
 					}
 				}
@@ -654,11 +654,10 @@ namespace Croupier
 			CroupierSocketServer.Respin += (object? sender, MissionID id) => Spin(id);
 			CroupierSocketServer.AutoSpin += (object? sender, MissionID id) => {
 				if (SpinLock) return;
-				if (Config.Default.AutoSpinCountdown > 0) {
-					autoSpinSchedule = DateTime.Now + TimeSpan.FromSeconds(Config.Default.AutoSpinCountdown);
-					autoSpinMission = id;
-				}
-				else AutoSpin(id);
+				if (Config.Default.AutoSpinCountdown > 0)
+					ScheduleAutoSpin(TimeSpan.FromSeconds(Config.Default.AutoSpinCountdown), id);
+				else
+					AutoSpin(id);
 			};
 			CroupierSocketServer.Random += (object? sender, int _) => Shuffle();
 			CroupierSocketServer.ToggleSpinLock += (object? sender, int _) => {
@@ -676,6 +675,9 @@ namespace Croupier
 			CroupierSocketServer.ResetTimer += (object? sender, int _) => {
 				StopTimer();
 				ResetTimer();
+			};
+			CroupierSocketServer.SplitTimer += (object? sender, int _) => {
+				SplitTimer();
 			};
 			CroupierSocketServer.ResetStreak += (object? sender, int _) => {
 				ResetStreak();
@@ -959,6 +961,15 @@ namespace Croupier
 			Spin(id);
 		}
 
+		public void ScheduleAutoSpin(TimeSpan time, MissionID id = MissionID.NONE) {
+			autoSpinSchedule = DateTime.Now + time;
+			autoSpinMission = id;
+		}
+
+		public void CancelScheduledAutoSpin() {
+			autoSpinSchedule = null;
+		}
+
 		public void Spin(MissionID id = MissionID.NONE) {
 			if (Ruleset.Current == null) {
 				MessageBox.Show("No ruleset active. Please select a ruleset from the ruleset window.");
@@ -973,7 +984,7 @@ namespace Croupier
 			if (!spinCompleted)
 				ResetStreak();
 
-			autoSpinSchedule = null;
+			CancelScheduledAutoSpin();
 
 			var gen = Roulette.Main.CreateGenerator(Ruleset.Current);
 			spin = gen.Spin(Mission.Get(currentMission!.ID));
