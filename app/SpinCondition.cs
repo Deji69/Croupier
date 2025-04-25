@@ -109,14 +109,33 @@ namespace Croupier {
 
 		private static bool TestMethodTagLegality(Mission mission, Target target, Disguise disguise, KillMethod kill, KillComplication complication = KillComplication.None) {
 			var ruleset = Ruleset.Current ?? throw new Exception("No ruleset.");
+
+			if (kill.Category == KillMethodCategory.Weapon) {
+				if (!ruleset.Rules.RemoteExplosives && kill.IsExplosive && kill.IsRemoteOnly)
+					return false;
+				if (!ruleset.Rules.ImpactExplosives && kill.IsExplosive && kill.IsImpact)
+					return false;
+				if (!ruleset.Rules.LoudRemoteExplosives && kill.IsExplosive && kill.IsRemoteOnly && kill.IsLoud)
+					return false;
+			}
+			if (kill.Category == KillMethodCategory.Melee) {
+				if (!ruleset.Rules.MeleeKillTypes && kill.IsMelee)
+					return false;
+				if (!ruleset.Rules.ThrownKillTypes && kill.IsThrown)
+					return false;
+			}
+
 			var tags = ruleset.GetMethodTags(target, kill);
 			if (tags.Contains("OnlyLoud") && (kill.IsSilencedWeapon || tags.Contains("IsSilenced")))
+				return false;
+			if (tags.Contains("OnlySilenced") && (kill.IsLoudWeapon || tags.Contains("IsLoud")))
 				return false;
 			if (ruleset.AreAnyOfTheseTagsBanned(tags))
 				return false;
 			tags = ruleset.TestRules(target, disguise, kill, mission, complication);
 			if (ruleset.AreAnyOfTheseTagsBanned(tags))
 				return false;
+
 			return true;
 		}
 

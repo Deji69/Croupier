@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Croupier
 {
@@ -75,22 +73,17 @@ namespace Croupier
 			return kill;
 		}
 
-		public KillMethodVariant? GenerateWeaponKillVariant(Spin spin, Mission mission, Target target, Disguise disguise, KillMethod method) {
+		public static KillMethodVariant? GenerateWeaponKillVariant(Spin spin, Mission mission, Target target, Disguise disguise, KillMethod method) {
 			var variants = method.Variants.Where(v =>
-				(!v.IsExplosive || !v.IsRemoteOnly || ruleset.Rules.RemoteExplosives)
-				&& (!v.IsExplosive || !v.IsImpact || ruleset.Rules.ImpactExplosives)
-				&& (!v.IsExplosive || !v.IsRemoteOnly || !v.IsLoud || ruleset.Rules.LoudRemoteExplosives)
-				&& Croupier.SpinCondition.IsLegalForSpin(spin, mission, target, disguise, v)
+				Croupier.SpinCondition.IsLegalForSpin(spin, mission, target, disguise, v)
 			).ToList();
 			if (variants.Count == 0) return null;
 			return variants[random.Next(variants.Count)];
 		}
 
-		public KillMethodVariant? GenerateMeleeKillVariant(Spin spin, Mission mission, Target target, Disguise disguise, KillMethod method) {
+		public static KillMethodVariant? GenerateMeleeKillVariant(Spin spin, Mission mission, Target target, Disguise disguise, KillMethod method) {
 			var variants = method.Variants.Where(v => 
-				(!v.IsMelee || ruleset.Rules.MeleeKillTypes)
-				&& (!v.IsThrown || ruleset.Rules.ThrownKillTypes)
-				&& Croupier.SpinCondition.IsLegalForSpin(spin, mission, target, disguise, v)
+				Croupier.SpinCondition.IsLegalForSpin(spin, mission, target, disguise, v)
 			).ToList();
 			if (variants.Count == 0) return null;
 			return variants[random.Next(variants.Count)];
@@ -125,7 +118,7 @@ namespace Croupier
 				method = category switch {
 					KillMethodCategory.Standard => GenerateKillFromSet(standardKills, spin, mission, target, disguise),
 					KillMethodCategory.Weapon => GenerateKillFromSet(weaponKills, spin, mission, target, disguise, shouldGenerateType),
-					KillMethodCategory.Melee => GenerateKillFromSet(mission.Methods.Select(m => m as KillMethod).ToList(), spin, mission, target, disguise, shouldGenerateType),
+					KillMethodCategory.Melee => GenerateKillFromSet([..mission.Methods.Select(m => m as KillMethod)], spin, mission, target, disguise, shouldGenerateType),
 					KillMethodCategory.Unique => GenerateKillFromSet(uniqueKills, spin, mission, target, disguise, shouldGenerateType),
 					_ => throw new NotImplementedException()
 				};
