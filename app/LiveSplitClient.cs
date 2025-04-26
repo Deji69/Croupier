@@ -45,8 +45,6 @@ namespace Croupier {
 
 				try {
 					while (socket.Connected && !needToStop) {
-						if (await Receive("ping") != "pong")
-							throw new SocketException(-1, "Invalid ping response.");
 						await Task.Delay(2000);
 					}
 				} catch (SocketException e) {
@@ -94,7 +92,7 @@ namespace Croupier {
 			if (!await this.Send(command))
 				return null;
 
-			var size = socket.Receive(buffer);
+			var size = await socket.ReceiveAsync(buffer);
 			if (size == 0)
 				return null;
 			var response = Encoding.ASCII.GetString(buffer, 0, size);
