@@ -142,7 +142,8 @@ namespace Croupier {
 
 		protected void Status(string text) {
 			status = text;
-			App.Current.Dispatcher.Invoke(new Action(() => OnStatusChange?.Invoke(this, text)));
+			if (!needToStop && OnStatusChange != null)
+				App.Current.Dispatcher.Invoke(new Action(() => OnStatusChange?.Invoke(this, text)));
 		}
 	}
 }
