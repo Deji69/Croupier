@@ -117,6 +117,7 @@ namespace Croupier {
 			await Send("unsplit");
 		}
 
+		// 'splint' because I think that used to be the actual LiveSplit command and I still find it funny
 		public async void SkipSplint() {
 			await Send("skipsplit");
 		}
