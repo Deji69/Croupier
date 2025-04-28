@@ -2051,7 +2051,7 @@ auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Ki
 		// Special cases: sometimes (possibly for challenge reasons?) the game reports no specific kill method,
 		// but does report a setpiece repository ID of the falling object. Check for one of these objects...
 		if (killMethodStrict == "") {
-			// Only one proven to present this issue (the FO by the lead actor's puke spot)
+			// Only one proven to present this issue, specifically on Wazir Kale (and the FO by the lead actor's puke spot)
 			// SetPiece_Mumbai_Falling_Sign_Shop_Electric_B_05
 			if (ev.Value.SetPieceId == "701a4dfc-fb62-4702-ac1d-a07188851642")
 				return eKillValidationType::Valid;

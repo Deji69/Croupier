@@ -112,8 +112,20 @@ auto CroupierClient::reconnect() -> bool {
 				break;
 			closesocket(this->sock);
 			this->sock = INVALID_SOCKET;
+
 			auto error = WSAGetLastError();
-			Logger::Error("Error connecting socket ({})", error);
+			if (error != 0) {
+				LPSTR buffer = nullptr;
+			
+				FormatMessageA(
+					FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+					NULL, error,
+					MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+					(LPSTR)&buffer, 0, NULL
+				);
+
+				Logger::Error("Error connecting socket ({})", trim(buffer));
+			}
 		}
 
 		this->connected = this->sock != INVALID_SOCKET;
