@@ -740,6 +740,7 @@ const std::vector<DisguiseKeywords> disguiseKeywords = {
 		{"marshal", "Race Marshal"},
 		{"marshall", "Race Marshal"},
 		{"sheikh", "Sheik"},
+		{"sheik", "Sheik"},
 		{"sotteraneomechanic", "Sotteraneo Mechanic"},
 		{"sotteraneo", "Sotteraneo Mechanic"},
 		{"streetmusician", "Street Musician"},
