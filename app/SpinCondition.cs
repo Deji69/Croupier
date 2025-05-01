@@ -125,13 +125,14 @@ namespace Croupier {
 					return false;
 			}
 
-			var tags = ruleset.TestRules(target, disguise, kill, mission, complication);
+			var tags = ruleset.GetMethodTags(target, kill);
 			if (tags.Contains("OnlyLoud") && (kill.IsSilencedWeapon || tags.Contains("IsSilenced")))
 				return false;
 			if (tags.Contains("OnlySilenced") && (kill.IsLoudWeapon || tags.Contains("IsLoud")))
 				return false;
 			if (ruleset.AreAnyOfTheseTagsBanned(tags))
 				return false;
+			tags = ruleset.TestRules(target, disguise, kill, mission, complication);
 			if (ruleset.AreAnyOfTheseTagsBanned(tags))
 				return false;
 
