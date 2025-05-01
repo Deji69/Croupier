@@ -75,6 +75,22 @@ namespace Croupier
 			return false;
 		}
 
+		private static Func<Disguise, KillMethod, Mission, KillComplication, bool> GetRuleFunc(string? key) {
+			return key switch {
+				"Live" => (Disguise d, KillMethod k, Mission m, KillComplication c) => c == KillComplication.Live,
+				"LoudLive" => (Disguise d, KillMethod k, Mission m, KillComplication c) => c == KillComplication.Live && k.IsLoud && k.IsFirearm,
+				"IsLoud" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsLoud,
+				"OnlyLoud" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsLoud,
+				"IsSilenced" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsSilenced,
+				"OnlySilenced" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsSilenced,
+				"HostileNonRemote" => (Disguise d, KillMethod k, Mission m, KillComplication c) => d.Hostile && !k.IsRemote,
+				"RemoteExplosive" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsExplosive && k.IsRemote,
+				"ImpactExplosive" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsExplosive && k.IsImpact,
+				"IsExplosive" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsExplosive,
+				_ => (Disguise d, KillMethod k, Mission m, KillComplication c) => key == null || k.Name == key,
+			};
+		}
+
 		public static Ruleset FromJson(Roulette roulette, JsonNode json) {
 			var name = json["Name"]?.GetValue<string>() ?? throw new Exception("Missing property 'Name'.");
 			var rulesJson = json["Rules"]?.AsObject() ?? throw new Exception("Missing property 'Rules'.");
@@ -121,17 +137,17 @@ namespace Croupier
 						if (cond == null) continue;
 						if (cond.GetValueKind() == JsonValueKind.Object) {
 							var condJson = cond.AsObject();
-							var methodName = condJson["Method"]?.GetValue<string>();
+							var methodRuleFn = GetRuleFunc(condJson["Method"]?.GetValue<string>());
 							StringCollection disguises = [];
 							foreach (var disguise in condJson["Disguises"]?.AsArray() ?? []) {
 								if (disguise == null) continue;
 								disguises.Add(disguise.GetValue<string>());
 							}
-							if (methodName == null && disguises.Count == 0)
+							if (disguises.Count == 0)
 								continue;
 							tagRules.Add(new(
 								(Disguise d, KillMethod k, Mission m, KillComplication c) =>
-									(methodName == null || k.Name == methodName)
+									methodRuleFn(d, k, m, c)
 									&& (
 										disguises.Count == 0
 										|| disguises.Contains(d.Name)
@@ -163,23 +179,8 @@ namespace Croupier
 
 				foreach (var (key, tags) in rulesConfig) {
 					if (tags == null) continue;
-					Func<Disguise, KillMethod, Mission, KillComplication, bool>? func = key switch {
-						"LoudLive" => (Disguise d, KillMethod k, Mission m, KillComplication c) => c == KillComplication.Live && k.IsLoud && k.IsFirearm,
-						"OnlyLoud" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsLoud,
-						"OnlySilenced" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsSilenced,
-						"HostileNonRemote" => (Disguise d, KillMethod k, Mission m, KillComplication c) => d.Hostile && !k.IsRemote,
-						"RemoteExplosive" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsExplosive && k.IsRemote,
-						"ImpactExplosive" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsExplosive && k.IsImpact,
-						"IsExplosive" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsExplosive,
-						_ => null,
-					};
-					if (func == null) {
-						var disguise = target.Mission?.Disguises.Find(d => d.Name == key);
-						if (disguise == null)
-							continue;
-						func = (Disguise d, KillMethod k, Mission m, KillComplication c) => d.Name == disguise.Name;
-					}
-					
+					var disguise = target.Mission?.Disguises.Find(d => d.Name == key);
+					var func = disguise == null ? GetRuleFunc(key) : (Disguise d, KillMethod k, Mission m, KillComplication c) => d.Name == disguise.Name;
 					tagRules.Add(new(func, tags));
 				}
 
