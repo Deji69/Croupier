@@ -2,63 +2,29 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Text.RegularExpressions;
 
 namespace Croupier
 {
-	public partial class KillMethodTags(string name, StringCollection? tags) {
-		public string Name { get; set; } = WhitespaceRegex().Replace(name, "");
-		public StringCollection Tags { get; set; } = tags ?? [];
-
-		public bool MatchesKillMethod(KillMethod km) {
-			if (km is KillMethodVariant v)
-				return Name == WhitespaceRegex().Replace(v.Name, "")
-					|| Name == WhitespaceRegex().Replace(v.Method.Name, "");
-			return WhitespaceRegex().Replace(km.Name, "") == Name;
-		}
-
-		[GeneratedRegex("\\s")]
-		private static partial Regex WhitespaceRegex();
-	}
-
-	public class DisguiseTags(string name, StringCollection? tags) {
-		public string Name { get; set; } = name;
-		public StringCollection Tags { get; set; } = tags ?? [];
-	}
-
-	public class RulesetRule(Func<Disguise, KillMethod, Mission, KillComplication, bool> func, StringCollection? tags = null) {
+	public class RulesetRule(Func<Disguise, KillMethod, Mission, KillComplication, bool> func, StringCollection tags) {
 		public Func<Disguise, KillMethod, Mission, KillComplication, bool> Func { get; private set; } = func;
 		public StringCollection Tags { get; private set; } = tags ?? [];
 	}
 
-	public class RulesetTargetTags(List<KillMethodTags> tags, List<RulesetRule> rules) {
-		public List<KillMethodTags> Tags { get; private set; } = tags;
-		public List<RulesetRule> Rules { get; private set; } = rules;
-	}
-
-	public class Ruleset(string name, RulesetRules rules, Dictionary<string, RulesetTargetTags> tags)
+	public class Ruleset(string name, RulesetRules rules, Dictionary<string, List<RulesetRule>> tags)
 	{
 		public static Ruleset? Current { get; set; }
 
 		public string Name { get; set; } = name;
 		public RulesetRules Rules { get; private set; } = rules;
-		public Dictionary<string, RulesetTargetTags> Tags { get; private set; } = tags;
-
-		public StringCollection GetMethodTags(Target target, KillMethod method) {
-			if (!Tags.TryGetValue(target.Initials, out var tags))
-				return method.Tags;
-			var methodTags = tags.Tags.FirstOrDefault(t => t.MatchesKillMethod(method));
-			return methodTags != null ? [..method.Tags, ..methodTags.Tags] : method.Tags;
-		}
+		public Dictionary<string, List<RulesetRule>> Tags { get; private set; } = tags;
 
 		public StringCollection TestRules(Target target, Disguise disguise, KillMethod method, Mission mission, KillComplication complication) {
-			if (!Tags.TryGetValue(target.Initials, out var rules))
+			if (!Tags.TryGetValue(target.Initials, out var rules) || rules == null)
 				return [];
 			StringCollection broken = [];
-			foreach (var rule in rules.Rules) {
+			foreach (var rule in rules) {
 				if (rule.Func(disguise, method, mission, complication))
 					broken.AddRange([..rule.Tags]);
 			}
@@ -87,7 +53,7 @@ namespace Croupier
 				"RemoteExplosive" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsExplosive && k.IsRemote,
 				"ImpactExplosive" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsExplosive && k.IsImpact,
 				"IsExplosive" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsExplosive,
-				_ => (Disguise d, KillMethod k, Mission m, KillComplication c) => key == null || k.Name == key,
+				_ => (Disguise d, KillMethod k, Mission m, KillComplication c) => key == null ||  k.Name == key,
 			};
 		}
 
@@ -96,7 +62,7 @@ namespace Croupier
 			var rulesJson = json["Rules"]?.AsObject() ?? throw new Exception("Missing property 'Rules'.");
 			var tagsJson = json["Tags"]?.AsObject() ?? [];
 			var rules = new RulesetRules();
-			Dictionary<string, RulesetTargetTags> rulesetTags = [];
+			Dictionary<string, List<RulesetRule>> rulesetTags = [];
 
 			foreach (var (k, v) in rulesJson) {
 				if (k == null) continue;
@@ -125,8 +91,6 @@ namespace Croupier
 				var target = roulette.GetTargetByInitials(k);
 				if (target == null) continue;
 
-				List<KillMethodTags> methodTags = [];
-				List<DisguiseTags> disguiseTags = [];
 				List<RulesetRule> tagRules = [];
 				Dictionary<string, StringCollection> rulesConfig = [];
 
@@ -137,7 +101,7 @@ namespace Croupier
 						if (cond == null) continue;
 						if (cond.GetValueKind() == JsonValueKind.Object) {
 							var condJson = cond.AsObject();
-							var methodRuleFn = GetRuleFunc(condJson["Method"]?.GetValue<string>());
+							var ruleFn = GetRuleFunc(condJson["Method"]?.GetValue<string>());
 							StringCollection disguises = [];
 							foreach (var disguise in condJson["Disguises"]?.AsArray() ?? []) {
 								if (disguise == null) continue;
@@ -147,44 +111,23 @@ namespace Croupier
 								continue;
 							tagRules.Add(new(
 								(Disguise d, KillMethod k, Mission m, KillComplication c) =>
-									methodRuleFn(d, k, m, c)
+									ruleFn(d, k, m, c)
 									&& (
 										disguises.Count == 0
 										|| disguises.Contains(d.Name)
 									),
 								[tag]
 							));
-							continue;
+						} else if (cond.GetValueKind() == JsonValueKind.String) {
+							var condStr = cond.GetValue<string>();
+							var disguise = target.Mission?.Disguises.Find(d => d.Name == condStr);
+							var ruleFn = disguise == null ? GetRuleFunc(condStr) : (Disguise d, KillMethod k, Mission m, KillComplication c) => d.Name == disguise.Name;
+							tagRules.Add(new(ruleFn, [tag]));
 						}
-
-						var condStr = cond.GetValue<string>();
-						var method = SpinKillMethod.Parse(roulette, condStr, target);
-						if (method != null) {
-							var methodTag = methodTags.FirstOrDefault(t => t.MatchesKillMethod(method.Method));
-							if (methodTag != null) {
-								methodTag.Tags.Add(tag);
-								continue;
-							}
-
-							methodTags.Add(new(method.Method.Name, [tag]));
-							continue;
-						}
-
-						if (rulesConfig.TryGetValue(condStr, out var res)) {
-							if (!res.Contains(tag)) res.Add(tag);
-						}
-						else rulesConfig.Add(condStr, [tag]);
 					}
 				}
 
-				foreach (var (key, tags) in rulesConfig) {
-					if (tags == null) continue;
-					var disguise = target.Mission?.Disguises.Find(d => d.Name == key);
-					var func = disguise == null ? GetRuleFunc(key) : (Disguise d, KillMethod k, Mission m, KillComplication c) => d.Name == disguise.Name;
-					tagRules.Add(new(func, tags));
-				}
-
-				rulesetTags.Add(k, new(methodTags, tagRules));
+				rulesetTags.Add(k, tagRules);
 			}
 			
 			return new(name, rules, rulesetTags);
