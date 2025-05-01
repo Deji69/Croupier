@@ -100,9 +100,9 @@ namespace Croupier {
 
 		public static bool IsLegalForSpin(Spin spin, Mission mission, Target target, Disguise disguise, KillMethod kill, KillComplication complication = KillComplication.None) {
 			var ruleset = Ruleset.Current ?? throw new Exception("No ruleset.");
-			if (kill.IsLargeFirearm && spin.LargeFirearmCount > (ruleset.Rules.MaxLargeFirearms - 1))
+			if (kill.IsLargeFirearm && spin.LargeFirearmCount >= ruleset.Rules.MaxLargeFirearms)
 				return false;
-			if (spin.HasMethod(kill))
+			if (!ruleset.Rules.AllowDuplicateMethod && spin.HasMethod(kill))
 				return false;
 			return TestMethodTagLegality(mission, target, disguise, kill, complication);
 		}
