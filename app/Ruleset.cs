@@ -46,14 +46,14 @@ namespace Croupier
 				"Live" => (Disguise d, KillMethod k, Mission m, KillComplication c) => c == KillComplication.Live,
 				"LoudLive" => (Disguise d, KillMethod k, Mission m, KillComplication c) => c == KillComplication.Live && k.IsLoud && k.IsFirearm,
 				"IsLoud" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsLoud,
-				"OnlyLoud" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsLoud,
 				"IsSilenced" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsSilenced,
+				"OnlyLoud" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsLoud,
 				"OnlySilenced" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsSilenced,
 				"HostileNonRemote" => (Disguise d, KillMethod k, Mission m, KillComplication c) => d.Hostile && !k.IsRemote,
 				"RemoteExplosive" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsExplosive && k.IsRemote,
 				"ImpactExplosive" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsExplosive && k.IsImpact,
 				"IsExplosive" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsExplosive,
-				_ => (Disguise d, KillMethod k, Mission m, KillComplication c) => key == null ||  k.Name == key,
+				_ => (Disguise d, KillMethod k, Mission m, KillComplication c) => key == null || k.Name == key,
 			};
 		}
 
