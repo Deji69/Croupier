@@ -53,7 +53,7 @@ namespace Croupier
 				"RemoteExplosive" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsExplosive && k.IsRemote,
 				"ImpactExplosive" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsExplosive && k.IsImpact,
 				"IsExplosive" => (Disguise d, KillMethod k, Mission m, KillComplication c) => k.IsExplosive,
-				_ => (Disguise d, KillMethod k, Mission m, KillComplication c) => key == null || k.Name == key,
+				_ => (Disguise d, KillMethod k, Mission m, KillComplication c) => key == null || k.Name == key || k.Tags.Contains(key),
 			};
 		}
 
