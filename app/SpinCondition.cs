@@ -125,6 +125,9 @@ namespace Croupier {
 					return false;
 			}
 
+			if (complication == KillComplication.Live && !kill.CanHaveLiveComplication(ruleset))
+				return false;
+
 			if (ruleset.AreAnyOfTheseTagsBanned(kill.Tags))
 				return false;
 
