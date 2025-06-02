@@ -1995,7 +1995,7 @@ auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Ki
 	case eKillMethod::Sniper:
 		return killMethodBroad == "sniperrifle" ? eKillValidationType::Valid : eKillValidationType::Invalid;
 	case eKillMethod::Explosive:
-		if (type == eKillType::Impact) {
+		if (type == eKillType::Any || type == eKillType::Loud || type == eKillType::Impact) {
 			// Check for molotov burn kills...
 			if (haveDamageEvents
 				&& ev.Value.DamageEvents[0] == "Burn"
@@ -2003,7 +2003,7 @@ auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Ki
 				&& !isAccident)
 				return eKillValidationType::Valid;
 		}
-		if (type == eKillType::Loud || type == eKillType::Impact) {
+		if (type == eKillType::Any || type == eKillType::Loud || type == eKillType::Impact) {
 			// Check for deadly lock-on throw kills...
 			if (killMethodBroad == "throw"
 				&& killClass == "melee"
