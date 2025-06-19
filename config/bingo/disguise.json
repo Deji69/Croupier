@@ -1056,5 +1056,138 @@
 		"Missions": ["Embrace of the Serpent"],
 		"Disguise": ["135073d8-ef7c-4f4d-b30b-cbf65de613cb"],
 		"Tags": ["Disguise", "Civilian", "Unique"]
+	},
+	{
+		"Name": "Barber",
+		"Group": "Disguise",
+		"Missions": ["Chasing a Ghost", "Illusions of Grandeur"],
+		"Disguise": ["c4011c75-39ff-4bff-aff5-fe902ae4b83b"],
+		"Tags": ["Disguise", "Civilian", "Unique"]
+	},
+	{
+		"Name": "Bollywood Bodyguard",
+		"Group": "Disguise",
+		"Missions": ["Chasing a Ghost", "Illusions of Grandeur"],
+		"Disguise": ["06fb2890-e820-45f2-aef3-0cb7d0528ee1"],
+		"Keywords": ["bollywoodbodyguard", "bodyguard", "bollywood"]
+	},
+	{
+		"Name": "Bollywood Crew",
+		"Group": "Disguise",
+		"Missions": ["Chasing a Ghost", "Illusions of Grandeur"],
+		"Disguise": ["6d3d59b4-571c-4dbb-9737-205fb34a1ffa"],
+		"Keywords": ["bollywoodcrew", "bollywood", "crew"]
+	},
+	{
+		"Name": "Dancer",
+		"Group": "Disguise",
+		"Missions": ["Chasing a Ghost", "Illusions of Grandeur"],
+		"Disguise": ["88adef78-2a19-45fb-9c95-988e82c056f1"],
+		"Keywords": ["dancer"]
+	},
+	{
+		"Name": "Elite Thug",
+		"Group": "Disguise",
+		"Missions": ["Chasing a Ghost", "Illusions of Grandeur"],
+		"Disguise": ["e9e143e1-f5a6-40a5-af56-947cbf32e20a"],
+		"Keywords": ["elitethug", "elite"]
+	},
+	{
+		"Name": "Food Vendor",
+		"Group": "Disguise",
+		"Missions": ["Chasing a Ghost", "Illusions of Grandeur"],
+		"Disguise": ["e9dffefc-e896-46e4-b158-1b401b015764"],
+		"Keywords": ["foodvendor", "vendor"]
+	},
+	{
+		"Name": "Holy Man",
+		"Group": "Disguise",
+		"Missions": ["Chasing a Ghost", "Illusions of Grandeur"],
+		"Disguise": ["e4581e1a-a45a-4c42-ba25-3527bd75c0f7"],
+		"Keywords": ["holyman", "holy"]
+	},
+	{
+		"Name": "Kashmirian",
+		"Group": "Disguise",
+		"Missions": ["Chasing a Ghost", "Illusions of Grandeur"],
+		"Disguise": ["6f875d32-869e-437a-8935-368e0c2cc8bc"],
+		"Keywords": ["kashmirian", "kashmoneyman", "kashmerian"]
+	},
+	{
+		"Name": "Laundry Foreman",
+		"Group": "Disguise",
+		"Missions": ["Chasing a Ghost", "Illusions of Grandeur"],
+		"Disguise": ["eeefa90a-6665-4eb1-8bc9-3e08c222abae"],
+		"Keywords": ["laundryforeman", "foreman", "laundryforman", "forman"]
+	},
+	{
+		"Name": "Laundry Worker",
+		"Group": "Disguise",
+		"Missions": ["Chasing a Ghost", "Illusions of Grandeur"],
+		"Disguise": ["c5c8e251-bb30-4e9e-b146-74ed96c7048f"],
+		"Keywords": ["laundryworker"]
+	},
+	{
+		"Name": "Lead Actor",
+		"Group": "Disguise",
+		"Missions": ["Chasing a Ghost", "Illusions of Grandeur"],
+		"Disguise": ["446ace07-c9c6-49fc-b157-fa58e812fcef"],
+		"Keywords": ["leadactor", "actor", "gregoryarthur", "gregory"]
+	},
+	{
+		"Name": "Local Security",
+		"Group": "Disguise",
+		"Missions": ["Chasing a Ghost", "Illusions of Grandeur"],
+		"Disguise": ["d136699a-a244-4789-b332-9a3afc4e3f48"],
+		"Keywords": ["localsecurity", "security"]
+	},
+	{
+		"Name": "Metal Worker",
+		"Group": "Disguise",
+		"Missions": ["Chasing a Ghost", "Illusions of Grandeur"],
+		"Disguise": ["48afc44d-cf8a-44ba-9436-663a6979c908"],
+		"Keywords": ["metalworker", "metal", "forger"]
+	},
+	{
+		"Name": "Painter",
+		"Group": "Disguise",
+		"Missions": ["Chasing a Ghost", "Illusions of Grandeur"],
+		"Disguise": ["81f55bbc-a120-4757-a778-b73fd775d1a4"],
+		"Keywords": ["painter", "paint", "artist"]
+	},
+	{
+		"Name": "Queen's Bodyguard",
+		"Group": "Disguise",
+		"Missions": ["Chasing a Ghost", "Illusions of Grandeur"],
+		"Disguise": ["6edb224d-0970-4d1d-8740-5e86d1e7af59"],
+		"Keywords": ["queensbodyguard", "queenbodyguard"]
+	},
+	{
+		"Name": "Queen's Guard",
+		"Group": "Disguise",
+		"Missions": ["Chasing a Ghost", "Illusions of Grandeur"],
+		"Disguise": ["b36075a1-b352-4e0f-9d84-84f2bdac6a86"],
+		"Keywords": ["queensguard", "queenguard"]
+	},
+	{
+		"Name": "Tailor",
+		"Group": "Disguise",
+		"Missions": ["Chasing a Ghost", "Illusions of Grandeur"],
+		"Disguise": ["b384ff35-9c38-4b08-ab0b-e333cfd7bc6a"],
+		"Keywords": ["tailor"]
+	},
+	{
+		"Name": "Thug",
+		"Group": "Disguise",
+		"Missions": ["Chasing a Ghost", "Illusions of Grandeur"],
+		"Disguise": ["a2cef12c-77d6-4062-9596-cf9d1a47d1b5"],
+		"Keywords": ["thug"]
+	},
+	{
+		"Name": "Vanya's Servant",
+		"Group": "Disguise",
+		"Missions": ["Chasing a Ghost", "Illusions of Grandeur"],
+		"Disguise": ["ae320bab-bb37-42a5-86a1-df283ada49c0"],
+		"Keywords": ["vanyasservant", "servant", "vanyaservant"]
 	}
 ]
