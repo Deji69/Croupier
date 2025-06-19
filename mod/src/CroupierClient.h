@@ -35,6 +35,7 @@ enum class eClientMessage {
 	PauseTimer,
 	LoadStarted,
 	LoadFinished,
+	Event,
 };
 
 class ClientMessage {
@@ -43,6 +44,8 @@ public:
 
 	eClientMessage type;
 	std::string args;
+	std::string raw;
+	bool isRaw = false;
 };
 
 class CroupierClient {
@@ -55,6 +58,7 @@ public:
 	auto abort() -> void;
 	auto isConnected() const -> bool { return this->connected; }
 	auto send(eClientMessage type, std::initializer_list<std::string> args = {}) -> void;
+	auto sendRaw(std::string msg) -> void;
 	auto tryTakeMessage(ClientMessage&) -> bool;
 
 protected:

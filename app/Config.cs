@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Text.Json;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Croupier {
-	class Config {
+    public enum GameMode {
+        Roulette,
+        Bingo,
+    }
+
+    class Config {
 		public static event EventHandler<int>? OnSave;
 
 		public static Config Default = new();
@@ -17,6 +23,9 @@ namespace Croupier {
 		public bool SpinIsRandom { get; set; } = false;
 		public List<string> SpinHistory { get; set; } = [];
 		public List<string> Bookmarks { get; set; } = [];
+
+        [DefaultValue(GameMode.Roulette)]
+        public GameMode Mode { get; set; } = GameMode.Roulette;
 
 		public bool CheckUpdate { get; set; } = true;
 		public bool UseNoKOBanner { get; set; } = true;
@@ -36,6 +45,9 @@ namespace Croupier {
 		
 		[DefaultValue(true)]
 		public bool TimerPauseDuringOutro { get; set; } = true;
+
+		[DefaultValue(25)]
+		public int BingoCardSize { get; set; } = 25;
 
 		public bool Streak { get; set; } = false;
 		public bool ShowStreakPB { get; set; } = false;

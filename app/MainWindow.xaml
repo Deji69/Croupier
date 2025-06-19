@@ -48,11 +48,24 @@
 		<CommandBinding Command="{x:Static local:MainWindow.DailySpin1Command}" CanExecute="DailySpin1Command_CanExecute" Executed="DailySpin1Command_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.DailySpin2Command}" CanExecute="DailySpin2Command_CanExecute" Executed="DailySpin2Command_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.DailySpin3Command}" CanExecute="DailySpin3Command_CanExecute" Executed="DailySpin3Command_Executed" />
-		<CommandBinding Command="{x:Static local:MainWindow.DebugWindowCommand}" CanExecute="DebugWindowCommand_CanExecute" Executed="DebugWindowCommand_Executed" />
-	</Window.CommandBindings>
+        <CommandBinding Command="{x:Static local:MainWindow.SetBoardSizeCommand}" CanExecute="Command_AlwaysCanExecute" Executed="SetBoardSizeCommand_Executed" />
+        <CommandBinding Command="{x:Static local:MainWindow.DebugWindowCommand}" CanExecute="DebugWindowCommand_CanExecute" Executed="DebugWindowCommand_Executed" />
+    </Window.CommandBindings>
 	<Window.Resources>
-		<BooleanToVisibilityConverter x:Key="VisibilityOfBool" />
-		<Style x:Key="ButtonFlatStyle" TargetType="{x:Type Button}">
+        <BooleanToVisibilityConverter x:Key="VisibilityOfBool" />
+        <Style x:Key="ButtonTransparentStyle" TargetType="{x:Type Button}">
+            <Setter Property="UIElement.SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ButtonFlatStyle" TargetType="{x:Type Button}">
 			<Setter Property="UIElement.SnapsToDevicePixels" Value="True"/>
 			<Setter Property="TextElement.Foreground" Value="{StaticResource NormalFGBrush}"/>
 			<Setter Property="Background" Value="{StaticResource NormalBGBrush}" />
@@ -237,6 +250,77 @@
 				</Grid>
 			</Grid>
 		</DataTemplate>
+		<DataTemplate x:Name="BingoTileDataTemplate" x:Key="BingoTileDataTemplate" DataType="{x:Type local:BingoTile}">
+			<UniformGrid
+				x:Name="ContentGrid"
+				Focusable="False"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+				KeyboardNavigation.IsTabStop="False"
+			>
+                <Border
+                    BorderBrush="Black"
+                    BorderThickness="1"
+                    VerticalAlignment="Stretch"
+                    HorizontalAlignment="Stretch"
+                    Width="{Binding DataContext.SpinGridWidth, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorLevel=2, AncestorType=UniformGrid}}"
+                    Height="{Binding DataContext.SpinGridHeight, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorLevel=2, AncestorType=UniformGrid}}"
+				>
+                    <Button
+						VerticalAlignment="Stretch"
+                        HorizontalAlignment="Stretch"
+                        BorderThickness="0"
+                        Click="BingoTile_MouseDown"
+                        
+						OverridesDefaultStyle="True"
+                    >
+                        <StackPanel Margin="8,0" Orientation="Vertical">
+                            <TextBlock
+								Text="{Binding GroupText}"
+								TextWrapping="Wrap"
+                                Visibility="{Binding GroupTextVisibility}"
+								VerticalAlignment="Center"
+								HorizontalAlignment="Center"
+								TextAlignment="Center"
+								Foreground="#77AACC"
+                                Margin="0,-10,0,5"
+								FontSize="{Binding DataContext.BingoGroupFontSize, RelativeSource={RelativeSource AncestorLevel=2, AncestorType=UniformGrid}}" />
+                            <TextBlock
+								Text="{Binding Text}"
+								TextWrapping="Wrap"
+								VerticalAlignment="Center"
+								HorizontalAlignment="Center"
+								TextAlignment="Center"
+								Foreground="White"
+								FontSize="{Binding DataContext.SpinFontSize, RelativeSource={RelativeSource AncestorLevel=2, AncestorType=UniformGrid}}">
+							</TextBlock>
+                        </StackPanel>
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}">
+                                <Setter Property="Background" Value="#09224499" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type Button}">
+                                            <Border Background="{TemplateBinding Background}">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0" />
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Complete}" Value="True">
+										<Setter Property="Background" Value="#2211AA11" />
+									</DataTrigger>
+									<DataTrigger Binding="{Binding Complete}" Value="False">
+										<Setter Property="Background" Value="#09224499" />
+									</DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </Border>
+            </UniformGrid>
+		</DataTemplate>
 		<DataTemplate x:Key="MissionSelectTemplate" DataType="{x:Type local:MissionComboBoxItem}">
 			<ContentPresenter Content="{Binding}" HorizontalAlignment="Stretch">
 				<ContentPresenter.Style>
@@ -252,6 +336,7 @@
 			</ContentPresenter>
 		</DataTemplate>
 	</Window.Resources>
+    
 	<DockPanel LastChildFill="True" Background="{DynamicResource BackgroundBrush}">
 		<Grid Name="HeaderGrid" DockPanel.Dock="Top" Background="{DynamicResource BackgroundBrush}" UseLayoutRounding="True">
 			<Grid.ColumnDefinitions>
@@ -508,8 +593,21 @@
 			FlowDirection="{Binding ContentGridFlowDir, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"
 			/>
 		<DockPanel.ContextMenu>
-			<ContextMenu Name="MainContextMenu" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
-				<MenuItem
+            <ContextMenu Name="MainContextMenu" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                <MenuItem
+					Name="ContextMenuGameMode"
+					Header="_Mode"
+				>
+                    <MenuItem.ItemContainerStyle>
+                        <Style TargetType="MenuItem">
+                            <Setter Property="Header" Value="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                            <Setter Property="IsChecked" Value="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" />
+                            <Setter Property="Command" Value="{Binding DataContext.GameModeSelectCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                            <Setter Property="CommandParameter" Value="{Binding Index}"/>
+                        </Style>
+                    </MenuItem.ItemContainerStyle>
+                </MenuItem>
+                <MenuItem
 					Name="ContextMenuHistory"
 					Header="_History"
 				>
@@ -535,8 +633,17 @@
 							<Setter Property="CommandParameter" Value="{Binding Index}"/>
 						</Style>
 					</MenuItem.ItemContainerStyle>
-				</MenuItem>
-				<Separator />
+                </MenuItem>
+                <MenuItem Name="ContextMenuBingoSize" Header="Board Size" StaysOpenOnClick="True">
+                    <MenuItem.ItemContainerStyle>
+                        <Style TargetType="MenuItem">
+                            <Setter Property="StaysOpenOnClick" Value="True" />
+                        </Style>
+                    </MenuItem.ItemContainerStyle>
+                    <MenuItem Header="4x4" Command="{x:Static local:MainWindow.SetBoardSizeCommand}" CommandParameter="4x4" IsChecked="{Binding BingoSize4x4, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <MenuItem Header="5x5" Command="{x:Static local:MainWindow.SetBoardSizeCommand}" CommandParameter="5x5" IsChecked="{Binding BingoSize5x5, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                </MenuItem>
+                <Separator Name="ContextMenuTopSeparator" />
 				<MenuItem
 					Name="ContextMenuCopySpin"
 					Header="_Copy Spin"
@@ -552,10 +659,11 @@
 					<MenuItem Header="Copy Link" Command="{x:Static local:MainWindow.CopySpinLinkCommand}" />
 				</MenuItem>
 				<MenuItem
+					Name="ContextMenuPasteSpin"
 					Header="_Paste Spin"
 					Command="{x:Static local:MainWindow.PasteSpinCommand}"
 				/>
-				<Separator />
+				<Separator Name="ContextMenuSpinSeparator" />
 				<MenuItem
 					Header="Timer"
 					IsChecked="{Binding ShowTimer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -568,7 +676,8 @@
 					IsCheckable="True"
 					ToolTip="Show a tracker of SA spin completion streaks in the Croupier window. Must be connected with mod to work."
 				/>
-				<MenuItem
+                <MenuItem
+					Name="ContextMenuRouletteKillConfirmations"
 					Header="Kill Confirmations"
 					IsChecked="{Binding KillValidations, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 					IsCheckable="True"

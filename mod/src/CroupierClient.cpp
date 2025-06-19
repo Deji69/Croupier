@@ -70,6 +70,7 @@ std::map<std::string, eClientMessage> clientMessageTypeMapRev = {
 };
 
 auto ClientMessage::toString() const -> std::string {
+	if (this->isRaw) return this->raw;
 	auto it = clientMessageTypeMap.find(this->type);
 	if (it == end(clientMessageTypeMap)) return "";
 	return std::format("{}:{}", it->second, this->args);
@@ -180,7 +181,7 @@ auto CroupierClient::start() -> bool {
 		}
 	});
 	readThread = std::thread([this] {
-		char buffer[1024] = {0};
+		char buffer[4096] = {0};
 
 		while (this->keepOpen) {
 			if (!this->reconnect()) {
@@ -298,5 +299,13 @@ auto CroupierClient::send(eClientMessage type, std::initializer_list<std::string
 	for (auto const& arg : args)
 		argStr += (argStr.empty() ? "" : "\t") + arg;
 	message.args = std::move(argStr);
+	this->queue.push_back(std::move(message));
+}
+
+auto CroupierClient::sendRaw(std::string msg) -> void {
+	if (!this->connected) return;
+	ClientMessage message;
+	message.raw = msg;
+	message.isRaw = true;
 	this->queue.push_back(std::move(message));
 }

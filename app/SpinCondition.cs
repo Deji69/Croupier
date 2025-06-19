@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
-using System.Reflection;
 
 namespace Croupier {
 	public class SpinCondition(Target target, Disguise disguise, SpinKillMethod method) : INotifyPropertyChanged {

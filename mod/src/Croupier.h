@@ -295,6 +295,7 @@ private:
 	DECLARE_PLUGIN_DETOUR(Croupier, void, OnEventReceived, ZAchievementManagerSimple* th, const SOnlineEvent& event);
 	DECLARE_PLUGIN_DETOUR(Croupier, void, OnEventSent, ZAchievementManagerSimple* th, uint32_t eventIndex, const ZDynamicObject& event);
 	DECLARE_PLUGIN_DETOUR(Croupier, void, OnWinHttpCallback, void* dwContext, void* hInternet, void* param_3, int dwInternetStatus, void* param_5, int param_6);
+	DECLARE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pinId, const ZObjectRef& data);
 
 private:
 	std::unique_ptr<CroupierClient> client;
