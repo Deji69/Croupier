@@ -35,6 +35,7 @@ namespace Croupier {
 					if (needToStop) break;
 					Status($"{e.Message}\nCheck LiveSplit Server is running (Control > Start Server) and that the IP and Port are correct.");
 					System.Diagnostics.Debug.WriteLine("[LIVESPLIT] " + e.Message);
+					await Task.Delay(5000);
 				}
 
 				if (!socket.Connected)
