@@ -1,18 +1,50 @@
-﻿using System;
+﻿using Croupier.Exceptions;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization.Json;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace Croupier
 {
+	public class GameModeEntry(GameMode mode, string name) : INotifyPropertyChanged {
+		public GameMode Mode { get; set; } = mode;
+		public int Index => (int)Mode;
+		public string Name { get; set; } = name;
+		public bool IsSelected {
+			get => Config.Default.Mode == Mode;
+			set {
+				Config.Default.Mode = Mode;
+				OnPropertyChanged(nameof(IsSelected));
+			}
+        }
+
+        public void Refresh() {
+            OnPropertyChanged(nameof(IsSelected));
+            OnPropertyChanged(nameof(Name));
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName) {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
 	public class TargetNameFormatEntry(TargetNameFormat id, string name) : INotifyPropertyChanged {
 		public TargetNameFormat ID { get; set; } = id;
 		public int Index => (int)ID;
@@ -37,7 +69,7 @@ namespace Croupier
 		}
 	}
 
-	public class SpinHistoryEntry(string name, int index) : INotifyPropertyChanged
+	public class ContextSubmenuEntry(string name, int index) : INotifyPropertyChanged
 	{
 		private string _name = name;
 		private bool isSelected = false;
@@ -147,6 +179,7 @@ namespace Croupier
 		]);
 		public static readonly RoutedUICommand StartTimerCommand = new("Start Timer", "StartTimer", typeof(MainWindow));
 		public static readonly RoutedUICommand StopTimerCommand = new("Stop Timer", "StopTimer", typeof(MainWindow));
+		public static readonly RoutedUICommand SetBoardSizeCommand = new("Set Board Size", "SetBoardSize", typeof(MainWindow));
 
 		private static readonly Random random = new();
 		private static readonly List<Spin> spinHistory = [];
@@ -180,6 +213,26 @@ namespace Croupier
 		private bool _showTimer = false;
 		private bool _timerMultiSpin = false;
 		private bool _timerFractions = true;
+		private GameMode _gameMode = GameMode.Roulette;
+
+		public GameMode Mode {
+			get => _gameMode;
+			set {
+				_gameMode = value;
+				Config.Default.Mode = value;
+				OnPropertyChanged(nameof(Mode));
+                foreach (var entry in GameModeEntries)
+                    entry.Refresh();
+				SetupGameMode();
+				OnPropertyChanged(nameof(SpinGridWidth));
+				OnPropertyChanged(nameof(SpinGridHeight));
+				OnPropertyChanged(nameof(ContentGridFlowDir));
+			}
+		}
+
+		public bool BingoSize4x4 => Config.Default.BingoCardSize == 4 * 4;
+		public bool BingoSize5x5 => Config.Default.BingoCardSize == 5 * 5;
+		public bool BingoSize6x6 => Config.Default.BingoCardSize == 6 * 6;
 
 		public TargetNameFormat TargetNameFormat {
 			get => _targetNameFormat;
@@ -216,9 +269,12 @@ namespace Croupier
 					OnPropertyChanged(nameof(SpinFontSize));
 					OnPropertyChanged(nameof(SpinSmallFontSize));
 					OnPropertyChanged(nameof(SpinNTKOHeight));
+					OnPropertyChanged(nameof(BingoGroupFontSize));
 				}
 			}
 		}
+
+		public double BingoGroupFontSize => SpinFontSize * .85;
 
 		public bool ShuffleButtonEnabled => missionPool.Count > 0;
 
@@ -397,12 +453,18 @@ namespace Croupier
 			=> !StaticSize ? HorizontalAlignment.Stretch : (StaticSizeLHS ? HorizontalAlignment.Left : HorizontalAlignment.Right);
 		public TextAlignment SpinTextAlignment => RightToLeft ? TextAlignment.Right : TextAlignment.Left;
 		public FlowDirection ContentGridFlowDir
-			=> !StaticSize ? FlowDirection.LeftToRight : (StaticSizeLHS ? FlowDirection.LeftToRight : FlowDirection.RightToLeft);
+			=> Mode == GameMode.Bingo
+				? FlowDirection.LeftToRight
+				: (!StaticSize ? FlowDirection.LeftToRight : (StaticSizeLHS ? FlowDirection.LeftToRight : FlowDirection.RightToLeft));
 		public HorizontalAlignment SpinAlignHorz
 			=> !StaticSize ? HorizontalAlignment.Stretch : (StaticSizeLHS ? HorizontalAlignment.Left : HorizontalAlignment.Right);
-		public bool StatusAlignLeft => StaticSize ? StaticSizeLHS : !RightToLeft;
-		public double SpinGridWidth => !StaticSize ? double.NaN : (VerticalDisplay ? Width : Width / 2) - 6;
-		public double SpinGridHeight => !StaticSize ? double.NaN : SpinGridWidth * 0.33;
+		public bool StatusAlignLeft => (StaticSize ? StaticSizeLHS : !RightToLeft);
+		public double SpinGridWidth => Mode == GameMode.Roulette
+			? (!StaticSize ? double.NaN : (VerticalDisplay ? Width : Width / 2) - 6)
+			: Width / Math.Floor(Math.Sqrt(card?.Tiles.Count ?? 0));
+		public double SpinGridHeight => Mode == GameMode.Roulette
+			? !StaticSize ? double.NaN : SpinGridWidth * 0.33
+			: Width / (Math.Floor(Math.Sqrt(card?.Tiles.Count ?? 0)) * 1.328);
 
 		public string DailySpin1Label {
 			get {
@@ -475,8 +537,12 @@ namespace Croupier
 
 		public Spin? CurrentSpin => spin;
 
-		public ObservableCollection<SpinHistoryEntry> HistoryEntries = [];
-		public ObservableCollection<SpinHistoryEntry> BookmarkEntries = [
+		public ObservableCollection<GameModeEntry> GameModeEntries = [
+			new(GameMode.Roulette, "Roulette"),
+            new(GameMode.Bingo, "Bingo"),
+        ];
+		public ObservableCollection<ContextSubmenuEntry> HistoryEntries = [];
+		public ObservableCollection<ContextSubmenuEntry> BookmarkEntries = [
 			new("<Add Current>", 0),
 			new("<Remove Current>", 1),
 		];
@@ -486,6 +552,7 @@ namespace Croupier
 			new(TargetNameFormat.Short, "Short Name"),
 		];
 
+		private BingoCard? card = null;
 		private readonly List<SpinCondition> conditions = [];
 		private readonly ObservableCollection<Ruleset> rulesets = [];
 
@@ -537,13 +604,19 @@ namespace Croupier
 			}
 		}
 
-		public MainWindow() {
+        private void RegisterWindowPlace() {
+            if (OperatingSystem.IsWindowsVersionAtLeast(7))
+                ((App)Application.Current).WindowPlace.Register(this);
+        }
+
+        public MainWindow() {
 			liveSplit = ((App)Application.Current).LiveSplitClient;
 			DataContext = this;
 			InitializeComponent();
 			MainContextMenu.DataContext = this;
 			SizeToContent = SizeToContent.Height;
-			((App)Application.Current).WindowPlace.Register(this);
+
+			RegisterWindowPlace();
 			Focus();
 
 			var ver = Assembly.GetExecutingAssembly().GetName().Version;
@@ -555,15 +628,7 @@ namespace Croupier
 				Logo.ToolTip = "Croupier v" + logoVerStr;
 			}
 
-			LoadSettings();
-
-			MissionSelect.ItemsSource = MissionListItems;
-			ContextMenuTargetNameFormat.ItemsSource = TargetNameFormatEntries;
-			ContextMenuTargetNameFormat.DataContext = this;
-			ContextMenuHistory.ItemsSource = HistoryEntries;
-			ContextMenuHistory.DataContext = this;
-			ContextMenuBookmarks.ItemsSource = BookmarkEntries;
-			ContextMenuBookmarks.DataContext = this;
+			SetupGameMode();
 
 			var idx = MissionListItems.ToList().FindIndex(item => item.ID == currentMission?.ID);
 			MissionSelect.SelectedIndex = idx;
@@ -687,6 +752,7 @@ namespace Croupier
 				ResetStreak();
 			};
 			CroupierSocketServer.MissionStart += (object? sender, MissionStart start) => {
+				if (card != null) card.Reset();
 				TrackGameMissionAttempt(start);
 			};
 			CroupierSocketServer.MissionComplete += (object? sender, MissionCompletion arg) => {
@@ -772,6 +838,7 @@ namespace Croupier
 
 				TrackKillValidation();
 			};
+			CroupierSocketServer.Event += CroupierSocketServer_Event;
 			HitmapsSpinLink.ReceiveNewSpinData += (object? sender, string data) => {
 				if (SpinParser.TryParse(data, out var spin)) {
 					SetSpin(spin!);
@@ -785,34 +852,119 @@ namespace Croupier
 
 			LoadSpinHistory();
 
-			if (spinHistory.Count > 0)
+			if (spinHistory.Count > 0) {
 				SetSpinHistory(1);
+				if (Mode == GameMode.Bingo)
+					Spin(MissionID.PARIS_SHOWSTOPPER);
+			}
 			else {
 				SetMission(MissionID.PARIS_SHOWSTOPPER);
-				Spin();
+				Spin(MissionID.PARIS_SHOWSTOPPER);
 			}
+
 
 			SendMissionsToClient();
 			SendSpinToClient();
+		}
+
+		private static readonly JsonSerializerOptions jsonGameEventSerializerOptions = new() {
+			AllowTrailingCommas = true,
+			ReadCommentHandling = JsonCommentHandling.Skip,
+		};
+
+		private void CroupierSocketServer_Event(object? sender, string evData) {
+			try {
+				if (card == null) return;
+				var json = JsonDocument.Parse(evData);
+				var ev = json.Deserialize<GameEvents.Event>(jsonGameEventSerializerOptions);
+				if (ev?.Value is JsonElement value) {
+					var val = DeserializeEventValue(ev.Name, value);
+					if (val != null) {
+						card.TryAdvance(val);
+						var result = card.CheckWin();
+						Debug.WriteLine(ev.Name, val.ToString());
+						if (result != null) {
+							Debug.WriteLine($"WIN!!! {JsonSerializer.Serialize(result)}");
+						}
+					}
+				}
+			} catch (JsonException e) {
+					Debug.WriteLine(e);
+			}
+		}
+
+		private static GameEvents.EventValue? DeserializeEventValue(string name, JsonElement json) {
+			return name switch {
+				"setpieces" => json.Deserialize<GameEvents.SetpiecesEventValue>(jsonGameEventSerializerOptions),
+				"ItemPickedUp" => json.Deserialize<GameEvents.ItemPickedUpEventValue>(jsonGameEventSerializerOptions),
+				"ItemRemovedFromInventory" => json.Deserialize<GameEvents.ItemRemovedFromInventoryEventValue>(jsonGameEventSerializerOptions),
+				"ItemDropped" => json.Deserialize<GameEvents.ItemDroppedEventValue>(jsonGameEventSerializerOptions),
+				"ItemThrown" => json.Deserialize<GameEvents.ItemThrownEventValue>(jsonGameEventSerializerOptions),
+				"Disguise" => new GameEvents.StringEventValue(json.Deserialize<string>(jsonGameEventSerializerOptions) ?? throw new JsonException()),
+				"Actorsick" => json.Deserialize<GameEvents.ActorSickEventValue>(jsonGameEventSerializerOptions),
+				"Dart_Hit" => json.Deserialize<GameEvents.DartHitEventValue>(jsonGameEventSerializerOptions),
+				"Trespassing" => json.Deserialize<GameEvents.TrespassingEventValue>(jsonGameEventSerializerOptions),
+				"SecuritySystemRecorder" => json.Deserialize<GameEvents.SecuritySystemRecorderEventValue>(jsonGameEventSerializerOptions),
+				"BodyBagged" => json.Deserialize<GameEvents.ActorIdentityEventValue>(jsonGameEventSerializerOptions),
+				"BodyHidden" => json.Deserialize<GameEvents.ActorIdentityEventValue>(jsonGameEventSerializerOptions),
+				"Door_Unlocked" => json.Deserialize<GameEvents.EventValue>(jsonGameEventSerializerOptions),
+				"Investigate_Curious" => json.Deserialize<GameEvents.InvestigateCuriousEventValue>(jsonGameEventSerializerOptions),
+				"OpportunityEvents" => json.Deserialize<GameEvents.OpportunityEventValue>(jsonGameEventSerializerOptions),
+				"Level_Setup_Events" => json.Deserialize<GameEvents.LevelSetupEventValue>(jsonGameEventSerializerOptions),
+				_ => null,
+			};
 		}
 
 		private void MainWindow_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == nameof(VerticalDisplay)
 				|| e.PropertyName == nameof(StaticSize)
 				|| e.PropertyName == nameof(UseNoKOBanner)) {
-				RefitWindow();
-				Task.Delay(10).ContinueWith(task => {
-					SetupSpinUI();
-					RefitWindow();
-				}, TaskScheduler.FromCurrentSynchronizationContext());
+				DoHackyWindowSizeFix();
 				return;
 			}
 		}
 
-		private void LoadRulesetConfiguration() {
+		private void DoHackyWindowSizeFix(bool skipSetupCall = false, int time = 40) {
+			RefitWindow();
+			Task.Delay(time).ContinueWith(task => {
+				if (!skipSetupCall) SetupGameUI();
+				RefitWindow();
+			}, TaskScheduler.FromCurrentSynchronizationContext());
+		}
+
+		private void SetupGameMode() {
+			LoadSettings();
+			
+			if (Mode == GameMode.Roulette) LoadRouletteConfiguration();
+			else LoadBingoConfiguration();
+
+			UpdateStreakStatus(false);
+
+			MissionSelect.ItemsSource = MissionListItems;
+			ContextMenuGameMode.ItemsSource = GameModeEntries;
+			ContextMenuGameMode.DataContext = this;
+            ContextMenuTargetNameFormat.ItemsSource = TargetNameFormatEntries;
+            ContextMenuTargetNameFormat.DataContext = this;
+            ContextMenuHistory.ItemsSource = HistoryEntries;
+            ContextMenuHistory.DataContext = this;
+            ContextMenuBookmarks.ItemsSource = BookmarkEntries;
+            ContextMenuBookmarks.DataContext = this;
+
+            ContextMenuHistory.Visibility = Mode == GameMode.Roulette ? Visibility.Visible : Visibility.Collapsed;
+            ContextMenuCopySpin.Visibility = Mode == GameMode.Roulette ? Visibility.Visible : Visibility.Collapsed;
+            ContextMenuPasteSpin.Visibility = Mode == GameMode.Roulette ? Visibility.Visible : Visibility.Collapsed;
+            ContextMenuBookmarks.Visibility = Mode == GameMode.Roulette ? Visibility.Visible : Visibility.Collapsed;
+            ContextMenuTargetNameFormat.Visibility = Mode == GameMode.Roulette ? Visibility.Visible : Visibility.Collapsed;
+            ContextMenuRouletteKillConfirmations.Visibility = Mode == GameMode.Roulette ? Visibility.Visible : Visibility.Collapsed;
+			ContextMenuTopSeparator.Visibility = Mode == GameMode.Roulette ? Visibility.Visible : Visibility.Collapsed;
+			ContextMenuSpinSeparator.Visibility = Mode == GameMode.Roulette ? Visibility.Visible : Visibility.Collapsed;
+		}
+
+		private void LoadMainConfiguration() {
 			try {
 				Roulette.Main.Load();
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				MessageBox.Show(
 					this,
 					$"Config error: {e.Message}",
@@ -821,7 +973,9 @@ namespace Croupier
 					MessageBoxImage.Exclamation
 				);
 			}
+		}
 
+		private void LoadRulesetConfiguration() {
 			var files = Directory.GetFiles("rulesets", "*.json");
 
 			rulesets.Clear();
@@ -837,13 +991,23 @@ namespace Croupier
 			}
 
 			var activeRuleset = rulesets.FirstOrDefault(r => r.Name == Config.Default.Ruleset)
-				?? rulesets.FirstOrDefault(r => r.Name == "RRWC 2025")
+				?? rulesets.FirstOrDefault(r => r.Name == "RR17")
 				?? rulesets.FirstOrDefault();
 
 			if (activeRuleset != null) {
 				Ruleset.Current = activeRuleset;
 				Config.Default.Ruleset = Ruleset.Current.Name;
 			}
+		}
+
+		private void LoadRouletteConfiguration() {
+			LoadMainConfiguration();
+			LoadRulesetConfiguration();
+		}
+
+		private void LoadBingoConfiguration() {
+			LoadMainConfiguration();
+			Bingo.Main.Load();
 		}
 
 		private void LoadSpinHistory() {
@@ -864,8 +1028,7 @@ namespace Croupier
 			if (!Enum.IsDefined(typeof(MissionPoolPresetID), Config.Default.MissionPool))
 				Config.Default.MissionPool = MissionPoolPresetID.MainMissions;
 
-			LoadRulesetConfiguration();
-
+			_gameMode = Config.Default.Mode;
 			VerticalDisplay = Config.Default.VerticalDisplay;
 			TopmostEnabled = Config.Default.AlwaysOnTop;
 			UseNoKOBanner = Config.Default.UseNoKOBanner;
@@ -881,7 +1044,6 @@ namespace Croupier
 			KillValidations = Config.Default.KillValidations;
 			TargetNameFormat = TargetNameFormatMethods.FromString(Config.Default.TargetNameFormat);
 			LoadMissionPool();
-			UpdateStreakStatus(false);
 
 			foreach (var bookmark in Config.Default.Bookmarks) {
 				BookmarkEntries.Add(new(bookmark, BookmarkEntries.Count));
@@ -974,27 +1136,47 @@ namespace Croupier
 			autoSpinSchedule = null;
 		}
 
+		public void DrawBingo(MissionID id = MissionID.NONE) {
+			try {
+				card = BingoGenerator.Generate(Config.Default.BingoCardSize, id);
+			}
+			catch (BingoGeneratorException e) {
+				MessageBox.Show($"Error: {e.Message}", "Error - Croupier", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+			}
+		}
+
 		public void Spin(MissionID id = MissionID.NONE) {
-			if (Ruleset.Current == null) {
-				MessageBox.Show("No ruleset active. Please select a ruleset from the ruleset window.");
-				return;
+			if (Mode == GameMode.Bingo) {
+				if (id == MissionID.NONE && card != null)
+					id = card?.Mission ?? MissionID.NONE;
+				if (id != MissionID.NONE && !SetMission(id))
+					return;
+				spin = null;
+				DrawBingo(id);
+			}
+			else {
+				if (Ruleset.Current == null) {
+					MessageBox.Show("No ruleset active. Please select a ruleset from the ruleset window.");
+					return;
+				}
+
+				if (id == MissionID.NONE && spin != null)
+					id = spin.Mission;
+				if (id != MissionID.NONE && !SetMission(id))
+					return;
+
+				if (!spinCompleted)
+					ResetStreak();
+
+				CancelScheduledAutoSpin();
+
+				var gen = Roulette.Main.CreateGenerator(Ruleset.Current);
+				spin = gen.Spin(Mission.Get(currentMission!.ID));
+				SetSpin(spin);
+				spinHistoryIndex = 1;
+				PushCurrentSpinToHistory();
 			}
 
-			if (id == MissionID.NONE && spin != null)
-				id = spin.Mission;
-			if (id != MissionID.NONE && !SetMission(id))
-				return;
-
-			if (!spinCompleted)
-				ResetStreak();
-
-			CancelScheduledAutoSpin();
-
-			var gen = Roulette.Main.CreateGenerator(Ruleset.Current);
-			spin = gen.Spin(Mission.Get(currentMission!.ID));
-			SetSpin(spin);
-			spinHistoryIndex = 1;
-			PushCurrentSpinToHistory();
 			PostConditionUpdate();
 
 			HandleTimingOnNewSpin(id);
@@ -1003,6 +1185,20 @@ namespace Croupier
 			Config.Save();
 
 			TrackNewSpin();
+		}
+
+		public void SetBoardSizeCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
+			Config.Default.BingoCardSize = e.Parameter switch {
+				"4x4" => 4 * 4,
+				"5x5" => 5 * 5,
+				_ => 5 * 5,
+			};
+
+			if (card != null && card.Tiles.Count != Config.Default.BingoCardSize)
+				Spin();
+
+			OnPropertyChanged(nameof(BingoSize4x4));
+			OnPropertyChanged(nameof(BingoSize5x5));
 		}
 
 		public void ResetCurrentSpinProgress() {
@@ -1126,7 +1322,7 @@ namespace Croupier
 			Config.Default.SpinIsRandom = false;
 			Config.Save();
 			SendSpinToClient();
-			SetupSpinUI();
+			SetupGameUI();
 			RefitWindow();
 			if (this.spin != null)
 				this.SpinChanged?.Invoke(this, this.spin);
@@ -1484,6 +1680,7 @@ namespace Croupier
 			Spin(missionPool[random.Next(missionPool.Count)]);
 		}
 
+		private ICommand? _gameModeSelectCommand;
 		private ICommand? _historyEntrySelectCommand;
 		private ICommand? _bookmarkEntrySelectCommand;
 		private ICommand? _targetNameFormatSelectCommand;
@@ -1498,6 +1695,10 @@ namespace Croupier
 
 		public ICommand TargetNameFormatSelectCommand {
 			get => _targetNameFormatSelectCommand ??= new RelayCommand(param => this.TargetNameFormatSelected(param));
+		}
+
+		public ICommand GameModeSelectCommand {
+			get => _gameModeSelectCommand ??= new RelayCommand(param => this.GameModeSelected(param));
 		}
 
 		private void HistoryEntrySelected(object param) {
@@ -1530,6 +1731,17 @@ namespace Croupier
 				SyncHistoryEntries();
 				SendSpinToClient();
 			}
+		}
+
+		private void GameModeSelected(object param) {
+			var index = param as int?;
+			if (index == null || index < 0 || index >= GameModeEntries.Count)
+				return;
+			Mode = GameModeEntries[index.Value].Mode;
+			if (Mode == GameMode.Bingo && card == null)
+				Spin();
+			else if (Mode == GameMode.Roulette && conditions.Count == 0)
+				Spin();
 		}
 
 		private void TargetNameFormatSelected(object param) {
@@ -1593,9 +1805,18 @@ namespace Croupier
 			};
 		}
 
+		private void SetupGameUI() {
+			if (Mode == GameMode.Bingo)
+				SetupBingoUI();
+			else
+				SetupSpinUI();
+			DoHackyWindowSizeFix(true, 40);
+		}
+
 		private void SetupSpinUI() {
 			var numColumns = GetNumColumns();
 			ContentGrid.Columns = numColumns;
+			ContentGrid.Rows = 0;
 			ContentGrid.Children.Clear();
 			var thisCodeIsStupid = false;
 
@@ -1632,6 +1853,22 @@ namespace Croupier
 			}
 		}
 
+		private void SetupBingoUI() {
+			ContentGrid.Children.Clear();
+			if (card == null) return;
+			var size = (int)Math.Floor(Math.Sqrt(card.Tiles.Count));
+            ContentGrid.Columns = size;
+			ContentGrid.Rows = size;
+            foreach (var tile in card.Tiles) {
+                var control = new ContentPresenter {
+                    Content = tile,
+                    DataContext = tile,
+                    ContentTemplate = (DataTemplate)Resources["BingoTileDataTemplate"],
+                };
+                ContentGrid.Children.Add(control);
+            }
+        }
+
 		private void SetupSpinUI_AddCondition(SpinCondition condition) {
 			var control = new ContentPresenter {
 				Content = condition,
@@ -1642,6 +1879,21 @@ namespace Croupier
 		}
 
 		private void RefitWindow(bool keepSize = false) {
+			if (Mode == GameMode.Bingo) {
+                var h = 53 + (ShowStatusBar ? StatusGrid.ActualHeight : 0);
+                RefitWindow_Bingo(keepSize);
+                SizeToContent = SizeToContent.Manual;
+				MinHeight = Width * .75 + h;
+				MaxHeight = Width * .75 + h;
+				Height = Width * .75 + h;
+				
+                double v = (Width / 50) * 1.3;
+                SpinFontSize = Math.Max(11.5, v);
+				OnPropertyChanged(nameof(SpinGridWidth));
+				OnPropertyChanged(nameof(SpinGridHeight));
+                return;
+			}
+
 			if (StaticSize) {
 				var h = SpinGridHeight * GetNumRows() + 53 + (ShowStatusBar ? StatusGrid.ActualHeight : 0);
 				SizeToContent = SizeToContent.Manual;
@@ -1678,7 +1930,12 @@ namespace Croupier
 			ScaleFonts(width);
 		}
 
-		private double GetContentScale() {
+		private void RefitWindow_Bingo(bool keepSize = false) {
+			
+		}
+
+
+        private double GetContentScale() {
 			if (VerticalDisplay) {
 				return conditions.Count switch {
 					1 => 2.75,
@@ -1788,7 +2045,7 @@ namespace Croupier
 		}
 
 		private void EditRulesetsCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
-			LoadRulesetConfiguration();
+			LoadRouletteConfiguration();
 
 			if (EditRulesetWindowInst != null) {
 				EditRulesetWindowInst.Activate();
@@ -2153,6 +2410,12 @@ namespace Croupier
 					MessageBoxButton.OK
 				);
 			}
+		}
+
+		private void BingoTile_MouseDown(object sender, RoutedEventArgs e) {
+			var tile = (BingoTile)((Button)sender).DataContext;
+			tile.Complete = !tile.Complete;
+			//SetupBingoUI();
 		}
 	}
 }

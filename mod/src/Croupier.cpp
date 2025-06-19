@@ -1,11 +1,13 @@
-#include "Croupier.h"
+	#include "Croupier.h"
 #include <Logging.h>
 #include <IconsMaterialDesign.h>
 #include <Globals.h>
 #include <Glacier/SOnlineEvent.h>
+#include <Glacier/ZAction.h>
 #include <Glacier/ZActor.h>
 #include <Glacier/ZGameLoopManager.h>
 #include <Glacier/ZInputActionManager.h>
+#include <Glacier/ZItem.h>
 #include <Glacier/ZScene.h>
 #include <Glacier/ZString.h>
 #include <chrono>
@@ -336,6 +338,7 @@ auto Croupier::InstallHooks() -> void {
 	Hooks::ZAchievementManagerSimple_OnEventReceived->AddDetour(this, &Croupier::OnEventReceived);
 	Hooks::ZAchievementManagerSimple_OnEventSent->AddDetour(this, &Croupier::OnEventSent);
 	Hooks::Http_WinHttpCallback->AddDetour(this, &Croupier::OnWinHttpCallback);
+	Hooks::SignalOutputPin->AddDetour(this, &Croupier::OnPinOutput);
 
 	this->hooksInstalled = true;
 }
@@ -350,6 +353,7 @@ auto Croupier::UninstallHooks() -> void {
 	Hooks::ZAchievementManagerSimple_OnEventReceived->RemoveDetour(&Croupier::OnEventReceived);
 	Hooks::ZAchievementManagerSimple_OnEventSent->RemoveDetour(&Croupier::OnEventSent);
 	Hooks::Http_WinHttpCallback->RemoveDetour(&Croupier::OnWinHttpCallback);
+	Hooks::SignalOutputPin->RemoveDetour(&Croupier::OnPinOutput);
 
 	this->hooksInstalled = false;
 }
@@ -357,7 +361,7 @@ auto Croupier::UninstallHooks() -> void {
 auto Croupier::OnFrameUpdate(const SGameUpdateEvent& ev) -> void {
 	this->ProcessSpinState();
 	this->ProcessClientMessages();
-	this->ProcessLoadRemoval();
+	this->ProcessLoadRemoval();	
 }
 
 auto Croupier::ProcessSpinState() -> void {
@@ -2393,6 +2397,148 @@ static std::set<std::string> eventsNotToPrint = {
 	"StartCpd",
 };
 
+static std::set<std::string> eventsNotToSend = {
+	"ContractStart",
+	"ContractLoad",
+	"ContractFailed",
+	"ContractEnd",
+	// Map-specific Perma Shortcut Events
+	"Bulldog_Ladder_A_Open",
+	"Bulldog_Ladder_B_Open",
+	"Dugong_Ladder_A_Down",
+	"Dugong_Ladder_B_Down",
+	"Edgy_Ladder_A_Down",
+	"Gecko_Ladder_A_Down",
+	"Gecko_Ladder_B_Down",
+	"Gecko_Ladder_C_Down",
+	"Rat_Ladder_A_Open",
+	// Freelancer Objectives
+	"Activate_BlindGuard",
+	"Activate_BlindTarget",
+	"Activate_Camera_Caught",
+	"Activate_Camera_DestroyRecorder",
+	"Activate_DartGun_Target",
+	"Activate_DisguiseBlown",
+	"Activate_Distract_Target",
+	"Activate_DontTakeDamage",
+	"Activate_EliminationPayout",
+	"Activate_HideTargetBodies",
+	"Activate_KillGuard_Sniper",
+	"Activate_KillGuard_SubMachineGun",
+	"Activate_KillMethod_Poison",
+	"Activate_KillMethod_Sniper",
+	"Activate_KillMethod_UnSilenced_Pistol",
+	"Activate_LimitedDisguise",
+	"Activate_No_Firearms",
+	"Activate_No_Witnesses",
+	"Activate_NoCombat",
+	"Activate_NoMissedShots",
+	"Activate_NoBodyFound",
+	"Activate_NotSpotted",
+	"Activate_PacifyGuard_Explosive",
+	"Activate_PoisonGuard_Any",
+	"Activate_PoisonGuard_Syringe",
+	"Activate_PoisonTarget_Emetic",
+	"Activate_PoisonTarget_Sedative",
+	"Activate_SA",
+	"Activate_SASO",
+	"Activate_SilentTakedown_3",
+	"Activate_Timed_SilientTakedown",
+	"DrActivate_EliminationPayout",
+	// Misc. Freelancer Events
+	"AddAssassin_Event",
+	"AddLookout_Event",
+	"AddSuspectGlow",
+	"CompleteEvergreenPrimaryObj",
+	"Evergreen_EvaluateChallenge",
+	"Evergreen_Mastery_Level",
+	"Evergreen_Merces_Data",
+	"Evergreen_MissionCompleted_Hot",
+	"Evergreen_MissionPayout",
+	"Evergreen_Payout_Data",
+	"Evergreen_Safehouse_Stash_ItemChosen",
+	"Evergreen_SecurityCameraDestroyed",
+	"Evergreen_Stash_ItemChosen",
+	"Evergreen_Suspect_Looks",
+	"EvergreenExitTriggered",
+	"EvergreenExitTriggeredOrWounded",
+	"EvergreenMissionEnd",
+	"GearSlotsTotal",
+	"GearSlotsTutorialised",
+	"GearSlotsUsed",
+	"MildMissionCompleted_Africa_Event",
+	"MildMissionCompleted_Asia_Event",
+	"MildMissionCompleted_Event",
+	"MissionCompleted_Event",
+	"NoTargetsLeft",
+	"NumberOfTargets",
+	"PayoutObjective_Completed",
+	"ScoringScreenEndState_CampaignCompletedBonusXP_Professional",
+	"ScoringScreenEndState_CampaignCompletedBonusXP_Hard",
+	"ScoringScreenEndState_MildCompleted",
+	"SetPayout",
+	"Setup_TargetName",
+	"TravelDestination",
+	"Leader_In_Meeting",
+	"LeaderDeadEscaping_Event",
+	"LeaderEscaping",
+	"LeaderPacifiedEscaping_Event",
+	"RemoveSuspectGlow",
+	"SupplierVisited",
+	"TargetPickedConfirm",
+	// Freelancer Challenge Events
+	"CollectorUpdate",
+	"GunmasterComplete",
+	"GunslingerUpdate",
+	"LetsGoHuntingUpdate",
+	"OneShotOneKillUpdate",
+	"SprayAndPrayUpdate",
+	"ThisIsMyRifleUpdate",
+	"UpCloseAndPersonalUpdate",
+	// Misc. Events
+	"ChallengeCompleted",
+	"ContractSessionMarker",
+	"CpdSet",
+	"Hero_Health",
+	"LeaderboardUpdated",
+	"Progression_XPGain",
+	"SegmentClosing",
+	"StartCpd",
+
+	// Gameplay Events
+	"AccidentBodyFound",
+	"Agility_Start",
+	"AllBodiesHidden",
+	"AmbientChanged",
+	"DeadBodySeen",
+	"DrainPipe_climbed",
+	"Drain_Pipe_Climbed",
+	"ExitInventory",
+	"FirstMissedShot",
+	"FirstNonHeadshot",
+	"HeroSpawn_Location",
+	"HoldingIllegalWeapon", // ?
+	//"ItemRemovedFromInventory",
+	"MurderedBodySeen",
+	"Noticed_Pacified",
+	"ObjectiveCompleted",
+	"PlayingPianoChanged",
+	"SituationContained",
+	"StartingSuit",
+	"Unnoticed_Pacified",
+	"Unnoticed_Kill",
+	"VirusDestroyed",
+	"Witnesses",
+
+	"OpportunityStageEvent",
+	"IntroCutEnd",
+	"OpportunityEvents",
+	"Spotted",
+	"DisguiseBlown",
+	"47_FoundTrespassing",
+	"ShotsFired",
+};
+
 DEFINE_PLUGIN_DETOUR(Croupier, void, OnEventSent, ZAchievementManagerSimple* th, uint32_t eventIndex, const ZDynamicObject& ev) {
 	ZString eventData = ZDynamicObjectToString(const_cast<ZDynamicObject&>(ev));
 
@@ -2405,6 +2551,8 @@ DEFINE_PLUGIN_DETOUR(Croupier, void, OnEventSent, ZAchievementManagerSimple* th,
 			Logger::Info("Croupier: event {}", eventData);
 
 		this->events.handle(eventName, json);
+		if (!eventsNotToSend.contains(eventName))
+			this->client->sendRaw(eventData.c_str());
 	}
 	catch (const nlohmann::json::exception& ex) {
 		Logger::Info("Error handling event: {}", eventData);
@@ -2412,7 +2560,27 @@ DEFINE_PLUGIN_DETOUR(Croupier, void, OnEventSent, ZAchievementManagerSimple* th,
 		Logger::Error("JSON exception: {}", ex.what());
 	}
 
-	return HookResult<void>(HookAction::Continue());
+	return HookAction::Continue();
+}
+
+DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pinId, const ZObjectRef& data) {
+	const ZHM5ActionManager* actionManager = Globals::HM5ActionManager;
+
+	const auto item = entity.QueryInterface<ZHM5Item>();
+	if (!item) return HookAction::Continue();
+
+	for (const auto currAction : actionManager->m_Actions) {
+		if (currAction && (static_cast<int>(currAction->m_eActionType) & static_cast<int>(EActionType::AT_PICKUP)) != 0) {
+			if (const ZHM5Item* currItem = currAction->m_Object.QueryInterface<ZHM5Item>()) {
+				if (currItem->m_pItemConfigDescriptor == nullptr || item->m_pItemConfigDescriptor == nullptr)
+					return HookAction::Continue();
+
+				if (currItem->m_pItemConfigDescriptor->m_RepositoryId == item->m_pItemConfigDescriptor->m_RepositoryId)
+					Logger::Debug("\tFound matching entity!");
+			}
+		}
+	}
+	return HookAction::Continue();
 }
 
 DEFINE_PLUGIN_DETOUR(Croupier, void, OnWinHttpCallback, void* dwContext, void* hInternet, void* param_3, int dwInternetStatus, void* param_5, int param_6) {
@@ -2448,7 +2616,7 @@ DEFINE_PLUGIN_DETOUR(Croupier, void, OnWinHttpCallback, void* dwContext, void* h
 		}
 	}
 	//else Logger::Error("WinHttpQueryOption failed: {}", GetLastError());
-	return HookResult<void>(HookAction::Continue());
+	return HookAction::Continue();
 }
 
 DECLARE_ZHM_PLUGIN(Croupier);

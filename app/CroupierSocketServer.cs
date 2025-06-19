@@ -22,6 +22,7 @@ namespace Croupier
 		public static event EventHandler<MissionID>? Respin;
 		public static event EventHandler<MissionID>? AutoSpin;
 		public static event EventHandler<List<MissionID>>? Missions;
+		public static event EventHandler<string>? Event;
 		public static event EventHandler<string>? SpinData;
 		public static event EventHandler<string>? KillValidation;
 		public static event EventHandler<int>? Random;
@@ -89,7 +90,7 @@ namespace Croupier
 
 		private static async Task HandleClientReceiveAsync(TcpClient client, CancellationToken ct) {
 			var stream = client.GetStream();
-			var buffer = new byte[1024];
+			var buffer = new byte[4096];
 
 			try {
 				while (!ct.IsCancellationRequested && client.Connected) {
@@ -220,6 +221,8 @@ namespace Croupier
 					App.Current.Dispatcher.Invoke(new Action(() => KillValidation?.Invoke(null, rest.First())));
 					return;
 			}
+
+			App.Current.Dispatcher.Invoke(new Action(() => Event?.Invoke(null, msg)));
 		}
 	}
 }
