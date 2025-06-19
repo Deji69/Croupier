@@ -706,5 +706,355 @@
 		"Missions": ["Nightcall"],
 		"Tags": ["Disguise", "Guard"],
 		"Disguise": ["d4dd18b3-2dbe-4ad2-8bfa-db5fdb9a6568"]
+	},
+	{
+		"Name": "Aeon Driver",
+		"Group": "Disguise",
+		"Missions": ["The Finish Line", "A Silver Tongue"],
+		"Tags": ["Disguise", "Civilian", "Unique"],
+		"Disguise": ["6fca97a0-cb80-4bd7-9a8f-106fa20a5d04"]
+	},
+	{
+		"Name": "Aeon Mechanic",
+		"Group": "Disguise",
+		"Missions": ["The Finish Line", "A Silver Tongue"],
+		"Tags": ["Disguise", "Civilian"],
+		"Disguise": ["6fca97a0-cb80-4bd7-9a8f-106fa20a5d04"]
+	},
+	{
+		"Name": "Blue Seed Driver",
+		"Group": "Disguise",
+		"Missions": ["The Finish Line", "A Silver Tongue"],
+		"Tags": ["Disguise", "Civilian", "Unique"],
+		"Disguise": ["46dedef3-bbcf-438c-af2b-c97dd853aac1"]
+	},
+	{
+		"Name": "Crashed Kronstadt Driver",
+		"Group": "Disguise",
+		"Missions": ["The Finish Line", "A Silver Tongue"],
+		"Disguise": ["8980597c-1559-46a7-ba8d-bc5d95d5936a"],
+		"Tags": ["Disguise", "Civilian", "Unique"]
+	},
+	{
+		"Name": "Event Crew",
+		"Group": "Disguise",
+		"Missions": ["The Finish Line", "A Silver Tongue"],
+		"Disguise": ["d86e4379-4aad-42cf-a7cf-38d0fa7e727b"],
+		"Tags": ["Disguise", "Civilian"]
+	},
+	{
+		"Name": "Event Security",
+		"Group": "Disguise",
+		"Missions": ["The Finish Line", "A Silver Tongue"],
+		"Disguise": ["dc5b1ccd-0997-4834-93a0-db7543e729cc"],
+		"Tags": ["Disguise", "Guard"]
+	},
+	{
+		"Name": "Florida Man",
+		"Group": "Disguise",
+		"Missions": ["The Finish Line", "A Silver Tongue"],
+		"Disguise": ["f8ef3523-2500-410c-98fb-b6926a832df4"],
+		"Tags": ["Disguise", "Civilian", "Unique"]
+	},
+	{
+		"Name": "Food Vendor",
+		"Group": "Disguise",
+		"Missions": ["The Finish Line", "A Silver Tongue"],
+		"Disguise": ["e9ed2969-146a-472d-8e87-39c77bd1757d"],
+		"Tags": ["Disguise", "Civilian"]
+	},
+	{
+		"Name": "Journalist",
+		"Group": "Disguise",
+		"Missions": ["The Finish Line", "A Silver Tongue"],
+		"Disguise": ["723e73f3-9fa4-40d8-bb11-b66184c9a795"],
+		"Tags": ["Disguise", "Civilian"]
+	},
+	{
+		"Name": "Kitchen Staff",
+		"Group": "Disguise",
+		"Missions": ["The Finish Line", "A Silver Tongue"],
+		"Disguise": ["2a5a3dba-bafd-4a1f-8bbf-204668b32fe1"],
+		"Tags": ["Disguise", "Civilian"]
+	},
+	{
+		"Name": "Kowoon Driver",
+		"Group": "Disguise",
+		"Missions": ["The Finish Line", "A Silver Tongue"],
+		"Disguise": ["12181b2f-8c74-4761-8d78-3bedfbf9281d"],
+		"Tags": ["Disguise", "Civilian", "Unique"]
+	},
+	{
+		"Name": "Kowoon Mechanic",
+		"Group": "Disguise",
+		"Missions": ["The Finish Line", "A Silver Tongue"],
+		"Disguise": ["fc829fad-5afc-4236-8662-65ab8698ef44"],
+		"Tags": ["Disguise", "Civilian"]
+	},
+	{
+		"Name": "Kronstadt Engineer",
+		"Group": "Disguise",
+		"Missions": ["The Finish Line", "A Silver Tongue"],
+		"Disguise": ["9bd53a5a-a152-488f-be20-7394b083d99a"],
+		"Tags": ["Disguise", "Civilian"]
+	},
+	{
+		"Name": "Kronstadt Mechanic",
+		"Group": "Disguise",
+		"Missions": ["The Finish Line", "A Silver Tongue"],
+		"Disguise": ["085e639e-2cf4-4e9b-bd9b-f9fd5b899676"],
+		"Tags": ["Disguise", "Civilian"]
+	},
+	{
+		"Name": "Kronstadt Researcher",
+		"Group": "Disguise",
+		"Missions": ["The Finish Line", "A Silver Tongue"],
+		"Disguise": ["ade47a03-a3ec-4d78-aefa-6057abceea28"],
+		"Tags": ["Disguise", "Civilian"]
+	},
+	{
+		"Name": "Kronstadt Security",
+		"Group": "Disguise",
+		"Missions": ["The Finish Line", "A Silver Tongue"],
+		"Disguise": ["d37ae121-69b4-4a9c-ab57-972063505e2f"],
+		"Tags": ["Disguise", "Guard"]
+	},
+	{
+		"Name": "Mascot",
+		"Group": "Disguise",
+		"Missions": ["The Finish Line"],
+		"Disguise": ["124d145e-469e-485d-a628-ced82ddf1b75"],
+		"Tags": ["Disguise", "Civilian"]
+	},
+	{
+		"Name": "Mascot",
+		"Group": "Disguise",
+		"Missions": ["A Silver Tongue"],
+		"Disguise": ["5fc2ed75-ab22-4c61-af6c-bdd07b1a55a6"],
+		"Tags": ["Disguise", "Civilian"]
+	},
+	{
+		"Name": "Medic",
+		"Group": "Disguise",
+		"Missions": ["The Finish Line", "A Silver Tongue"],
+		"Disguise": ["b838226d-5fbf-4b5d-8e5f-98e5c8ddc1f2"],
+		"Tags": ["Disguise", "Civilian"]
+	},
+	{
+		"Name": "Moses Lee",
+		"Group": "Disguise",
+		"Missions": ["The Finish Line", "A Silver Tongue"],
+		"Disguise": ["a45555d8-d68c-4cd7-8006-7d7f61b36c72"],
+		"Tags": ["Disguise", "Civilian", "Unique"]
+	},
+	{
+		"Name": "Pale Rider",
+		"Group": "Disguise",
+		"Missions": ["The Finish Line", "A Silver Tongue"],
+		"Disguise": ["9df94442-ed1b-436c-942f-3195b1ef7e0e"],
+		"Tags": ["Disguise", "Civilian", "Unique"]
+	},
+	{
+		"Name": "Race Coordinator",
+		"Group": "Disguise",
+		"Missions": ["The Finish Line", "A Silver Tongue"],
+		"Disguise": ["be9dd1c4-af52-43db-b8f7-37c3c054c90f"],
+		"Tags": ["Disguise", "Civilian"]
+	},
+	{
+		"Name": "Race Marshal",
+		"Group": "Disguise",
+		"Missions": ["The Finish Line", "A Silver Tongue"],
+		"Disguise": ["a166a37e-a3f8-42d2-99d6-e0dd2cf5c090"],
+		"Tags": ["Disguise", "Civilian"]
+	},
+	{
+		"Name": "Sheik",
+		"Group": "Disguise",
+		"Missions": ["The Finish Line", "A Silver Tongue"],
+		"Disguise": ["a68b2030-d52f-4e52-907f-8657b867dd50"],
+		"Tags": ["Disguise", "Civilian", "Unique"]
+	},
+	{
+		"Name": "Sotteraneo Mechanic",
+		"Group": "Disguise",
+		"Missions": ["The Finish Line", "A Silver Tongue"],
+		"Disguise": ["981b7a3b-5548-4a6f-b568-f767784e6d91"],
+		"Tags": ["Disguise", "Civilian", "Unique"]
+	},
+	{
+		"Name": "Street Musician",
+		"Group": "Disguise",
+		"Missions": ["The Finish Line", "A Silver Tongue"],
+		"Disguise": ["2018be7c-5f79-497e-a7e1-0e64f31e71f5"],
+		"Tags": ["Disguise", "Civilian", "Unique"]
+	},
+	{
+		"Name": "Ted Mendez",
+		"Group": "Disguise",
+		"Missions": ["The Finish Line", "A Silver Tongue"],
+		"Disguise": ["d7d8d5e8-070c-4d6c-9a67-f1165a7bb29d"],
+		"Tags": ["Disguise", "Civilian", "Unique"]
+	},
+	{
+		"Name": "Thwack Driver",
+		"Group": "Disguise",
+		"Missions": ["The Finish Line", "A Silver Tongue"],
+		"Disguise": ["bac37ceb-6f72-406f-bfa3-e49413436525"],
+		"Tags": ["Disguise", "Civilian", "Unique"]
+	},
+	{
+		"Name": "Thwack Mechanic",
+		"Group": "Disguise",
+		"Missions": ["The Finish Line", "A Silver Tongue"],
+		"Disguise": ["4376850a-3a37-4ad3-a886-168d0e24aa20"],
+		"Tags": ["Disguise", "Civilian"]
+	},
+	{
+		"Name": "Waiter",
+		"Group": "Disguise",
+		"Missions": ["The Finish Line", "A Silver Tongue"],
+		"Disguise": ["c7bbd142-7873-4a91-98c8-76a6900bea60"],
+		"Tags": ["Disguise", "Civilian"]
+	},
+	{
+		"Name": "Band Member",
+		"Group": "Disguise",
+		"Missions": ["Three-Headed Serpent", "Embrace of the Serpent"],
+		"Disguise": ["fc0491ac-8592-486d-9dc2-b39af13cf6e3"],
+		"Tags": ["Disguise", "Civilian", "Unique"]
+	},
+	{
+		"Name": "Barman",
+		"Group": "Disguise",
+		"Missions": ["Three-Headed Serpent", "Embrace of the Serpent"],
+		"Disguise": ["cfacf46a-eb59-4a16-a221-a690defd05a3"],
+		"Tags": ["Disguise", "Civilian", "Unique"]
+	},
+	{
+		"Name": "Chef",
+		"Group": "Disguise",
+		"Missions": ["Three-Headed Serpent", "Embrace of the Serpent"],
+		"Disguise": ["d0fe70cb-c30b-41a3-8d1c-5503e898f686"],
+		"Tags": ["Disguise", "Civilian"]
+	},
+	{
+		"Name": "Coca Field Guard",
+		"Group": "Disguise",
+		"Missions": ["Three-Headed Serpent", "Embrace of the Serpent"],
+		"Disguise": ["56a589d8-bf28-489f-a30c-2ecea87177f5"],
+		"Tags": ["Disguise", "Guard"]
+	},
+	{
+		"Name": "Coca Field Worker",
+		"Group": "Disguise",
+		"Missions": ["Three-Headed Serpent", "Embrace of the Serpent"],
+		"Disguise": ["11f2849d-87c5-4806-a25e-1a9dad85981d"],
+		"Tags": ["Disguise", "Civilian"]
+	},
+	{
+		"Name": "Construction Worker",
+		"Group": "Disguise",
+		"Missions": ["Three-Headed Serpent", "Embrace of the Serpent"],
+		"Disguise": ["57342129-03a9-47a4-a509-cc0656e0a76a"],
+		"Tags": ["Disguise", "Civilian"]
+	},
+	{
+		"Name": "Drug Lab Worker",
+		"Group": "Disguise",
+		"Missions": ["Three-Headed Serpent", "Embrace of the Serpent"],
+		"Disguise": ["a741cd97-135e-465e-89c3-4fa52a2bbf9d"],
+		"Tags": ["Disguise", "Civilian"]
+	},
+	{
+		"Name": "Elite Guard",
+		"Group": "Disguise",
+		"Missions": ["Three-Headed Serpent"],
+		"Disguise": ["fbf1ca6f-8559-410d-a0b4-66a5a32d1d90"],
+		"Tags": ["Disguise", "Guard"]
+	},
+	{
+		"Name": "Elite Guard",
+		"Group": "Disguise",
+		"Missions": ["Embrace of the Serpent"],
+		"Disguise": ["3e3be8e1-1fe4-4b3a-959c-9e52f595b0c4"],
+		"Tags": ["Disguise", "Guard"]
+	},
+	{
+		"Name": "Gardener",
+		"Group": "Disguise",
+		"Missions": ["Three-Headed Serpent", "Embrace of the Serpent"],
+		"Disguise": ["886c3b26-b81f-4731-8080-524f2d6da5dd"],
+		"Tags": ["Disguise", "Civilian"]
+	},
+	{
+		"Name": "Hippie",
+		"Group": "Disguise",
+		"Missions": ["Three-Headed Serpent", "Embrace of the Serpent"],
+		"Disguise": ["177410f1-4fd7-4ef2-8ed7-2119bcba3661"],
+		"Tags": ["Disguise", "Civilian", "Unique"]
+	},
+	{
+		"Name": "Hippo Whisperer",
+		"Group": "Disguise",
+		"Missions": ["Three-Headed Serpent", "Embrace of the Serpent"],
+		"Disguise": ["4a145036-e4cc-4798-a795-42bcee511524"],
+		"Tags": ["Disguise", "Civilian", "Unique"]
+	},
+	{
+		"Name": "Mansion Guard",
+		"Group": "Disguise",
+		"Missions": ["Three-Headed Serpent", "Embrace of the Serpent"],
+		"Disguise": ["f0d1dfab-ac73-4fe9-bbac-a5587fbc0f91"],
+		"Tags": ["Disguise", "Guard"]
+	},
+	{
+		"Name": "Mansion Staff",
+		"Group": "Disguise",
+		"Missions": ["Three-Headed Serpent", "Embrace of the Serpent"],
+		"Disguise": ["2dec1e42-0093-462a-83aa-c0f4d82ac224"],
+		"Tags": ["Disguise", "Civilian"]
+	},
+	{
+		"Name": "Shaman",
+		"Group": "Disguise",
+		"Missions": ["Three-Headed Serpent", "Embrace of the Serpent"],
+		"Disguise": ["30005896-2b39-49c0-bb04-3475d4a12ae6"],
+		"Tags": ["Disguise", "Civilian", "Unique"]
+	},
+	{
+		"Name": "Street Soldier",
+		"Group": "Disguise",
+		"Missions": ["Three-Headed Serpent", "Embrace of the Serpent"],
+		"Disguise": ["ab5a46a2-6e53-4b15-a48e-c336df1ef5ff"],
+		"Tags": ["Disguise", "Guard"]
+	},
+	{
+		"Name": "Submarine Crew",
+		"Group": "Disguise",
+		"Missions": ["Three-Headed Serpent", "Embrace of the Serpent"],
+		"Disguise": ["f86848e7-ca8c-48e0-94d1-2d925e96a3e7"],
+		"Tags": ["Disguise", "Civilian"]
+	},
+	{
+		"Name": "Submarine Engineer",
+		"Group": "Disguise",
+		"Missions": ["Three-Headed Serpent", "Embrace of the Serpent"],
+		"Disguise": ["dfaa8260-20af-4112-b1ca-88a98481127b"],
+		"Tags": ["Disguise", "Civilian", "Unique"]
+	},
+	{
+		"Name": "Tattoo Artist (P-Power)",
+		"Group": "Disguise",
+		"Missions": ["Three-Headed Serpent"],
+		"Disguise": ["bbc1dd7c-a0ef-41eb-9bef-a4c38fded3fa"],
+		"Tags": ["Disguise", "Civilian", "Unique"]
+	},
+	{
+		"Name": "Tattoo Artist (P-Power)",
+		"Group": "Disguise",
+		"Missions": ["Embrace of the Serpent"],
+		"Disguise": ["135073d8-ef7c-4f4d-b30b-cbf65de613cb"],
+		"Tags": ["Disguise", "Civilian", "Unique"]
 	}
 ]
