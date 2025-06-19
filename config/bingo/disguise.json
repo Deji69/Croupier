@@ -1,0 +1,710 @@
+[
+	{
+		"Name": "Auction Staff",
+		"Group": "Disguise",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Disguise", "Civilian"],
+		"Disguise": ["b5664bed-462a-417c-bc07-6d9d3f666e2d"]
+	},
+	{
+		"Name": "Chef",
+		"Group": "Disguise",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Disguise", "Civilian"],
+		"Disguise": ["26ae3261-2a1d-49b2-8cab-d626d0887836"]
+	},
+	{
+		"Name": "CICADA Bodyguard",
+		"Group": "Disguise",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Disguise", "Guard"],
+		"Disguise": ["d2c76544-3a12-43a8-abc3-c7ce51830c1e"]
+	},
+	{
+		"Name": "Helmut Kruger",
+		"Group": "Disguise",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Disguise", "Unique", "Civilian"],
+		"Disguise": ["642c20f9-bf41-41b4-b0bb-2491b5be938a"]
+	},
+	{
+		"Name": "Palace Staff",
+		"Group": "Disguise",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Disguise", "Free", "Civilian"],
+		"Disguise": ["2018db77-aa8a-4bf9-9afb-56bdaa161156"]
+	},
+	{
+		"Name": "Security Guard",
+		"Group": "Disguise",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Disguise", "Guard"],
+		"Disguise": ["992cc7b6-4ccf-4ae8-a467-e9b2aabaeeb5"]
+	},
+	{
+		"Name": "Sheikh Salman Al-Ghazali",
+		"Group": "Disguise",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Text": "Become the Sheikh",
+		"Tags": ["Disguise", "Unique", "Civilian"],
+		"Disguise": ["a8ecd823-6e08-4cfe-a04d-816d387fcf0c"]
+	},
+	{
+		"Name": "Stylist",
+		"Group": "Disguise",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Disguise", "Free", "Civilian"],
+		"Disguise": ["96e32a7a-129a-4dd6-9b5b-3000a58f2a0f"]
+	},
+	{
+		"Name": "Tech Crew",
+		"Group": "Disguise",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Disguise", "Civilian"],
+		"Disguise": ["69aac6db-461e-43af-89bc-2c27e50d430f"]
+	},
+	{
+		"Name": "Vampire Magician",
+		"Group": "Disguise",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Disguise", "Unique", "Free", "Civilian"],
+		"Disguise": ["1fdc259e-b96a-47f2-bbd8-e86e78d6df70"]
+	},
+	{
+		"Name": "Biolab Security",
+		"Group": "Disguise",
+		"Missions": ["World of Tomorrow"],
+		"Tags": ["Disguise", "Guard"],
+		"Disguise": ["91b37d1f-21ba-42b5-81fa-f4b6ce2ba691"]
+	},
+	{
+		"Name": "Bodyguard",
+		"Group": "Disguise",
+		"Missions": ["World of Tomorrow", "The Author", "Landslide"],
+		"Tags": ["Disguise", "Guard"],
+		"Disguise": ["bf9629e0-f25c-4e71-9561-4a99a93a43e8"]
+	},
+	{
+		"Name": "Bohemian",
+		"Group": "Disguise",
+		"Missions": ["World of Tomorrow", "The Author", "Landslide"],
+		"Tags": ["Disguise", "Unique", "Civilian"],
+		"Disguise": ["61b8f96e-4986-4f0a-ab95-dcdc69f51580"]
+	},
+	{
+		"Name": "Brother Akram",
+		"Group": "Disguise",
+		"Missions": ["The Author"],
+		"Tags": ["Disguise", "Unique", "Civilian"],
+		"Disguise": ["a6034d86-0fa4-46ce-8deb-90acf2d1e485"]
+	},
+	{
+		"Name": "Butler",
+		"Group": "Disguise",
+		"Missions": ["World of Tomorrow"],
+		"Tags": ["Disguise", "Unique", "Civilian"],
+		"Disguise": ["81eed11b-eaa3-4fd3-97ba-e1e89dcca57e"]
+	},
+	{
+		"Name": "Chef",
+		"Group": "Disguise",
+		"Missions": ["World of Tomorrow", "The Author"],
+		"Tags": ["Disguise", "Unique", "Civilian"],
+		"Disguise": ["4c6816d8-4ae7-4161-a971-970055e64b34"]
+	},
+	{
+		"Name": "Church Staff",
+		"Group": "Disguise",
+		"Missions": ["World of Tomorrow", "The Author", "Landslide"],
+		"Tags": ["Disguise", "Civilian"],
+		"Disguise": ["5440b347-026f-402c-9cd4-3b4e142804ce"]
+	},
+	{
+		"Name": "Craig Black",
+		"Group": "Disguise",
+		"Missions": ["The Author"],
+		"Tags": ["Disguise", "Unique", "Civilian"],
+		"Disguise": ["e710b6a4-b6f1-40a3-9389-cf297fff8d86"]
+	},
+	{
+		"Name": "Cyclist",
+		"Group": "Disguise",
+		"Missions": ["World of Tomorrow"],
+		"Tags": ["Disguise", "Unique", "Civilian"],
+		"Disguise": ["b58672d6-c235-4c08-a856-ef7caee777dd"]
+	},
+	{
+		"Name": "Delivery Man",
+		"Group": "Disguise",
+		"Missions": ["World of Tomorrow"],
+		"Tags": ["Disguise", "Unique", "Free", "Civilian"],
+		"Disguise": ["0d35cd13-e2ca-4375-9a67-763d1b776b48"]
+	},
+	{
+		"Name": "Dr. Oscar Lafayette",
+		"Group": "Disguise",
+		"Missions": ["World of Tomorrow"],
+		"Tags": ["Disguise", "Unique", "Civilian"],
+		"Disguise": ["fbf69e85-da3c-423b-bef9-da1b64f35f6b"]
+	},
+	{
+		"Name": "Gardener",
+		"Group": "Disguise",
+		"Missions": ["World of Tomorrow", "The Author", "Landslide"],
+		"Tags": ["Disguise", "Free", "Civilian"],
+		"Disguise": ["d788ff58-8a7a-4a85-acdd-c0e5693525f0"]
+	},
+	{
+		"Name": "Green Plumber",
+		"Group": "Disguise",
+		"Missions": ["World of Tomorrow", "The Author", "Landslide"],
+		"Tags": ["Disguise", "Unique", "Civilian"],
+		"Disguise": ["844680e8-ae40-4fec-92b7-69c7619feb82"]
+	},
+	{
+		"Name": "Hazmat Suit",
+		"Group": "Disguise",
+		"Missions": ["World of Tomorrow"],
+		"Tags": ["Disguise", "Unique", "Free", "Civilian"],
+		"Disguise": ["92c30801-1782-44c5-88a0-d2020d6d4ff5"]
+	},
+	{
+		"Name": "Housekeeper",
+		"Group": "Disguise",
+		"Missions": ["World of Tomorrow", "The Author"],
+		"Tags": ["Disguise", "Free", "Civilian"],
+		"Disguise": ["a6c81663-684d-4506-abc0-65b35c4d8b63"]
+	},
+	{
+		"Name": "Kitchen Assistant",
+		"Group": "Disguise",
+		"Missions": ["World of Tomorrow", "The Author", "Landslide", "The Icon"],
+		"Tags": ["Disguise", "Free", "Civilian"],
+		"Disguise": ["10601c6b-1f65-44ed-92a1-bf843f023d3f"]
+	},
+	{
+		"Name": "Lab Technician",
+		"Group": "Disguise",
+		"Missions": ["World of Tomorrow"],
+		"Tags": ["Disguise", "Civilian"],
+		"Disguise": ["2894c92d-b780-412f-a48f-5c5ddf0dafc8"]
+	},
+	{
+		"Name": "Mansion Security",
+		"Group": "Disguise",
+		"Missions": ["World of Tomorrow"],
+		"Tags": ["Disguise", "Free", "Guard"],
+		"Disguise": ["fd56a934-f402-4b52-bdca-8bbc737400ff"]
+	},
+	{
+		"Name": "Mansion Staff",
+		"Group": "Disguise",
+		"Missions": ["World of Tomorrow"],
+		"Tags": ["Disguise", "Free", "Civilian"],
+		"Disguise": ["5edcef70-c4bb-4856-9124-de3d39fa814a"]
+	},
+	{
+		"Name": "Movie Crew",
+		"Group": "Disguise",
+		"Missions": ["World of Tomorrow"],
+		"Tags": ["Disguise", "Civilian"],
+		"Disguise": ["79a767f7-5473-4380-b778-e93028e4fc2f"]
+	},
+	{
+		"Name": "Photographer",
+		"Group": "Disguise",
+		"Missions": ["World of Tomorrow"],
+		"Tags": ["Disguise", "Unique", "Civilian"],
+		"Disguise": ["b110cb05-0a38-4d77-b199-16e15a98b111"]
+	},
+	{
+		"Name": "Plague Doctor",
+		"Group": "Disguise",
+		"Missions": ["World of Tomorrow"],
+		"Tags": ["Disguise", "Unique", "Free", "Civilian"],
+		"Disguise": ["2bbc0c72-fc99-465d-9dec-c276f68ab982"]
+	},
+	{
+		"Name": "Priest",
+		"Group": "Disguise",
+		"Missions": ["World of Tomorrow", "Landslide"],
+		"Tags": ["Disguise", "Unique", "Civilian"],
+		"Disguise": ["98888ced-60f9-4f83-a93b-bf0ef2963341"]
+	},
+	{
+		"Name": "Private Detective",
+		"Group": "Disguise",
+		"Missions": ["World of Tomorrow"],
+		"Tags": ["Disguise", "Unique", "Civilian"],
+		"Disguise": ["02a9f8e4-3ed1-4c29-9f73-88e0cf2d7b5e"]
+	},
+	{
+		"Name": "Roberto Vargas",
+		"Group": "Disguise",
+		"Missions": ["World of Tomorrow"],
+		"Tags": ["Disguise", "Unique", "Civilian"],
+		"Disguise": ["691311a2-c215-4250-a318-fb25fd08e265"]
+	},
+	{
+		"Name": "Red Plumber",
+		"Group": "Disguise",
+		"Missions": ["World of Tomorrow", "The Author", "Landslide"],
+		"Tags": ["Disguise", "Unique", "Civilian"],
+		"Disguise": ["37352a6b-eb58-4458-a5d6-522dd0508baa"]
+	},
+	{
+		"Name": "Salvatore Bravuomo",
+		"Group": "Disguise",
+		"Missions": ["The Author", "Landslide"],
+		"Tags": ["Disguise", "Unique", "Civilian"],
+		"Disguise": ["7766b295-35f3-45a8-b73d-10b222ed18ef"]
+	},
+	{
+		"Name": "Security",
+		"Group": "Disguise",
+		"Missions": ["Landslide", "The Icon"],
+		"Tags": ["Disguise", "Guard"],
+		"Disguise": ["94a0d283-bea4-468d-ad8f-ec2735008511"]
+	},
+	{
+		"Name": "SFX Crew",
+		"Group": "Disguise",
+		"Missions": ["The Author", "The Icon"],
+		"Tags": ["Disguise", "Civilian"],
+		"Disguise": ["2fd2437d-a5eb-4bfd-bd2d-a4f240a8f0ce"]
+	},
+	{
+		"Name": "Stage Crew",
+		"Group": "Disguise",
+		"Missions": ["World of Tomorrow"],
+		"Tags": ["Disguise", "Civilian"],
+		"Disguise": ["6f9f7786-2044-4394-98b4-f79da0341e7f"]
+	},
+	{
+		"Name": "Store Clerk",
+		"Group": "Disguise",
+		"Missions": ["World of Tomorrow"],
+		"Tags": ["Disguise", "Free", "Civilian"],
+		"Disguise": ["063fa6ef-9d58-4c3e-a4fd-70ce51a2f862"]
+	},
+	{
+		"Name": "Street Performer",
+		"Group": "Disguise",
+		"Missions": ["World of Tomorrow"],
+		"Tags": ["Disguise", "Unique", "Civilian"],
+		"Disguise": ["40bc08b2-1d39-4321-ab14-76f300e4ea3a"]
+	},
+	{
+		"Name": "Super Fan",
+		"Group": "Disguise",
+		"Missions": ["The Author", "The Icon"],
+		"Tags": ["Disguise", "Unique", "Civilian"],
+		"Disguise": ["95c7f899-e20c-4182-a228-28bd3d8a4ff4"]
+	},
+	{
+		"Name": "Waiter",
+		"Group": "Disguise",
+		"Missions": ["World of Tomorrow", "The Author", "Landslide"],
+		"Tags": ["Disguise", "Civilian"],
+		"Disguise": ["40bc08b2-1d39-4321-ab14-76f300e4ea3a"]
+	},
+	{
+		"Name": "Bodyguard",
+		"Group": "Disguise",
+		"Missions": ["A Gilded Cage", "A House Built On Sand"],
+		"Tags": ["Disguise", "Guard"],
+		"Disguise": ["97536da8-64a5-4675-a108-08ff7be41c1f"]
+	},
+	{
+		"Name": "Cameraman",
+		"Group": "Disguise",
+		"Missions": ["A Gilded Cage"],
+		"Tags": ["Disguise", "Unique", "Civilian"],
+		"Disguise": ["e0fc86fb-a852-4652-bb5c-b591f7bfeb29"]
+	},
+	{
+		"Name": "Consulate Intern",
+		"Group": "Disguise",
+		"Missions": ["A Gilded Cage"],
+		"Tags": ["Disguise", "Unique", "Civilian"],
+		"Disguise": ["65f23b45-f5ab-4ede-82ec-46e4de38c0e9"]
+	},
+	{
+		"Name": "Consulate Janitor",
+		"Group": "Disguise",
+		"Missions": ["A Gilded Cage"],
+		"Tags": ["Disguise", "Free", "Civilian"],
+		"Disguise": ["1b87edd3-fb1e-4adf-9463-efcb380cbd6b"]
+	},
+	{
+		"Name": "Consulate Security",
+		"Group": "Disguise",
+		"Missions": ["A Gilded Cage"],
+		"Tags": ["Disguise", "Free", "Guard"],
+		"Disguise": ["e0fc86fc-a852-4652-bb5c-b591f7bfeb29"]
+	},
+	{
+		"Name": "Elite Soldier",
+		"Group": "Disguise",
+		"Missions": ["A Gilded Cage"],
+		"Tags": ["Disguise", "Guard"],
+		"Disguise": ["e5bb3c6b-2fcd-4e36-a30d-03955cb05088"]
+	},
+	{
+		"Name": "Food Vendor",
+		"Group": "Disguise",
+		"Missions": ["A Gilded Cage", "A House Built On Sand"],
+		"Tags": ["Disguise", "Civilian"],
+		"Disguise": ["98b1c1f6-2634-4c29-b9e6-fa8d7633100a"]
+	},
+	{
+		"Name": "Fortune Teller",
+		"Group": "Disguise",
+		"Missions": ["A Gilded Cage", "A House Built On Sand"],
+		"Tags": ["Disguise", "Unique", "Civilian"],
+		"Disguise": ["dc4762e0-e58e-4336-a3c1-40646087267a"]
+	},
+	{
+		"Name": "Handyman",
+		"Group": "Disguise",
+		"Missions": ["A Gilded Cage", "A House Built On Sand"],
+		"Tags": ["Disguise", "Unique", "Civilian"],
+		"Disguise": ["eb48ed16-195a-4de1-bae6-d7e7ec92046c"]
+	},
+	{
+		"Name": "Headmaster",
+		"Group": "Disguise",
+		"Missions": ["A Gilded Cage"],
+		"Tags": ["Disguise", "Unique", "Civilian"],
+		"Disguise": ["6136fa6a-3f1f-4606-9b87-fde9538966dc"]
+	},
+	{
+		"Name": "Local Printing Crew",
+		"Group": "Disguise",
+		"Missions": ["A Gilded Cage"],
+		"Tags": ["Disguise", "Civilian"],
+		"Disguise": ["ff6668af-dde5-48c3-ac9a-f47b860122d0"]
+	},
+	{
+		"Name": "Masseur",
+		"Group": "Disguise",
+		"Missions": ["A Gilded Cage"],
+		"Tags": ["Disguise", "Unique", "Civilian"],
+		"Disguise": ["138eda40-501a-48b8-affc-928321566a4e"]
+	},
+	{
+		"Name": "Military Officer",
+		"Group": "Disguise",
+		"Missions": ["A Gilded Cage"],
+		"Tags": ["Disguise", "Guard"],
+		"Disguise": ["65d860f4-998e-4f92-a1d7-9f40c04a2474"]
+	},
+	{
+		"Name": "Military Soldier",
+		"Group": "Disguise",
+		"Missions": ["A Gilded Cage", "A House Built On Sand"],
+		"Tags": ["Disguise", "Guard"],
+		"Disguise": ["955bca9e-bc91-46da-a4df-3dfc787c8aff"]
+	},
+	{
+		"Name": "Prisoner",
+		"Group": "Disguise",
+		"Missions": ["A Gilded Cage"],
+		"Tags": ["Disguise", "Unique", "Hostile"],
+		"Disguise": ["fdb4aade-4d5f-47e2-896f-fc1addf64d52"]
+	},
+	{
+		"Name": "Shopkeeper",
+		"Group": "Disguise",
+		"Missions": ["A Gilded Cage", "A House Built On Sand"],
+		"Tags": ["Disguise", "Free", "Civilian"],
+		"Disguise": ["ecf1b752-0cd6-4283-a1a5-743fc0249525"]
+	},
+	{
+		"Name": "Waiter",
+		"Group": "Disguise",
+		"Missions": ["A Gilded Cage", "A House Built On Sand"],
+		"Tags": ["Disguise", "Civilian"],
+		"Disguise": ["6348cc33-665f-4470-80b4-a0ad836df702"]
+	},
+	{
+		"Name": "Abel de Silva",
+		"Group": "Disguise",
+		"Missions": ["Club 27"],
+		"Tags": ["Disguise", "Unique", "Civilian"],
+		"Disguise": ["f17c737e-9947-4fff-a443-65b381839d00"]
+	},
+	{
+		"Name": "Cult Bodyguard",
+		"Group": "Disguise",
+		"Missions": ["The Source"],
+		"Tags": ["Disguise", "Guard"],
+		"Disguise": ["78fcc1c0-5612-4284-924f-c20d9e322c96"]
+	},
+	{
+		"Name": "Exterminator",
+		"Group": "Disguise",
+		"Missions": ["Club 27", "The Source"],
+		"Tags": ["Disguise", "Civilian"],
+		"Disguise": ["bf0bcc10-a335-4714-9dd2-69e7e96704b2"]
+	},
+	{
+		"Name": "Groundskeeper",
+		"Group": "Disguise",
+		"Missions": ["Club 27", "The Source"],
+		"Tags": ["Disguise", "Civilian"],
+		"Disguise": ["7f6da010-1a96-4783-83e0-48c55a3e7103"]
+	},
+	{
+		"Name": "Hotel Security",
+		"Group": "Disguise",
+		"Missions": ["Club 27", "The Source"],
+		"Tags": ["Disguise", "Free", "Guard"],
+		"Disguise": ["07f3479a-29fc-45e0-bb80-e49a41c0c410"]
+	},
+	{
+		"Name": "Hotel Staff",
+		"Group": "Disguise",
+		"Missions": ["Club 27", "The Source"],
+		"Tags": ["Disguise", "Civilian"],
+		"Disguise": ["c96f9796-0194-47c6-836c-102473cc6c3c"]
+	},
+	{
+		"Name": "Jordan Cross' Bodyguard",
+		"Group": "Disguise",
+		"Missions": ["Club 27", "The Source"],
+		"Tags": ["Disguise", "Guard"],
+		"Disguise": ["d01c8adc-735c-44f0-9105-b28d85062def"]
+	},
+	{
+		"Name": "Kitchen Staff",
+		"Group": "Disguise",
+		"Missions": ["Club 27", "The Source"],
+		"Tags": ["Disguise", "Free", "Civilian"],
+		"Disguise": ["85971c2e-34ae-423f-9653-bc32c5f3e4f7"]
+	},
+	{
+		"Name": "Morgan's Bodyguard",
+		"Group": "Disguise",
+		"Missions": ["Club 27"],
+		"Tags": ["Disguise", "Unique", "Guard"],
+		"Disguise": ["4c8941af-541c-4bb9-a8e3-8b8e61b0a789"]
+	},
+	{
+		"Name": "Recording Crew",
+		"Group": "Disguise",
+		"Missions": ["Club 27", "The Source"],
+		"Tags": ["Disguise", "Free", "Civilian"],
+		"Disguise": ["ef704a8e-88b7-430a-a217-09bbeea7074f"]
+	},
+	{
+		"Name": "Stalker",
+		"Group": "Disguise",
+		"Missions": ["Club 27"],
+		"Tags": ["Disguise", "Unique", "Hostile"],
+		"Disguise": ["c5bf909f-66a5-4f19-9aee-aeb953172e45"]
+	},
+	{
+		"Name": "Waiter",
+		"Group": "Disguise",
+		"Missions": ["Club 27", "The Source"],
+		"Tags": ["Disguise", "Unique", "Civilian"],
+		"Disguise": ["57669117-fbf3-4630-80e3-53e5420a8f30"]
+	},
+	{
+		"Name": "Explosives Specialist",
+		"Group": "Disguise",
+		"Missions": ["Freedom Fighters"],
+		"Tags": ["Disguise", "Guard"],
+		"Disguise": ["59c4f7db-f065-4fac-bc6c-5c7ac3758eed"]
+	},
+	{
+		"Name": "Hacker",
+		"Group": "Disguise",
+		"Missions": ["Freedom Fighters"],
+		"Tags": ["Disguise", "Civilian"],
+		"Disguise": ["aab7f28d-84d9-47d1-be52-d142f5970086"]
+	},
+	{
+		"Name": "Militia Cook",
+		"Group": "Disguise",
+		"Missions": ["Freedom Fighters"],
+		"Tags": ["Disguise", "Guard"],
+		"Disguise": ["dac13714-a012-47cf-b76a-150cfc4cece5"]
+	},
+	{
+		"Name": "Militia Elite",
+		"Group": "Disguise",
+		"Missions": ["Freedom Fighters"],
+		"Tags": ["Disguise", "Guard", "Free"],
+		"Disguise": ["d878b5ee-90cd-4222-8503-1e9ae193d556"]
+	},
+	{
+		"Name": "Militia Soldier",
+		"Group": "Disguise",
+		"Missions": ["Freedom Fighters"],
+		"Tags": ["Disguise", "Guard"],
+		"Disguise": ["3dd1467a-72d2-4590-93d8-10807c9f1645"]
+	},
+	{
+		"Name": "Militia Spec Ops",
+		"Group": "Disguise",
+		"Missions": ["Freedom Fighters"],
+		"Tags": ["Disguise", "Guard", "Free"],
+		"Disguise": ["ed1a4bf9-0641-4e70-9af1-d6e68cbb84d6"]
+	},
+	{
+		"Name": "Militia Technician",
+		"Group": "Disguise",
+		"Missions": ["Freedom Fighters"],
+		"Tags": ["Disguise", "Guard", "Free"],
+		"Disguise": ["143c62fc-4bf6-474a-9542-1e81bf93a044"]
+	},
+	{
+		"Name": "Point Man",
+		"Group": "Disguise",
+		"Missions": ["Freedom Fighters"],
+		"Tags": ["Disguise", "Guard", "Unique"],
+		"Disguise": ["338021a8-0c61-4732-a991-559e25e49efe"]
+	},
+	{
+		"Name": "Scarecrow",
+		"Group": "Disguise",
+		"Missions": ["Freedom Fighters"],
+		"Tags": ["Disguise", "Hostile", "Unique"],
+		"Disguise": ["fd5d2b9d-dcef-4596-a98a-5266a148c40c"]
+	},
+	{
+		"Name": "Baseball Player",
+		"Group": "Disguise",
+		"Missions": ["Situs Inversus", "Hokkaido Snow Festival"],
+		"Tags": ["Disguise", "Hostile", "Unique"],
+		"Disguise": ["5946924c-958d-48f4-ada3-86beb58aa778"]
+	},
+	{
+		"Name": "Bodyguard",
+		"Group": "Disguise",
+		"Missions": ["Situs Inversus", "Hokkaido Snow Festival", "Patient Zero"],
+		"Tags": ["Disguise", "Guard"],
+		"Disguise": ["5270225d-797a-43f8-8435-078ae0d92249"]
+	},
+	{
+		"Name": "Chef",
+		"Group": "Disguise",
+		"Missions": ["Situs Inversus", "Hokkaido Snow Festival", "Patient Zero"],
+		"Tags": ["Disguise", "Civilian"],
+		"Disguise": ["d6bbbe57-8cc8-45ed-b1cb-d1f9477c4b61"]
+	},
+	{
+		"Name": "Chief Surgeon",
+		"Group": "Disguise",
+		"Missions": ["Situs Inversus", "Hokkaido Snow Festival"],
+		"Tags": ["Disguise", "Civilian", "Unique"],
+		"Disguise": ["d6bbbe57-8cc8-45ed-b1cb-d1f9477c4b61"]
+	},
+	{
+		"Name": "Doctor",
+		"Group": "Disguise",
+		"Missions": ["Situs Inversus", "Hokkaido Snow Festival", "Patient Zero"],
+		"Tags": ["Disguise", "Civilian"],
+		"Disguise": ["a8191fb6-9a6d-4145-8baf-d786e6f392b7"]
+	},
+	{
+		"Name": "Handyman",
+		"Group": "Disguise",
+		"Missions": ["Situs Inversus", "Hokkaido Snow Festival", "Patient Zero"],
+		"Tags": ["Disguise", "Civilian"],
+		"Disguise": ["d9e0fbe7-ff74-4030-bed6-5a33a01acead"]
+	},
+	{
+		"Name": "Helicopter Pilot",
+		"Group": "Disguise",
+		"Missions": ["Situs Inversus", "Hokkaido Snow Festival", "Patient Zero"],
+		"Tags": ["Disguise", "Civilian", "Unique"],
+		"Disguise": ["b8dbb7b6-fef9-4782-923f-ddebc573625e"]
+	},
+	{
+		"Name": "Hospital Director",
+		"Group": "Disguise",
+		"Missions": ["Situs Inversus", "Hokkaido Snow Festival", "Patient Zero"],
+		"Tags": ["Disguise", "Civilian", "Unique"],
+		"Disguise": ["f6f53c39-17f9-48cf-9594-7a696b036d61"]
+	},
+	{
+		"Name": "Morgue Doctor",
+		"Group": "Disguise",
+		"Missions": ["Situs Inversus", "Hokkaido Snow Festival", "Patient Zero"],
+		"Tags": ["Disguise", "Civilian"],
+		"Disguise": ["3d4424a3-23f9-4cfe-b225-2e06c17d780b"]
+	},
+	{
+		"Name": "Motorcyclist",
+		"Group": "Disguise",
+		"Missions": ["Situs Inversus", "Hokkaido Snow Festival", "Patient Zero"],
+		"Tags": ["Disguise", "Hostile", "Unique"],
+		"Disguise": ["8e01f48f-ef06-448c-9d22-5d58c4414968"]
+	},
+	{
+		"Name": "Ninja",
+		"Group": "Disguise",
+		"Missions": ["Situs Inversus", "Hokkaido Snow Festival"],
+		"Tags": ["Disguise", "Hostile", "Unique"],
+		"Disguise": ["06456d4d-da36-4008-bea5-c0b985a565f5"]
+	},
+	{
+		"Name": "Patient",
+		"Group": "Disguise",
+		"Missions": ["Situs Inversus", "Hokkaido Snow Festival", "Patient Zero"],
+		"Tags": ["Disguise", "Civilian"],
+		"Disguise": ["c98a6467-5dd9-4041-8bff-119445750d4d"]
+	},
+	{
+		"Name": "Resort Security",
+		"Group": "Disguise",
+		"Missions": ["Situs Inversus", "Hokkaido Snow Festival", "Patient Zero"],
+		"Tags": ["Disguise", "Guard"],
+		"Disguise": ["25406dac-d206-48c7-a6df-dffb887c9227"]
+	},
+	{
+		"Name": "Resort Staff",
+		"Group": "Disguise",
+		"Missions": ["Situs Inversus", "Hokkaido Snow Festival", "Patient Zero"],
+		"Tags": ["Disguise", "Civilian"],
+		"Disguise": ["52992428-8884-48db-9764-e486d17d4804"]
+	},
+	{
+		"Name": "Surgeon",
+		"Group": "Disguise",
+		"Missions": ["Situs Inversus", "Hokkaido Snow Festival", "Patient Zero"],
+		"Tags": ["Disguise", "Civilian"],
+		"Disguise": ["6a25f81d-cf2e-4e47-9b15-0f712a3f71d9"]
+	},
+	{
+		"Name": "Amos Dexter",
+		"Group": "Disguise",
+		"Missions": ["Situs Inversus", "Hokkaido Snow Festival", "Patient Zero"],
+		"Tags": ["Disguise", "Civilian", "Unique"],
+		"Disguise": ["427bac46-50b4-4470-9b0e-478efcd37793"]
+	},
+	{
+		"Name": "Jason Portman",
+		"Group": "Disguise",
+		"Missions": ["Situs Inversus", "Hokkaido Snow Festival"],
+		"Tags": ["Disguise", "Civilian", "Unique"],
+		"Disguise": ["b00380d9-3f84-4484-8bd6-39c0872da414"]
+	},
+	{
+		"Name": "Yoga Instructor",
+		"Group": "Disguise",
+		"Missions": ["Situs Inversus", "Hokkaido Snow Festival", "Patient Zero"],
+		"Tags": ["Disguise", "Civilian", "Unique"],
+		"Disguise": ["f4ea7065-d32b-4a97-baf9-98072a9c8128"]
+	},
+	{
+		"Name": "Bodyguard",
+		"Group": "Disguise",
+		"Missions": ["Nightcall"],
+		"Tags": ["Disguise", "Guard"],
+		"Disguise": ["d4dd18b3-2dbe-4ad2-8bfa-db5fdb9a6568"]
+	}
+]

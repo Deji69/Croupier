@@ -1,0 +1,11 @@
+[
+	{
+		"Name": "Ignite Oil Drum",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Action", "Destroy"],
+		"Setpiece": {
+			"Name": "Explosive_OilDrum",
+			"ToolUsed": "Exploded"
+		}
+	}
+]

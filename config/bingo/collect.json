@@ -1,0 +1,213 @@
+[
+	{
+		"Name": "{1}x Bust",
+		"Group": "Collect",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Collect"],
+		"Collect": {
+			"Count": 2,
+			"Max": 4,
+			"Items": ["97d74fa2-4832-4186-a447-c4b2e37d537a"]
+		}
+	},
+	{
+		"Name": "{1}x Brick",
+		"Group": "Collect",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Collect"],
+		"Collect": {
+			"Count": 1,
+			"Max": 1,
+			"Items": ["5cc4d1ea-b4fa-4667-ba3a-b6e859f03059"]
+		}
+	},
+	{
+		"Name": "Camera Lens",
+		"Group": "Collect",
+		"Missions": ["The Showstopper"],
+		"Tags": ["Collect"],
+		"Collect": {
+			"Items": ["9712eaaa-43b7-4327-bd04-7f731a08a3b3"]
+		}
+	},
+	{
+		"Name": "Cleaver",
+		"Group": "Collect",
+		"Missions": ["The Showstopper"],
+		"Tags": ["Collect"],
+		"Collect": {
+			"Items": ["1bbf0ed5-0515-4599-a4c9-454ce59cff44"]
+		}
+	},
+	{
+		"Name": "{1}x Crowbar",
+		"Group": "Collect",
+		"Missions": ["The Showstopper"],
+		"Tags": ["Collect"],
+		"Collect": {
+			"Count": 2,
+			"Max": 8,
+			"Items": ["01ed6d15-e26e-4362-b1a6-363684a7d0fd"]
+		}
+	},
+	{
+		"Name": "{1}x Crowbar",
+		"Group": "Collect",
+		"Missions": ["Holiday Hoarders"],
+		"Tags": ["Collect"],
+		"Collect": {
+			"Count": 2,
+			"Max": 9,
+			"Items": ["01ed6d15-e26e-4362-b1a6-363684a7d0fd"]
+		}
+	},
+	{
+		"Name": "Fireworks Remote",
+		"Group": "Collect",
+		"Collect": {
+			"Items": ["e83c4ea3-e964-43b0-9804-55cfbb32c83a"]
+		}
+	},
+	{
+		"Name": "Holiday Crowbar",
+		"Group": "Collect",
+		"Missions": ["Holiday Hoarders"],
+		"Tags": ["Collect"],
+		"Collect": {
+			"Items": ["????"]
+		}
+	},
+	{
+		"Name": "{1}x Hammer",
+		"Group": "Collect",
+		"Missions": ["The Showstopper"],
+		"Tags": ["Collect"],
+		"Collect": {
+			"Count": 2,
+			"Max": 8,
+			"Items": ["3c24c96a-557c-472a-9d71-1a235d7383a7"]
+		}
+	},
+	{
+		"Name": "{1}x Kitchen Knife",
+		"Group": "Collect",
+		"Missions": ["The Showstopper"],
+		"Tags": ["Collect"],
+		"Collect": {
+			"Count": 2,
+			"Max": 8,
+			"Items": ["e17172cc-bf70-4df6-9828-d9856b1a24fd"]
+		}
+	},
+	{
+		"Name": "Laptop Dongle",
+		"Group": "Collect",
+		"Missions": ["The Showstopper"],
+		"Tags": ["Collect"],
+		"Collect": {
+			"Items": ["55d34557-5b46-422f-84ce-7bb13cfcef96"]
+		}
+	},
+	{
+		"Name": "{1}x Lead Pipe",
+		"Group": "Collect",
+		"Missions": ["The Showstopper"],
+		"Tags": ["Collect"],
+		"Collect": {
+			"Count": 2,
+			"Max": 7,
+			"Items": ["7aeb740f-3d60-4e49-8d27-15a98067ce9f"]
+		}
+	},
+	{
+		"Name": "{1}x Letter Opener",
+		"Group": "Collect",
+		"Missions": ["The Showstopper"],
+		"Tags": ["Collect"],
+		"Collect": {
+			"Count": 2,
+			"Max": 5,
+			"Items": ["f1f89faf-a441-4492-b442-9a923b5ecfd1"]
+		}
+	},
+	{
+		"Name": "Palace Master Key",
+		"Group": "Collect",
+		"Missions": ["The Showstopper"],
+		"Tags": ["Collect"],
+		"Collect": {
+			"Items": ["2ad76caf-8af3-44b1-904b-fd99b23550f1"]
+		}
+	},
+	{
+		"Name": "Police Baton",
+		"Group": "Collect",
+		"Missions": ["The Showstopper"],
+		"Tags": ["Collect"],
+		"Collect": {
+			"Items": ["510c62c2-1f40-4a4d-9e42-da677bd116e7"]
+		}
+	},
+	{
+		"Name": "{1}x Rat Poison",
+		"Group": "Collect",
+		"Missions": ["The Showstopper"],
+		"Tags": ["Collect"],
+		"Collect": {
+			"Count": 3,
+			"Max": 6,
+			"Items": ["8b37a3a8-8a20-4262-81c5-0fcd15f4bba9"]
+		}
+	},
+	{
+		"Name": "Remote Explosive",
+		"Group": "Collect",
+		"Missions": ["The Showstopper"],
+		"Tags": ["Collect"],
+		"Collect": {
+			"Items": ["????"]
+		}
+	},
+	{
+		"Name": "{1}x Scissors",
+		"Group": "Collect",
+		"Missions": ["The Showstopper"],
+		"Tags": ["Collect"],
+		"Collect": {
+			"Count": 2,
+			"Max": 8,
+			"Items": ["6ecf1f15-453c-4783-9c70-8777c83934d7"]
+		}
+	},
+	{
+		"Name": "{1}x Screwdriver",
+		"Group": "Collect",
+		"Missions": ["The Showstopper"],
+		"Tags": ["Collect"],
+		"Collect": {
+			"Count": 3,
+			"Max": 17,
+			"Items": ["12cb6b51-a6dd-4bf5-9653-0ab727820cac"]
+		}
+	},
+	{
+		"Name": "Speedboat Key",
+		"Group": "Collect",
+		"Missions": ["The Showstopper"],
+		"Tags": ["Collect"],
+		"Collect": {
+			"Items": ["2cac278e-49a1-47d7-893e-ecc98f35a739"]
+		}
+	},
+	{
+		"Name": "{1}x Wrench",
+		"Group": "Collect",
+		"Missions": ["The Showstopper"],
+		"Tags": ["Collect"],
+		"Collect": {
+			"Count": 3,
+			"Max": 10,
+			"Items": ["6adddf7e-6879-4d51-a7e2-6a25ffdca6ae"]
+		}
+	}
+]
