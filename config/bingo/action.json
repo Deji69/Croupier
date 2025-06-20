@@ -7,5 +7,14 @@
 			"Name": "Explosive_OilDrum",
 			"ToolUsed": "Exploded"
 		}
+	},
+	{
+		"Name": "Activate Diorama",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Action", "Interact"],
+		"Setpiece": {
+			"Name": "Diorama_Napoleon_war",
+			"ToolUsed": "Exploded"
+		}
 	}
 ]
