@@ -353,7 +353,7 @@ auto Croupier::InstallHooks() -> void {
 	Hooks::ZAchievementManagerSimple_OnEventReceived->AddDetour(this, &Croupier::OnEventReceived);
 	Hooks::ZAchievementManagerSimple_OnEventSent->AddDetour(this, &Croupier::OnEventSent);
 	Hooks::Http_WinHttpCallback->AddDetour(this, &Croupier::OnWinHttpCallback);
-	Hooks::SignalOutputPin->AddDetour(this, &Croupier::OnPinOutput);
+	//Hooks::SignalOutputPin->AddDetour(this, &Croupier::OnPinOutput);
 
 	this->hooksInstalled = true;
 }
@@ -368,7 +368,7 @@ auto Croupier::UninstallHooks() -> void {
 	Hooks::ZAchievementManagerSimple_OnEventReceived->RemoveDetour(&Croupier::OnEventReceived);
 	Hooks::ZAchievementManagerSimple_OnEventSent->RemoveDetour(&Croupier::OnEventSent);
 	Hooks::Http_WinHttpCallback->RemoveDetour(&Croupier::OnWinHttpCallback);
-	Hooks::SignalOutputPin->RemoveDetour(&Croupier::OnPinOutput);
+	//Hooks::SignalOutputPin->RemoveDetour(&Croupier::OnPinOutput);
 
 	this->hooksInstalled = false;
 }
