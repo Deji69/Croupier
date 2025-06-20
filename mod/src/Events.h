@@ -222,6 +222,7 @@ struct ItemEventValue {
 	std::string RepositoryId;
 	std::string ItemType;
 	std::string ItemName;
+	std::string InstanceId;
 	//std::vector<std::string> OnlineTraits;
 	//std::string ActionRewardType;
 
@@ -229,6 +230,7 @@ struct ItemEventValue {
 		ItemName = json.value("ItemName", "");
 		ItemType = json.value("ItemType", "");
 		RepositoryId = json.value("RepositoryId", "");
+		InstanceId = json.value("InstanceId", "");
 	}
 };
 

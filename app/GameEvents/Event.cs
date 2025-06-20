@@ -134,11 +134,11 @@ namespace Croupier.GameEvents {
 	}
 
 	public class InvestigateCuriousEventValue : EventValue {
-		public required uint ActorId { get; set; }
+		public required double ActorId { get; set; }
 		public required string RepositoryId { get; set; }
 		public required string SituationType { get; set; }
 		public required string EventType { get; set; }
-		public required uint InvestigationType { get; set; }
+		public required double InvestigationType { get; set; }
 	}
 
 	public class OpportunityEventValue : EventValue {
@@ -181,7 +181,7 @@ namespace Croupier.GameEvents {
 		public required string setpieceType_metricvalue { get; set; }
 		public required string toolUsed_metricvalue { get; set; }
 		public required string Item_triggered_metricvalue { get; set; }
-		public required SVector3 Position { get; set; }
+		public required string Position { get; set; }
 	}
 
 	public class ActorSickEventValue : EventValue {

@@ -1583,6 +1583,36 @@ auto Croupier::SetupEvents() -> void {
 	events.listen<Events::ItemThrown>([this](const ServerEvent<Events::ItemThrown>& ev) {
 		lastThrownItem = ev.Value.RepositoryId;
 	});
+	events.listen<Events::ItemPickedUp>([this](const ServerEvent<Events::ItemPickedUp>& ev) {
+		for (const auto action : Globals::HM5ActionManager->m_Actions) {
+			if (action && action->m_eActionType == EActionType::AT_PICKUP) {
+				if (const ZHM5Item* item = action->m_Object.QueryInterface<ZHM5Item>()) {
+					if (item->m_pItemConfigDescriptor->m_RepositoryId.ToString() == ZRepositoryID(ev.Value.RepositoryId)) {
+						auto const instanceId = (*action->m_Object.m_pEntity)->m_nEntityId;
+						if (this->sharedSpin.collectedItemInstances.contains(instanceId))
+							continue;
+						this->sharedSpin.collectedItemInstances.insert(instanceId);
+						nlohmann::json json = {
+							{"Name", ev.Name},
+							{"Timestamp", ev.Timestamp},
+							{"ContractId", ev.ContractId},
+							{"ContractSessionId", ev.ContractSessionId},
+							{"Value", {
+								{"RepositoryId", ev.Value.RepositoryId},
+								{"InstanceId", std::format("{}", instanceId)},
+								{"ItemType", ev.Value.ItemType},
+								{"ItemName", ev.Value.ItemName},
+							}},
+						};
+						//ev.Value.InstanceId = std::format("{}", (*action->m_Object.m_pEntity)->m_nEntityId);
+						Logger::Debug("\tFound matching entity!");
+						this->client->sendRaw(json.dump());
+						break;
+					}
+				}
+			}
+		}
+	});
 	events.listen<Events::Pacify>([this](const ServerEvent<Events::Pacify>& ev) {
 		if (!ev.Value.IsTarget) return;
 		if (this->spinCompleted) return;
@@ -2647,18 +2677,6 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 
 	const auto item = entity.QueryInterface<ZHM5Item>();
 	if (!item) return HookAction::Continue();
-
-	for (const auto currAction : actionManager->m_Actions) {
-		if (currAction && (static_cast<int>(currAction->m_eActionType) & static_cast<int>(EActionType::AT_PICKUP)) != 0) {
-			if (const ZHM5Item* currItem = currAction->m_Object.QueryInterface<ZHM5Item>()) {
-				if (currItem->m_pItemConfigDescriptor == nullptr || item->m_pItemConfigDescriptor == nullptr)
-					return HookAction::Continue();
-
-				if (currItem->m_pItemConfigDescriptor->m_RepositoryId == item->m_pItemConfigDescriptor->m_RepositoryId)
-					Logger::Debug("\tFound matching entity!");
-			}
-		}
-	}
 	return HookAction::Continue();
 }
 
