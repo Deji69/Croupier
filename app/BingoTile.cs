@@ -83,9 +83,8 @@ namespace Croupier {
 
 		public override bool Test(GameEvents.EventValue ev) {
 			if (ev is GameEvents.ItemPickedUpEventValue v) {
-				if (Items.Contains(v.RepositoryId))
-					return false;
-				return true;
+				if (v.InstanceId.Length == 0) return false;
+				return Items.Contains(v.RepositoryId);
 			}
 			return false;
 		}
@@ -106,12 +105,7 @@ namespace Croupier {
 		public int? Max { get; set; }
 
 		public override bool Test(GameEvents.EventValue ev) {
-			if (ev is GameEvents.ItemPickedUpEventValue v) {
-				if (Items.Contains(v.RepositoryId))
-					return false;
-				return true;
-			}
-			return false;
+			return ev is GameEvents.StringEventValue v && Items.Contains(v.Value);
 		}
 
 		public override void Advance(BingoTileState state) {

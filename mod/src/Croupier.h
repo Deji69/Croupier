@@ -42,6 +42,7 @@ struct SharedRouletteSpin {
 	const RouletteSpin& spin;
 	std::set<std::string, InsensitiveCompareLexicographic> killed;
 	std::set<std::string, InsensitiveCompareLexicographic> spottedNotKilled;
+	std::set<uint64_t> collectedItemInstances;
 	std::vector<DisguiseChange> disguiseChanges;
 	std::vector<KillConfirmation> killValidations;
 	std::vector<KillSetpieceEvent> killSetpieceEvents;
@@ -189,6 +190,7 @@ struct SharedRouletteSpin {
 		disguiseChanges.clear();
 		killSetpieceEvents.clear();
 		levelSetupEvents.clear();
+		collectedItemInstances.clear();
 
 		for (auto& kv : killValidations)
 			kv = KillConfirmation {};
