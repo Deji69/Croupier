@@ -28,18 +28,25 @@ namespace Croupier {
 		public List<BingoTile> Tiles => [..Card.Tiles.Where((t, i) => TileIndexes.Contains(i))];
 	}
 
-	public class BingoCard(MissionID mission, ObservableCollection<BingoTile>? tiles = null) : INotifyPropertyChanged {
-		public MissionID Mission = mission;
-		public readonly ObservableCollection<BingoTile> Tiles = tiles ?? [];
+	public class BingoCard : INotifyPropertyChanged {
+		public MissionID Mission = MissionID.NONE;
 		public BingoCardSize Size => size;
+		public ReadOnlyObservableCollection<BingoTile> Tiles => new(tiles);
+
+		private ObservableCollection<BingoTile> tiles = [];
 		private BingoCardSize size = new(0, 0, false);
 
-		public BingoCard() : this(MissionID.NONE) {
-			Tiles.CollectionChanged += (sender, e) => {
+		public BingoCard(MissionID mission = MissionID.NONE) {
+			Mission = mission;
+			tiles.CollectionChanged += (sender, e) => {
 				OnPropertyChanged(nameof(Tiles));
-				size = GetCardSize();
 				OnPropertyChanged(nameof(Size));
 			};
+		}
+
+		public void Add(BingoTile tile) {
+			tiles.Add(tile);
+			size = GetCardSize();
 		}
 
 		public bool TryAdvance(GameEvents.EventValue ev) {

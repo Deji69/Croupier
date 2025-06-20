@@ -21,7 +21,7 @@ namespace Croupier {
 				var liveTile = (BingoTile)tile.Clone();
 				liveTile.Reset();
 				availableTiles.Remove(tile);
-				card.Tiles.Add(liveTile);
+				card.Add(liveTile);
 			}
 
 			return card;
