@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Croupier.GameEvents {
 	public class SVector3 {
@@ -50,6 +51,10 @@ namespace Croupier.GameEvents {
 	}
 
 	public class EventValue {
+
+	}
+
+	public class DoorUnlockedEventValue : EventValue {
 
 	}
 
@@ -128,7 +133,7 @@ namespace Croupier.GameEvents {
 	}
 
 	public class ActorIdentityEventValue : EventValue {
-		public required uint ActorId { get; set; }
+		public required double ActorId { get; set; }
 		public required string RepositoryId { get; set; }
 		public required bool IsCrowdActor { get; set; }
 	}
@@ -206,12 +211,13 @@ namespace Croupier.GameEvents {
 
 	public class TrespassingEventValue : EventValue {
 		public required bool IsTrespassing { get; set; }
-		public required int RoomId { get; set; }
+		public required double RoomId { get; set; }
 	}
 
 	public class SecuritySystemRecorderEventValue : EventValue {
+		[JsonPropertyName("event")]
 		public required string event_ { get; set; }
-		public required uint camera { get; set; }
-		public required uint recorder { get; set; }
+		public double? camera { get; set; }
+		public double? recorder { get; set; }
 	}
 }

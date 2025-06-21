@@ -45,6 +45,8 @@ Croupier::Croupier() : sharedSpin(spin), respinAction("Respin"), shuffleAction("
 }
 
 Croupier::~Croupier() {
+	if (this->client)
+		this->client->stop();
 	this->SaveConfiguration();
 	this->UninstallHooks();
 }
@@ -227,6 +229,8 @@ auto Croupier::SaveConfiguration() -> void {
 
 	this->file.flush();
 	this->file.close();
+
+	Logger::Info("Croupier - Config saved.");
 }
 
 auto Croupier::ParseSpin(std::string_view sv) -> std::optional<RouletteSpin> {
@@ -341,6 +345,8 @@ auto Croupier::InstallHooks() -> void {
 	//Hooks::SignalOutputPin->AddDetour(this, &Croupier::OnPinOutput);
 
 	this->hooksInstalled = true;
+
+	Logger::Info("Croupier - Hooks installed.");
 }
 
 auto Croupier::UninstallHooks() -> void {
@@ -356,6 +362,8 @@ auto Croupier::UninstallHooks() -> void {
 	//Hooks::SignalOutputPin->RemoveDetour(&Croupier::OnPinOutput);
 
 	this->hooksInstalled = false;
+
+	Logger::Info("Croupier - Hooks uninstalled.");
 }
 
 auto Croupier::OnFrameUpdate(const SGameUpdateEvent& ev) -> void {
@@ -1495,7 +1503,7 @@ auto Croupier::SetupEvents() -> void {
 			if (action && action->m_eActionType == EActionType::AT_PICKUP) {
 				if (const ZHM5Item* item = action->m_Object.QueryInterface<ZHM5Item>()) {
 					if (item->m_pItemConfigDescriptor->m_RepositoryId.ToString() == ZRepositoryID(ev.Value.RepositoryId)) {
-						auto const instanceId = (*action->m_Object.m_pEntity)->m_nEntityId;
+						auto const instanceId = reinterpret_cast<uintptr_t>(item);
 						if (this->sharedSpin.collectedItemInstances.contains(instanceId))
 							continue;
 						this->sharedSpin.collectedItemInstances.insert(instanceId);
@@ -2525,6 +2533,7 @@ static std::set<std::string> eventsNotToSend = {
 	"SprayAndPrayUpdate",
 	"ThisIsMyRifleUpdate",
 	"UpCloseAndPersonalUpdate",
+	"ShotsHit",
 	// Misc. Events
 	"ChallengeCompleted",
 	"ContractSessionMarker",

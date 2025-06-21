@@ -206,9 +206,8 @@ auto CroupierClient::start() -> bool {
 }
 
 auto CroupierClient::stop() -> void {
+	if (!this->keepOpen) return;
 	this->keepOpen = false;
-	this->readThread.join();
-	this->writeThread.join();
 	this->connected = false;
 
 	if (this->sock != INVALID_SOCKET) {
@@ -220,6 +219,8 @@ auto CroupierClient::stop() -> void {
 	}
 
 	WSACleanup();
+	this->readThread.join();
+	this->writeThread.join();
 }
 
 auto CroupierClient::abort() -> void {
@@ -228,8 +229,7 @@ auto CroupierClient::abort() -> void {
 	this->writeThread.detach();
 	this->connected = false;
 
-	if (this->sock != INVALID_SOCKET)
-	{
+	if (this->sock != INVALID_SOCKET) {
 		if (shutdown(this->sock, SD_SEND) == SOCKET_ERROR)
 			Logger::Error("Shutdown failed");
 
@@ -238,6 +238,7 @@ auto CroupierClient::abort() -> void {
 	}
 
 	WSACleanup();
+	Logger::Info("Croupier Shutdown - Socket client ended.");
 }
 
 CroupierClient::~CroupierClient() {

@@ -31,19 +31,19 @@ namespace Croupier
 				Config.Default.Mode = Mode;
 				OnPropertyChanged(nameof(IsSelected));
 			}
-        }
+		}
 
-        public void Refresh() {
-            OnPropertyChanged(nameof(IsSelected));
-            OnPropertyChanged(nameof(Name));
-        }
+		public void Refresh() {
+			OnPropertyChanged(nameof(IsSelected));
+			OnPropertyChanged(nameof(Name));
+		}
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged(string propertyName) {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
+		protected virtual void OnPropertyChanged(string propertyName) {
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		}
+	}
 
 	public class TargetNameFormatEntry(TargetNameFormat id, string name) : INotifyPropertyChanged {
 		public TargetNameFormat ID { get; set; } = id;
@@ -221,8 +221,8 @@ namespace Croupier
 				_gameMode = value;
 				Config.Default.Mode = value;
 				OnPropertyChanged(nameof(Mode));
-                foreach (var entry in GameModeEntries)
-                    entry.Refresh();
+				foreach (var entry in GameModeEntries)
+					entry.Refresh();
 				SetupGameMode();
 				OnPropertyChanged(nameof(SpinGridWidth));
 				OnPropertyChanged(nameof(SpinGridHeight));
@@ -539,8 +539,8 @@ namespace Croupier
 
 		public ObservableCollection<GameModeEntry> GameModeEntries = [
 			new(GameMode.Roulette, "Roulette"),
-            new(GameMode.Bingo, "Bingo"),
-        ];
+			new(GameMode.Bingo, "Bingo"),
+		];
 		public ObservableCollection<ContextSubmenuEntry> HistoryEntries = [];
 		public ObservableCollection<ContextSubmenuEntry> BookmarkEntries = [
 			new("<Add Current>", 0),
@@ -604,12 +604,12 @@ namespace Croupier
 			}
 		}
 
-        private void RegisterWindowPlace() {
-            if (OperatingSystem.IsWindowsVersionAtLeast(7))
-                ((App)Application.Current).WindowPlace.Register(this);
-        }
+		private void RegisterWindowPlace() {
+			if (OperatingSystem.IsWindowsVersionAtLeast(7))
+				((App)Application.Current).WindowPlace.Register(this);
+		}
 
-        public MainWindow() {
+		public MainWindow() {
 			liveSplit = ((App)Application.Current).LiveSplitClient;
 			DataContext = this;
 			InitializeComponent();
@@ -907,7 +907,7 @@ namespace Croupier
 				"SecuritySystemRecorder" => json.Deserialize<GameEvents.SecuritySystemRecorderEventValue>(jsonGameEventSerializerOptions),
 				"BodyBagged" => json.Deserialize<GameEvents.ActorIdentityEventValue>(jsonGameEventSerializerOptions),
 				"BodyHidden" => json.Deserialize<GameEvents.ActorIdentityEventValue>(jsonGameEventSerializerOptions),
-				"Door_Unlocked" => json.Deserialize<GameEvents.EventValue>(jsonGameEventSerializerOptions),
+				"Door_Unlocked" => new GameEvents.DoorUnlockedEventValue(),
 				"Investigate_Curious" => json.Deserialize<GameEvents.InvestigateCuriousEventValue>(jsonGameEventSerializerOptions),
 				"OpportunityEvents" => json.Deserialize<GameEvents.OpportunityEventValue>(jsonGameEventSerializerOptions),
 				"Level_Setup_Events" => json.Deserialize<GameEvents.LevelSetupEventValue>(jsonGameEventSerializerOptions),
@@ -943,19 +943,19 @@ namespace Croupier
 			MissionSelect.ItemsSource = MissionListItems;
 			ContextMenuGameMode.ItemsSource = GameModeEntries;
 			ContextMenuGameMode.DataContext = this;
-            ContextMenuTargetNameFormat.ItemsSource = TargetNameFormatEntries;
-            ContextMenuTargetNameFormat.DataContext = this;
-            ContextMenuHistory.ItemsSource = HistoryEntries;
-            ContextMenuHistory.DataContext = this;
-            ContextMenuBookmarks.ItemsSource = BookmarkEntries;
-            ContextMenuBookmarks.DataContext = this;
+			ContextMenuTargetNameFormat.ItemsSource = TargetNameFormatEntries;
+			ContextMenuTargetNameFormat.DataContext = this;
+			ContextMenuHistory.ItemsSource = HistoryEntries;
+			ContextMenuHistory.DataContext = this;
+			ContextMenuBookmarks.ItemsSource = BookmarkEntries;
+			ContextMenuBookmarks.DataContext = this;
 
-            ContextMenuHistory.Visibility = Mode == GameMode.Roulette ? Visibility.Visible : Visibility.Collapsed;
-            ContextMenuCopySpin.Visibility = Mode == GameMode.Roulette ? Visibility.Visible : Visibility.Collapsed;
-            ContextMenuPasteSpin.Visibility = Mode == GameMode.Roulette ? Visibility.Visible : Visibility.Collapsed;
-            ContextMenuBookmarks.Visibility = Mode == GameMode.Roulette ? Visibility.Visible : Visibility.Collapsed;
-            ContextMenuTargetNameFormat.Visibility = Mode == GameMode.Roulette ? Visibility.Visible : Visibility.Collapsed;
-            ContextMenuRouletteKillConfirmations.Visibility = Mode == GameMode.Roulette ? Visibility.Visible : Visibility.Collapsed;
+			ContextMenuHistory.Visibility = Mode == GameMode.Roulette ? Visibility.Visible : Visibility.Collapsed;
+			ContextMenuCopySpin.Visibility = Mode == GameMode.Roulette ? Visibility.Visible : Visibility.Collapsed;
+			ContextMenuPasteSpin.Visibility = Mode == GameMode.Roulette ? Visibility.Visible : Visibility.Collapsed;
+			ContextMenuBookmarks.Visibility = Mode == GameMode.Roulette ? Visibility.Visible : Visibility.Collapsed;
+			ContextMenuTargetNameFormat.Visibility = Mode == GameMode.Roulette ? Visibility.Visible : Visibility.Collapsed;
+			ContextMenuRouletteKillConfirmations.Visibility = Mode == GameMode.Roulette ? Visibility.Visible : Visibility.Collapsed;
 			ContextMenuTopSeparator.Visibility = Mode == GameMode.Roulette ? Visibility.Visible : Visibility.Collapsed;
 			ContextMenuSpinSeparator.Visibility = Mode == GameMode.Roulette ? Visibility.Visible : Visibility.Collapsed;
 		}
@@ -1857,17 +1857,17 @@ namespace Croupier
 			ContentGrid.Children.Clear();
 			if (card == null) return;
 			var size = (int)Math.Floor(Math.Sqrt(card.Tiles.Count));
-            ContentGrid.Columns = size;
+			ContentGrid.Columns = size;
 			ContentGrid.Rows = size;
-            foreach (var tile in card.Tiles) {
-                var control = new ContentPresenter {
-                    Content = tile,
-                    DataContext = tile,
-                    ContentTemplate = (DataTemplate)Resources["BingoTileDataTemplate"],
-                };
-                ContentGrid.Children.Add(control);
-            }
-        }
+			foreach (var tile in card.Tiles) {
+				var control = new ContentPresenter {
+					Content = tile,
+					DataContext = tile,
+					ContentTemplate = (DataTemplate)Resources["BingoTileDataTemplate"],
+				};
+				ContentGrid.Children.Add(control);
+			}
+		}
 
 		private void SetupSpinUI_AddCondition(SpinCondition condition) {
 			var control = new ContentPresenter {
@@ -1880,18 +1880,18 @@ namespace Croupier
 
 		private void RefitWindow(bool keepSize = false) {
 			if (Mode == GameMode.Bingo) {
-                var h = 53 + (ShowStatusBar ? StatusGrid.ActualHeight : 0);
-                RefitWindow_Bingo(keepSize);
-                SizeToContent = SizeToContent.Manual;
+				var h = 53 + (ShowStatusBar ? StatusGrid.ActualHeight : 0);
+				RefitWindow_Bingo(keepSize);
+				SizeToContent = SizeToContent.Manual;
 				MinHeight = Width * .75 + h;
 				MaxHeight = Width * .75 + h;
 				Height = Width * .75 + h;
 				
-                double v = (Width / 50) * 1.3;
-                SpinFontSize = Math.Max(11.5, v);
+				double v = (Width / 50) * 1.3;
+				SpinFontSize = Math.Max(11.5, v);
 				OnPropertyChanged(nameof(SpinGridWidth));
 				OnPropertyChanged(nameof(SpinGridHeight));
-                return;
+				return;
 			}
 
 			if (StaticSize) {
@@ -1935,7 +1935,7 @@ namespace Croupier
 		}
 
 
-        private double GetContentScale() {
+		private double GetContentScale() {
 			if (VerticalDisplay) {
 				return conditions.Count switch {
 					1 => 2.75,

@@ -254,47 +254,51 @@
 			<UniformGrid
 				x:Name="ContentGrid"
 				Focusable="False"
-				HorizontalAlignment="Stretch"
-				VerticalAlignment="Stretch"
 				KeyboardNavigation.IsTabStop="False"
 			>
                 <Border
                     BorderBrush="Black"
                     BorderThickness="1"
-                    VerticalAlignment="Stretch"
-                    HorizontalAlignment="Stretch"
-                    Width="{Binding DataContext.SpinGridWidth, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorLevel=2, AncestorType=UniformGrid}}"
-                    Height="{Binding DataContext.SpinGridHeight, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorLevel=2, AncestorType=UniformGrid}}"
 				>
                     <Button
-						VerticalAlignment="Stretch"
-                        HorizontalAlignment="Stretch"
                         BorderThickness="0"
                         Click="BingoTile_MouseDown"
-                        
 						OverridesDefaultStyle="True"
                     >
-                        <StackPanel Margin="8,0" Orientation="Vertical">
+                        <Grid
+							Margin="0,0"
+							Width="{Binding DataContext.SpinGridWidth, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorLevel=2, AncestorType=UniformGrid}}"
+							Height="{Binding DataContext.SpinGridHeight, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorLevel=2, AncestorType=UniformGrid}}"
+                            VerticalAlignment="Center"
+                        >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
                             <TextBlock
+                                Grid.Row="0"
 								Text="{Binding GroupText}"
 								TextWrapping="Wrap"
                                 Visibility="{Binding GroupTextVisibility}"
-								VerticalAlignment="Center"
+								VerticalAlignment="Top"
 								HorizontalAlignment="Center"
 								TextAlignment="Center"
-								Foreground="#77AACC"
-                                Margin="0,-10,0,5"
+								Foreground="{Binding GroupTextColor}"
+                                Margin="0,4,0,0"
 								FontSize="{Binding DataContext.BingoGroupFontSize, RelativeSource={RelativeSource AncestorLevel=2, AncestorType=UniformGrid}}" />
                             <TextBlock
+                                Grid.Row="1"
 								Text="{Binding Text}"
 								TextWrapping="Wrap"
 								VerticalAlignment="Center"
 								HorizontalAlignment="Center"
 								TextAlignment="Center"
 								Foreground="White"
+                                Margin="0,-10,0,0"
+                                Padding="9,0"
 								FontSize="{Binding DataContext.SpinFontSize, RelativeSource={RelativeSource AncestorLevel=2, AncestorType=UniformGrid}}">
 							</TextBlock>
-                        </StackPanel>
+                        </Grid>
                         <Button.Style>
                             <Style TargetType="{x:Type Button}">
                                 <Setter Property="Background" Value="#09224499" />
