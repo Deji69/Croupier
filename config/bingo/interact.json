@@ -1,0 +1,40 @@
+[
+	{
+		"Name": "Activate Diorama",
+		"Group": "Interact",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Action", "Interact"],
+		"Setpiece": {
+			"Name": "Diorama_Napoleon_war",
+			"ToolUsed": "Exploded"
+		}
+	},
+	{
+		"Name": "Enter {1} Containers",
+		"Group": "Interact",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Action", "Interact"],
+		"Setpiece": {
+			"Type": ["Enter_Closet", "Enter_Crate"],
+			"Count": 3
+		}
+	},
+	{
+		"Name": "Activate Fire Alarm",
+		"Group": "Interact",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Action", "Interact"],
+		"Setpiece": {
+			"Name": "FireAlarm"
+		}
+	},
+	{
+		"Name": "Release {1} Winches Manually",
+		"Group": "Interact",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Action", "Interact"],
+		"Setpiece": {
+			"RepositoryId": "f2da77b3-2104-42ac-9b8c-3c20d0b60d7f"
+		}
+	}
+]

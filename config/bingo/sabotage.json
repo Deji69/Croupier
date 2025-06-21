@@ -1,0 +1,72 @@
+[
+	{
+		"Name": "Ignite Oil Drum",
+		"Group": "Sabotage",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Action", "Sabotage"],
+		"Setpiece": {
+			"Name": "Explosive_OilDrum",
+			"ToolUsed": "Exploded"
+		}
+	},
+	{
+		"Name": "Explode a Vehicle",
+		"Group": "Sabotage",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Action", "Sabotage"],
+		"Setpiece": {
+			"RepositoryId": "2b29d641-2a0d-4781-b2dd-0df02bc2674b",
+			"ToolUsed": "Exploded"
+		}
+	},
+	{
+		"Name": "Explode {1} Gas Heater Lamps",
+		"Group": "Sabotage",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Action", "Sabotage"],
+		"Setpiece": {
+			"Name": "GasHeaterLamp",
+			"ToolUsed": "Exploded",
+			"Count": 2
+		}
+	},
+	{
+		"Name": "Break Museum Vase",
+		"Group": "Sabotage",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Action", "Sabotage"],
+		"LevelSetupEvent": {
+			"Event": "C_MuseumVase_Destroy"
+		}
+	},
+	{
+		"Name": "Explode Fire Extinguisher",
+		"Group": "Sabotage",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Action", "Sabotage"],
+		"Setpiece": {
+			"RepositoryId": "2b29d641-2a0d-4781-b2dd-0df02bc2674b",
+			"ToolUsed": "Exploded"
+		}
+	},
+	{
+		"Name": "Explode Propane Flask",
+		"Group": "Sabotage",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Action", "Sabotage"],
+		"Setpiece": {
+			"Name": "PropaneFlask",
+			"ToolUsed": "Exploded"
+		}
+	},
+	{
+		"Name": "Explode Gas Canister",
+		"Group": "Sabotage",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Action", "Sabotage"],
+		"Setpiece": {
+			"Name": "GasCanister_Large_A",
+			"ToolUsed": "Exploded"
+		}
+	}
+]
