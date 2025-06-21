@@ -1,0 +1,18 @@
+{
+	"Disguise": {
+		"Name": "Disguise",
+		"Color": "#66BB66"
+	},
+	"Collect": {
+		"Name": "Collect",
+		"Color": "#77AACC"
+	},
+	"Sabotage": {
+		"Name": "Sabotage",
+		"Color": "#FF8877"
+	},
+	"Interact": {
+		"Name": "Interact",
+		"Color": "#CCBB77"
+	}
+}

@@ -42,10 +42,9 @@
 		"Disguise": ["992cc7b6-4ccf-4ae8-a467-e9b2aabaeeb5"]
 	},
 	{
-		"Name": "Sheikh Salman Al-Ghazali",
+		"Name": "Sheikh",
 		"Group": "Disguise",
 		"Missions": ["The Showstopper", "Holiday Hoarders"],
-		"Text": "Become the Sheikh",
 		"Tags": ["Disguise", "Unique", "Civilian"],
 		"Disguise": ["a8ecd823-6e08-4cfe-a04d-816d387fcf0c"]
 	},
