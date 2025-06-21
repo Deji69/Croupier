@@ -50,7 +50,7 @@ struct SharedRouletteSpin {
 	const RouletteSpin& spin;
 	std::set<std::string, InsensitiveCompareLexicographic> killed;
 	std::set<std::string, InsensitiveCompareLexicographic> spottedNotKilled;
-	std::set<uint64_t> collectedItemInstances;
+	std::set<uintptr_t> collectedItemInstances;
 	std::vector<DisguiseChange> disguiseChanges;
 	std::vector<KillConfirmation> killValidations;
 	std::vector<KillSetpieceEvent> killSetpieceEvents;

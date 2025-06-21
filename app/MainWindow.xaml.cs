@@ -907,7 +907,7 @@ namespace Croupier
 				"SecuritySystemRecorder" => json.Deserialize<GameEvents.SecuritySystemRecorderEventValue>(jsonGameEventSerializerOptions),
 				"BodyBagged" => json.Deserialize<GameEvents.ActorIdentityEventValue>(jsonGameEventSerializerOptions),
 				"BodyHidden" => json.Deserialize<GameEvents.ActorIdentityEventValue>(jsonGameEventSerializerOptions),
-				"Door_Unlocked" => json.Deserialize<GameEvents.EventValue>(jsonGameEventSerializerOptions),
+				"Door_Unlocked" => new GameEvents.DoorUnlockedEventValue(),
 				"Investigate_Curious" => json.Deserialize<GameEvents.InvestigateCuriousEventValue>(jsonGameEventSerializerOptions),
 				"OpportunityEvents" => json.Deserialize<GameEvents.OpportunityEventValue>(jsonGameEventSerializerOptions),
 				"Level_Setup_Events" => json.Deserialize<GameEvents.LevelSetupEventValue>(jsonGameEventSerializerOptions),

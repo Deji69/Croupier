@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Media;
 
 namespace Croupier {
 	public abstract class BingoTileTrigger {
@@ -22,9 +23,10 @@ namespace Croupier {
 				var setpiece = json["Setpiece"]!.AsObject();
 				return new BingoTileSetpieceTrigger() {
 					RepositoryId = setpiece["RepositoryId"]?.GetValue<string>(),
-					Name = setpiece["name_metricvalue"]?.GetValue<string>(),
-					Type = setpiece["setpieceType_metricvalue"]?.GetValue<string>(),
-					ToolUsed = setpiece["toolUsed_metricvalue"]?.GetValue<string>(),
+					Name = setpiece["Name"]?.GetValue<string>(),
+					Type = setpiece["Type"]?.GetValue<string>(),
+					ToolUsed = setpiece["ToolUsed"]?.GetValue<string>(),
+					Count = setpiece["Count"]?.GetValue<int>(),
 				};
 			}
 			if (json["Collect"] != null) {
@@ -47,7 +49,7 @@ namespace Croupier {
 					items.Add(node.GetValue<string>());
 				}
 				return new BingoTileDisguiseTrigger() {
-					Items = items
+					Items = items,
 				};
 			}
 			return null;
@@ -59,6 +61,7 @@ namespace Croupier {
 		public string? Name { get; set; }
 		public string? Type { get; set; }
 		public string? ToolUsed { get; set; }
+		public int? Count { get; set; }
 
 		public override bool Test(GameEvents.EventValue ev) {
 			if (ev is GameEvents.SetpiecesEventValue v) {
@@ -73,6 +76,15 @@ namespace Croupier {
 				return true;
 			}
 			return false;
+		}
+
+		public override void Advance(BingoTileState state) {
+			if (Count == null) state.Complete = true;
+			else state.Complete = ++state.Counter >= Count;
+		}
+
+		public override object[] GetFormatArgs(BingoTileState state) {
+			return [state.Counter, Count ?? 1];
 		}
 	}
 
@@ -101,20 +113,9 @@ namespace Croupier {
 
 	public class BingoTileDisguiseTrigger : BingoTileTrigger {
 		public required StringCollection Items { get; set; }
-		public int? Count { get; set; }
-		public int? Max { get; set; }
 
 		public override bool Test(GameEvents.EventValue ev) {
 			return ev is GameEvents.StringEventValue v && Items.Contains(v.Value);
-		}
-
-		public override void Advance(BingoTileState state) {
-			if (Count == null) state.Complete = true;
-			else state.Complete = ++state.Counter >= Count;
-		}
-
-		public override object[] GetFormatArgs(BingoTileState state) {
-			return [];
 		}
 	}
 
@@ -125,15 +126,29 @@ namespace Croupier {
 
 	public partial class BingoTile : INotifyPropertyChanged, ICloneable {
 		public required string Name { get; set; }
-		public string? Group { get; set; }
+		public BingoGroup? Group {
+			get => group;
+			set {
+				group = value;
+				if (group?.Color != null) {
+					groupTextBrush = (SolidColorBrush?)new BrushConverter().ConvertFromString(group.Color) ?? throw new CroupierException("Could not create group text colour brush.");
+					OnPropertyChanged(nameof(GroupTextColor));
+				}
+				OnPropertyChanged(nameof(GroupTextVisibility));
+			}
+		}
+		public string? GroupName => Group?.Name;
 		public required List<MissionID> Missions { get; set; }
 		public required StringCollection Tags { get; set; }
 		public required BingoTileTrigger Trigger { get; set; }
 		public string Text => ToString();
-		public string GroupText => Group != null ? $"{Group}:" : "";
+		public string GroupText => Group != null ? $"{Group.Name}" : "";
 		public Visibility GroupTextVisibility => Group != null ? Visibility.Visible : Visibility.Collapsed;
+		public SolidColorBrush GroupTextColor => groupTextBrush;
 
+		private BingoGroup? group = null;
 		private BingoTileState state = new();
+		private SolidColorBrush groupTextBrush = new(new() { R = 200, G = 200, B = 200 });
 
 		public bool Complete {
 			get => state.Complete;
@@ -173,9 +188,10 @@ namespace Croupier {
 
 		public static BingoTile FromJson(JsonNode json, string? filename = null) {
 			var name = (json["Name"]?.GetValue<string>()) ?? throw new BingoTileConfigException("Invalid 'Name' property.");
-			var group = (json["Group"]?.GetValue<string>());
+			var groupName = (json["Group"]?.GetValue<string>());
 			var tags = (StringCollection)[];
 			var missions = (List<MissionID>)[];
+			var group = Bingo.Main.Groups.Find(g => g.ID == groupName);
 
 			foreach (var node in json["Tags"]?.AsArray() ?? []) {
 				try {
