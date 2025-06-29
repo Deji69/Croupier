@@ -11,6 +11,8 @@ namespace Croupier
 		public bool Suit { get; private set; } = suit;
 		public bool Any { get; private set; } = any;
 		public bool Hostile { get; private set; } = hostile;
+		public bool? Unique { get; set; }
+		public string? RepositoryId { get; set; }
 		public StringCollection Keywords { get; private set; } = keywords ?? [];
 
 		public Uri ImageUri {

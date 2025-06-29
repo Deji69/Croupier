@@ -172,6 +172,7 @@ namespace Croupier
 					App.Current.Dispatcher.Invoke(new Action(() => SpinData?.Invoke(null, rest.First())));
 					return;
 				case "MissionStart":
+					if (rest.Length < 2) return;
 					App.Current.Dispatcher.Invoke(new Action(() => MissionStart?.Invoke(null, new() {
 						Location = rest.First(),
 						Loadout = JsonSerializer.Deserialize<string[]>(rest[1])!,
@@ -218,7 +219,7 @@ namespace Croupier
 					App.Current.Dispatcher.Invoke(new Action(() => LoadFinished?.Invoke(null, 0)));
 					return;
 				case "KillValidation":
-					App.Current.Dispatcher.Invoke(new Action(() => KillValidation?.Invoke(null, rest.First())));
+					App.Current.Dispatcher.Invoke(new Action(() => KillValidation?.Invoke(null, rest.Length > 0 ? rest.First() : "")));
 					return;
 			}
 

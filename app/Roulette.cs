@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
 using System.Text.Json.Nodes;
 
 namespace Croupier {
@@ -13,6 +12,7 @@ namespace Croupier {
 		public List<KillMethod> StandardMethods { get; } = [];
 		public List<KillMethod> WeaponMethods { get; } = [];
 		public List<KillMethod> UniqueMethods { get; } = [];
+		public Dictionary<string, List<Disguise>> DisguiseRepoIdMap { get; private set; } = [];
 		public Dictionary<string, List<object>> MethodKeywordMap { get; private set; } = new() {
 			{ "live", [KillComplication.Live] },
 			{ "ntk", [KillComplication.Live] },
@@ -47,8 +47,18 @@ namespace Croupier {
 		};
 		public List<Mission> Missions { get; } = [];
 
+		private bool loaded = false;
+
 		public IEnumerable<KillMethod> GetUniqueMethods(Target target) {
 			return UniqueMethods.Where(m => m.Target == target.Name);
+		}
+
+		public Disguise? GetDisguiseByRepoId(string repoId, MissionID? missionId = null) {
+			if (DisguiseRepoIdMap.TryGetValue(repoId, out var disguises)) {
+				if (missionId == null) return disguises.First();
+				return disguises.First(d => d.Mission.ID == missionId);
+			}
+			return null;
 		}
 
 		public Mission GetRandomMission() {
@@ -133,14 +143,24 @@ namespace Croupier {
 			return mission;
 		}
 
-
-		public void Load() {
+		public void Load(bool reload = false) {
+			if (loaded && !reload) return;
 			LoadKillMethodsFromFile("config/kill-methods.json");
 			Missions.Clear();
+			DisguiseRepoIdMap.Clear();
 			Mission.All.Clear();
-			foreach (var file in Directory.GetFiles("config/missions", "*.json", SearchOption.TopDirectoryOnly))
-				LoadMissionFromFile(file);
+			foreach (var file in Directory.GetFiles("config/missions", "*.json", SearchOption.TopDirectoryOnly)) {
+				var mission = LoadMissionFromFile(file);
+				foreach (var disguise in mission?.Disguises ?? []) {
+					if (disguise.RepositoryId == null) continue;
+					if (DisguiseRepoIdMap.TryGetValue(disguise.RepositoryId, out var disguises))
+						disguises.Add(disguise);
+					else
+						DisguiseRepoIdMap.Add(disguise.RepositoryId, [disguise]);
+				}
+			}
 			Mission.All.Sort();
+			loaded = true;
 		}
 
 

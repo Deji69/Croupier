@@ -16,6 +16,7 @@ namespace Croupier {
 		public double IGT { get; set; } = 0;
 		public bool SA { get; set; } = false;
 		public bool KillsValidated { get; set; } = false;
+		public bool Won { get; set; } = false;
 	}
 
 	public class MissionStats(MissionID mission) {

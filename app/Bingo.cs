@@ -1,5 +1,4 @@
 ﻿using Croupier.Exceptions;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json.Nodes;
@@ -35,15 +34,19 @@ namespace Croupier {
 		public List<BingoTile> Tiles { get; } = [];
 		public List<BingoGroup> Groups { get; } = [];
 
-		public void Load() {
+		private bool loaded = false;
+
+		public void LoadConfiguration(bool reload = false) {
+			if (loaded && !reload) return;
 			Tiles.Clear();
 			Groups.Clear();
 			if (File.Exists("config/bingo/group.json"))
 				LoadGroupsFromFile("config/bingo/group.json");
-			foreach (var file in Directory.GetFiles("config/bingo", "*.json", SearchOption.TopDirectoryOnly)) {
+			foreach (var file in Directory.GetFiles("config/bingo", "*.json", SearchOption.AllDirectories)) {
 				if (file.EndsWith("group.json")) continue;
 				LoadTilesFromFile(file);
 			}
+			loaded = true;
 		}
 
 		public void LoadGroupsFromFile(string file) {

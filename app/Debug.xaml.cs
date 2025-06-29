@@ -25,10 +25,12 @@ namespace Croupier {
 			InitializeComponent();
 
 			viewModel.PropertyChanged += OnPropertyChanged;
-			main.SpinChanged += OnSpinChanged;
+			GameController.Main.Roulette.SpinEdited += OnSpinChanged;
 		}
 
-		private void OnSpinChanged(object? sender, Spin e) {
+		private void OnSpinChanged(object? sender, Spin? e) {
+			viewModel.LegalSpinText = "";
+			if (e == null) return;
 			if (e.IsLegal())
 				viewModel.LegalSpinText = "Spin is Legal";
 			else
@@ -61,7 +63,7 @@ namespace Croupier {
 
 		private void ValidKills_Click(object sender, RoutedEventArgs e) {
 			var msg = "";
-			foreach (var cond in mainWindow.CurrentSpin?.Conditions ?? []) {
+			foreach (var cond in GameController.Main.Roulette.Spin?.Conditions ?? []) {
 				if (msg.Length > 0) msg += ",";
 				msg += $"{cond.Target.Initials}:2:1:{cond.Target.Initials}";
 			}

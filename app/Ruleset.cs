@@ -1,20 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Linq;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
 namespace Croupier
 {
-	public class RulesetRule(Func<Disguise, KillMethod, Mission, KillComplication, bool> func, StringCollection tags) {
+	public class RulesetRule(Func<Disguise, KillMethod, Mission, KillComplication, bool> func, List<string> tags) {
 		public Func<Disguise, KillMethod, Mission, KillComplication, bool> Func { get; private set; } = func;
-		public StringCollection Tags { get; private set; } = tags ?? [];
+		public List<string> Tags { get; private set; } = tags ?? [];
 	}
 
 	public class Ruleset(string name, RulesetRules rules, Dictionary<string, List<RulesetRule>> tags)
 	{
 		public static Ruleset? Current { get; set; }
+		private static readonly ObservableCollection<Ruleset> rulesets = [];
+		private static readonly ReadOnlyObservableCollection<Ruleset> rulesetsRO = new(rulesets);
+		public static ReadOnlyObservableCollection<Ruleset> Rulesets => rulesetsRO;
 
 		public string Name { get; set; } = name;
 		public RulesetRules Rules { get; private set; } = rules;
@@ -25,8 +30,8 @@ namespace Croupier
 				return [];
 			StringCollection broken = [];
 			foreach (var rule in rules) {
-				if (rule.Func(disguise, method, mission, complication))
-					broken.AddRange([..rule.Tags]);
+				if (!rule.Func(disguise, method, mission, complication)) continue;;
+				broken.AddRange([..rule.Tags]);
 			}
 			return broken;
 		}
@@ -139,6 +144,33 @@ namespace Croupier
 				CommentHandling = JsonCommentHandling.Skip
 			}) ?? throw new Exception($"Unable to read file '{path}'.");
 			return FromJson(roulette, json);
+		}
+
+		public static void LoadConfiguration(bool reload = false) {
+			if (Current != null && !reload) return;
+
+			var files = Directory.GetFiles("rulesets", "*.json");
+
+			rulesets.Clear();
+
+			foreach (var file in files.Reverse()) {
+				var ruleset = LoadFromFile(Roulette.Main, file);
+				if (rulesets.Any(r => r.Name == ruleset.Name))
+					continue;
+				if (ruleset.Name == "Custom")
+					rulesets.Insert(0, ruleset);
+				else
+					rulesets.Add(ruleset);
+			}
+
+			var activeRuleset = rulesets.FirstOrDefault(r => r.Name == Config.Default.Ruleset)
+				?? rulesets.FirstOrDefault(r => r.Name == "RR17")
+				?? rulesets.FirstOrDefault();
+
+			if (activeRuleset != null) {
+				Current = activeRuleset;
+				Config.Default.Ruleset = Current.Name;
+			}
 		}
 	}
 }

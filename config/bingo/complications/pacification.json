@@ -1,0 +1,120 @@
+[
+	{
+		"Name": "No Target KOs",
+		"Type": "Complication",
+		"Group": "Pacification",
+		"Difficulty": "VeryHigh",
+		"Pacify": {
+			"IsTarget": true
+		}
+	},
+	{
+		"Name": "No Non-Target KOs",
+		"Type": "Complication",
+		"Group": "Pacification",
+		"Difficulty": "VeryHigh",
+		"Pacify": {
+			"IsTarget": false
+		}
+	},
+	{
+		"Name": "No Male KOs",
+		"Type": "Complication",
+		"Group": "Pacification",
+		"Difficulty": "High",
+		"Pacify": {
+			"IsFemale": false
+		}
+	},
+	{
+		"Name": "No Female KOs",
+		"Type": "Complication",
+		"Group": "Pacification",
+		"Difficulty": "High",
+		"Pacify": {
+			"IsFemale": true
+		}
+	},
+	{
+		"Name": "No Guard KOs",
+		"Type": "Complication",
+		"Group": "Pacification",
+		"Difficulty": "High",
+		"Pacify": {
+			"ActorType": "Guard"
+		}
+	},
+	{
+		"Name": "No Civilian KOs",
+		"Type": "Complication",
+		"Group": "Pacification",
+		"Difficulty": "Medium",
+		"Pacify": {
+			"ActorType": "Civilian",
+			"IsTarget": false
+		}
+	},
+	{
+		"Name": "No Same Disguise KOs",
+		"Type": "Complication",
+		"Group": "Pacification",
+		"Difficulty": "Medium",
+		"Pacify": {
+			"ActorHasSameOutfit": true
+		}
+	},
+	{
+		"Name": "No Unique Disguise KOs",
+		"Type": "Complication",
+		"Group": "Pacification",
+		"Difficulty": "Medium",
+		"Pacify": {
+			"ActorOutfitIsUnique": true
+		}
+	},
+	{
+		"Name": "No Melee KOs",
+		"Type": "Complication",
+		"Group": "Pacification",
+		"Difficulty": "Medium",
+		"Pacify": {
+			"KillMethodBroad": "melee_lethal"
+		}
+	},
+	{
+		"Name": "No Throw KOs",
+		"Type": "Complication",
+		"Group": "Pacification",
+		"Difficulty": "Medium",
+		"Pacify": {
+			"KillMethodBroad": "throw"
+		}
+	},
+	{
+		"Name": "No Sedative KOs",
+		"Type": "Complication",
+		"Group": "Pacification",
+		"Difficulty": "Medium",
+		"Pacify": {
+			"DamageEvents": "Sedated"
+		}
+	},
+	{
+		"Name": "Only Sedative and Accident KOs",
+		"Type": "Complication",
+		"Group": "Pacification",
+		"Difficulty": "Medium",
+		"Pacify": {
+			"NOT": {
+				"OR": [
+					{
+						"DamageEvents": "Sedated"
+					},
+					{
+						"Accident": true
+					}
+				]
+			}
+		}
+	}
+]

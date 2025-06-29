@@ -1,0 +1,59 @@
+[
+	{
+		"Name": "No Disguise Changes",
+		"Type": "Complication",
+		"Difficulty": "High",
+		"Disguise": []
+	},
+	{
+		"Name": "No Civilian Disguises",
+		"Type": "Complication",
+		"Difficulty": "Medium",
+		"OR": [
+			{
+				"Disguise": {
+					"ActorType": "Civilian"
+				}
+			},
+			{
+				"StartingSuit": {
+					"ActorType": "Civilian"
+				}
+			}
+		]
+	},
+	{
+		"Name": "No Guard Disguises",
+		"Type": "Complication",
+		"Difficulty": "Medium",
+		"OR": [
+			{
+				"Disguise": {
+					"ActorType": "Guard"
+				}
+			},
+			{
+				"StartingSuit": {
+					"ActorType": "Guard"
+				}
+			}
+		]
+	},
+	{
+		"Name": "No Waiter Disguises",
+		"Type": "Complication",
+		"Difficulty": "Medium",
+		"OR": [
+			{
+				"Disguise": {
+					"OutfitType": "Waiter"
+				}
+			},
+			{
+				"StartingSuit": {
+					"OutfitType": "Waiter"
+				}
+			}
+		]
+	}
+]

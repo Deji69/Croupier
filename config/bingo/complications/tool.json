@@ -1,0 +1,57 @@
+[
+	{
+		"Name": "No Emetics",
+		"Type": "Complication",
+		"Group": "Manipulation",
+		"Difficulty": "Medium",
+		"ActorSick": {
+			"NOT": {
+				"_COMMENT": "This Mendoza NPC gets sick naturally and the event looks identical to sieker. There are no reliable indicators for whether the player was who made the NPC sick, so exempt him outright.",
+				"ActorRepositoryId": "eb9793fd-4f4a-4181-aca9-b304beed659e"
+			}
+		}
+	},
+	{
+		"Name": "No Darts",
+		"Type": "Complication",
+		"Group": "Manipulation",
+		"Difficulty": "Medium",
+		"DartHit": {}
+	},
+	{
+		"Name": "No Darts on Targets",
+		"Type": "Complication",
+		"Group": "Manipulation",
+		"Difficulty": "Medium",
+		"DartHit": {
+			"IsTarget": true
+		}
+	},
+	{
+		"Name": "No Darts on Non Targets",
+		"Type": "Complication",
+		"Group": "Manipulation",
+		"Difficulty": "Medium",
+		"DartHit": {
+			"IsTarget": false
+		}
+	},
+	{
+		"Name": "No Emetic Darts",
+		"Type": "Complication",
+		"Group": "Manipulation",
+		"Difficulty": "Medium",
+		"DartHit": {
+			"Sick": true
+		}
+	},
+	{
+		"Name": "No Tranq Darts",
+		"Type": "Complication",
+		"Group": "Manipulation",
+		"Difficulty": "Medium",
+		"DartHit": {
+			"Sedative": true
+		}
+	}
+]

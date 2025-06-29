@@ -1,0 +1,74 @@
+[
+	{
+		"Name": "{1} Male NPCs",
+		"Group": "Pacify",
+		"Tags": ["Action", "Pacify"],
+		"Pacify": {
+			"IsFemale": false,
+			"Count": 3
+		}
+	},
+	{
+		"Name": "{1} Female NPCs",
+		"Group": "Pacify",
+		"Tags": ["Action", "Pacify"],
+		"Pacify": {
+			"IsFemale": true,
+			"Count": 2
+		}
+	},
+	{
+		"Name": "{1} Guard NPCs",
+		"Group": "Pacify",
+		"Tags": ["Action", "Pacify"],
+		"Pacify": {
+			"ActorType": "Guard",
+			"Count": 3
+		}
+	},
+	{
+		"Name": "{1} Civilian NPCs",
+		"Group": "Pacify",
+		"Tags": ["Action", "Pacify"],
+		"Pacify": {
+			"ActorType": "Civilian",
+			"Count": 3
+		}
+	},
+	{
+		"Name": "With Piano",
+		"Group": "Pacify",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Action", "Pacify"],
+		"Pacify": {
+			"SetPieceId": "db6a820c-22ea-496e-a0f2-6823b32a911d"
+		}
+	},
+	{
+		"Name": "With Police Baton",
+		"Group": "Pacify",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Action", "Pacify"],
+		"Pacify": {
+			"KillItemRepositoryId": "db6a820c-22ea-496e-a0f2-6823b32a911d"
+		}
+	},
+	{
+		"Name": "With Golf Club",
+		"Group": "Pacify",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Action", "Pacify"],
+		"Pacify": {
+			"KillItemRepositoryId": "17615866-32e7-4e1e-951d-7ef2ada796e9"
+		}
+	},
+	{
+		"Name": "Helmut Kruger",
+		"Group": "Pacify",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Action", "Pacify"],
+		"Pacify": {
+			"RepositoryId": "ab22f88d-f567-43a2-b20f-0ecc17257ffe"
+		}
+	}
+]

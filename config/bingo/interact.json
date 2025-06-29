@@ -1,21 +1,21 @@
 [
 	{
-		"Name": "Activate Diorama",
-		"Group": "Interact",
-		"Missions": ["The Showstopper", "Holiday Hoarders"],
-		"Tags": ["Action", "Interact"],
-		"Setpiece": {
-			"Name": "Diorama_Napoleon_war",
-			"ToolUsed": "Exploded"
-		}
-	},
-	{
 		"Name": "Enter {1} Containers",
+		"NameSingular": "Enter {1} Container",
 		"Group": "Interact",
-		"Missions": ["The Showstopper", "Holiday Hoarders"],
 		"Tags": ["Action", "Interact"],
 		"Setpiece": {
 			"Type": ["Enter_Closet", "Enter_Crate"],
+			"Unique": "Position",
+			"Count": 3
+		}
+	},
+	{
+		"Name": "Hide {1} Bodies",
+		"NameSingular": "Hide {1} Body",
+		"Group": "Interact",
+		"Tags": ["Action", "Interact"],
+		"BodyHidden": {
 			"Count": 3
 		}
 	},
@@ -29,12 +29,80 @@
 		}
 	},
 	{
-		"Name": "Release {1} Winches Manually",
+		"Name": "Flood {1} Sinks",
+		"NameSingular": "Flood {1} Sink",
 		"Group": "Interact",
 		"Missions": ["The Showstopper", "Holiday Hoarders"],
 		"Tags": ["Action", "Interact"],
 		"Setpiece": {
-			"RepositoryId": "f2da77b3-2104-42ac-9b8c-3c20d0b60d7f"
+			"RepositoryId": "95e7e530-dbd0-4e1a-95f6-8d5c165a7991",
+			"Count": 3
+		}
+	},
+	{
+		"Name": "Activate Diorama",
+		"Group": "Interact",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Action", "Interact"],
+		"Setpiece": {
+			"Name": "Diorama_Napoleon_war"
+		}
+	},
+	{
+		"Name": "Release {1} Winches Manually",
+		"NameSingular": "Release {1} Winch Manually",
+		"Group": "Interact",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Action", "Interact"],
+		"Setpiece": {
+			"RepositoryId": [
+				"f2da77b3-2104-42ac-9b8c-3c20d0b60d7f",
+				"79f2494e-4606-4021-bda0-415a403fbf86"
+			],
+			"Count": 2
+		}
+	},
+	{
+		"Name": "Poison a Sushi Plate",
+		"Group": "Interact",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Action", "Interact"],
+		"Setpiece": {
+			"Helper": "PosionSource_Logic",
+			"RepositoryId": [
+				"d36f17b9-eb30-47ef-967d-994db942c5aa",
+				"20d06859-95e0-4bc9-b9fc-dfbd16196bbb",
+				"f840c3d0-8df5-4971-b9ed-16230258b953",
+				"eb71599a-4c6a-4e9a-8df7-4dace0d0a82e"
+			]
+		}
+	},
+	{
+		"Name": "Poison Sato's Drink",
+		"Group": "Interact",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Action", "Interact"],
+		"Setpiece": {
+			"Helper": "PosionSource_Logic",
+			"RepositoryId": "9d316f01-7701-41b8-a9bb-153908768168"
+		}
+	},
+	{
+		"Name": "Examine Fireworks Schedule",
+		"Group": "Interact",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Action", "Interact"],
+		"Setpiece": {
+			"Name": "Paris_Firework_Schedule"
+		}
+	},
+	{
+		"Name": "Read Cocktail Recipe",
+		"Group": "Interact",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Action", "Interact"],
+		"Setpiece": {
+			"Name": "Paris_Cocktail_Recipe"
 		}
 	}
 ]

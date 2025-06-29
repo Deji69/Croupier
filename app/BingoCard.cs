@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.DirectoryServices.ActiveDirectory;
 using System.Linq;
 
 namespace Croupier {
@@ -29,14 +28,16 @@ namespace Croupier {
 	}
 
 	public class BingoCard : INotifyPropertyChanged {
+		public BingoTileType Mode = BingoTileType.Objective;
 		public MissionID Mission = MissionID.NONE;
 		public BingoCardSize Size => size;
 		public ReadOnlyObservableCollection<BingoTile> Tiles => new(tiles);
 
-		private ObservableCollection<BingoTile> tiles = [];
+		private readonly ObservableCollection<BingoTile> tiles = [];
 		private BingoCardSize size = new(0, 0, false);
 
-		public BingoCard(MissionID mission = MissionID.NONE) {
+		public BingoCard(BingoTileType mode, MissionID mission = MissionID.NONE) {
+			Mode = mode;
 			Mission = mission;
 			tiles.CollectionChanged += (sender, e) => {
 				OnPropertyChanged(nameof(Tiles));
@@ -52,11 +53,25 @@ namespace Croupier {
 		public bool TryAdvance(GameEvents.EventValue ev) {
 			bool advanced = false;
 			foreach (var tile in Tiles) {
-				if (!tile.Trigger.Test(ev)) continue;
+				if (!tile.Test(ev)) continue;
 				tile.Advance();
 				advanced = true;
 			}
 			return advanced;
+		}
+
+		public bool HasWon() {
+			var numCompleted = Tiles.Count(t => t.Complete);
+			if (numCompleted == Tiles.Count)
+				return true;
+
+			for (var row = 0; row < Size.Rows; ++row) {
+				if (TestRow(row)) return true;
+			}
+			for (var col = 0; col < Size.Columns; ++col) {
+				if (TestColumn(col)) return true;
+			}
+			return TestDiagonal() || TestReverseDiagonal();
 		}
 
 		public BingoWinResult? CheckWin() {
@@ -77,17 +92,37 @@ namespace Croupier {
 			if (TestReverseDiagonal())
 				return new(this, BingoWinType.Diagonal, GetReverseDiagonalIndexes());
 
-			if (numCompleted > Tiles.Count / 2)
-				return new(this, BingoWinType.Majority, [..Tiles.Where(t => t.Complete).Select((t, i) => i)]);
-
+			//if (numCompleted > Tiles.Count / 2)
+			//	return new(this, BingoWinType.Majority, [..Tiles.Where(t => t.Complete).Select((t, i) => i)]);
 			return null;
 		}
 
-		public bool TestPosition(int col, int row) {
+		public void Finish() {
+			if (Mode != BingoTileType.Complication) return;
+			for (var row = 0; row < Size.Rows; ++row) {
+				if (TestRow(row))
+					ScoreIndexes(GetRowIndexes(row));
+			}
+			for (var col = 0; col < Size.Columns; ++col) {
+				if (TestColumn(col))
+					ScoreIndexes(GetColumnIndexes(col));
+			}
+			if (TestDiagonal())
+				ScoreIndexes(GetDiagonalIndexes());
+			if (TestReverseDiagonal())
+				ScoreIndexes(GetReverseDiagonalIndexes());
+		}
+
+		public int PositionToIndex(int col, int row) {
 			if (col >= Size.Rows) throw new BingoException("Noot noot (1)");
 			if (row >= Size.Columns) throw new BingoException("Noot noot (2)");
-			if (col * row > Tiles.Count) throw new BingoException("Noot noot (3)");
-			return Tiles[col * row].Complete;
+			return col + row * Size.Columns;
+		}
+
+		public bool TestPosition(int col, int row) {
+			var idx = PositionToIndex(col, row);
+			if (idx >= Tiles.Count) throw new BingoException("Noot noot (3)");
+			return Tiles[idx].Complete;
 		}
 
 		public bool TestDiagonal() {
@@ -123,14 +158,14 @@ namespace Croupier {
 		public List<int> GetRowIndexes(int row) {
 			List<int> indexes = [];
 			for (var col = 0; col < Size.Columns; ++col)
-				indexes.Add(row * col);
+				indexes.Add(PositionToIndex(col, row));
 			return indexes;
 		}
 
 		public List<int> GetColumnIndexes(int col) {
 			List<int> indexes = [];
 			for (var row = 0; row < Size.Columns; ++row)
-				indexes.Add(row * col);
+				indexes.Add(PositionToIndex(col, row));
 			return indexes;
 		}
 
@@ -138,7 +173,7 @@ namespace Croupier {
 			if (!IsCardSquare()) return [];
 			List<int> indexes = [];
 			for (int col = 0, row = 0; col * row < Tiles.Count; ++row, ++col)
-				indexes.Add(row * col);
+				indexes.Add(PositionToIndex(col, row));
 			return indexes;
 		}
 
@@ -146,8 +181,15 @@ namespace Croupier {
 			if (!IsCardSquare()) return [];
 			List<int> indexes = [];
 			for (int col = Size.Columns - 1, row = Size.Rows - 1; col > 0 && row > 0; --row, --col)
-				indexes.Add(row * col);
+				indexes.Add(PositionToIndex(col, row));
 			return indexes;
+		}
+
+		private void ScoreIndexes(List<int> indexes) {
+			foreach (var idx in indexes) {
+				if (idx >= Tiles.Count) continue;
+				Tiles[idx].Score();
+			}
 		}
 
 		private bool IsCardSquare() {

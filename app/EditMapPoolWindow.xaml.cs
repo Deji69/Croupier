@@ -182,9 +182,6 @@ namespace Croupier
 
 	public partial class EditMapPoolWindow : Window, INotifyPropertyChanged
 	{
-		public event EventHandler<MissionID> AddMissionToPool;
-		public event EventHandler<MissionID> RemoveMissionFromPool;
-
 		private readonly ObservableCollection<MissionPoolGroup> _MissionPoolList = [
 			new("Prologue", [
 				new(MissionID.ICAFACILITY_FREEFORM, "Freeform Training"),
@@ -275,18 +272,9 @@ namespace Croupier
 				Config.Default.CustomMissionPool.AddRange(unique);
 			}
 
-			AddMissionToPool += (object? sender, MissionID e) => {
+			GameController.Main.MissionPoolUpdated += (sender, id) => {
 				if (!IsCustomPoolSelected) return;
-				var key = e.GetKey();
-				if (!Config.Default.CustomMissionPool.Contains(key))
-					Config.Default.CustomMissionPool.Add(key);
-				Config.Save();
-
-				customMissionPoolPresetEntry.Name = "Custom (" + Config.Default.CustomMissionPool.Count.ToString() + ")";
-			};
-			RemoveMissionFromPool += (object? sender, MissionID e) => {
-				if (!IsCustomPoolSelected) return;
-				Config.Default.CustomMissionPool.Remove(e.GetKey());
+				Config.Default.CustomMissionPool = [..GameController.Main.MissionPool.Select(m => m.GetKey())];
 				Config.Save();
 				customMissionPoolPresetEntry.Name = "Custom (" + Config.Default.CustomMissionPool.Count.ToString() + ")";
 			};
@@ -305,7 +293,7 @@ namespace Croupier
 			if (checkbox.DataContext is not MissionPoolGroup) return;
 			var group = (MissionPoolGroup)checkbox.DataContext;
 			foreach (var entry in group.Entries)
-				AddMissionToPool?.Invoke(this, entry.MissionID);
+				GameController.Main.MissionPool.Add(entry.MissionID);
 		}
 
 		private void GroupCheckBox_Unchecked(object sender, RoutedEventArgs e)
@@ -314,7 +302,7 @@ namespace Croupier
 			if (checkbox.DataContext is not MissionPoolGroup) return;
 			var group = (MissionPoolGroup)checkbox.DataContext;
 			foreach (var entry in group.Entries)
-				RemoveMissionFromPool?.Invoke(this, entry.MissionID);
+				GameController.Main.MissionPool.Remove(entry.MissionID);
 		}
 
 		private void CheckBox_Checked(object sender, RoutedEventArgs e)
@@ -323,7 +311,7 @@ namespace Croupier
 			if (checkbox.DataContext is not MissionPoolEntry) return;
 			var entry = (MissionPoolEntry)checkbox.DataContext;
 			entry.IsInPool = true;
-			AddMissionToPool?.Invoke(this, entry.MissionID);
+			GameController.Main.AddMissionToPool(entry.MissionID);
 		}
 
 		private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
@@ -332,7 +320,7 @@ namespace Croupier
 			if (checkbox.DataContext is not MissionPoolEntry) return;
 			var entry = (MissionPoolEntry)checkbox.DataContext;
 			entry.IsInPool = false;
-			RemoveMissionFromPool?.Invoke(this, entry.MissionID);
+			GameController.Main.RemoveMissionFromPool(entry.MissionID);
 		}
 
 		private void MissionPoolPresetComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

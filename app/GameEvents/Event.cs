@@ -4,9 +4,9 @@ using System.Text.Json.Serialization;
 
 namespace Croupier.GameEvents {
 	public class SVector3 {
-		public required double x { get; set; }
-		public required double y { get; set; }
-		public required double z { get; set; }
+		public required double X { get; set; }
+		public required double Y { get; set; }
+		public required double Z { get; set; }
 	}
 
 	public enum EActorType {
@@ -14,6 +14,14 @@ namespace Croupier.GameEvents {
 		eAT_Guard    = 1,
 		eAT_Hitman   = 2,
 		eAT_Last     = 3,
+	};
+	public enum EOutfitType {
+		eOT_None      = 0,
+		eOT_Suit      = 1,
+		eOT_Guard     = 2,
+		eOT_Worker    = 3,
+		eOT_Waiter    = 4,
+		eOT_LucasGrey = 5,
 	};
 	public enum EKillType {
 		EKillType_Undefined = 0,
@@ -44,9 +52,17 @@ namespace Croupier.GameEvents {
 		eDT_BLOODY_KILL = 3,
 	}
 
+	public enum SecuritySystemRecorderEvent {
+		Undefined,
+		Spotted,
+		Erased,
+		Destroyed,
+		CameraDestroyed,
+	};
+
 	public class Event {
 		public required string Name { get; set; }
-		public required double Timestamp { get; set; }
+		public double Timestamp { get; set; }
 		public object? Value { get; set; }
 	}
 
@@ -55,6 +71,10 @@ namespace Croupier.GameEvents {
 	}
 
 	public class DoorUnlockedEventValue : EventValue {
+
+	}
+
+	public class DoorBrokenEventValue : EventValue {
 
 	}
 
@@ -80,43 +100,52 @@ namespace Croupier.GameEvents {
 
 	public class PacifyEventValue : EventValue {
 		public required string RepositoryId { get; set; }
-		public required uint ActorId { get; set; }
 		public required string ActorName { get; set; }
 		public required EActorType ActorType { get; set; }
 		public required EKillType KillType { get; set; }
 		public required EDeathContext KillContext { get; set; }
 		public required string KillClass { get; set; }
-		public required bool Accident { get; set; }
-		public required bool WeaponSilenced { get; set; }
-		public required bool Explosive { get; set; }
-		public required int ExplosionType { get; set; }
-		public required bool Projectile { get; set; }
-		public required bool Sniper { get; set; }
-		public required bool IsHeadshot { get; set; }
-		public required bool IsTarget { get; set; }
-		public required bool ThroughWall { get; set; }
-		public required int BodyPartId { get; set; }
-		public required double TotalDamage { get; set; }
-		public required bool IsMoving { get; set; }
-		public required int RoomId { get; set; }
-		public required string ActorPosition { get; set; }
-		public required string HeroPosition { get; set; }
-		public required List<string> DamageEvents { get; set; }
-		public required int PlayerId { get; set; }
-		public required string OutfitRepositoryId { get; set; }
-		public required string SetPieceId { get; set; }
-		public required string SetPieceType { get; set; }
-		public required bool OutfitIsHitmanSuit { get; set; }
-		public required string KillMethodBroad { get; set; }
-		public required string KillMethodStrict { get; set; }
-		public required int EvergreenRarity { get; set; }
-		public required List<DamageHistoryEventValue> History { get; set; }
+		public bool? Accident { get; set; }
+		public bool? WeaponSilenced { get; set; }
+		public bool? Explosive { get; set; }
+		public int? ExplosionType { get; set; }
+		public bool? Projectile { get; set; }
+		public bool? Sniper { get; set; }
+		public bool? IsHeadshot { get; set; }
+		public bool? IsTarget { get; set; }
+		public bool? ThroughWall { get; set; }
+		public int? BodyPartId { get; set; }
+		public double? TotalDamage { get; set; }
+		public bool? IsMoving { get; set; }
+		public int? RoomId { get; set; }
+		public List<string>? DamageEvents { get; set; }
+		public int? PlayerId { get; set; }
+		public string? OutfitRepositoryId { get; set; }
+		public string? SetPieceId { get; set; }
+		public string? SetPieceType { get; set; }
+		public bool? OutfitIsHitmanSuit { get; set; }
+		public string? KillMethodBroad { get; set; }
+		public string? KillMethodStrict { get; set; }
+		public int? EvergreenRarity { get; set; }
+		public string? KillItemRepositoryId { get; set; }
+		//public string? KillItemInstanceId { get; set; }
+		public string? KillItemCategory { get; set; }
+		public List<DamageHistoryEventValue>? History { get; set; }
+
+		// Imbued
+		public bool? ActorHasDisguise { get; set; }
+		public EOutfitType? ActorOutfitType { get; set; }
+		public bool? IsFemale { get; set; }
+		public bool? ActorHasSameOutfit { get; set; }
+		public string? ActorOutfitRepositoryId { get; set; }
+		public SVector3? ActorPosition { get; set; }
+		public SVector3? HeroPosition { get; set; }
+
+		// Self Imbued
+		public bool? ActorOutfitIsUnique { get; set; }
 	}
 
 	public class KillEventValue : PacifyEventValue {
-		public required string KillItemRepositoryId { get; set; }
-		public required string KillItemInstanceId { get; set; }
-		public required string KillItemCategory { get; set; }
 	}
 
 	public class StringEventValue(string val) : EventValue {
@@ -135,7 +164,7 @@ namespace Croupier.GameEvents {
 	public class ActorIdentityEventValue : EventValue {
 		public required double ActorId { get; set; }
 		public required string RepositoryId { get; set; }
-		public required bool IsCrowdActor { get; set; }
+		public bool? IsCrowdActor { get; set; }
 	}
 
 	public class InvestigateCuriousEventValue : EventValue {
@@ -155,6 +184,11 @@ namespace Croupier.GameEvents {
 		public required string Contract_Name_metricvalue { get; set; }
 		public required string Location_MetricValue { get; set; }
 		public required string Event_metricvalue { get; set; }
+	}
+
+	public class BodyHiddenEventValue : EventValue {
+		public string? RepositoryId { get; set; }
+		public string? ActorName { get; set; }
 	}
 
 	public class BodyEventValue : EventValue {
@@ -190,8 +224,8 @@ namespace Croupier.GameEvents {
 	}
 
 	public class ActorSickEventValue : EventValue {
-		public required SVector3 ActorPosition { get; set; }
-		public required uint ActorId { get; set; }
+		//public required SVector3 ActorPosition { get; set; }
+		//public required uint ActorId { get; set; }
 		public required string ActorName { get; set; }
 		public required string actor_R_ID { get; set; }
 		public required bool IsTarget { get; set; }
@@ -200,13 +234,17 @@ namespace Croupier.GameEvents {
 		public required EActorType ActorType { get; set; }
 	}
 
+	public class ShotFiredEventValue : EventValue {
+
+	}
+
 	public class DartHitEventValue : EventValue {
 		public required string RepositoryId { get; set; }
 		public required EActorType ActorType { get; set; }
 		public required bool IsTarget { get; set; }
-		public required bool Blind { get; set; }
-		public required bool Sedative { get; set; }
-		public required bool Sick { get; set; }
+		public bool? Blind { get; set; }
+		public bool? Sedative { get; set; }
+		public bool? Sick { get; set; }
 	}
 
 	public class TrespassingEventValue : EventValue {
@@ -214,10 +252,64 @@ namespace Croupier.GameEvents {
 		public required double RoomId { get; set; }
 	}
 
+	public class DisguiseEventValue : EventValue {
+		public required string RepositoryId { get; set; }
+		public string? Title { get; set; }
+		public EActorType? ActorType { get; set; }
+		public bool? IsSuit { get; set; }
+		public EOutfitType? OutfitType { get; set; }
+	}
+
+	public class StartingSuitEventValue : DisguiseEventValue {
+
+	}
+
 	public class SecuritySystemRecorderEventValue : EventValue {
 		[JsonPropertyName("event")]
-		public required string event_ { get; set; }
-		public double? camera { get; set; }
-		public double? recorder { get; set; }
+		public required string Event { get; set; }
+		[JsonPropertyName("camera")]
+		public double? Camera { get; set; }
+		[JsonPropertyName("recorder")]
+		public double? Recorder { get; set; }
+	}
+
+	public class OnIsFullyInCrowdEventValue : EventValue {
+
+	}
+
+	public class OnIsFullyInVegetationEventValue : EventValue {
+
+	}
+
+	public class OnTakeDamageEventValue : EventValue {
+
+	}
+
+	public class InstinctActiveEventValue : EventValue {
+
+	}
+
+	public class IsCrouchWalkingSlowlyEventValue : EventValue {
+
+	}
+
+	public class IsCrouchWalkingEventValue : EventValue {
+
+	}
+
+	public class IsCrouchRunningEventValue : EventValue {
+
+	}
+
+	public class IsRunningEventValue : EventValue {
+
+	}
+
+	public class DrainPipeClimbedEventValue : EventValue {
+
+	}
+
+	public class ItemStashedEventValue : EventValue {
+
 	}
 }
