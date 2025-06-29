@@ -6,9 +6,6 @@
 #include <string>
 #include <string_view>
 #include <vector>
-//#include <unicode/utypes.h>
-//#include <unicode/unistr.h>
-//#include <unicode/translit.h>
 
 // helper type for the visitor #4
 template<class... Ts>
@@ -30,20 +27,6 @@ inline std::string narrow(const std::wstring& wstr)
 }
 
 inline std::string removeDiacritics(const std::string& str) {
-	// UTF-8 std::string -> UTF-16 UnicodeString
-	//icu::UnicodeString source = icu::UnicodeString::fromUTF8(icu::StringPiece(str));
-	//
-	//// Transliterate UTF-16 UnicodeString
-	//UErrorCode status = U_ZERO_ERROR;
-	//icu::Transliterator* accentsConverter = icu::Transliterator::createInstance(
-	//	"NFD; [:M:] Remove; NFC", UTRANS_FORWARD, status);
-	//accentsConverter->transliterate(source);
-	//// TODO: handle errors with status
-	//
-	//// UTF-16 UnicodeString -> UTF-8 std::string
-	//std::string result;
-	//source.toUTF8String(result);
-	//return result;
 	size_t length;
 	char* out = nullptr;
 	if (unac_string("utf-8", str.c_str(), str.size(), &out, &length) == 0) {
