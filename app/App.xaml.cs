@@ -1,4 +1,6 @@
 ﻿using RestoreWindowPlace;
+using System;
+using System.Runtime.Versioning;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -9,6 +11,7 @@ namespace Croupier
 		public readonly HitmapsSpinLink HitmapsSpinLink = new();
 		public readonly LiveSplitClient LiveSplitClient = new();
 
+		[SupportedOSPlatform("windows7.0")]
 		public WindowPlace WindowPlace { get; } = new WindowPlace("app.config");
 
 		public App() : base() {
@@ -21,7 +24,6 @@ namespace Croupier
 		private void Application_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
 		{
 			MessageBox.Show("An unhandled exception just occurred: " + e.Exception.Message, "Exception", MessageBoxButton.OK, MessageBoxImage.Error);
-			//e.Handled = true;
 		}
 
 		protected override void OnExit(ExitEventArgs e)
@@ -30,7 +32,8 @@ namespace Croupier
 			HitmapsSpinLink.ForceStop();
 			base.OnExit(e);
 			Config.Save(true);
-			WindowPlace.Save();
+			if (OperatingSystem.IsWindowsVersionAtLeast(7))
+				WindowPlace.Save();
 		}
 	}
 }

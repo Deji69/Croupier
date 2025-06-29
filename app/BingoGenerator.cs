@@ -3,15 +3,16 @@ using System;
 using System.Collections.Generic;
 
 namespace Croupier {
-	public class BingoGenerator {
+	public class BingoGenerator(BingoTileType mode = BingoTileType.Objective) {
 		private static readonly Random random = new();
+		private readonly BingoTileType Mode = mode;
 
-		public static BingoCard Generate(int tiles = 25, MissionID missionId = MissionID.NONE) {
+		public BingoCard Generate(int tiles = 25, MissionID missionId = MissionID.NONE) {
 			if (missionId == MissionID.NONE)
 				missionId = Mission.GetRandomMissionID();
 			var mission = Mission.Get(missionId);
-			BingoCard card = new(mission.ID);
-			var availableTiles = Bingo.Main.Tiles.FindAll(t => t.Missions.Contains(mission.ID));
+			BingoCard card = new(Mode, mission.ID);
+			var availableTiles = GetTiles(missionId);
 
 			if (availableTiles.Count < tiles)
 				throw new BingoGeneratorException($"Insufficient {mission.Name} tiles available for {tiles}-tile board.");
@@ -25,6 +26,16 @@ namespace Croupier {
 			}
 
 			return card;
+		}
+
+		private List<BingoTile> GetTiles(MissionID missionID) {
+			return Bingo.Main.Tiles.FindAll(t => {
+				if (t.Disabled)
+					return false;
+				if (t.Missions.Count != 0 && !t.Missions.Contains(missionID))
+					return false;
+				return t.Type == Mode;
+			});
 		}
 	}
 }

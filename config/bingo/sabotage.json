@@ -1,5 +1,31 @@
 [
 	{
+		"Name": "Erase Security Recorder",
+		"Group": "Sabotage",
+		"Missions": [],
+		"Tags": ["Action", "Sabotage"],
+		"SecuritySystemRecorder": {
+			"OR": [
+				{ "Event": "Erased" },
+				{ "Event": "Destroyed" }
+			]
+		}
+	},
+	{
+		"Name": "Destroy {1} Cameras",
+		"NameSingular": "Destroy {1} Camera",
+		"Group": "Sabotage",
+		"Missions": [],
+		"Tags": ["Action", "Sabotage"],
+		"SecuritySystemRecorder": {
+			"Count": 3,
+			"OR": [
+				{ "Event": "Erased" },
+				{ "Event": "Destroyed" }
+			]
+		}
+	},
+	{
 		"Name": "Ignite Oil Drum",
 		"Group": "Sabotage",
 		"Missions": ["The Showstopper", "Holiday Hoarders"],
@@ -21,6 +47,7 @@
 	},
 	{
 		"Name": "Explode {1} Gas Heater Lamps",
+		"NameSingular": "Explode {1} Gas Heater Lamp",
 		"Group": "Sabotage",
 		"Missions": ["The Showstopper", "Holiday Hoarders"],
 		"Tags": ["Action", "Sabotage"],

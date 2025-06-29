@@ -1,4 +1,5 @@
 ﻿using Croupier.Exceptions;
+using Croupier.GameEvents;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -9,123 +10,23 @@ using System.Windows;
 using System.Windows.Media;
 
 namespace Croupier {
-	public abstract class BingoTileTrigger {
-		public abstract bool Test(GameEvents.EventValue ev);
-		public virtual void Advance(BingoTileState state) {
-			state.Complete = true;
-		}
-		public virtual object[] GetFormatArgs(BingoTileState state) {
-			return [];
-		}
-
-		public static BingoTileTrigger? FromJson(JsonNode json) {
-			if (json["Setpiece"] != null) {
-				var setpiece = json["Setpiece"]!.AsObject();
-				return new BingoTileSetpieceTrigger() {
-					RepositoryId = setpiece["RepositoryId"]?.GetValue<string>(),
-					Name = setpiece["Name"]?.GetValue<string>(),
-					Type = setpiece["Type"]?.GetValue<string>(),
-					ToolUsed = setpiece["ToolUsed"]?.GetValue<string>(),
-					Count = setpiece["Count"]?.GetValue<int>(),
-				};
-			}
-			if (json["Collect"] != null) {
-				var collect = json["Collect"]!.AsObject();
-				StringCollection items = [];
-				foreach (var node in collect["Items"]?.AsArray() ?? []) {
-					if (node == null) continue;
-					items.Add(node.GetValue<string>());
-				}
-				return new BingoTileCollectTrigger() {
-					Items = items,
-					Count = collect["Count"]?.GetValue<int>(),
-					Max = collect["Max"]?.GetValue<int>(),
-				};
-			}
-			if (json["Disguise"] != null) {
-				StringCollection items = [];
-				foreach (var node in json["Disguise"]?.AsArray() ?? []) {
-					if (node == null) continue;
-					items.Add(node.GetValue<string>());
-				}
-				return new BingoTileDisguiseTrigger() {
-					Items = items,
-				};
-			}
-			return null;
-		}
-	}
-
-	public class BingoTileSetpieceTrigger : BingoTileTrigger {
-		public string? RepositoryId { get; set; }
-		public string? Name { get; set; }
-		public string? Type { get; set; }
-		public string? ToolUsed { get; set; }
-		public int? Count { get; set; }
-
-		public override bool Test(GameEvents.EventValue ev) {
-			if (ev is GameEvents.SetpiecesEventValue v) {
-				if (Name != null && v.name_metricvalue != Name)
-					return false;
-				if (Type != null && v.setpieceType_metricvalue != Type)
-					return false;
-				if (ToolUsed != null && v.toolUsed_metricvalue != ToolUsed)
-					return false;
-				if (RepositoryId != null && v.RepositoryId != RepositoryId)
-					return false;
-				return true;
-			}
-			return false;
-		}
-
-		public override void Advance(BingoTileState state) {
-			if (Count == null) state.Complete = true;
-			else state.Complete = ++state.Counter >= Count;
-		}
-
-		public override object[] GetFormatArgs(BingoTileState state) {
-			return [state.Counter, Count ?? 1];
-		}
-	}
-
-	public class BingoTileCollectTrigger : BingoTileTrigger {
-		public required StringCollection Items { get; set; }
-		public int? Count { get; set; }
-		public int? Max { get; set; }
-
-		public override bool Test(GameEvents.EventValue ev) {
-			if (ev is GameEvents.ItemPickedUpEventValue v) {
-				if (v.InstanceId.Length == 0) return false;
-				return Items.Contains(v.RepositoryId);
-			}
-			return false;
-		}
-
-		public override void Advance(BingoTileState state) {
-			if (Count == null) state.Complete = true;
-			else state.Complete = ++state.Counter >= Count;
-		}
-
-		public override object[] GetFormatArgs(BingoTileState state) {
-			return [state.Counter, Count ?? 1];
-		}
-	}
-
-	public class BingoTileDisguiseTrigger : BingoTileTrigger {
-		public required StringCollection Items { get; set; }
-
-		public override bool Test(GameEvents.EventValue ev) {
-			return ev is GameEvents.StringEventValue v && Items.Contains(v.Value);
-		}
+	public enum BingoTileType {
+		Objective,
+		Complication,
 	}
 
 	public class BingoTileState {
 		public bool Complete { get; set; } = false;
 		public int Counter { get; set; } = 0;
+		public object? Data { get; set; } = null;
+		public object? History { get; set; } = null;
 	}
 
 	public partial class BingoTile : INotifyPropertyChanged, ICloneable {
 		public required string Name { get; set; }
+		public string? NameSingular { get; set; } = null;
+		public BingoTileType Type { get; set; } = BingoTileType.Objective;
+		public bool Disabled { get; set; } = false;
 		public BingoGroup? Group {
 			get => group;
 			set {
@@ -140,39 +41,65 @@ namespace Croupier {
 		public string? GroupName => Group?.Name;
 		public required List<MissionID> Missions { get; set; }
 		public required StringCollection Tags { get; set; }
-		public required BingoTileTrigger Trigger { get; set; }
+		public required BingoTrigger Trigger { get; set; }
 		public string Text => ToString();
 		public string GroupText => Group != null ? $"{Group.Name}" : "";
 		public Visibility GroupTextVisibility => Group != null ? Visibility.Visible : Visibility.Collapsed;
-		public SolidColorBrush GroupTextColor => groupTextBrush;
+		public SolidColorBrush GroupTextColor => Config.Default.EnableGroupTileColors ? groupTextBrush : defaultBrush;
 
 		private BingoGroup? group = null;
 		private BingoTileState state = new();
-		private SolidColorBrush groupTextBrush = new(new() { R = 200, G = 200, B = 200 });
+		private SolidColorBrush groupTextBrush = new(new() { R = 200, G = 200, B = 200, A = 255 });
+		private readonly SolidColorBrush defaultBrush = new(new() { R = 200, G = 200, B = 200, A = 255 });
+		private bool isScored = false;
 
 		public bool Complete {
 			get => state.Complete;
 			set {
 				state.Complete = value;
 				OnPropertyChanged(nameof(Complete));
+				OnPropertyChanged(nameof(Failed));
 			}
 		}
 
+		public bool Achieved => (Type != BingoTileType.Complication || isScored) && state.Complete;
+		public bool Failed => Type == BingoTileType.Complication && !state.Complete;
+
 		public void Reset() {
-			state = new();
+			state = new() {
+				Complete = Type != BingoTileType.Objective
+			};
+			isScored = false;
 			OnPropertyChanged(nameof(Complete));
+			OnPropertyChanged(nameof(Achieved));
+			OnPropertyChanged(nameof(Failed));
+		}
+
+		public bool Test(EventValue ev) {
+			return Trigger.Test(ev, state);
 		}
 
 		public void Advance() {
 			Trigger.Advance(state);
 			OnPropertyChanged(nameof(Text));
 			OnPropertyChanged(nameof(Complete));
+			OnPropertyChanged(nameof(Achieved));
+			OnPropertyChanged(nameof(Failed));
 		}
 
+		public void Score() {
+			isScored = true;
+			OnPropertyChanged(nameof(Achieved));
+		}
+
+		public void RefreshColor() {
+			OnPropertyChanged(nameof(GroupTextColor));
+		}
 
 		public override string ToString() {
-			var args = Trigger.GetFormatArgs(this.state);
-			var res = string.Format(Name, args);
+			var args = Trigger.GetFormatArgs(state);
+			var useSingular = (Trigger.Count ?? 1) - (state.Complete ? 0 : state.Counter) == 1;
+			var res = string.Format(useSingular ? NameSingular ?? Name : Name, args);
 			return res;
 		}
 
@@ -188,10 +115,15 @@ namespace Croupier {
 
 		public static BingoTile FromJson(JsonNode json, string? filename = null) {
 			var name = (json["Name"]?.GetValue<string>()) ?? throw new BingoTileConfigException("Invalid 'Name' property.");
-			var groupName = (json["Group"]?.GetValue<string>());
+			var nameSingular = json["NameSingular"]?.GetValue<string>();
+			var disabled = json["Disabled"]?.GetValue<bool>() ?? false;
+			var groupName = json["Group"]?.GetValue<string>();
 			var tags = (StringCollection)[];
 			var missions = (List<MissionID>)[];
 			var group = Bingo.Main.Groups.Find(g => g.ID == groupName);
+			var typeName = json["Type"]?.GetValue<string>();
+
+			var type = typeName != null ? Enum.Parse<BingoTileType>(typeName) : BingoTileType.Objective;
 
 			foreach (var node in json["Tags"]?.AsArray() ?? []) {
 				try {
@@ -222,14 +154,17 @@ namespace Croupier {
 			try {
 				return new() {
 					Name = name,
+					NameSingular = nameSingular,
+					Disabled = disabled,
+					Type = type,
 					Group = group,
 					Missions = missions,
 					Tags = tags,
-					Trigger = BingoTileTrigger.FromJson(json) ?? throw new BingoTileConfigException($"No trigger logic found in tile."),
+					Trigger = BingoTrigger.FromJson(type, json) ?? throw new BingoTileConfigException($"No trigger logic found in tile."),
 				};
 			}
 			catch (Exception e) {
-				throw new BingoTileConfigException($"Exception while loading bingo tile trigger logic (Name: '{name}')", e);
+				throw new BingoTileConfigException($"Exception while loading bingo tile trigger logic (Name: '{name}').\n{e.Message}", e);
 			}
 		}
 

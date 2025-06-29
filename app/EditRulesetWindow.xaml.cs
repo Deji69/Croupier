@@ -13,9 +13,9 @@ namespace Croupier
 	public partial class EditRulesetWindow : Window, INotifyPropertyChanged
 	{
 		public Ruleset? Ruleset { get; set; }
-		private readonly ObservableCollection<Ruleset> Rulesets;
+		private readonly ReadOnlyObservableCollection<Ruleset> Rulesets;
 
-		public EditRulesetWindow(ObservableCollection<Ruleset> rulesets) {
+		public EditRulesetWindow(ReadOnlyObservableCollection<Ruleset> rulesets) {
 			InitializeComponent();
 			DataContext = this;
 			Rulesets = rulesets;

@@ -8,9 +8,12 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH};${PROJECT_SOURCE_DIR}/deps)
 set(ZHMMODSDK_VER "v3.1.1")
 include(cmake/setup-zhmmodsdk.cmake)
+include(cmake/get-cpm.cmake)
 
 # Set C++ standard to C++23.
 set(CMAKE_CXX_STANDARD 23)
+
+CPMAddPackage("gh:OrfeasZ/ZHMTools@3.6.4")
 
 add_compile_definitions(UNAC_VERSION="1.0.7")
 
@@ -19,7 +22,9 @@ add_library(Croupier SHARED
 	src/Croupier.cpp
 	src/Croupier.h
 	src/json.hpp
-	"src/Roulette.cpp" "src/util.h" "src/EventSystem.h" "src/Events.h" "src/Enums.h" "src/RouletteRuleset.h" "src/RouletteMission.h" "src/CroupierClient.h" "src/CroupierClient.cpp" "src/SpinParser.h" "src/SpinParser.cpp" "src/RouletteMission.cpp" "src/Disguise.h" "src/Target.h" "src/Exception.h" "src/unac.h" "src/unac.c" "deps/iconv.h" "src/KillConfirmation.h" "src/KillMethod.h"  "src/InputUtil.h" "src/InputUtil.cpp")
+	"src/Roulette.cpp" "src/util.h" "src/EventSystem.h" "src/Events.h" "src/Enums.h" "src/RouletteRuleset.h" "src/RouletteMission.h" "src/CroupierClient.h" "src/CroupierClient.cpp" "src/SpinParser.h" "src/SpinParser.cpp" "src/RouletteMission.cpp" "src/Disguise.h" "src/Target.h" "src/Exception.h" "src/unac.h" "src/unac.c" "deps/iconv.h" "src/KillConfirmation.h" "src/KillMethod.h"  "src/InputUtil.h" "src/InputUtil.cpp"  "src/HookImpl.h" "src/ProcessUtils.cpp" "src/ProcessUtils.h"
+	"src/HookImpl.h" "src/ProcessUtils.cpp" "src/ProcessUtils.h"
+)
 
 add_library(unac STATIC)
 target_sources(unac PRIVATE "src/unac.h" "src/unac.c")
@@ -37,6 +42,7 @@ target_compile_options(Croupier PRIVATE -utf-8)
 
 target_link_libraries(Croupier PRIVATE
 	ZHMModSDK
+	ResourceLib_HM3
 	${ICONV_LIB_PATH}
 	Microsoft::DirectX-Guids
 	Microsoft::DirectX-Headers

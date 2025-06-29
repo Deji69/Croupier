@@ -1,0 +1,164 @@
+[
+	{
+		"Name": "No Accident Kills",
+		"Type": "Complication",
+		"Group": "Kill",
+		"Difficulty": "High",
+		"Kill": {
+			"Accident": true
+		}
+	},
+	{
+		"Name": "No Accident Explosion Kills",
+		"Type": "Complication",
+		"Group": "Kill",
+		"Difficulty": "High",
+		"Kill": {
+			"KillMethodStrict": "accident_explosion"
+		}
+	},
+	{
+		"Name": "No Consumed Poison Kills",
+		"Type": "Complication",
+		"Group": "Kill",
+		"Difficulty": "Medium",
+		"Kill": {
+			"KillMethodStrict": "consumed_poison"
+		}
+	},
+	{
+		"Name": "No Drown Kills",
+		"Type": "Complication",
+		"Group": "Kill",
+		"Difficulty": "Low",
+		"Kill": {
+			"KillMethodStrict": "accident_drown"
+		}
+	},
+	{
+		"Name": "No Electrocution Kills",
+		"Type": "Complication",
+		"Group": "Kill",
+		"Difficulty": "Low",
+		"Kill": {
+			"KillMethodStrict": "accident_electric"
+		}
+	},
+	{
+		"Name": "No Suspended Object Kills",
+		"Type": "Complication",
+		"Group": "Kill",
+		"Difficulty": "Medium",
+		"Kill": {
+			"KillMethodStrict": "accident_suspended_object"
+		}
+	},
+	{
+		"Name": "No Headshot Kills",
+		"Type": "Complication",
+		"Group": "Kill",
+		"Difficulty": "Medium",
+		"Kill": {
+			"IsHeadshot": true
+		}
+	},
+	{
+		"Name": "No Injected Poison Kills",
+		"Type": "Complication",
+		"Group": "Kill",
+		"Difficulty": "Medium",
+		"Kill": {
+			"KillMethodStrict": "injected_poison"
+		}
+	},
+	{
+		"Name": "No Non Elimination Firearm Kills",
+		"Type": "Complication",
+		"Group": "Kill",
+		"Difficulty": "Medium",
+		"Kill": {
+			"OR": [
+				{
+					"KillMethodBroad": "pistol"
+				},
+				{
+					"KillMethodBroad": "smg"
+				},
+				{
+					"KillMethodBroad": "shotgun"
+				},
+				{
+					"KillMethodBroad": "assaultrifle"
+				},
+				{
+					"KillMethodBroad": "sniperrifle"
+				}
+			]
+		}
+	},
+	{
+		"Name": "No Pistol Kills",
+		"Type": "Complication",
+		"Group": "Kill",
+		"Difficulty": "Medium",
+		"Kill": {
+			"OR": [
+				{
+					"KillMethodBroad": "pistol"
+				},
+				{
+					"KillMethodBroad": "close_combat_pistol_elimination"
+				}
+			]
+		}
+	},
+	{
+		"Name": "No Poison Kills",
+		"Type": "Complication",
+		"Group": "Kill",
+		"Difficulty": "Medium",
+		"Kill": {
+			"KillClass": "poison"
+		}
+	},
+	{
+		"Name": "No Silenced Weapon Kills",
+		"Type": "Complication",
+		"Group": "Kill",
+		"Difficulty": "Medium",
+		"Kill": {
+			"WeaponSilenced": true
+		}
+	},
+	{
+		"Name": "No Throw Kills",
+		"Type": "Complication",
+		"Group": "Kill",
+		"Difficulty": "Medium",
+		"Kill": {
+			"KillMethodBroad": "throw"
+		}
+	},
+	{
+		"Name": "No Melee Kills",
+		"Type": "Complication",
+		"Group": "Kill",
+		"Difficulty": "Medium",
+		"Kill": {
+			"KillMethodBroad": "melee_lethal",
+			"NOT": {
+				"_COMMENT": "SMG Elimination uses 'melee_lethal' for some reason, check against it.",
+				"KillItemCategory": "smg"
+			}
+		}
+	},
+	{
+		"Name": "No Unarmed Kills",
+		"Type": "Complication",
+		"Group": "Kill",
+		"Difficulty": "Low",
+		"Kill": {
+			"KillMethodBroad": "unarmed"
+		}
+	}
+]

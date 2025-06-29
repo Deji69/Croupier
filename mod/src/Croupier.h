@@ -5,6 +5,7 @@
 #include "InputUtil.h"
 #include "KillConfirmation.h"
 #include "Roulette.h"
+#include <Hooks.h>
 #include <IPluginInterface.h>
 #include <Glacier/Enums.h>
 #include <Glacier/SGameUpdateEvent.h>
@@ -17,6 +18,40 @@
 #include <stack>
 #include <unordered_map>
 
+class ZGlobalOutfitKit;
+
+/*struct SRoomInfoHeader
+{
+    uint8_t PAD[0xD0];
+};
+
+static ZRoomManagerCreator* RoomManagerCreator;
+
+class ZRoomManagerCreator : public IComponentInterface {
+public:
+    ZRoomManager* m_pRoomManager;
+};
+
+static auto ZRoomManager_CheckPointInRoom_Test = reinterpret_cast<bool(__fastcall*)(class ZRoomManager*, float4, SRoomInfoHeader*)>(0x141113CA0);
+
+class ZRoomManager {
+public:
+    int GetRoomID(const float4 vPointWS) {
+        for (size_t i = 0; i < m_RoomHeaders.size(); ++i) {
+            if (ZRoomManager_CheckPointInRoom_Test(this, vPointWS, &m_RoomHeaders[i])) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+private:
+	uint8_t PAD[0x6D0];
+    TArray<SRoomInfoHeader> m_RoomHeaders;
+};
+
+static ZRoomManager** ZRoomManagerPtr = reinterpret_cast<ZRoomManager**>(0x143861288);*/
+
 enum class DockMode {
 	None,
 	TopLeft,
@@ -25,11 +60,34 @@ enum class DockMode {
 	BottomRight,
 };
 
+enum class PlayerMoveType {
+	Unknown,
+	CrouchWalking,
+	CrouchWalkingSlowly,
+	CrouchRunning,
+	Running,
+	Walking,
+	WalkingSlowly,
+};
+
 struct KeyBindAssign {
 	KeyBind key1;
 	KeyBind key2;
 	bool assigning1 = false;
 	bool assigning2 = false;
+};
+
+struct ActorData {
+	const TEntityRef<ZActor>* actor = nullptr;
+	std::optional<ZRepositoryID> repoId = std::nullopt;
+	std::optional<ZRepositoryID> disguiseRepoId = std::nullopt;
+	bool isTarget = false;
+	bool isFemale = false;
+	bool hasDisguise = false;
+	SMatrix43 transform;
+	EActorType actorType = EActorType::eAT_Last;
+	EOutfitType outfitType = EOutfitType::eOT_None;
+	int16_t roomId = -1;
 };
 
 struct KillSetpieceEvent {
@@ -56,6 +114,9 @@ struct SharedRouletteSpin {
 	std::vector<KillSetpieceEvent> killSetpieceEvents;
 	std::vector<LevelSetupEvent> levelSetupEvents;
 	std::vector<LoadoutItemEventValue> loadout;
+	std::array<ActorData, 1000> actorData;
+	std::map<std::string, uint16_t, InsensitiveCompareLexicographic> actorDataRepoIdMap;
+	std::size_t actorDataSize = 0;
 	std::string locationId;
 	std::chrono::steady_clock::time_point timeStarted;
 	std::chrono::seconds timeElapsed = std::chrono::seconds(0);
@@ -69,10 +130,44 @@ struct SharedRouletteSpin {
 	bool hasLoadedGame = false;		// current play session is from a loaded game
 	LONG windowX = 0;
 	LONG windowY = 0;
+	SMatrix43 playerMatrix;
+	PlayerMoveType playerMoveType;
+	bool playerInInstinct = false;
+	bool playerInInstinctSinceFrame = false;
+	int shotFiredPinCounter = 0;
+	std::string room;
+	int16_t roomId = -1;
 
 	SharedRouletteSpin(const RouletteSpin& spin) : spin(spin), timeElapsed(0) {
 		timeStarted = std::chrono::steady_clock().now();
 		this->resetKillValidations();
+	}
+
+	auto reset() -> void {
+		killed.clear();
+		spottedNotKilled.clear();
+		disguiseChanges.clear();
+		killSetpieceEvents.clear();
+		levelSetupEvents.clear();
+		collectedItemInstances.clear();
+		actorDataRepoIdMap.clear();
+
+		playerMoveType = PlayerMoveType::Unknown;
+		playerInInstinct = false;
+
+		for (auto& actorData : this->actorData)
+			actorData = ActorData{};
+
+		this->actorDataSize = 0;
+
+		this->resetKillValidations();
+	}
+
+	auto getActorDataByRepoId(const std::string& repoId) -> ActorData* {
+		auto it = this->actorDataRepoIdMap.find(repoId);
+		if (it != this->actorDataRepoIdMap.end())
+			return &this->actorData[it->second];
+		return nullptr;
 	}
 
 	auto getTargetKillValidation(eTargetID target) const -> KillConfirmation {
@@ -86,7 +181,7 @@ struct SharedRouletteSpin {
 
 	auto getKillConfirmation(size_t idx) -> KillConfirmation& {
 		if (killValidations.size() < spin.getConditions().size())
-			this->resetKillValidations();
+			this->reset();
 		if (idx > killValidations.size()) throw std::exception("Invalid kill confirmation index.");
 		return killValidations[idx];
 	}
@@ -153,7 +248,7 @@ struct SharedRouletteSpin {
 	}
 
 	auto playerStart() {
-		this->resetKillValidations();
+		this->reset();
 
 		if (!this->isPlaying) {
 			this->isPlaying = true;
@@ -161,8 +256,6 @@ struct SharedRouletteSpin {
 			this->isFinished = false;
 		}
 
-		this->killed.clear();
-		this->spottedNotKilled.clear();
 		this->exitIGT = 0;
 		this->isSA = true;
 		this->isCaughtOnCams = false;
@@ -178,7 +271,7 @@ struct SharedRouletteSpin {
 	auto playerLoad() {
 		this->isPlaying = true;
 		this->hasLoadedGame = true;
-		this->resetKillValidations();
+		this->reset();
 	}
 
 	auto playerExit(double timestamp = 0) {
@@ -195,10 +288,6 @@ struct SharedRouletteSpin {
 
 	auto resetKillValidations() -> void {
 		killValidations.resize(spin.getConditions().size());
-		disguiseChanges.clear();
-		killSetpieceEvents.clear();
-		levelSetupEvents.clear();
-		collectedItemInstances.clear();
 
 		for (auto& kv : killValidations)
 			kv = KillConfirmation {};
@@ -236,6 +325,7 @@ public:
 	auto OnDrawMenu() -> void override;
 	auto OnDrawUI(bool p_HasFocus) -> void override;
 	auto OnFrameUpdate(const SGameUpdateEvent&) -> void;
+	auto OnFrameUpdate_PlayMode(const SGameUpdateEvent&) -> void;
 	auto OnMissionSelect(eMission, bool isAuto = true) -> void;
 	auto OnRulesetSelect(eRouletteRuleset) -> void;
 	auto OnRulesetCustomised() -> void;
@@ -246,6 +336,7 @@ public:
 	auto DrawEditMissionPoolUI(bool focused) -> void;
 	auto DrawEditHotkeysUI(bool focused) -> void;
 	auto DrawSpinUI(bool focused) -> void;
+	auto DrawBingoDebugUI(bool focused) -> void;
 	auto Random() -> void;
 	auto Respin(bool isAuto = true) -> void;
 	auto PreviousSpin() -> void;
@@ -273,6 +364,27 @@ public:
 	auto SendSplitTimer() -> void;
 	auto SendLoadStarted() -> void;
 	auto SendLoadFinished() -> void;
+	auto GetOutfitByRepoId(std::string_view repoId) -> const ZGlobalOutfitKit*;
+	auto GetOutfitByRepoId(ZRepositoryID repoId) -> const ZGlobalOutfitKit*;
+
+	template<Events T> auto SendImbuedEvent(const ServerEvent<T>& ev, nlohmann::json eventValue) -> void {
+		nlohmann::json json = {
+			{"Name", ev.Name},
+			{"Timestamp", ev.Timestamp},
+			{"ContractId", ev.ContractId},
+			{"ContractSessionId", ev.ContractSessionId},
+			{"Value", eventValue},
+		};
+		this->client->sendRaw(json.dump());
+	}
+
+	auto SendCustomEvent(std::string_view name, nlohmann::json eventValue) -> void {
+		nlohmann::json json = {
+			{"Name", name},
+			{"Value", eventValue},
+		};
+		this->client->sendRaw(json.dump());
+	}
 
 	auto InstallHooks() -> void;
 	auto UninstallHooks() -> void;
@@ -298,6 +410,7 @@ private:
 	DECLARE_PLUGIN_DETOUR(Croupier, void, OnEventSent, ZAchievementManagerSimple* th, uint32_t eventIndex, const ZDynamicObject& event);
 	DECLARE_PLUGIN_DETOUR(Croupier, void, OnWinHttpCallback, void* dwContext, void* hInternet, void* param_3, int dwInternetStatus, void* param_5, int param_6);
 	DECLARE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pinId, const ZObjectRef& data);
+	DECLARE_PLUGIN_DETOUR(Croupier, bool, OnPinInput, ZEntityRef entity, uint32_t pinId, const ZObjectRef& data);
 
 private:
 	std::unique_ptr<CroupierClient> client;
@@ -312,6 +425,7 @@ private:
 	std::fstream file;
 	std::filesystem::path modulePath;
 	ImVec2 overlaySize = {};
+	ImVec2 debugOverlaySize = {};
 	int uiMissionSelectIndex = 0;
 	bool currentSpinSaved = true;
 	bool showUI = false;

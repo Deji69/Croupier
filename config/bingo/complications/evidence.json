@@ -1,0 +1,22 @@
+[
+	{
+		"Name": "No Cameras Destroyed",
+		"Type": "Complication",
+		"Difficulty": "Medium",
+		"SecuritySystemRecorder": {
+			"Event": "CameraDestroyed"
+		}
+	},
+	{
+		"Name": "No Broken Doors",
+		"Type": "Complication",
+		"Difficulty": "Low",
+		"DoorBroken": {}
+	},
+	{
+		"Name": "Doors Stay Locked",
+		"Type": "Complication",
+		"Difficulty": "Medium",
+		"DoorUnlocked": {}
+	}
+]

@@ -14,5 +14,9 @@
 	"Interact": {
 		"Name": "Interact",
 		"Color": "#CCBB77"
+	},
+	"Pacify": {
+		"Name": "Pacify",
+		"Color": "#CC8833"
 	}
 }

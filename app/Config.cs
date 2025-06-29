@@ -7,15 +7,12 @@ using System.Text.Json;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Croupier {
-    public enum GameMode {
-        Roulette,
-        Bingo,
-    }
-
-    class Config {
+    public class Config {
 		public static event EventHandler<int>? OnSave;
 
-		public static Config Default = new();
+		private static Config _instance = new();
+
+		public static Config Default => _instance;
 
 		public List<string> CustomMissionPool { get; set; } = [];
 		public MissionPoolPresetID MissionPool { get; set; } = MissionPoolPresetID.MainMissions;
@@ -26,6 +23,9 @@ namespace Croupier {
 
         [DefaultValue(GameMode.Roulette)]
         public GameMode Mode { get; set; } = GameMode.Roulette;
+
+		[DefaultValue(true)]
+		public bool EnableGroupTileColors { get; set; } = true;
 
 		public bool CheckUpdate { get; set; } = true;
 		public bool UseNoKOBanner { get; set; } = true;
@@ -48,6 +48,9 @@ namespace Croupier {
 
 		[DefaultValue(25)]
 		public int BingoCardSize { get; set; } = 25;
+
+		[DefaultValue(BingoTileType.Objective)]
+		public BingoTileType BingoTileType { get; set; } = BingoTileType.Objective;
 
 		public bool Streak { get; set; } = false;
 		public bool ShowStreakPB { get; set; } = false;
@@ -80,7 +83,7 @@ namespace Croupier {
 		{
 			try {
 				var json = File.ReadAllText("config.json");
-				Default = JsonSerializer.Deserialize<Config>(json, jsonSerializerOptions)!;
+				_instance = JsonSerializer.Deserialize<Config>(json, jsonSerializerOptions)!;
 			}
 			catch (FileNotFoundException) { }
 			return true;

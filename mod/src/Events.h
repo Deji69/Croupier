@@ -84,9 +84,12 @@ struct PacifyEventValue {
 	std::vector<std::string> DamageEvents;
 	int PlayerId;
 	std::string OutfitRepositoryId;
+	bool OutfitIsHitmanSuit;
 	std::string SetPieceId;
 	std::string SetPieceType;
-	bool OutfitIsHitmanSuit;
+	std::string KillItemRepositoryId;
+	std::string KillItemInstanceId;
+	std::string KillItemCategory;
 	std::string KillMethodBroad;
 	std::string KillMethodStrict;
 	int EvergreenRarity;
@@ -118,9 +121,12 @@ struct PacifyEventValue {
 		DamageEvents(json["DamageEvents"].get<std::vector<std::string>>()),
 		PlayerId(json.value("PlayerId", -1)),
 		OutfitRepositoryId(json.value("OutfitRepositoryId", "")),
+		OutfitIsHitmanSuit(json.value("OutfitIsHitmanSuit", false)),
 		SetPieceId(json.value("SetPieceId", "")),
 		SetPieceType(json.value("SetPieceType", "")),
-		OutfitIsHitmanSuit(json.value("OutfitIsHitmanSuit", false)),
+		KillItemRepositoryId(json.value("KillItemRepositoryId", "")),
+		KillItemInstanceId(json.value("KillItemInstanceId", "")),
+		KillItemCategory(json.value("KillItemCategory", "")),
 		KillMethodBroad(json.value("KillMethodBroad", "")),
 		KillMethodStrict(json.value("KillMethodStrict", "")),
 		EvergreenRarity(json.value("EvergreenRarity", -1))
@@ -134,14 +140,7 @@ struct PacifyEventValue {
 };
 
 struct KillEventValue : PacifyEventValue {
-	std::string KillItemRepositoryId;
-	std::string KillItemInstanceId;
-	std::string KillItemCategory;
-
-	KillEventValue(const nlohmann::json& json) : PacifyEventValue(json),
-		KillItemRepositoryId(json.value("KillItemRepositoryId", "")),
-		KillItemInstanceId(json.value("KillItemInstanceId", "")),
-		KillItemCategory(json.value("KillItemCategory", ""))
+	KillEventValue(const nlohmann::json& json) : PacifyEventValue(json)
 	{
 	}
 };
@@ -499,6 +498,12 @@ struct Event<Events::Agility_Start> {
 template<>
 struct Event<Events::Drain_Pipe_Climbed> {
 	static auto constexpr Name = "Drain_Pipe_Climbed";
+	using EventValue = VoidEventValue;
+};
+
+template<>
+struct Event<Events::DrainPipe_climbed> {
+	static auto constexpr Name = "DrainPipe_climbed";
 	using EventValue = VoidEventValue;
 };
 

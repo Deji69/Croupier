@@ -173,16 +173,19 @@ namespace Croupier
 	public partial class EditSpinWindow : Window
 	{
 		private readonly EditSpinViewModel viewModel = new();
-		public event EventHandler<SpinCondition>? SetCondition;
+		private readonly RouletteGame game;
 
-		public EditSpinWindow(List<SpinCondition> conds)
+		public EditSpinWindow(RouletteGame game)
 		{
-			UpdateConditions(conds);
+			this.game = game;
 			DataContext = viewModel;
 			InitializeComponent();
+			if (game.Spin != null)
+				UpdateConditions(game.Spin.Conditions);
+			game.SpinEdited += OnSpinEdited;
 		}
 
-		public void UpdateConditions(List<SpinCondition> conds)
+		private void UpdateConditions(List<SpinCondition> conds)
 		{
 			viewModel.Conditions.Clear();
 			foreach (var cond in conds) {
@@ -194,16 +197,12 @@ namespace Croupier
 					if (e.PropertyName != nameof(EditSpinCondition.IsEditLegal)
 						&& e.PropertyName != nameof(EditSpinCondition.LegalityText))
 						condition.IsEditLegal = condition.IsLegal();
-					SetCondition?.Invoke(sender, condition);
+
+					game.SetSpinCondition(condition);
 				};
 			}
 
 			RefitWindow();
-		}
-
-		private void OnSizeChange(object sender, SizeChangedEventArgs e)
-		{
-			if (e.WidthChanged) RefitWindow();
 		}
 
 		private void RefitWindow()
@@ -213,6 +212,15 @@ namespace Croupier
 			else if (viewModel.Conditions.Count >= 2) MinHeight = 2 * 104.3 + 40;
 			else if (viewModel.Conditions.Count >= 1) MinHeight = 1 * 104.3 + 40;
 			MaxHeight = viewModel.Conditions.Count * 104.3 + 40;
+		}
+
+		private void OnSizeChange(object sender, SizeChangedEventArgs e) {
+			if (e.WidthChanged) RefitWindow();
+		}
+
+		private void OnSpinEdited(object? sender, Spin? e) {
+			viewModel.Conditions.Clear();
+			if (e != null) UpdateConditions(e.Conditions);
 		}
 	}
 }

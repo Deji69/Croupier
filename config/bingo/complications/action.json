@@ -1,0 +1,109 @@
+[
+	{
+		"Name": "No Climbing Drain Pipes",
+		"Type": "Complication",
+		"Group": "Action",
+		"Difficulty": "Medium",
+		"DrainPipeClimbed": {}
+	},
+	{
+		"Disabled": true,
+		"Name": "No Crouch Running",
+		"Type": "Complication",
+		"Group": "Action",
+		"Difficulty": "High",
+		"IsCrouchRunning": {}
+	},
+	{
+		"Disabled": true,
+		"Name": "No Crouch Movement",
+		"Type": "Complication",
+		"Group": "Action",
+		"Difficulty": "High",
+		"OR": [
+			{
+				"IsCrouchRunning": {}
+			},
+			{
+				"IsCrouchWalking": {}
+			},
+			{
+				"IsCrouchWalkingSlowly": {}
+			}
+		]
+	},
+	{
+		"Name": "No Crouch Move in Trespassing",
+		"Type": "Complication",
+		"Group": "Action",
+		"Difficulty": "High",
+		"OR": [
+			{
+				"IsCrouchRunning": {}
+			},
+			{
+				"IsCrouchWalking": {}
+			},
+			{
+				"IsCrouchWalkingSlowly": {}
+			}
+		]
+	},
+	{
+		"Name": "No Crowd Blending",
+		"Type": "Complication",
+		"Group": "Action",
+		"Difficulty": "Medium",
+		"OnIsFullyInCrowd": {}
+	},
+	{
+		"Name": "No Vegetation Concealing",
+		"Type": "Complication",
+		"Group": "Action",
+		"Difficulty": "Medium",
+		"OnIsFullyInVegetation": {}
+	},
+	{
+		"Name": "No Damage",
+		"Type": "Complication",
+		"Group": "Action",
+		"Difficulty": "Medium",
+		"OnTakeDamage": {}
+	},
+	{
+		"Name": "No Instinct",
+		"Type": "Complication",
+		"Group": "Action",
+		"Difficulty": "Medium",
+		"InstinctActive": {}
+	},
+	{
+		"Disabled": true,
+		"Name": "Only Run While Crouched",
+		"Type": "Complication",
+		"Group": "Action",
+		"Difficulty": "High",
+		"IsRunning": {}
+	},
+	{
+		"Name": "No Shots Fired",
+		"Type": "Complication",
+		"Group": "Action",
+		"Difficulty": "Medium",
+		"ShotFired": {}
+	},
+	{
+		"Name": "No Throwing",
+		"Type": "Complication",
+		"Group": "Action",
+		"Difficulty": "High",
+		"ItemThrown": {}
+	},
+	{
+		"Name": "No Weapons Confiscated",
+		"Type": "Complication",
+		"Group": "Action",
+		"Difficulty": "Easy",
+		"ItemStashed": {}
+	}
+]

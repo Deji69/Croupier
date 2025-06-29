@@ -119,6 +119,8 @@ namespace Croupier
 				if (d == null) continue;
 				var disguiseName = d["Name"]?.GetValue<string>();
 				var disguiseImage = d["Image"]?.GetValue<string>();
+				var repoId = d["RepoId"]?.GetValue<string>();
+				var unique = d["Unique"]?.GetValue<bool>();
 				var suit = d["Suit"]?.GetValue<bool>() ?? false;
 				var hostile = d["Hostile"]?.GetValue<bool>() ?? false;
 				StringCollection kws = [];
@@ -131,7 +133,10 @@ namespace Croupier
 					kws.Add(kw.GetValue<string>()); 
 				}
 
-				mission.Disguises.Add(new(mission, disguiseName, disguiseImage, suit, false, hostile, kws));
+				mission.Disguises.Add(new(mission, disguiseName, disguiseImage, suit, false, hostile, kws) {
+					RepositoryId = repoId,
+					Unique = unique,
+				});
 			}
 
 			All.Add(mission);

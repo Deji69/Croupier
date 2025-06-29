@@ -44,6 +44,7 @@ enum class Events {
 	DisguiseBlown,
 	Door_Unlocked,
 	Drain_Pipe_Climbed,
+	DrainPipe_climbed,
 	ExitGate,
 	ExitTango,
 	FacilityExitEvent,
