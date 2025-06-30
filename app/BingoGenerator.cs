@@ -34,7 +34,7 @@ namespace Croupier {
 					return false;
 				if (t.Missions.Count != 0 && !t.Missions.Contains(missionID))
 					return false;
-				return t.Type == Mode;
+				return Mode == BingoTileType.Mixed || t.Type == Mode;
 			});
 		}
 	}

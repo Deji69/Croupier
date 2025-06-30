@@ -40,6 +40,23 @@
 		]
 	},
 	{
+		"Name": "No Unique Disguises",
+		"Type": "Complication",
+		"Difficulty": "Medium",
+		"OR": [
+			{
+				"Disguise": {
+					"IsUnique": true
+				}
+			},
+			{
+				"StartingSuit": {
+					"IsUnique": true
+				}
+			}
+		]
+	},
+	{
 		"Name": "No Waiter Disguises",
 		"Type": "Complication",
 		"Difficulty": "Medium",

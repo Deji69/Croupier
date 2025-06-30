@@ -45,10 +45,10 @@
 		}
 	},
 	{
-		"Name": "No Suspended Object Kills",
+		"Name": "No Falling Object Kills",
 		"Type": "Complication",
 		"Group": "Kill",
-		"Difficulty": "Medium",
+		"Difficulty": "Low",
 		"Kill": {
 			"KillMethodStrict": "accident_suspended_object"
 		}
@@ -69,6 +69,19 @@
 		"Difficulty": "Medium",
 		"Kill": {
 			"KillMethodStrict": "injected_poison"
+		}
+	},
+	{
+		"Name": "No Melee Kills",
+		"Type": "Complication",
+		"Group": "Kill",
+		"Difficulty": "Medium",
+		"Kill": {
+			"KillMethodBroad": "melee_lethal",
+			"NOT": {
+				"_COMMENT": "SMG Elimination uses 'melee_lethal' for some reason, check against it.",
+				"KillItemCategory": "smg"
+			}
 		}
 	},
 	{
@@ -131,25 +144,21 @@
 		}
 	},
 	{
+		"Name": "No Suspended Object Kills",
+		"Type": "Complication",
+		"Group": "Kill",
+		"Difficulty": "Medium",
+		"Kill": {
+			"KillMethodStrict": "accident_suspended_object"
+		}
+	},
+	{
 		"Name": "No Throw Kills",
 		"Type": "Complication",
 		"Group": "Kill",
 		"Difficulty": "Medium",
 		"Kill": {
 			"KillMethodBroad": "throw"
-		}
-	},
-	{
-		"Name": "No Melee Kills",
-		"Type": "Complication",
-		"Group": "Kill",
-		"Difficulty": "Medium",
-		"Kill": {
-			"KillMethodBroad": "melee_lethal",
-			"NOT": {
-				"_COMMENT": "SMG Elimination uses 'melee_lethal' for some reason, check against it.",
-				"KillItemCategory": "smg"
-			}
 		}
 	},
 	{

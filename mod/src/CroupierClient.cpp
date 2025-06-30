@@ -39,6 +39,7 @@ std::map<eClientMessage, std::string> clientMessageTypeMap = {
 	{eClientMessage::PauseTimer, "PauseTimer"},
 	{eClientMessage::LoadStarted, "LoadStarted"},
 	{eClientMessage::LoadFinished, "LoadFinished"},
+	{eClientMessage::Event, "Event"},
 };
 std::map<std::string, eClientMessage> clientMessageTypeMapRev = {
 	{"Respin", eClientMessage::Respin},
@@ -67,6 +68,7 @@ std::map<std::string, eClientMessage> clientMessageTypeMapRev = {
 	{"PauseTimer", eClientMessage::PauseTimer},
 	{"LoadStarted", eClientMessage::LoadStarted},
 	{"LoadFinished", eClientMessage::LoadFinished},
+	{"Event", eClientMessage::Event},
 };
 
 auto ClientMessage::toString() const -> std::string {
@@ -181,7 +183,7 @@ auto CroupierClient::start() -> bool {
 		}
 	});
 	readThread = std::thread([this] {
-		char buffer[4096] = {0};
+		char buffer[8192] = {0};
 
 		while (this->keepOpen) {
 			if (!this->reconnect()) {

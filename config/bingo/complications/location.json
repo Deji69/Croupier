@@ -3,6 +3,7 @@
 		"Name": "No Entry: Auction Room",
 		"Type": "Complication",
 		"Group": "Location",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
 		"Difficulty": "Medium",
 		"EnterRoom": {
 			"Room": [34]
@@ -12,6 +13,7 @@
 		"Name": "No Entry: Attic",
 		"Type": "Complication",
 		"Group": "Location",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
 		"Difficulty": "Medium",
 		"EnterRoom": {
 			"Room": [1, 5, 17, 18, 28, 35, 62]
@@ -21,61 +23,132 @@
 		"Name": "No Entry: Bar",
 		"Type": "Complication",
 		"Group": "Location",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
 		"Difficulty": "Medium",
 		"EnterRoom": {
 			"Room": [52]
 		}
 	},
 	{
+		"Name": "No Entry: Dressing Room",
+		"Type": "Complication",
+		"Group": "Location",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Difficulty": "Medium",
+		"EnterRoom": {
+			"Room": [13]
+		}
+	},
+	{
+		"Name": "No Entry: Basement",
+		"Type": "Complication",
+		"Group": "Location",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Difficulty": "High",
+		"EnterRoom": {
+			"Room": [0, 2, 3, 9, 10, 11, 19, 20, 23, 30, 32, 46, 56, 60, 61, 74]
+		}
+	},
+	{
 		"Name": "No Entry: Entrance Hall",
 		"Type": "Complication",
 		"Group": "Location",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
 		"Difficulty": "Medium",
 		"EnterRoom": {
 			"Room": [65]
 		}
 	},
 	{
-		"Name": "No Entry: Library",
-		"Type": "Complication",
-		"Group": "Location",
-		"Difficulty": "Medium",
-		"EnterRoom": {
-			"Room": [67]
-		}
-	},
-	{
-		"Name": "No Entry: Public Restrooms",
-		"Type": "Complication",
-		"Group": "Location",
-		"Difficulty": "Medium",
-		"EnterRoom": {
-			"Room": [27, 49, 58]
-		}
-	},
-	{
 		"Name": "No Entry: Grand Hall",
 		"Type": "Complication",
 		"Group": "Location",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
 		"Difficulty": "Medium",
 		"EnterRoom": {
 			"Room": [39]
 		}
 	},
 	{
-		"Name": "No Entry: Sheds",
-		"Type": "Complication",
-		"Group": "Location",
-		"Difficulty": "Medium",
-		"EnterRoom": {
-			"Room": [24, 25, ...]
-		}
-	},
-	{
 		"Name": "No Entry: Helipad",
 		"Type": "Complication",
 		"Group": "Locaton",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
 		"Difficulty": "Medium",
-		"EnterArea": "Helipad"
+		"EnterArea": {
+			"ID": "Helipad",
+			"From": [-279.825, -2.929, -4.935],
+			"To": [-328.375, 32.669, 0.215]
+		}
+	},
+	{
+		"Name": "No Entry: Kitchens",
+		"Type": "Complication",
+		"Group": "Location",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Difficulty": "Medium",
+		"EnterRoom": {
+			"Room": [32, 77]
+		}
+	},
+	{
+		"Name": "No Entry: Library",
+		"Type": "Complication",
+		"Group": "Location",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Difficulty": "Medium",
+		"EnterRoom": {
+			"Room": [67]
+		}
+	},
+	{
+		"Name": "No Entry: Locker Room",
+		"Type": "Complication",
+		"Group": "Location",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Difficulty": "Medium",
+		"EnterRoom": {
+			"Room": [3]
+		}
+	},
+	{
+		"Name": "No Entry: Public Restrooms",
+		"Type": "Complication",
+		"Group": "Location",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Difficulty": "Medium",
+		"EnterRoom": {
+			"Room": [27, 49, 58]
+		}
+	},
+	{
+		"Name": "No Entry: Security Room",
+		"Type": "Complication",
+		"Group": "Location",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Difficulty": "Medium",
+		"EnterRoom": {
+			"Room": [10]
+		}
+	},
+	{
+		"Name": "No Entry: Sheds",
+		"Type": "Complication",
+		"Group": "Location",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Difficulty": "Medium",
+		"EnterRoom": {
+			"Room": [24, 25, 79]
+		}
+	},
+	{
+		"Name": "No Entry: Sheikh's Room",
+		"Type": "Complication",
+		"Group": "Location",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Difficulty": "Medium",
+		"EnterRoom": {
+			"Room": [70]
+		}
 	}
 ]

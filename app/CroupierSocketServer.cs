@@ -50,7 +50,6 @@ namespace Croupier
 			try {
 				var ipAddress = IPAddress.Parse("127.0.0.1");
 				var serverSocket = new TcpListener(ipAddress, PORT);
-				List<Thread> threads = [];
 				serverSocket.Start();
 				System.Diagnostics.Debug.WriteLine("[SOCKET] Waiting for connection...");
 
@@ -66,6 +65,7 @@ namespace Croupier
 						var send = HandleClientSendAsync(client, CancelConnection.Token);
 
 						App.Current.Dispatcher.Invoke(new Action(() => Connected?.Invoke(null, 0)));
+						
 						await receive.WaitAsync(CancelConnection.Token);
 						await send.WaitAsync(CancelConnection.Token);
 					}
@@ -82,6 +82,10 @@ namespace Croupier
 
 		public static void Send(string message) {
 			clientMessages.Add(new(message));
+		}
+
+		public static void Send(dynamic obj) {
+			Send("Event:" + JsonSerializer.Serialize(obj));
 		}
 
 		private static void OnExit(object sender, System.Windows.ExitEventArgs e) {

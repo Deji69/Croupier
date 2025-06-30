@@ -13,6 +13,7 @@ namespace Croupier {
 	public enum BingoTileType {
 		Objective,
 		Complication,
+		Mixed,
 	}
 
 	public class BingoTileState {
@@ -113,7 +114,7 @@ namespace Croupier {
 			return MemberwiseClone();
 		}
 
-		public static BingoTile FromJson(JsonNode json, string? filename = null) {
+		public static BingoTile FromJson(JsonObject json, string? filename = null) {
 			var name = (json["Name"]?.GetValue<string>()) ?? throw new BingoTileConfigException("Invalid 'Name' property.");
 			var nameSingular = json["NameSingular"]?.GetValue<string>();
 			var disabled = json["Disabled"]?.GetValue<bool>() ?? false;

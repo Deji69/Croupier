@@ -74,6 +74,41 @@ namespace Croupier {
 			return TestDiagonal() || TestReverseDiagonal();
 		}
 
+		public List<BingoTriggerEnterArea> GetEnterAreaTriggers() {
+			var results = new List<BingoTriggerEnterArea>();
+			foreach (var tile in Tiles) {
+				results.AddRange(GetEnterAreaTriggerChildren(tile.Trigger));
+			}
+			return results;
+		}
+
+		private static List<BingoTriggerEnterArea> GetEnterAreaTriggerChildren(BingoTrigger trigger) {
+			if (trigger is BingoTriggerEnterArea t) return [t];
+			if (trigger is BingoTriggerComplication c)
+				return c.Trigger != null ? GetEnterAreaTriggerChildren(c.Trigger) : [];
+			if (trigger is BingoTriggerAND tand) {
+				List<BingoTriggerEnterArea> res = [];
+				foreach (var tandTrigger in tand.Triggers) {
+					if (tandTrigger == null) continue;
+					res.AddRange(GetEnterAreaTriggerChildren(tandTrigger));
+				}
+				return res;
+			}
+			if (trigger is BingoTriggerOR tor) {
+				List<BingoTriggerEnterArea> res = [];
+				foreach (var torTrigger in tor.Triggers) {
+					if (torTrigger == null) continue;
+					res.AddRange(GetEnterAreaTriggerChildren(torTrigger));
+				}
+				return res;
+			}
+			if (trigger is BingoTriggerNOT tnot) {
+				if (tnot.Trigger != null)
+					return GetEnterAreaTriggerChildren(tnot.Trigger);
+			}
+			return [];
+		}
+
 		public BingoWinResult? CheckWin() {
 			var numCompleted = Tiles.Count(t => t.Complete);
 			if (numCompleted == Tiles.Count)
@@ -98,7 +133,7 @@ namespace Croupier {
 		}
 
 		public void Finish() {
-			if (Mode != BingoTileType.Complication) return;
+			if (Mode != BingoTileType.Complication && Mode != BingoTileType.Mixed) return;
 			for (var row = 0; row < Size.Rows; ++row) {
 				if (TestRow(row))
 					ScoreIndexes(GetRowIndexes(row));

@@ -1,4 +1,8 @@
 #include "Croupier.h"
+#include <chrono>
+#include <format>
+#include <variant>
+#include <winhttp.h>
 #include <Logging.h>
 #include <IconsMaterialDesign.h>
 #include <Globals.h>
@@ -19,119 +23,24 @@
 #include <Glacier/ZContentKitManager.h>
 #include <Glacier/ZHM5BaseCharacter.h>
 #include <Glacier/Pins.h>
-#include <IModSDK.h>
-#include <chrono>
-#include <variant>
-#include <winhttp.h>
+#include <ResourceLib_HM3.h>
 #include "Events.h"
 #include "KillConfirmation.h"
 #include "KillMethod.h"
 #include "SpinParser.h"
 #include "json.hpp"
 #include "util.h"
-#include <format>
-#include <ResourceLib_HM3.h>
-#include "ProcessUtils.h"
+#include "ZHMUtils.h"
 
 #pragma comment(lib, "Winhttp.lib")
 
 using namespace std::string_literals;
 using namespace std::string_view_literals;
 
+class ZGlobalOutfitKit;
+
 std::random_device rd;
 std::mt19937 gen(rd());
-
-template <class T>
-class PatternEngineFunction;
-
-static HMODULE Module = GetModuleHandleA(nullptr);
-static uintptr_t ModuleBase = reinterpret_cast<uintptr_t>(Module) + Util::ProcessUtils::GetBaseOfCode(Module);
-static uint32_t SizeOfCode = Util::ProcessUtils::GetSizeOfCode(Module);
-static uint32_t ImageSize = Util::ProcessUtils::GetSizeOfImage(Module);
-
-template <class ReturnType, class... Args>
-class PatternEngineFunction<ReturnType(Args...)> final : public EngineFunction<ReturnType(Args...)>
-{
-public:
-    PatternEngineFunction(const char* p_FunctionName, const char* p_Pattern, const char* p_Mask) :
-        EngineFunction<ReturnType(Args...)>(GetTarget(p_Pattern, p_Mask))
-    {
-        if (this->m_Address == nullptr)
-        {
-            Logger::Error("Could not locate address for function '{}'. This probably means that the game was updated and the SDK requires changes.", p_FunctionName);
-            return;
-        }
-
-        Logger::Debug("Successfully located function '{}' at address '{}'.", p_FunctionName, fmt::ptr(this->m_Address));
-    }
-
-private:
-    void* GetTarget(const char* p_Pattern, const char* p_Mask) const
-    {
-        const auto* s_Pattern = reinterpret_cast<const uint8_t*>(p_Pattern);
-        return reinterpret_cast<void*>(Util::ProcessUtils::SearchPattern(ModuleBase, SizeOfCode, s_Pattern, p_Mask));
-    }
-};
-
-class ZRoomManager;
-class ZRoomManagerCreator;
-
-class ZRoomManagerCreator : public IComponentInterface {
-public:
-	ZRoomManager* m_pRoomManager;
-};
-
-struct SRoomInfoHeader {
-    PAD(0xD0);
-};
-
-template <class T>
-T PatternGlobalRelative(const char* p_GlobalName, const char* p_Pattern, const char* p_Mask, ptrdiff_t p_Offset)
-{
-    static_assert(std::is_pointer<T>::value, "Global type is not a pointer type.");
-
-    const auto* s_Pattern = reinterpret_cast<const uint8_t*>(p_Pattern);
-    auto s_Target = Util::ProcessUtils::SearchPattern(ModuleBase, SizeOfCode, s_Pattern, p_Mask);
-
-    if (s_Target == 0)
-    {
-        Logger::Error("Could not find address for global '{}'. This probably means that the game was updated and the SDK requires changes.", p_GlobalName);
-        return nullptr;
-    }
-
-    uintptr_t s_RelAddrPtr = s_Target + p_Offset;
-    int32_t s_RelAddr = *reinterpret_cast<int32_t*>(s_RelAddrPtr);
-
-    uintptr_t s_FinalAddr = s_RelAddrPtr + s_RelAddr + sizeof(int32_t);
-
-    Logger::Debug("Successfully located global '{}' at address {}.", p_GlobalName, fmt::ptr(reinterpret_cast<void*>(s_FinalAddr)));
-
-    return reinterpret_cast<T>(s_FinalAddr);
-}
-
-static ZRoomManagerCreator* RoomManagerCreator = PatternGlobalRelative<ZRoomManagerCreator*>("RoomManagerCreator", "\x48\x89\x05\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x45\x33\xC9\x4C\x8D\x45\x20\xBA\x00\x00\x00\x00\x48\x8B\x48\x10\x48\x8B\x01\xFF\x50\x38\x48\x85\xC0", "xxx????x????xxxxxxxx????xxxxxxxxxxxxx", 3);
-//static EngineFunction<bool(ZRoomManager* th, const float4 vPointWS, const SRoomInfoHeader* pRoomInput)>* ZRoomManager_CheckPointInRoom = new PatternEngineFunction<bool(ZRoomManager* th, const float4 vPointWS, const SRoomInfoHeader* pRoomInput)>("ZRoomManager_CheckPointInRoom", "\x48\x8B\xC4\x48\x89\x58\x08\x48\x89\x68\x10\x48\x89\x70\x18\x57\x41\x56\x41\x57\x48\x81\xEC\x00\x00\x00\x00\x41\x0F\x10\x58\x38", "xxxxxxxxxxxxxxxxxxxxxxx????xxxxx");
-static auto ZRoomManager_CheckPointInRoom = new PatternEngineFunction<int16(ZRoomManager* th, const float4 vPointWS)>("ZRoomManager_CheckPointInRoom", "\x48\x89\x5C\x24\x08\x48\x89\x6C\x24\x10\x48\x89\x74\x24\x18\x48\x89\x7C\x24\x20\x41\x56\x48\x83\xEC\x20\x48\x8B\xEA\x48\x8B\xF1\x33\xDB\x49\xBE\xB7\x6D\xDB\xB6\x6D\xDB\xB6\x6D\x0F\x1F\x40\x00", "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-
-class ZRoomManager {
-public:
-    int16 GetRoomID(const float4 vPointWS) {
-		return ZRoomManager_CheckPointInRoom->Call(this, vPointWS);
-		//auto const size = m_RoomHeaders.size();
-		//auto const inlineFlag = m_RoomHeaders.hasInlineFlag();
-		//
-        //for (size_t i = 0; i < m_RoomHeaders.size(); ++i) {
-        //    if (ZRoomManager_CheckPointInRoom->Call(this, vPointWS, &m_RoomHeaders[i])) {
-        //        return i;
-        //    }
-        //}
-		//
-        //return -1;
-    }
-
-    PAD(0x6D0);
-    TArray<SRoomInfoHeader> m_RoomHeaders;
-};
 
 template<typename T>
 static auto randomVectorElement(const std::vector<T>& vec) -> const T&
@@ -141,6 +50,7 @@ static auto randomVectorElement(const std::vector<T>& vec) -> const T&
 }
 
 Croupier::Croupier() : sharedSpin(spin), respinAction("Respin"), shuffleAction("Shuffle") {
+	ZHMExtension::Init();
 	this->SetupEvents();
 	this->rules = makeRouletteRuleset(this->ruleset);
 
@@ -483,26 +393,7 @@ auto Croupier::OnFrameUpdate(const SGameUpdateEvent& ev) -> void {
 
 auto Croupier::OnFrameUpdate_PlayMode(const SGameUpdateEvent& ev) -> void {
 	this->ProcessSpinState();
-	if (!this->sharedSpin.playerInInstinctSinceFrame && this->sharedSpin.playerInInstinct) {
-		this->sharedSpin.playerInInstinct = false;
-	}
-	this->sharedSpin.playerInInstinctSinceFrame = false;
-}
-
-auto checkInRoom(SVector3 pos, SVector3 swb, SVector3 net) {
-	auto lowZ = swb.z < net.z ? swb.z : net.z;
-	if (pos.z < lowZ) return false;
-	auto highZ = swb.z > net.z ? swb.z : net.z;
-	if (pos.z > highZ) return false;
-	auto lowY = swb.y < net.y ? swb.y : net.y;
-	if (pos.y < lowY) return false;
-	auto highY = swb.y > net.y ? swb.y : net.y;
-	if (pos.y > highY) return false;
-	auto lowX = swb.x < net.x ? swb.x : net.x;
-	if (pos.x < lowX) return false;
-	auto highX = swb.x > net.x ? swb.x : net.x;
-	if (pos.x > highX) return false;
-	return true;
+	this->ProcessPlayerState();
 }
 
 static std::vector<std::string> propNames;
@@ -536,20 +427,48 @@ auto getEntityPropNames(ZEntityType* s_EntityType) -> const std::vector<std::str
 	return propNames;
 }
 
-auto Croupier::ProcessSpinState() -> void {
-	if (this->spinCompleted) return;
-	if (this->sharedSpin.hasLoadedGame) return;
+auto Croupier::ProcessPlayerState() -> void {
+	if (!this->sharedSpin.playerInInstinctSinceFrame && this->sharedSpin.playerInInstinct)
+		this->sharedSpin.playerInInstinct = false;
+	this->sharedSpin.playerInInstinctSinceFrame = false;
 
 	auto player = SDK()->GetLocalPlayer();
-	if (player) {
-		const auto spatial = player.m_ref.QueryInterface<ZSpatialEntity>();
-		this->sharedSpin.playerMatrix = spatial->m_mTransform;
-		auto roomManager = RoomManagerCreator->m_pRoomManager;
+	if (!player) return;
+
+	const auto spatial = player.m_ref.QueryInterface<ZSpatialEntity>();
+	this->sharedSpin.playerMatrix = spatial->m_mTransform;
+
+	// Process area entry for bingo
+	auto area = this->sharedSpin.getArea(this->sharedSpin.playerMatrix.Trans);
+	if (area && area != this->sharedSpin.lastArea) {
+		this->SendCustomEvent("EnterArea", {
+			{"Area", area->ID},
+		});
+	}
+
+	this->sharedSpin.lastArea = this->sharedSpin.area;
+	this->sharedSpin.area = area;
+
+	// Process room changes for bingo
+	if (ZHMExtension::RoomManagerCreator) {
+		auto roomManager = ZHMExtension::RoomManagerCreator->m_pRoomManager;
 		if (roomManager) {
 			auto roomId = roomManager->GetRoomID(spatial->GetWorldMatrix().Pos);
+			if (roomId != this->sharedSpin.lastRoomId && roomId != -1) {
+				this->SendCustomEvent("EnterRoom", {
+					{"Room", roomId},
+				});
+			}
+
+			this->sharedSpin.lastRoomId = this->sharedSpin.roomId;
 			this->sharedSpin.roomId = roomId;
 		}
 	}
+}
+
+auto Croupier::ProcessSpinState() -> void {
+	if (this->spinCompleted) return;
+	if (this->sharedSpin.hasLoadedGame) return;
 
 	for (int i = 0; i < *Globals::NextActorId; ++i) {
 		auto& actorData = this->sharedSpin.actorData[i];
@@ -611,10 +530,52 @@ auto Croupier::ProcessSpinState() -> void {
 	this->sharedSpin.actorDataSize = *Globals::NextActorId;
 }
 
+auto Croupier::ProcessClientEvent(std::string_view name, const nlohmann::json& json) -> void {
+	if (name == "Areas") {
+		this->sharedSpin.areas.clear();
+		if (!json.is_array())
+			return;
+
+		for (auto const& areaJson : json) {
+			if (!areaJson.is_object()) continue;
+
+			auto const& id = areaJson["ID"];
+			if (!id.is_string()) continue;
+
+			auto const& fromJson = areaJson["From"];
+			if (!fromJson.is_array()) continue;
+			if (fromJson.size() != 3) continue;
+
+			auto const& toJson = areaJson["To"];
+			if (!toJson.is_array()) continue;
+			if (toJson.size() != 3) continue;
+
+			Area area;
+			area.ID = id.get<std::string>();
+			area.From.x = fromJson[0].get<float32>();
+			area.From.y = fromJson[1].get<float32>();
+			area.From.z = fromJson[2].get<float32>();
+			area.To.x = toJson[0].get<float32>();
+			area.To.y = toJson[1].get<float32>();
+			area.To.z = toJson[2].get<float32>();
+
+			this->sharedSpin.areas.push_back(std::move(area));
+		}
+	}
+}
+
 auto Croupier::ProcessClientMessages() -> void {
 	ClientMessage message;
 	if (this->client->tryTakeMessage(message)) {
 		switch (message.type) {
+			case eClientMessage::Event:
+				{
+					auto json = nlohmann::json::parse(message.args);
+					auto name = json.value("Name", "");
+					if (name.empty()) return;
+					ProcessClientEvent(name, json["Data"]);
+				}
+				return;
 			case eClientMessage::SpinData:
 				return ProcessSpinDataMessage(message);
 			case eClientMessage::Missions:
@@ -1164,7 +1125,7 @@ auto Croupier::DrawBingoDebugUI(bool focused) -> void {
 
 		//ImGui::Text(this->sharedSpin.room.c_str());
 		static std::string roomText;
-		roomText = std::format("Room: {} - {}", this->sharedSpin.roomId, "unknown");
+		roomText = std::format("Room: {}", this->sharedSpin.roomId);
 		ImGui::Text(roomText.c_str());
 
 		auto str = std::format("{}, {}, {}", pos.x, pos.y, pos.z);
@@ -3000,6 +2961,7 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 	// ZHMPin::OnIsFullyInCrowd - Test, should work
 	// ZHMPin::OnIsFullyInVegetation
 
+#if _DEBUG
 	// Skip all the garbage
 	switch (static_cast<ZHMPin>(pinId)) {
 		case ZHMPin::NavigateSlots: // inventory slot navigation - maybe?
@@ -3033,12 +2995,133 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 		case ZHMPin::WeaponEquipSinglePistol: // ZWeaponSoundController, (data: void)
 		case ZHMPin::WeaponEquipIllegal: // ZWeaponSoundController
 		case ZHMPin::HMState_OpenDoor: // bit repetitive
+		case ZHMPin::WeaponEquipped: // bit repetitive
+		case ZHMPin::EnterCover: // ZHM5HMStateSoundController, ZHM5InstinctSoundController, and other sound controllers
+		case ZHMPin::ExitCover: // ^
+		case ZHMPin::CoverUsed: // maybe but also repetitive
+		case ZHMPin::OnHeroEnterCover: // maybe but also repetitive
+		case ZHMPin::OnHeroLeaveCover: // ZCoverPlane
+		case ZHMPin::HitmanInCoverBegin: // ZHM5CrowdReactionEntity
+		case ZHMPin::HitmanInCoverEnd: // ZHM5CrowdReactionEntity
+		case ZHMPin::RunUsed: // maybe but also repetitive
+		case ZHMPin::WeaponFire: // ZWeaponSoundController
+		case ZHMPin::PlayerEndBurstShot: // ZHM5ItemWeapon
+		case ZHMPin::HM_HitNPC: // ZBulletImpactListenerEntity,
+		case ZHMPin::HM_HitNPCAt: // ZBulletImpactListenerEntity,
+		case ZHMPin::HMState_StartRun: // ZHM5HMStateSoundController, ZHM5HealthSoundController,
+		case ZHMPin::HMState_CloseDoor:
+		case ZHMPin::OnDrop:
+		case ZHMPin::OnDropByHero:
+		case ZHMPin::OnActionY:
+		case ZHMPin::OnActionB:
+		case ZHMPin::OnActionX:
+		case ZHMPin::OnActionA:
+		case ZHMPin::ExecutedData:
+		case ZHMPin::PlaySound:
+		case ZHMPin::StealthKill:
+		case ZHMPin::OnMurdered:
+		case ZHMPin::OnGetEntityRef:
+		case ZHMPin::OnDead:
+		case ZHMPin::OnDying:
+		case ZHMPin::OnTargetDead:
+		case ZHMPin::StartExecuteKill:
+		case ZHMPin::HitmanCCBegin:
+		case ZHMPin::HitmanCCEnd:
+		case ZHMPin::InstinctUnavailable:
+		case ZHMPin::CC_Start:
+		case ZHMPin::CC_Start_Hitman:
+		case ZHMPin::CC_End:
+		case ZHMPin::CC_End_Win:
+		case ZHMPin::CC_Final_Impact:
+		case ZHMPin::EliminateUsed:
+		case ZHMPin::HM_HitNPCCloseCombatShot:
+		case ZHMPin::Weapon:
+		case ZHMPin::Kill:
+		case ZHMPin::TargetDied:
+		case ZHMPin::WeaponPlayerUnEquipped:
+		case ZHMPin::DeadlyThrowImpact:
+		case ZHMPin::DataStart:
+		case ZHMPin::IActor:
+		case ZHMPin::Unequipped:
+		case ZHMPin::Triggered:
+		case ZHMPin::DoorClose:
+		case ZHMPin::DoorCloseByHitmanFirst:
+		case ZHMPin::DoorOpenByHitmanFirst:
+		case ZHMPin::DisguiseBlendInActivated:
+		case ZHMPin::ObjectiveCompleted:
+		case ZHMPin::PrimaryObjectiveCompleted:
+		case ZHMPin::PrimaryObjectiveFailed:
+		case ZHMPin::ScoreCommon:
+		case ZHMPin::Trespassing:
+		case ZHMPin::WeaponUnEquipIllegal:
+		case ZHMPin::CombatHitmanSpotted:
+		case ZHMPin::Failed:
+		case ZHMPin::OnThrown:
+		case ZHMPin::OnFailed:
+		case ZHMPin::OnCombatStarted:
+		case ZHMPin::OnChallengeCompleted:
+		case ZHMPin::OnCombatEnded:
+		case ZHMPin::OnNoReceiversRegistered:
+		case ZHMPin::OnIActor:
+		case ZHMPin::OnDestroyed:
+		case ZHMPin::OnReadySetpiece:
+		case ZHMPin::OnPickup:
+		case ZHMPin::OnWarning:
+		case ZHMPin::OnGetItem:
+		case ZHMPin::OnItemConsumed:
+		case ZHMPin::OnTargetOutOfRange:
+		case ZHMPin::SomeonePacified:
+		case ZHMPin::KillData:
+		case ZHMPin::RepositoryID:
+		case ZHMPin::RoomID:
+		case ZHMPin::RoomId:
+		case ZHMPin::ActorId:
+		case ZHMPin::ActorName:
+		case ZHMPin::ActorType:
+		case ZHMPin::DeathContext:
+		case ZHMPin::HitmanGuardKill:
+		case ZHMPin::DeadlyThrowOn:
+		case ZHMPin::DeadlyThrowOff:
+		case ZHMPin::DeadlyThrowActivated:
+		case ZHMPin::ReleasedItem:
+		case ZHMPin::HitmanPush:
+		case ZHMPin::HitmanPushSignal:
+		case ZHMPin::HitmanSuspiciousSignal:
+		case ZHMPin::HitmanNotSuspiciousSignal:
+		case ZHMPin::HitmanGuardSilenced:
+		case ZHMPin::HM_HitNPCHeadShot:
+		case ZHMPin::HM_HitNPCHeadShot_IActor:
+		case ZHMPin::HM_HitNPCHeadShotAt:
+		case ZHMPin::KillerHero:
+		case ZHMPin::KillItemInstanceId:
+		case ZHMPin::KillItemRepositoryId:
+		case ZHMPin::KillItemCategory:
+		case ZHMPin::WeaponAimStart:
+		case ZHMPin::DataEnd:
+		case ZHMPin::Dead:
+		case ZHMPin::Fired: // not what it sounds like
+		case ZHMPin::OnFireProjectiles:
+		case ZHMPin::OnFireProjectilesLocal:
+		case ZHMPin::EnterAimAt:
+		case ZHMPin::ExitAimAt:
+		case ZHMPin::HitmanAimBegin:
+		case ZHMPin::HitmanAimEnd:
+		case ZHMPin::PageBack:
+		case ZHMPin::OnStateChanged:
+		case ZHMPin::PageClosed:
+		case ZHMPin::UpToWhite:
+		case ZHMPin::Impact:
 		case ZHMPin::HitmanBumping:
+		case ZHMPin::OnJoinNPC:
+		case ZHMPin::ShotsPerSecondNPC:
+		case ZHMPin::ShotsPerSecondHero:
 		case ZHMPin::HaveActiveParticles:
 		case ZHMPin::DeadBodySeenMurder:
 		case ZHMPin::DeadBodySeenMurderId:
 		case ZHMPin::BodyFoundMurder:
 		case ZHMPin::HitmanCivilianKill:
+		case ZHMPin::NPC_HitHM:
+		case ZHMPin::NPC_HitHMAt:
 		case ZHMPin::UnsetCurrentAmbience:
 		case ZHMPin::OnBusy:
 		case ZHMPin::OnLast:
@@ -3088,7 +3171,6 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 		case ZHMPin::SyncBar:
 		case ZHMPin::TextLocaleChanged:
 		case ZHMPin::Speaking:
-		case ZHMPin::OnActionB:
 		case ZHMPin::HMFootstepMaterialChanged:
 		case ZHMPin::Keyword:
 		case ZHMPin::PageOpen:
@@ -3471,6 +3553,8 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 		case ZHMPin::OutputEvent:
 		case ZHMPin::OnStopped:
 		case ZHMPin::DoorClosed:
+		case ZHMPin::LadderSlideStop:
+		case ZHMPin::LadderSlideStart:
 		case ZHMPin::CoverEnabled:
 		case ZHMPin::OnLeaveDrama:
 		case ZHMPin::OnDone:
@@ -3520,6 +3604,10 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 		case ZHMPin::OnSetKinematic:
 		case ZHMPin::OnBecomeInvisible:
 		case ZHMPin::OnBecomeVisible:
+		case ZHMPin::OnSelected:
+		case ZHMPin::OnSelectedSkin:
+		case ZHMPin::OnSelectedScope:
+		case ZHMPin::OnSelectedMuzzleExtension:
 		case ZHMPin::Item:
 		case ZHMPin::ShotInterval:
 		case ZHMPin::ShotsPerMinute:
@@ -3527,7 +3615,7 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 	}
 
 	auto ent = entity.GetEntity();
-	static std::string typeName;
+	std::string typeName;
 	if (ent) {
 		auto type = ent->GetType();
 		if (type && type->m_pInterfaces)
@@ -3535,127 +3623,101 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 	}
 
 	auto dataType = data.GetTypeID();
-	const char* dataTypeName = nullptr;
+	std::string dataTypeName;
 	if (dataType && dataType->m_pType && dataType->m_pType->m_pTypeName) {
 		dataTypeName = dataType->m_pType->m_pTypeName;
 		if (data.Is<ZString>()) {
-			static std::string formatted;
-			formatted = std::format("\"{}\"", data.As<ZString>()->c_str());
-			dataTypeName = formatted.c_str();
+			dataTypeName = std::format("\"{}\"", data.As<ZString>()->c_str());
 		}
 	}
+#endif
 
 	switch (static_cast<ZHMPin>(pinId)) {
 		default:
+#if _DEBUG
 			{
 				ZString pinName;
 				if (SDK()->GetPinName(pinId, pinName)) {
-					Logger::Info("PIN: {} from {}, (data: {})", pinName, typeName, dataTypeName ? dataTypeName : "");
+					Logger::Debug("PIN: {} from {}, (data: {})", pinName, typeName, dataTypeName);
 				}
 			}
+#endif
 			break;
 		case ZHMPin::HitmanInVision:
 			// "Never seen by targets", "Never seen by guards" etc?
 			break;
-		case ZHMPin::Fired:
-			// This pin is fired even when no shots are being fired... smoke without fire
-			// This Fired pin is fired twice per time a shot is fired, someone shoould be fired
-			if ((++this->sharedSpin.shotFiredPinCounter % 2) == 0) {
-				Logger::Info("PIN: Fired {}", typeName);
-				this->sharedSpin.shotFiredPinCounter = 0;
-				//SendCustomEvent("ShotFired", nlohmann::json {});
-			}
+		//case ZHMPin::ProjectileBodyShot:
+		//	Logger::Debug("PIN: ProjectileBodyShot {}", typeName);
+		//	break;
+		//case ZHMPin::Bodyshot:
+		//	Logger::Debug("PIN: Bodyshot {}", typeName);
+		//	break;
+		case ZHMPin::ShotBegin:
+			SendCustomEvent("PlayerShot", {
+				{"Room", this->sharedSpin.roomId},
+				{"Area", this->sharedSpin.area ? this->sharedSpin.area->ID : ""},
+			});
 			break;
-		case ZHMPin::RightHandIsReloading:
-			Logger::Info("PIN: RightHandIsReloading {}", typeName);
+		case ZHMPin::SpawnPhysicsClip:
+			SendCustomEvent("OnWeaponReload", {});
 			break;
-		case ZHMPin::HM_SingleShot:
-			Logger::Info("PIN: HM_SingleShot {}", typeName);
-			break;
-		case ZHMPin::HM_SingleShotSilenced:
-			Logger::Info("PIN: HM_SingleShotSilenced {}", typeName);
-			break;
-		case ZHMPin::ProjectileBodyShot:
-			Logger::Info("PIN: ProjectileBodyShot {}", typeName);
-			break;
-		case ZHMPin::Bodyshot:
-			Logger::Info("PIN: Bodyshot {}", typeName);
-			break;
-		case ZHMPin::ProjectileMissed:
-			Logger::Info("PIN: ProjectileMissed {}", typeName);
-			break;
-		case ZHMPin::Trespassing:
-			break;
-		case ZHMPin::WeaponReload:
-			Logger::Info("PIN: WeaponReload {}", typeName);
-			break;
-		case ZHMPin::WeaponStartReload:
-			//Logger::Info("PIN: WeaponStartReload");
-			for (const auto action : Globals::HM5ActionManager->m_Actions) {
-				if (!action)
-					continue;
-			}
-			break;
-		case ZHMPin::WeaponFire:
-			Logger::Info("PIN: WeaponFire {}", typeName);
-			SendCustomEvent("PlayerShot", nlohmann::json{}); // doesn't work anymore??
-			break;
-		case ZHMPin::WeaponEquipIllegal:
-			Logger::Info("PIN: WeaponEquipIllegal {}", typeName);	// works!
-			break;
-		case ZHMPin::WeaponEquipSuspicious:
-			Logger::Info("PIN: WeaponEquipSuspicious {}", typeName);
-			break;
+		//case ZHMPin::WeaponEquipIllegal:
+		//	Logger::Debug("PIN: WeaponEquipIllegal {}", typeName);	// works!
+		//	break;
+		//case ZHMPin::WeaponEquipSuspicious:
+		//	Logger::Debug("PIN: WeaponEquipSuspicious {}", typeName);
+		//	break;
 		case ZHMPin::InstinctActive:
 			if (!this->sharedSpin.playerInInstinct)
-				SendCustomEvent("InstinctActive", nlohmann::json{});
+				SendCustomEvent("InstinctActive", {});
 			this->sharedSpin.playerInInstinct = true;
 			this->sharedSpin.playerInInstinctSinceFrame = true;
 			break;
+		case ZHMPin::ProjectileBodyShot:
+			SendCustomEvent("ProjectileBodyShot", {});
+			break;
 		case ZHMPin::DoorBroken:
-			SendCustomEvent("DoorBroken", nlohmann::json{});
+			SendCustomEvent("DoorBroken", {});
 			break;
 		case ZHMPin::OnIsFullyInCrowd:
-			SendCustomEvent("OnIsFullyInCrowd", nlohmann::json{});
+			SendCustomEvent("OnIsFullyInCrowd", {});
 			break;
 		case ZHMPin::OnIsFullyInVegetation:
-			SendCustomEvent("OnIsFullyInVegetation", nlohmann::json{});
+			SendCustomEvent("OnIsFullyInVegetation", {});
 			break;
 		case ZHMPin::OnTakeDamage:
 		case ZHMPin::TakeDamage:
-			SendCustomEvent("OnTakeDamage", nlohmann::json{});
+			SendCustomEvent("OnTakeDamage", {});
 			break;
 		// ONLY WORK WHILE TRESPASSING
 		case ZHMPin::IsCrouchWalkingSlowly:
 			if (this->sharedSpin.playerMoveType != PlayerMoveType::WalkingSlowly)
-				SendCustomEvent("IsCrouchWalkingSlowly", nlohmann::json{});
+				SendCustomEvent("IsCrouchWalkingSlowly", {});
 			this->sharedSpin.playerMoveType = PlayerMoveType::WalkingSlowly;
 			break;
 		case ZHMPin::IsCrouchWalking:
 			if (this->sharedSpin.playerMoveType != PlayerMoveType::CrouchWalkingSlowly)
-				SendCustomEvent("IsCrouchWalking", nlohmann::json{});
+				SendCustomEvent("IsCrouchWalking", {});
 			this->sharedSpin.playerMoveType = PlayerMoveType::CrouchWalkingSlowly;
 			break;
 		case ZHMPin::IsCrouchRunning:
 			if (this->sharedSpin.playerMoveType != PlayerMoveType::CrouchRunning)
-				SendCustomEvent("IsCrouchRunning", nlohmann::json{});
+				SendCustomEvent("IsCrouchRunning", {});
 			this->sharedSpin.playerMoveType = PlayerMoveType::CrouchRunning;
-			break;
-		case ZHMPin::HMState_StartRun: // HMState_StartRun
 			break;
 		case ZHMPin::IsRunning:
 			if (this->sharedSpin.playerMoveType != PlayerMoveType::Running)
-				SendCustomEvent("IsRunning", nlohmann::json{});
+				SendCustomEvent("IsRunning", {});
 			this->sharedSpin.playerMoveType = PlayerMoveType::Running;
 			break;
 		case ZHMPin::IsWalking:
 			if (this->sharedSpin.playerMoveType != PlayerMoveType::Walking)
-				SendCustomEvent("IsWalking", nlohmann::json {});
+				SendCustomEvent("IsWalking", {});
 			this->sharedSpin.playerMoveType = PlayerMoveType::Walking;
 			break;
 		case ZHMPin::IsWalkingSlowly:
 			if (this->sharedSpin.playerMoveType != PlayerMoveType::WalkingSlowly)
-				SendCustomEvent("IsWalkingSlowly", nlohmann::json {});
+				SendCustomEvent("IsWalkingSlowly", {});
 			this->sharedSpin.playerMoveType = PlayerMoveType::WalkingSlowly;
 			break;
 	}
