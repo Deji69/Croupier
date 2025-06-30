@@ -70,6 +70,12 @@ namespace Croupier.GameEvents {
 
 	}
 
+	public class LocationImbuedEventValue : EventValue {
+		public int? Room { get; set; }
+		public string? Area { get; set; }
+		public SVector3? Position { get; set; }
+	}
+
 	public class DoorUnlockedEventValue : EventValue {
 
 	}
@@ -168,6 +174,10 @@ namespace Croupier.GameEvents {
 		public bool? IsCrowdActor { get; set; }
 	}
 
+	public class BodyBaggedEventValue : ActorIdentityEventValue {
+
+	}
+
 	public class InvestigateCuriousEventValue : EventValue {
 		public required double ActorId { get; set; }
 		public required string RepositoryId { get; set; }
@@ -207,7 +217,7 @@ namespace Croupier.GameEvents {
 		public required BodyKillInfoEventValue DeadBody { get; set; }
 	}
 
-	public abstract class ItemEventValue : EventValue {
+	public abstract class ItemEventValue : LocationImbuedEventValue {
 		public required string RepositoryId { get; set; }
 		public required string InstanceId { get; set; }
 		public required string ItemType { get; set; }
@@ -240,10 +250,7 @@ namespace Croupier.GameEvents {
 		public required EActorType ActorType { get; set; }
 	}
 
-	public class PlayerShotEventValue : EventValue {
-		// Imbued
-		public int? Room { get; set; }
-		public string? Area { get; set; }
+	public class PlayerShotEventValue : LocationImbuedEventValue {
 	}
 
 	public class DartHitEventValue : EventValue {
@@ -255,12 +262,11 @@ namespace Croupier.GameEvents {
 		public bool? Sick { get; set; }
 	}
 
-	public class TrespassingEventValue : EventValue {
+	public class TrespassingEventValue : LocationImbuedEventValue {
 		public required bool IsTrespassing { get; set; }
-		public required double RoomId { get; set; }
 	}
 
-	public class DisguiseEventValue : EventValue {
+	public class DisguiseEventValue : LocationImbuedEventValue {
 		public required string RepositoryId { get; set; }
 		public string? Title { get; set; }
 		public EActorType? ActorType { get; set; }
@@ -295,7 +301,7 @@ namespace Croupier.GameEvents {
 
 	}
 
-	public class OnWeaponReloadEventValue : EventValue {
+	public class OnWeaponReloadEventValue : LocationImbuedEventValue {
 
 	}
 

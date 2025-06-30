@@ -40,6 +40,7 @@
 		]
 	},
 	{
+		"Disabled": true,
 		"Name": "No Crouch Move in Trespassing",
 		"Type": "Complication",
 		"Group": "Action",

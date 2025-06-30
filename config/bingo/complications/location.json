@@ -4,7 +4,7 @@
 		"Type": "Complication",
 		"Group": "Location",
 		"Missions": ["The Showstopper", "Holiday Hoarders"],
-		"Difficulty": "Medium",
+		"Difficulty": "High",
 		"EnterRoom": {
 			"Room": [34]
 		}
@@ -14,7 +14,7 @@
 		"Type": "Complication",
 		"Group": "Location",
 		"Missions": ["The Showstopper", "Holiday Hoarders"],
-		"Difficulty": "Medium",
+		"Difficulty": "High",
 		"EnterRoom": {
 			"Room": [1, 5, 17, 18, 28, 35, 62]
 		}
@@ -30,16 +30,6 @@
 		}
 	},
 	{
-		"Name": "No Entry: Dressing Room",
-		"Type": "Complication",
-		"Group": "Location",
-		"Missions": ["The Showstopper", "Holiday Hoarders"],
-		"Difficulty": "Medium",
-		"EnterRoom": {
-			"Room": [13]
-		}
-	},
-	{
 		"Name": "No Entry: Basement",
 		"Type": "Complication",
 		"Group": "Location",
@@ -47,6 +37,16 @@
 		"Difficulty": "High",
 		"EnterRoom": {
 			"Room": [0, 2, 3, 9, 10, 11, 19, 20, 23, 30, 32, 46, 56, 60, 61, 74]
+		}
+	},
+	{
+		"Name": "No Entry: Dressing Room",
+		"Type": "Complication",
+		"Group": "Location",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Difficulty": "Medium",
+		"EnterRoom": {
+			"Room": [13]
 		}
 	},
 	{
@@ -118,7 +118,7 @@
 		"Missions": ["The Showstopper", "Holiday Hoarders"],
 		"Difficulty": "Medium",
 		"EnterRoom": {
-			"Room": [27, 49, 58]
+			"Room": [7, 12, 27, 45, 49, 58, 76]
 		}
 	},
 	{
@@ -149,6 +149,55 @@
 		"Difficulty": "Medium",
 		"EnterRoom": {
 			"Room": [70]
+		}
+	},
+	{
+		"Name": "No Entry: Voltaire Suite",
+		"Type": "Complication",
+		"Group": "Location",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Difficulty": "Medium",
+		"EnterRoom": {
+			"Room": [69, 63]
+		}
+	},
+	{
+		"Name": "No Trespassing on Top Floor",
+		"Type": "Complication",
+		"Group": "Location",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Difficulty": "Medium",
+		"Trespassing": {
+			"IsTrespassing": true,
+			"Position": {
+				"Z": {
+					"From": 13.5,
+					"To": 20.0
+				}
+			},
+			"Room": [16, 33, 34, 36, 51, 57, 75]
+		}
+	},
+	{
+		"Name": "No Trespassing in Basement",
+		"Type": "Complication",
+		"Group": "Location",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Difficulty": "Medium",
+		"Trespassing": {
+			"IsTrespassing": true,
+			"Room": [0, 2, 3, 9, 10, 11, 19, 20, 23, 30, 32, 46, 56, 60, 61, 74]
+		}
+	},
+	{
+		"Name": "No Trespassing on Ground Floor",
+		"Type": "Complication",
+		"Group": "Location",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Difficulty": "High",
+		"Trespassing": {
+			"IsTrespassing": true,
+			"Room": []
 		}
 	}
 ]
