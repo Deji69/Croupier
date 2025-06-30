@@ -1678,11 +1678,53 @@ auto Croupier::SetupEvents() -> void {
 				{"ActorType", outfit->m_eActorType},
 				{"IsSuit", outfit->m_bIsHitmanSuit},
 				{"OutfitType", outfit->m_eOutfitType},
+				{"Room", this->sharedSpin.roomId},
+				{"Area", this->sharedSpin.area ? this->sharedSpin.area->ID : ""},
+				{"Position", {
+					{"X", this->sharedSpin.playerMatrix.Trans.x},
+					{"Y", this->sharedSpin.playerMatrix.Trans.y},
+					{"Z", this->sharedSpin.playerMatrix.Trans.z},
+				}},
 			};
 		}
 		return {
 			{"RepositoryId", repoId},
+			{"Room", this->sharedSpin.roomId},
+			{"Area", this->sharedSpin.area ? this->sharedSpin.area->ID : ""},
+			{"Position", {
+				{"X", this->sharedSpin.playerMatrix.Trans.x},
+				{"Y", this->sharedSpin.playerMatrix.Trans.y},
+				{"Z", this->sharedSpin.playerMatrix.Trans.z},
+			}},
 		};
+	};
+	const auto imbueItemEvent = [this](const ItemEventValue& ev, EActionType actionType) -> std::optional<nlohmann::json> {
+		for (const auto action : Globals::HM5ActionManager->m_Actions) {
+			if (!action || action->m_eActionType != actionType)
+				continue;
+			const ZHM5Item* item = action->m_Object.QueryInterface<ZHM5Item>();
+			if (!item) continue;
+			if (item->m_pItemConfigDescriptor->m_RepositoryId.ToString() != ZRepositoryID(ev.RepositoryId))
+				continue;
+			auto const instanceId = reinterpret_cast<uintptr_t>(item);
+			if (this->sharedSpin.collectedItemInstances.contains(instanceId))
+				continue;
+			this->sharedSpin.collectedItemInstances.insert(instanceId);
+			return nlohmann::json{
+				{"RepositoryId", ev.RepositoryId},
+				{"InstanceId", std::format("{}", instanceId)},
+				{"ItemType", ev.ItemType},
+				{"ItemName", ev.ItemName},
+				{"Room", this->sharedSpin.roomId},
+				{"Area", this->sharedSpin.area ? this->sharedSpin.area->ID : ""},
+				{"Position", {
+					{"X", this->sharedSpin.playerMatrix.Trans.x},
+					{"Y", this->sharedSpin.playerMatrix.Trans.y},
+					{"Z", this->sharedSpin.playerMatrix.Trans.z},
+				}},
+			};
+		}
+		return std::nullopt;
 	};
 	const auto imbuePacifyEvent = [this](const PacifyEventValue& ev) -> std::optional<nlohmann::json> {
 		const auto actorData = this->sharedSpin.getActorDataByRepoId(ev.RepositoryId);
@@ -1718,6 +1760,7 @@ auto Croupier::SetupEvents() -> void {
 			{"IsFemale", actorData->isFemale},
 			{"ActorHasSameOutfit", actorData->disguiseRepoId && *actorData->disguiseRepoId == playerOutfitRepoId},
 			{"ActorOutfitRepositoryId", actorData->disguiseRepoId ? toLowerCase(actorData->disguiseRepoId->ToString()) : ""},
+			{"RoomId", ev.RoomId},
 			//{"ActorOutfitIsUnique", actorOutfit ? actorOutfit->m_eOutfitType},
 			{"ActorPosition", {
 				{"X", actorData->transform.Trans.x},
@@ -1819,31 +1862,26 @@ auto Croupier::SetupEvents() -> void {
 			{"Sedative", ev.Value.Sedative},
 			{"Sick", ev.Value.Sick},
 			{"IsTarget", ev.Value.IsTarget},
+			{"Room", this->sharedSpin.roomId},
+			{"Area", this->sharedSpin.area ? this->sharedSpin.area->ID : ""},
 		});
 	});
 	events.listen<Events::ItemThrown>([this](const ServerEvent<Events::ItemThrown>& ev) {
+		//auto imbued = imbueItemEvent(ev.Value, EActionType::AT_ITEM_INTERACTION);
+		//if (imbued) this->SendImbuedEvent(ev, *imbued);
 		lastThrownItem = ev.Value.RepositoryId;
 	});
-	events.listen<Events::ItemPickedUp>([this](const ServerEvent<Events::ItemPickedUp>& ev) {
-		for (const auto action : Globals::HM5ActionManager->m_Actions) {
-			if (!action || action->m_eActionType != EActionType::AT_PICKUP)
-				continue;
-			const ZHM5Item* item = action->m_Object.QueryInterface<ZHM5Item>();
-			if (!item) continue;
-			if (item->m_pItemConfigDescriptor->m_RepositoryId.ToString() != ZRepositoryID(ev.Value.RepositoryId))
-				continue;
-			auto const instanceId = reinterpret_cast<uintptr_t>(item);
-			if (this->sharedSpin.collectedItemInstances.contains(instanceId))
-				continue;
-			this->sharedSpin.collectedItemInstances.insert(instanceId);
-			this->SendImbuedEvent(ev, {
-				{"RepositoryId", ev.Value.RepositoryId},
-				{"InstanceId", std::format("{}", instanceId)},
-				{"ItemType", ev.Value.ItemType},
-				{"ItemName", ev.Value.ItemName},
-			});
-			break;
-		}
+	events.listen<Events::ItemPickedUp>([this, imbueItemEvent](const ServerEvent<Events::ItemPickedUp>& ev) {
+		auto imbued = imbueItemEvent(ev.Value, EActionType::AT_PICKUP);
+		if (imbued) this->SendImbuedEvent(ev, *imbued);
+	});
+	events.listen<Events::Trespassing>([this](const ServerEvent<Events::Trespassing>& ev) {
+		this->SendImbuedEvent(ev, {
+			{"IsTrespassing", ev.Value.IsTrespassing},
+			{"Room", ev.Value.RoomId},
+			{"Area", this->sharedSpin.area ? this->sharedSpin.area->ID : ""},
+			{"Position", { "X", this->sharedSpin.playerMatrix.Trans.x }, { "Y", this->sharedSpin.playerMatrix.Trans.y }, { "Z", this->sharedSpin.playerMatrix.Trans.z }},
+		});
 	});
 	events.listen<Events::Pacify>([this, imbuePacifyEvent](const ServerEvent<Events::Pacify>& ev) {
 		auto data = imbuePacifyEvent(ev.Value);
@@ -2737,7 +2775,9 @@ static std::set<std::string> eventsNotToPrint = {
 	"HoldingIllegalWeapon",
 	"Investigate_Curious",
 	"ItemDropped",
+#ifndef _DEBUG
 	"ItemPickedUp",
+#endif
 	"ItemRemovedFromInventory",
 	"ItemThrown",
 	"MurderedBodySeen",
@@ -2905,6 +2945,7 @@ static std::set<std::string> eventsNotToSend = {
 	"47_FoundTrespassing",
 	"ShotsFired",
 	// Imbued
+	"Trespassing",
 	"Pacify",
 	"Kill",
 	"Dart_Hit",
@@ -3657,10 +3698,23 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 			SendCustomEvent("PlayerShot", {
 				{"Room", this->sharedSpin.roomId},
 				{"Area", this->sharedSpin.area ? this->sharedSpin.area->ID : ""},
+				{"Position", {
+					{"X", this->sharedSpin.playerMatrix.Trans.x},
+					{"Y", this->sharedSpin.playerMatrix.Trans.y},
+					{"Z", this->sharedSpin.playerMatrix.Trans.z},
+				}},
 			});
 			break;
 		case ZHMPin::SpawnPhysicsClip:
-			SendCustomEvent("OnWeaponReload", {});
+			SendCustomEvent("OnWeaponReload", {
+				{"Room", this->sharedSpin.roomId},
+				{"Area", this->sharedSpin.area ? this->sharedSpin.area->ID : ""},
+				{"Position", {
+					{"X", this->sharedSpin.playerMatrix.Trans.x},
+					{"Y", this->sharedSpin.playerMatrix.Trans.y},
+					{"Z", this->sharedSpin.playerMatrix.Trans.z},
+				}},
+			});
 			break;
 		//case ZHMPin::WeaponEquipIllegal:
 		//	Logger::Debug("PIN: WeaponEquipIllegal {}", typeName);	// works!
@@ -3669,8 +3723,9 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 		//	Logger::Debug("PIN: WeaponEquipSuspicious {}", typeName);
 		//	break;
 		case ZHMPin::InstinctActive:
-			if (!this->sharedSpin.playerInInstinct)
+			if (!this->sharedSpin.playerInInstinct) {
 				SendCustomEvent("InstinctActive", {});
+			}
 			this->sharedSpin.playerInInstinct = true;
 			this->sharedSpin.playerInInstinctSinceFrame = true;
 			break;

@@ -169,7 +169,7 @@ namespace Croupier {
 					"Dart_Hit" => json.Deserialize<DartHitEventValue>(jsonGameEventSerializerOptions),
 					"Trespassing" => json.Deserialize<TrespassingEventValue>(jsonGameEventSerializerOptions),
 					"SecuritySystemRecorder" => json.Deserialize<SecuritySystemRecorderEventValue>(jsonGameEventSerializerOptions),
-					"BodyBagged" => json.Deserialize<ActorIdentityEventValue>(jsonGameEventSerializerOptions),
+					"BodyBagged" => json.Deserialize<BodyBaggedEventValue>(jsonGameEventSerializerOptions),
 					"BodyHidden" => json.Deserialize<BodyHiddenEventValue>(jsonGameEventSerializerOptions),
 					"Kill" => ImbuePacifyEvent(json.Deserialize<KillEventValue>(jsonGameEventSerializerOptions)),
 					"Pacify" => ImbuePacifyEvent(json.Deserialize<PacifyEventValue>(jsonGameEventSerializerOptions)),

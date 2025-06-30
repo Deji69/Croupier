@@ -1,11 +1,5 @@
 [
 	{
-		"Name": "No Disguise Changes",
-		"Type": "Complication",
-		"Difficulty": "High",
-		"Disguise": []
-	},
-	{
 		"Name": "No Civilian Disguises",
 		"Type": "Complication",
 		"Difficulty": "Medium",
@@ -21,6 +15,12 @@
 				}
 			}
 		]
+	},
+	{
+		"Name": "No Disguise Changes",
+		"Type": "Complication",
+		"Difficulty": "High",
+		"Disguise": []
 	},
 	{
 		"Name": "No Guard Disguises",
