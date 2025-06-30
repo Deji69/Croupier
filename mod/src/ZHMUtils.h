@@ -8,7 +8,6 @@
 #include <Glacier/ZObject.h>
 #include <Glacier/ZString.h>
 #include <Logging.h>
-#include <ResourceLib_HM3.h>
 #include "ProcessUtils.h"
 
 struct SRoomInfoHeader {
