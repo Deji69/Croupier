@@ -8,12 +8,9 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH};${PROJECT_SOURCE_DIR}/deps)
 set(ZHMMODSDK_VER "v4.0.0-rc.2")
 include(cmake/setup-zhmmodsdk.cmake)
-include(cmake/get-cpm.cmake)
 
 # Set C++ standard to C++23.
 set(CMAKE_CXX_STANDARD 23)
-
-CPMAddPackage("gh:OrfeasZ/ZHMTools@3.6.4")
 
 add_compile_definitions(UNAC_VERSION="1.0.7")
 
@@ -43,7 +40,6 @@ target_compile_options(Croupier PRIVATE -utf-8)
 
 target_link_libraries(Croupier PRIVATE
 	ZHMModSDK
-	ResourceLib_HM3
 	${ICONV_LIB_PATH}
 	Microsoft::DirectX-Guids
 	Microsoft::DirectX-Headers

@@ -23,7 +23,6 @@
 #include <Glacier/ZContentKitManager.h>
 #include <Glacier/ZHM5BaseCharacter.h>
 #include <Glacier/Pins.h>
-#include <ResourceLib_HM3.h>
 #include "Events.h"
 #include "KillConfirmation.h"
 #include "KillMethod.h"
@@ -396,7 +395,7 @@ auto Croupier::OnFrameUpdate_PlayMode(const SGameUpdateEvent& ev) -> void {
 	this->ProcessPlayerState();
 }
 
-static std::vector<std::string> propNames;
+/*static std::vector<std::string> propNames;
 
 auto getEntityPropNames(ZEntityType* s_EntityType) -> const std::vector<std::string>& {
 	propNames.clear();
@@ -425,7 +424,7 @@ auto getEntityPropNames(ZEntityType* s_EntityType) -> const std::vector<std::str
 		}
 	}
 	return propNames;
-}
+}*/
 
 auto Croupier::ProcessPlayerState() -> void {
 	if (!this->sharedSpin.playerInInstinctSinceFrame && this->sharedSpin.playerInInstinct)
@@ -1073,7 +1072,9 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 }
 
 auto Croupier::DrawBingoDebugUI(bool focused) -> void {
-	if (!_DEBUG) return;
+#ifdef _DEBUG
+	return;
+#endif
 
 	ImGui::PushFont(SDK()->GetImGuiBlackFont());
 
@@ -2940,7 +2941,7 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinInput, ZEntityRef entity, uint32_t pin
 	const ZHM5ActionManager* actionManager = Globals::HM5ActionManager;
 
 	if (pinId == static_cast<uint32_t>(ZHMPin::PlayerAllShots)) {
-		Logger::Info("Shot Fired", data.GetTypeID()->m_pType->m_pTypeName);
+		//Logger::Info("Shot Fired", data.GetTypeID()->m_pType->m_pTypeName);
 	}
 
 	if (pinId != static_cast<uint32_t>(ZHMPin::RoomID) && pinId != static_cast<uint32_t>(ZHMPin::RoomId))
@@ -3638,7 +3639,7 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 			{
 				ZString pinName;
 				if (SDK()->GetPinName(pinId, pinName)) {
-					Logger::Debug("PIN: {} from {}, (data: {})", pinName, typeName, dataTypeName);
+					//Logger::Debug("PIN: {} from {}, (data: {})", pinName, typeName, dataTypeName);
 				}
 			}
 #endif
