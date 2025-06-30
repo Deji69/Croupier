@@ -47,9 +47,8 @@
 		<CommandBinding Command="{x:Static local:MainWindow.CheckDailySpinsCommand}" CanExecute="Command_AlwaysCanExecute" Executed="CheckDailySpinsCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.DailySpin1Command}" CanExecute="DailySpin1Command_CanExecute" Executed="DailySpin1Command_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.DailySpin2Command}" CanExecute="DailySpin2Command_CanExecute" Executed="DailySpin2Command_Executed" />
-		<CommandBinding Command="{x:Static local:MainWindow.DailySpin3Command}" CanExecute="DailySpin3Command_CanExecute" Executed="DailySpin3Command_Executed" />
-		<CommandBinding Command="{x:Static local:MainWindow.SetBoardSizeCommand}" CanExecute="Command_AlwaysCanExecute" Executed="SetBoardSizeCommand_Executed" />
-		<CommandBinding Command="{x:Static local:MainWindow.DebugWindowCommand}" CanExecute="DebugWindowCommand_CanExecute" Executed="DebugWindowCommand_Executed" />
+        <CommandBinding Command="{x:Static local:MainWindow.DailySpin3Command}" CanExecute="DailySpin3Command_CanExecute" Executed="DailySpin3Command_Executed" />
+        <CommandBinding Command="{x:Static local:MainWindow.DebugWindowCommand}" CanExecute="DebugWindowCommand_CanExecute" Executed="DebugWindowCommand_Executed" />
 	</Window.CommandBindings>
 	<Window.Resources>
 		<BooleanToVisibilityConverter x:Key="VisibilityOfBool" />
@@ -289,7 +288,7 @@
 								VerticalAlignment="Top"
 								TextAlignment="Center"
                                 Margin="2,1,2,0"
-								Foreground="{Binding GroupTextColor}"
+								Foreground="{Binding GroupTextColor, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
 								FontSize="{Binding DataContext.BingoGroupFontSize, RelativeSource={RelativeSource AncestorLevel=2, AncestorType=UniformGrid}}" />
 							<TextBlock
 								Grid.Row="1"
@@ -297,7 +296,7 @@
 								TextWrapping="Wrap"
 								VerticalAlignment="Center"
 								HorizontalAlignment="Center"
-                                Margin="4,0"
+                                Margin="3,0,7,0"
 								TextAlignment="Center"
 								Foreground="White"
 								FontSize="{Binding DataContext.BingoFontSize, RelativeSource={RelativeSource AncestorLevel=2, AncestorType=UniformGrid}}">
@@ -635,14 +634,19 @@
 					Header="Bingo Mode"
 				>
 					<MenuItem.ItemContainerStyle>
-						<Style TargetType="MenuItem">
-							<Setter Property="Header" Value="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
-							<Setter Property="IsChecked" Value="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" />
-							<Setter Property="Command" Value="{Binding DataContext.BingoModeSelectCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
-							<Setter Property="CommandParameter" Value="{Binding Index}"/>
-						</Style>
-					</MenuItem.ItemContainerStyle>
-				</MenuItem>
+                        <Style TargetType="MenuItem">
+                            <Setter Property="StaysOpenOnClick" Value="True" />
+                        </Style>
+                    </MenuItem.ItemContainerStyle>
+                    <MenuItem Header="Objectives" Command="{Binding BingoModeSelectCommand}" CommandParameter="{x:Static local:BingoTileType.Objective}" IsChecked="{Binding IsBingoTileTypeObjective, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <MenuItem Header="Complications" Command="{Binding BingoModeSelectCommand}" CommandParameter="{x:Static local:BingoTileType.Complication}" IsChecked="{Binding IsBingoTileTypeComplication, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <MenuItem Header="Mixed" Command="{Binding BingoModeSelectCommand}" CommandParameter="{x:Static local:BingoTileType.Mixed}" IsChecked="{Binding IsBingoTileTypeMixed, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <Separator />
+                    <MenuItem Header="4x4" Command="{Binding SetBoardSizeCommand}" CommandParameter="4x4" IsChecked="{Binding BingoSize4x4, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <MenuItem Header="5x5" Command="{Binding SetBoardSizeCommand}" CommandParameter="5x5" IsChecked="{Binding BingoSize5x5, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <MenuItem Header="6x6" Command="{Binding SetBoardSizeCommand}" CommandParameter="6x6" IsChecked="{Binding BingoSize6x6, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <MenuItem Header="7x7" ToolTip="Large Screen Recommended" Command="{Binding SetBoardSizeCommand}" CommandParameter="7x7" IsChecked="{Binding BingoSize7x7, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                </MenuItem>
 				<MenuItem
 					Name="ContextMenuHistory"
 					Header="_History"
@@ -669,17 +673,6 @@
 							<Setter Property="CommandParameter" Value="{Binding Index}"/>
 						</Style>
 					</MenuItem.ItemContainerStyle>
-				</MenuItem>
-				<MenuItem Name="ContextMenuBingoSize" Header="Bingo Size" StaysOpenOnClick="True">
-					<MenuItem.ItemContainerStyle>
-						<Style TargetType="MenuItem">
-							<Setter Property="StaysOpenOnClick" Value="True" />
-						</Style>
-					</MenuItem.ItemContainerStyle>
-					<MenuItem Header="4x4" Command="{x:Static local:MainWindow.SetBoardSizeCommand}" CommandParameter="4x4" IsChecked="{Binding BingoSize4x4, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-					<MenuItem Header="5x5" Command="{x:Static local:MainWindow.SetBoardSizeCommand}" CommandParameter="5x5" IsChecked="{Binding BingoSize5x5, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-					<MenuItem Header="6x6" Command="{x:Static local:MainWindow.SetBoardSizeCommand}" CommandParameter="6x6" IsChecked="{Binding BingoSize6x6, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-					<MenuItem Header="7x7" ToolTip="Large Screen Recommended" Command="{x:Static local:MainWindow.SetBoardSizeCommand}" CommandParameter="7x7" IsChecked="{Binding BingoSize7x7, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
 				</MenuItem>
 				<Separator Name="ContextMenuTopSeparator" />
 				<MenuItem

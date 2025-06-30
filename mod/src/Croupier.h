@@ -13,44 +13,11 @@
 #include <Glacier/ZGameUIManager.h>
 #include <Glacier/ZInput.h>
 #include <Glacier/ZObject.h>
+#include <Glacier/ZOutfit.h>
 #include <Glacier/ZString.h>
 #include <filesystem>
 #include <stack>
 #include <unordered_map>
-
-class ZGlobalOutfitKit;
-
-/*struct SRoomInfoHeader
-{
-    uint8_t PAD[0xD0];
-};
-
-static ZRoomManagerCreator* RoomManagerCreator;
-
-class ZRoomManagerCreator : public IComponentInterface {
-public:
-    ZRoomManager* m_pRoomManager;
-};
-
-static auto ZRoomManager_CheckPointInRoom_Test = reinterpret_cast<bool(__fastcall*)(class ZRoomManager*, float4, SRoomInfoHeader*)>(0x141113CA0);
-
-class ZRoomManager {
-public:
-    int GetRoomID(const float4 vPointWS) {
-        for (size_t i = 0; i < m_RoomHeaders.size(); ++i) {
-            if (ZRoomManager_CheckPointInRoom_Test(this, vPointWS, &m_RoomHeaders[i])) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-private:
-	uint8_t PAD[0x6D0];
-    TArray<SRoomInfoHeader> m_RoomHeaders;
-};
-
-static ZRoomManager** ZRoomManagerPtr = reinterpret_cast<ZRoomManager**>(0x143861288);*/
 
 enum class DockMode {
 	None,
@@ -104,6 +71,13 @@ struct LevelSetupEvent {
 	double timestamp;
 };
 
+struct Area {
+	std::string ID;
+	SVector3 From;
+	SVector3 To;
+};
+
+// Poorly named and organised struct used as a catch-all, mostly for game mode data
 struct SharedRouletteSpin {
 	const RouletteSpin& spin;
 	std::set<std::string, InsensitiveCompareLexicographic> killed;
@@ -114,6 +88,7 @@ struct SharedRouletteSpin {
 	std::vector<KillSetpieceEvent> killSetpieceEvents;
 	std::vector<LevelSetupEvent> levelSetupEvents;
 	std::vector<LoadoutItemEventValue> loadout;
+	std::vector<Area> areas;
 	std::array<ActorData, 1000> actorData;
 	std::map<std::string, uint16_t, InsensitiveCompareLexicographic> actorDataRepoIdMap;
 	std::size_t actorDataSize = 0;
@@ -136,7 +111,10 @@ struct SharedRouletteSpin {
 	bool playerInInstinctSinceFrame = false;
 	int shotFiredPinCounter = 0;
 	std::string room;
+	const Area* area = nullptr;
+	const Area* lastArea = nullptr;
 	int16_t roomId = -1;
+	int16_t lastRoomId = -1;
 
 	SharedRouletteSpin(const RouletteSpin& spin) : spin(spin), timeElapsed(0) {
 		timeStarted = std::chrono::steady_clock().now();
@@ -161,6 +139,25 @@ struct SharedRouletteSpin {
 		this->actorDataSize = 0;
 
 		this->resetKillValidations();
+	}
+
+	auto getArea(const SVector3& vec) -> const Area* {
+		for (auto const& area : this->areas) {
+			auto lowZ = area.From.z < area.To.z ? area.From.z : area.To.z;
+			if (vec.z < lowZ) continue;
+			auto highZ = area.From.z > area.To.z ? area.From.z : area.To.z;
+			if (vec.z > highZ) continue;
+			auto lowY = area.From.y < area.To.y ? area.From.y : area.To.y;
+			if (vec.y < lowY) continue;
+			auto highY = area.From.y > area.To.y ? area.From.y : area.To.y;
+			if (vec.y > highY) continue;
+			auto lowX = area.From.x < area.To.x ? area.From.x : area.To.x;
+			if (vec.x < lowX) continue;
+			auto highX = area.From.x > area.To.x ? area.From.x : area.To.x;
+			if (vec.x > highX) continue;
+			return &area;
+		}
+		return nullptr;
 	}
 
 	auto getActorDataByRepoId(const std::string& repoId) -> ActorData* {
@@ -389,7 +386,9 @@ public:
 	auto InstallHooks() -> void;
 	auto UninstallHooks() -> void;
 	auto ProcessSpinState() -> void;
+	auto ProcessPlayerState() -> void;
 	auto ProcessClientMessages() -> void;
+	auto ProcessClientEvent(std::string_view name, const nlohmann::json& json) -> void;
 	auto ValidateKillMethod(eTargetID target, const ServerEvent<Events::Kill>& ev, eKillMethod method, eKillType type) -> eKillValidationType;
 	auto ValidateKillMethod(eTargetID target, const ServerEvent<Events::Kill>& ev, eMapKillMethod method, eKillType type) -> eKillValidationType;
 
@@ -398,7 +397,6 @@ private:
 
 	auto LogSpin() -> void;
 	auto SetupEvents() -> void;
-	auto ProcessHotkeys() -> void;
 	auto ProcessMissionsMessage(const ClientMessage& message) -> void;
 	auto ProcessSpinDataMessage(const ClientMessage& message) -> void;
 	auto ProcessLoadRemoval() -> void;

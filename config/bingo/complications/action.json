@@ -1,5 +1,12 @@
 [
 	{
+		"Name": "No Body Shots",
+		"Type": "Complication",
+		"Group": "Action",
+		"Difficulty": "Medium",
+		"ProjectileBodyShot": {}
+	},
+	{
 		"Name": "No Climbing Drain Pipes",
 		"Type": "Complication",
 		"Group": "Action",
@@ -78,19 +85,39 @@
 		"InstinctActive": {}
 	},
 	{
-		"Disabled": true,
-		"Name": "Only Run While Crouched",
+		"Name": "No Reloading",
 		"Type": "Complication",
-		"Group": "Action",
-		"Difficulty": "High",
-		"IsRunning": {}
+		"Difficulty": "Medium",
+		"OnWeaponReload": {}
 	},
 	{
 		"Name": "No Shots Fired",
 		"Type": "Complication",
 		"Group": "Action",
 		"Difficulty": "Medium",
-		"ShotFired": {}
+		"PlayerShot": {}
+	},
+	{
+		"Name": "No Shooting Indoors",
+		"Type": "Complication",
+		"Group": "Action",
+		"Difficulty": "Medium",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"PlayerShot": {
+			"NOT": {
+				"Room": [81]
+			}
+		}
+	},
+	{
+		"Name": "No Shooting Outside",
+		"Type": "Complication",
+		"Group": "Action",
+		"Difficulty": "Medium",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"PlayerShot": {
+			"Room": [81]
+		}
 	},
 	{
 		"Name": "No Throwing",
@@ -100,10 +127,11 @@
 		"ItemThrown": {}
 	},
 	{
-		"Name": "No Weapons Confiscated",
+		"Disabled": true,
+		"Name": "Only Run Crouched",
 		"Type": "Complication",
 		"Group": "Action",
-		"Difficulty": "Easy",
-		"ItemStashed": {}
+		"Difficulty": "High",
+		"IsRunning": {}
 	}
 ]

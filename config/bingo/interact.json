@@ -36,6 +36,8 @@
 		"Tags": ["Action", "Interact"],
 		"Setpiece": {
 			"RepositoryId": "95e7e530-dbd0-4e1a-95f6-8d5c165a7991",
+			"Type": "DefaultActivators",
+			"Unique": "Position",
 			"Count": 3
 		}
 	},

@@ -6,8 +6,8 @@
 		"Tags": ["Action", "Sabotage"],
 		"SecuritySystemRecorder": {
 			"OR": [
-				{ "Event": "Erased" },
-				{ "Event": "Destroyed" }
+				{ "Event": "erased" },
+				{ "Event": "destroyed" }
 			]
 		}
 	},
@@ -19,10 +19,7 @@
 		"Tags": ["Action", "Sabotage"],
 		"SecuritySystemRecorder": {
 			"Count": 3,
-			"OR": [
-				{ "Event": "Erased" },
-				{ "Event": "Destroyed" }
-			]
+			"Event": "CameraDestroyed"
 		}
 	},
 	{

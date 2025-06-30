@@ -169,7 +169,6 @@ namespace Croupier
 		]);
 		public static readonly RoutedUICommand StartTimerCommand = new("Start Timer", "StartTimer", typeof(MainWindow));
 		public static readonly RoutedUICommand StopTimerCommand = new("Stop Timer", "StopTimer", typeof(MainWindow));
-		public static readonly RoutedUICommand SetBoardSizeCommand = new("Set Board Size", "SetBoardSize", typeof(MainWindow));
 
 		private static readonly List<Spin> spinHistory = [];
 		private static int spinHistoryIndex = 1;
@@ -263,6 +262,10 @@ namespace Croupier
 
 		public static bool ShuffleButtonEnabled => GameController.Main.MissionPool.Count > 0;
 
+		public bool IsBingoTileTypeObjective => GameController.Main.Bingo.TileType == BingoTileType.Objective;
+		public bool IsBingoTileTypeComplication => GameController.Main.Bingo.TileType == BingoTileType.Complication;
+		public bool IsBingoTileTypeMixed => GameController.Main.Bingo.TileType == BingoTileType.Mixed;
+
 		public bool UseNoKOBanner {
 			get => _useNoKOBanner;
 			set {
@@ -281,6 +284,14 @@ namespace Croupier
 				Topmost = value;
 				Config.Default.AlwaysOnTop = value;
 				OnPropertyChanged(nameof(TopmostEnabled));
+			}
+		}
+
+		public bool EnableGroupTileColors {
+			get => Config.Default.EnableGroupTileColors;
+			set {
+				GameController.Main.Bingo.EnableGroupTileColours = value;
+				OnPropertyChanged(nameof(EnableGroupTileColors));
 			}
 		}
 
@@ -539,10 +550,6 @@ namespace Croupier
 			new(GameMode.Roulette, "Roulette"),
 			new(GameMode.Bingo, "Bingo"),
 			new(GameMode.RouletteBingo, "Hybrid"),
-		];
-		public ObservableCollection<BingoTileTypeEntry> BingoTileTypeEntries = [
-			new(BingoTileType.Objective, "Objectives"),
-			new(BingoTileType.Complication, "Complications"),
 		];
 		public ObservableCollection<ContextSubmenuEntry> HistoryEntries = [];
 		public ObservableCollection<ContextSubmenuEntry> BookmarkEntries = [
@@ -886,7 +893,6 @@ namespace Croupier
 			MissionSelect.ItemsSource = MissionListItems;
 			ContextMenuGameMode.ItemsSource = GameModeEntries;
 			ContextMenuGameMode.DataContext = this;
-			ContextMenuBingoTileType.ItemsSource = BingoTileTypeEntries;
 			ContextMenuBingoTileType.DataContext = this;
 			ContextMenuTargetNameFormat.ItemsSource = TargetNameFormatEntries;
 			ContextMenuTargetNameFormat.DataContext = this;
@@ -904,7 +910,6 @@ namespace Croupier
 			ContextMenuTopSeparator.Visibility = IsRouletteMode ? Visibility.Visible : Visibility.Collapsed;
 			ContextMenuSpinSeparator.Visibility = IsRouletteMode ? Visibility.Visible : Visibility.Collapsed;
 			ContextMenuBingoTileType.Visibility = IsBingoMode ? Visibility.Visible : Visibility.Collapsed;
-			ContextMenuBingoSize.Visibility = IsBingoMode ? Visibility.Visible : Visibility.Collapsed;
 
 			DisplayOptionUseNoKOBanner.Visibility = IsRouletteMode ? Visibility.Visible : Visibility.Collapsed;
 			DisplayOptionRTL.Visibility = IsRouletteMode ? Visibility.Visible : Visibility.Collapsed;
@@ -989,8 +994,6 @@ namespace Croupier
 			foreach (var bookmark in Config.Default.Bookmarks) {
 				BookmarkEntries.Add(new(bookmark, BookmarkEntries.Count));
 			}
-
-			RefreshBingoTileTypeEntries();
 		}
 
 		private void SaveCustomMissionPool() {
@@ -1053,26 +1056,6 @@ namespace Croupier
 				MessageBox.Show(e.Message);
 				return;
 			}
-		}
-
-		public void SetBoardSizeCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
-			GameController.Main.Bingo.CardSize = e.Parameter switch {
-				"4x4" => 4 * 4,
-				"5x5" => 5 * 5,
-				"6x6" => 6 * 6,
-				"7x7" => 7 * 7,
-				//"8x8" => 8 * 8,
-				_ => 5 * 5,
-			};
-
-			OnPropertyChanged(nameof(BingoSize4x4));
-			OnPropertyChanged(nameof(BingoSize5x5));
-			OnPropertyChanged(nameof(BingoSize6x6));
-			OnPropertyChanged(nameof(BingoSize7x7));
-			OnPropertyChanged(nameof(BingoSize8x8));
-			OnPropertyChanged(nameof(SpinGridHeight));
-			OnPropertyChanged(nameof(SpinGridWidth));
-			DoHackyWindowSizeFix();
 		}
 
 		public bool PushSpinToHistory(Spin spin, bool skipSync = false) {
@@ -1491,6 +1474,7 @@ namespace Croupier
 
 		private ICommand? _gameModeSelectCommand;
 		private ICommand? _bingoModeSelectCommand;
+		private ICommand? _setBoardSizeCommand;
 		private ICommand? _historyEntrySelectCommand;
 		private ICommand? _bookmarkEntrySelectCommand;
 		private ICommand? _targetNameFormatSelectCommand;
@@ -1504,6 +1488,8 @@ namespace Croupier
 		public ICommand GameModeSelectCommand => _gameModeSelectCommand ??= new RelayCommand(param => GameModeSelected(param));
 
 		public ICommand BingoModeSelectCommand => _bingoModeSelectCommand ??= new RelayCommand(param => BingoModeSelected(param));
+
+		public ICommand SetBoardSizeCommand => _setBoardSizeCommand ??= new RelayCommand(param => BingoSizeSelected(param));
 
 		private void HistoryEntrySelected(object param) {
 			var index = param as int?;
@@ -1550,17 +1536,33 @@ namespace Croupier
 			OnPropertyChanged(nameof(BingoFontSizeScale));
 		}
 
-		private void RefreshBingoTileTypeEntries() {
-			foreach (var entry in BingoTileTypeEntries)
-				entry.Refresh();
+		private void BingoModeSelected(object param) {
+			if (param is not BingoTileType type)
+				return;
+			GameController.Main.Bingo.TileType = type;
+			OnPropertyChanged(nameof(IsBingoTileTypeComplication));
+			OnPropertyChanged(nameof(IsBingoTileTypeObjective));
+			OnPropertyChanged(nameof(IsBingoTileTypeMixed));
 		}
 
-		private void BingoModeSelected(object param) {
-			var index = param as int?;
-			if (index == null || index < 0 || index >= BingoTileTypeEntries.Count)
-				return;
-			GameController.Main.Bingo.TileType = BingoTileTypeEntries[index.Value].Type;
-			RefreshBingoTileTypeEntries();
+		private void BingoSizeSelected(object param) {
+			GameController.Main.Bingo.CardSize = param switch {
+				"4x4" => 4 * 4,
+				"5x5" => 5 * 5,
+				"6x6" => 6 * 6,
+				"7x7" => 7 * 7,
+				//"8x8" => 8 * 8,
+				_ => 5 * 5,
+			};
+
+			OnPropertyChanged(nameof(BingoSize4x4));
+			OnPropertyChanged(nameof(BingoSize5x5));
+			OnPropertyChanged(nameof(BingoSize6x6));
+			OnPropertyChanged(nameof(BingoSize7x7));
+			OnPropertyChanged(nameof(BingoSize8x8));
+			OnPropertyChanged(nameof(SpinGridHeight));
+			OnPropertyChanged(nameof(SpinGridWidth));
+			DoHackyWindowSizeFix();
 		}
 
 		private void TargetNameFormatSelected(object param) {

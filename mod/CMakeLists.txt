@@ -22,8 +22,9 @@ add_library(Croupier SHARED
 	src/Croupier.cpp
 	src/Croupier.h
 	src/json.hpp
-	"src/Roulette.cpp" "src/util.h" "src/EventSystem.h" "src/Events.h" "src/Enums.h" "src/RouletteRuleset.h" "src/RouletteMission.h" "src/CroupierClient.h" "src/CroupierClient.cpp" "src/SpinParser.h" "src/SpinParser.cpp" "src/RouletteMission.cpp" "src/Disguise.h" "src/Target.h" "src/Exception.h" "src/unac.h" "src/unac.c" "deps/iconv.h" "src/KillConfirmation.h" "src/KillMethod.h"  "src/InputUtil.h" "src/InputUtil.cpp"  "src/HookImpl.h" "src/ProcessUtils.cpp" "src/ProcessUtils.h"
-	"src/HookImpl.h" "src/ProcessUtils.cpp" "src/ProcessUtils.h"
+	"src/Roulette.cpp" "src/util.h" "src/EventSystem.h" "src/Events.h" "src/Enums.h" "src/RouletteRuleset.h" "src/RouletteMission.h" "src/CroupierClient.h" "src/CroupierClient.cpp" "src/SpinParser.h" "src/SpinParser.cpp" "src/RouletteMission.cpp" "src/Disguise.h" "src/Target.h" "src/Exception.h" "src/unac.h" "src/unac.c" "deps/iconv.h" "src/KillConfirmation.h" "src/KillMethod.h"  "src/InputUtil.h" "src/InputUtil.cpp"
+	"src/ProcessUtils.cpp" "src/ProcessUtils.h"
+	"src/ZHMUtils.h" "src/ZHMUtils.cpp"
 )
 
 add_library(unac STATIC)

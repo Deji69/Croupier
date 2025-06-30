@@ -1,11 +1,15 @@
 [
 	{
-		"Name": "No Cameras Destroyed",
+		"Name": "Doors Stay Locked",
 		"Type": "Complication",
 		"Difficulty": "Medium",
-		"SecuritySystemRecorder": {
-			"Event": "CameraDestroyed"
-		}
+		"DoorUnlocked": {}
+	},
+	{
+		"Name": "No Bodies Found",
+		"Type": "Complication",
+		"Difficulty": "Medium",
+		"BodyFound": {}
 	},
 	{
 		"Name": "No Broken Doors",
@@ -14,9 +18,26 @@
 		"DoorBroken": {}
 	},
 	{
-		"Name": "Doors Stay Locked",
+		"Name": "No Cameras Destroyed",
 		"Type": "Complication",
 		"Difficulty": "Medium",
-		"DoorUnlocked": {}
+		"SecuritySystemRecorder": {
+			"Event": "CameraDestroyed"
+		}
+	},
+	{
+		"Name": "No Cameras Destroyed",
+		"Type": "Complication",
+		"Difficulty": "Medium",
+		"SecuritySystemRecorder": {
+			"Event": "CameraDestroyed"
+		}
+	},
+	{
+		"Name": "No Weapons Confiscated",
+		"Type": "Complication",
+		"Group": "Action",
+		"Difficulty": "Easy",
+		"ItemStashed": {}
 	}
 ]

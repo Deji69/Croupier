@@ -1,7 +1,9 @@
 ﻿using Croupier.Exceptions;
 using Croupier.GameEvents;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Dynamic;
 using System.Text.Json;
 using System.Windows;
 
@@ -11,6 +13,7 @@ namespace Croupier {
 		public event EventHandler<BingoCard?>? CardUpdated;
 
 		private BingoCard? card = null;
+		private bool enableSocketOperations = false;
 		public BingoCard? Card => card;
 
 
@@ -18,8 +21,11 @@ namespace Croupier {
 		public BingoTileType TileType {
 			get => bingoTileType;
 			set {
+				var oldType = bingoTileType;
 				SetProperty(ref bingoTileType, value);
 				Config.Default.BingoTileType = value;
+				if (Card != null && value != oldType)
+					Draw();
 			}
 		}
 
@@ -52,6 +58,10 @@ namespace Croupier {
 			CroupierSocketServer.MissionStart += (sender, start) => card?.Reset();
 			CroupierSocketServer.MissionComplete += (sender, arg) => card?.Finish();
 			CroupierSocketServer.Event += OnEvent;
+			CroupierSocketServer.Connected += (sender, arg) => {
+				enableSocketOperations = true;
+				SendAreasToClient();
+			};
 		}
 
 		public void LoadConfig(Config cfg) {
@@ -67,6 +77,7 @@ namespace Croupier {
 				Bingo.Main.LoadConfiguration();
 				var generator = new BingoGenerator(TileType);
 				card = generator.Generate(CardSize, controller.MissionID);
+				SendAreasToClient();
 			} catch (BingoGeneratorException e) {
 				MessageBox.Show(
 					e.Message,
@@ -75,6 +86,7 @@ namespace Croupier {
 					MessageBoxImage.Exclamation
 				);
 			}
+
 			CardUpdated?.Invoke(this, card);
 		}
 
@@ -83,6 +95,26 @@ namespace Croupier {
 			foreach (var tile in card.Tiles) {
 				tile.RefreshColor();
 			}
+		}
+
+		private void SendAreasToClient() {
+			if (!enableSocketOperations) return;
+			if (card == null || card.Tiles.Count == 0) return;
+
+			dynamic obj = new ExpandoObject();
+			obj.Name = "Areas";
+			var areas = new List<dynamic>();
+
+			foreach (var trigger in card.GetEnterAreaTriggers()) {
+				dynamic area = new ExpandoObject();
+				area.ID = trigger.IDRaw;
+				area.From = new double[3] { trigger.From.X, trigger.From.Y, trigger.From.Z };
+				area.To = new double[3] { trigger.To.X, trigger.To.Y, trigger.To.Z };
+				areas.Add(area);
+			}
+
+			obj.Data = areas.ToArray();
+			CroupierSocketServer.Send(obj);
 		}
 
 		private void OnEvent(object? sender, string evData) {
@@ -101,14 +133,24 @@ namespace Croupier {
 		}
 
 		private PacifyEventValue? ImbuePacifyEvent(PacifyEventValue? value) {
-			if (value?.ActorOutfitRepositoryId == null) return value;
-			var repoId = value.ActorOutfitRepositoryId.ToLower();
-			var disguise = Mission != MissionID.NONE
-				? Roulette.Main.GetDisguiseByRepoId(repoId, Mission)
-				: Roulette.Main.GetDisguiseByRepoId(repoId);
-			if (disguise != null) {
-				value.ActorOutfitIsUnique = disguise.Unique;
+			if (value?.OutfitRepositoryId != null) {
+				var playerRepoId = value.OutfitRepositoryId.ToLower();
+				var playerDisguise = Roulette.Main.GetDisguiseByRepoId(playerRepoId, Mission != MissionID.NONE ? Mission : null);
+				value.OutfitIsUnique = playerDisguise?.Unique;
 			}
+			if (value?.ActorOutfitRepositoryId != null) {
+				var victimRepoId = value.ActorOutfitRepositoryId.ToLower();
+				var victimDisguise = Roulette.Main.GetDisguiseByRepoId(victimRepoId, Mission != MissionID.NONE ? Mission : null);
+				value.ActorOutfitIsUnique = victimDisguise?.Unique;
+			}
+			return value;
+		}
+
+		private DisguiseEventValue? ImbueDisguiseEvent(DisguiseEventValue? value) {
+			if (value == null) return value;
+			var repoId = value.RepositoryId;
+			var disguise = Roulette.Main.GetDisguiseByRepoId(repoId, Mission != MissionID.NONE ? Mission : null);
+			value.IsUnique = disguise?.Unique;
 			return value;
 		}
 
@@ -121,30 +163,35 @@ namespace Croupier {
 					"ItemRemovedFromInventory" => json.Deserialize<ItemRemovedFromInventoryEventValue>(jsonGameEventSerializerOptions),
 					"ItemDropped" => json.Deserialize<ItemDroppedEventValue>(jsonGameEventSerializerOptions),
 					"ItemThrown" => json.Deserialize<ItemThrownEventValue>(jsonGameEventSerializerOptions),
-					"Disguise" => json.Deserialize<DisguiseEventValue>(jsonGameEventSerializerOptions),
-					"StartingSuit" => json.Deserialize<StartingSuitEventValue>(jsonGameEventSerializerOptions),
+					"Disguise" => ImbueDisguiseEvent(json.Deserialize<DisguiseEventValue>(jsonGameEventSerializerOptions)),
+					"StartingSuit" => ImbueDisguiseEvent(json.Deserialize<StartingSuitEventValue>(jsonGameEventSerializerOptions)),
 					"Actorsick" => json.Deserialize<ActorSickEventValue>(jsonGameEventSerializerOptions),
 					"Dart_Hit" => json.Deserialize<DartHitEventValue>(jsonGameEventSerializerOptions),
 					"Trespassing" => json.Deserialize<TrespassingEventValue>(jsonGameEventSerializerOptions),
 					"SecuritySystemRecorder" => json.Deserialize<SecuritySystemRecorderEventValue>(jsonGameEventSerializerOptions),
 					"BodyBagged" => json.Deserialize<ActorIdentityEventValue>(jsonGameEventSerializerOptions),
 					"BodyHidden" => json.Deserialize<BodyHiddenEventValue>(jsonGameEventSerializerOptions),
-					"Kill" => json.Deserialize<KillEventValue>(jsonGameEventSerializerOptions),
+					"Kill" => ImbuePacifyEvent(json.Deserialize<KillEventValue>(jsonGameEventSerializerOptions)),
 					"Pacify" => ImbuePacifyEvent(json.Deserialize<PacifyEventValue>(jsonGameEventSerializerOptions)),
+					"PlayerShot" => json.Deserialize<PlayerShotEventValue>(jsonGameEventSerializerOptions),
 					"Investigate_Curious" => json.Deserialize<InvestigateCuriousEventValue>(jsonGameEventSerializerOptions),
 					"OpportunityEvents" => json.Deserialize<OpportunityEventValue>(jsonGameEventSerializerOptions),
 					"Level_Setup_Events" => json.Deserialize<LevelSetupEventValue>(jsonGameEventSerializerOptions),
+					"EnterRoom" => json.Deserialize<EnterRoomEventValue>(jsonGameEventSerializerOptions),
+					"EnterArea" => json.Deserialize<EnterAreaEventValue>(jsonGameEventSerializerOptions),
+					"BodyFound" => json.Deserialize<BodyFoundEventValue>(jsonGameEventSerializerOptions),
 					_ => DeserializeEventValue(name),
 				};
 			}
 			return name switch {
 				"ItemStashed" => new ItemStashedEventValue(),
-				"ShotFired" => new ShotFiredEventValue(),
 				"Door_Unlocked" => new DoorUnlockedEventValue(),
 				"DoorBroken" => new DoorBrokenEventValue(),
 				"OnIsFullyInCrowd" => new OnIsFullyInCrowdEventValue(),
 				"OnIsFullyInVegetation" => new OnIsFullyInVegetationEventValue(),
 				"OnTakeDamage" => new OnTakeDamageEventValue(),
+				"OnWeaponReload" => new OnWeaponReloadEventValue(),
+				"ProjectileBodyShot" => new ProjectileBodyShotEventValue(),
 				"InstinctActive" => new InstinctActiveEventValue(),
 				"IsCrouchWalkingSlowly" => new IsCrouchWalkingSlowlyEventValue(),
 				"IsCrouchWalking" => new IsCrouchWalkingEventValue(),

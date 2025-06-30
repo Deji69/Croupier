@@ -1,0 +1,22 @@
+[
+	{
+		"Name": "Dalia: No Emetic",
+		"Type": "Complication",
+		"Group": "Opportunity",
+		"Missions": ["The Showstopper"],
+		"Difficulty": "Medium",
+		"ActorSick": {
+			"ActorName": "Dalia Margolis"
+		}
+	},
+	{
+		"Name": "Viktor: No Emetic",
+		"Type": "Complication",
+		"Group": "Opportunity",
+		"Missions": ["The Showstopper"],
+		"Difficulty": "Medium",
+		"ActorSick": {
+			"ActorName": "Viktor Novikov"
+		}
+	}
+]

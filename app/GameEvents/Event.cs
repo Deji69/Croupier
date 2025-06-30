@@ -108,25 +108,25 @@ namespace Croupier.GameEvents {
 		public bool? Accident { get; set; }
 		public bool? WeaponSilenced { get; set; }
 		public bool? Explosive { get; set; }
-		public int? ExplosionType { get; set; }
+		public double? ExplosionType { get; set; }
 		public bool? Projectile { get; set; }
 		public bool? Sniper { get; set; }
 		public bool? IsHeadshot { get; set; }
 		public bool? IsTarget { get; set; }
 		public bool? ThroughWall { get; set; }
-		public int? BodyPartId { get; set; }
+		public double? BodyPartId { get; set; }
 		public double? TotalDamage { get; set; }
 		public bool? IsMoving { get; set; }
-		public int? RoomId { get; set; }
+		public double? RoomId { get; set; }
 		public List<string>? DamageEvents { get; set; }
-		public int? PlayerId { get; set; }
+		public double? PlayerId { get; set; }
 		public string? OutfitRepositoryId { get; set; }
 		public string? SetPieceId { get; set; }
 		public string? SetPieceType { get; set; }
 		public bool? OutfitIsHitmanSuit { get; set; }
 		public string? KillMethodBroad { get; set; }
 		public string? KillMethodStrict { get; set; }
-		public int? EvergreenRarity { get; set; }
+		public double? EvergreenRarity { get; set; }
 		public string? KillItemRepositoryId { get; set; }
 		//public string? KillItemInstanceId { get; set; }
 		public string? KillItemCategory { get; set; }
@@ -142,6 +142,7 @@ namespace Croupier.GameEvents {
 		public SVector3? HeroPosition { get; set; }
 
 		// Self Imbued
+		public bool? OutfitIsUnique { get; set; }
 		public bool? ActorOutfitIsUnique { get; set; }
 	}
 
@@ -197,8 +198,13 @@ namespace Croupier.GameEvents {
 	}
 
 	public class BodyKillInfoEventValue : EventValue {
-		public required EDeathContext DeathContext { get; set; }
-		public required EDeathType DeathType { get; set; }
+		public string? RepositoryId { get; set; }
+		public EDeathContext? DeathContext { get; set; }
+		public EDeathType? DeathType { get; set; }
+	}
+
+	public class BodyFoundEventValue : EventValue {
+		public required BodyKillInfoEventValue DeadBody { get; set; }
 	}
 
 	public abstract class ItemEventValue : EventValue {
@@ -234,8 +240,10 @@ namespace Croupier.GameEvents {
 		public required EActorType ActorType { get; set; }
 	}
 
-	public class ShotFiredEventValue : EventValue {
-
+	public class PlayerShotEventValue : EventValue {
+		// Imbued
+		public int? Room { get; set; }
+		public string? Area { get; set; }
 	}
 
 	public class DartHitEventValue : EventValue {
@@ -258,10 +266,12 @@ namespace Croupier.GameEvents {
 		public EActorType? ActorType { get; set; }
 		public bool? IsSuit { get; set; }
 		public EOutfitType? OutfitType { get; set; }
+
+		// Self Imbued
+		public bool? IsUnique { get; set; }
 	}
 
 	public class StartingSuitEventValue : DisguiseEventValue {
-
 	}
 
 	public class SecuritySystemRecorderEventValue : EventValue {
@@ -285,7 +295,15 @@ namespace Croupier.GameEvents {
 
 	}
 
+	public class OnWeaponReloadEventValue : EventValue {
+
+	}
+
 	public class InstinctActiveEventValue : EventValue {
+
+	}
+
+	public class ProjectileBodyShotEventValue : EventValue {
 
 	}
 
@@ -311,5 +329,13 @@ namespace Croupier.GameEvents {
 
 	public class ItemStashedEventValue : EventValue {
 
+	}
+
+	public class EnterRoomEventValue : EventValue {
+		public required int Room { get; set; }
+	}
+
+	public class EnterAreaEventValue : EventValue {
+		public required string Area { get; set; }
 	}
 }
