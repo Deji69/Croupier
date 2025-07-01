@@ -66,6 +66,31 @@
 					/>
 			</StackPanel>
 			<TextBlock Text="{Binding Path=LegalSpinText}" Foreground="White" />
+			<TextBlock Text="Bingo" Margin="0,5" FontWeight="Bold" Foreground="White" />
+			<StackPanel Orientation="Horizontal">
+				<TextBlock Text="Total Tiles: " Foreground="White" />
+                <TextBlock Text="{Binding TotalBingoTiles}" Foreground="White" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Total Objectives: " Foreground="White" />
+                <TextBlock Text="{Binding TotalBingoObjectiveTiles}" Foreground="White" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Total Complications: " Foreground="White" />
+                <TextBlock Text="{Binding TotalBingoComplicationTiles}" Foreground="White" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Total Tiles (Map): " Foreground="White" />
+                <TextBlock Text="{Binding TotalBingoTilesCurrentMap}" Foreground="White" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Total Objectives (Map): " Foreground="White" />
+                <TextBlock Text="{Binding TotalBingoObjectiveTilesCurrentMap}" Foreground="White" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Total Complications (Map): " Foreground="White" />
+                <TextBlock Text="{Binding TotalBingoComplicationTilesCurrentMap}" Foreground="White" />
+            </StackPanel>
 		</StackPanel>
 	</ScrollViewer>
 </Window>

@@ -1,22 +1,36 @@
 {
-	"Disguise": {
-		"Name": "Disguise",
-		"Color": "#66BB66"
-	},
+	// Objective Groups
 	"Collect": {
 		"Name": "Collect",
-		"Color": "#77AACC"
+		"Color": "#77AACC",
+		"Tip": "Collect {0} of this item on the map."
 	},
-	"Sabotage": {
-		"Name": "Sabotage",
-		"Color": "#FF8877"
+	"Disguise": {
+		"Name": "Disguise",
+		"Color": "#66BB66",
+		"Tip": "Change into this disguise."
 	},
 	"Interact": {
 		"Name": "Interact",
-		"Color": "#CCBB77"
+		"Color": "#CCBB77",
+		"Tip": "Achieve the given interaction."
 	},
 	"Pacify": {
 		"Name": "Pacify",
-		"Color": "#CC8833"
+		"Color": "#CC8833",
+		"Tip": "Perform the requested pacification(s) as specified."
+	},
+	"Sabotage": {
+		"Name": "Sabotage",
+		"Color": "#FF8877",
+		"Tip": "Perform the given act of sabotage or vandalism."
+	},
+	
+	// Still working out how to group and style complication tiles.
+	// Until then we'll set 'Hidden' so the group names are not used.
+	"Location": {
+		"Name": "Location",
+		"Hidden": true, // Test
+		"Tip": "Follow the rules of the room/area.\nNo Entry: Location is off-limits.\n\"No Trespassing\": While in this location you must be wearing an appropriate disguise."
 	}
 }

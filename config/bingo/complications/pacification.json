@@ -2,6 +2,7 @@
 	{
 		"Name": "No Target KOs",
 		"Type": "Complication",
+		"Tip": "Do not pacify any of the targets.",
 		"Group": "Pacification",
 		"Difficulty": "VeryHigh",
 		"Pacify": {
@@ -11,6 +12,7 @@
 	{
 		"Name": "No Non-Target KOs",
 		"Type": "Complication",
+		"Tip": "Do not pacify any non-target NPCs.",
 		"Group": "Pacification",
 		"Difficulty": "VeryHigh",
 		"Pacify": {
@@ -20,6 +22,7 @@
 	{
 		"Name": "No Male KOs",
 		"Type": "Complication",
+		"Tip": "Do not pacify any male NPCs.",
 		"Group": "Pacification",
 		"Difficulty": "High",
 		"Pacify": {
@@ -29,6 +32,7 @@
 	{
 		"Name": "No Female KOs",
 		"Type": "Complication",
+		"Tip": "Do not pacify any female NPCs.",
 		"Group": "Pacification",
 		"Difficulty": "High",
 		"Pacify": {
@@ -38,6 +42,7 @@
 	{
 		"Name": "No Guard KOs",
 		"Type": "Complication",
+		"Tip": "Do not pacify any guard NPCs.",
 		"Group": "Pacification",
 		"Difficulty": "High",
 		"Pacify": {
@@ -47,6 +52,7 @@
 	{
 		"Name": "No Civilian KOs",
 		"Type": "Complication",
+		"Tip": "Do not pacify any civilian NPCs.",
 		"Group": "Pacification",
 		"Difficulty": "Medium",
 		"Pacify": {
@@ -57,6 +63,7 @@
 	{
 		"Name": "No Same Disguise KOs",
 		"Type": "Complication",
+		"Tip": "Do not pacify any NPC wearing the same disguise as you.",
 		"Group": "Pacification",
 		"Difficulty": "Medium",
 		"Pacify": {
@@ -66,6 +73,7 @@
 	{
 		"Name": "No Unique Disguise KOs",
 		"Type": "Complication",
+		"Tip": "Do not pacify any NPC wearing a unique disguise.",
 		"Group": "Pacification",
 		"Difficulty": "Medium",
 		"Pacify": {
@@ -75,6 +83,7 @@
 	{
 		"Name": "No Melee KOs",
 		"Type": "Complication",
+		"Tip": "Do not pacify using a melee prompt.",
 		"Group": "Pacification",
 		"Difficulty": "Medium",
 		"Pacify": {
@@ -84,6 +93,7 @@
 	{
 		"Name": "No Throw KOs",
 		"Type": "Complication",
+		"Tip": "Do not use thrown objects to pacify anyone.",
 		"Group": "Pacification",
 		"Difficulty": "Medium",
 		"Pacify": {
@@ -93,6 +103,7 @@
 	{
 		"Name": "No Sedative KOs",
 		"Type": "Complication",
+		"Tip": "Do not pacify anyone using sedatives or tranquilizers.",
 		"Group": "Pacification",
 		"Difficulty": "Medium",
 		"Pacify": {
@@ -100,8 +111,19 @@
 		}
 	},
 	{
+		"Name": "Only Same Disguise KOs",
+		"Type": "Complication",
+		"Tip": "Only pacify NPCs whose disguise you are wearing.",
+		"Group": "Pacification",
+		"Difficulty": "High",
+		"Pacify": {
+			"ActorHasSameOutfit": true
+		}
+	},
+	{
 		"Name": "Only Sedative and Accident KOs",
 		"Type": "Complication",
+		"Tip": "Do not pacify anyone unless using a sedative, tranquilizer dart or accident KO.",
 		"Group": "Pacification",
 		"Difficulty": "Medium",
 		"Pacify": {

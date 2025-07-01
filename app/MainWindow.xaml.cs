@@ -206,6 +206,7 @@ namespace Croupier
 		public bool IsRouletteMode => GameController.Main.Mode == GameMode.Roulette || GameController.Main.Mode == GameMode.RouletteBingo;
 		public bool IsHybridMode => GameController.Main.Mode == GameMode.RouletteBingo;
 
+		public bool BingoSize3x3 => GameController.Main.Bingo.CardSize == 3 * 3;
 		public bool BingoSize4x4 => GameController.Main.Bingo.CardSize == 4 * 4;
 		public bool BingoSize5x5 => GameController.Main.Bingo.CardSize == 5 * 5;
 		public bool BingoSize6x6 => GameController.Main.Bingo.CardSize == 6 * 6;
@@ -848,11 +849,11 @@ namespace Croupier
 			SetupVersionTooltip();
 			timer = SetupTimer();
 
+			SetupGameControllerEvents();
 			LoadSettings();
 			SetupGameMode();
 			LoadSpinHistory();
 			SetupHotkeys();
-			SetupGameControllerEvents();
 			SetupSocketServerEvents();
 
 			if (IsBingoMode)
@@ -893,7 +894,7 @@ namespace Croupier
 			MissionSelect.ItemsSource = MissionListItems;
 			ContextMenuGameMode.ItemsSource = GameModeEntries;
 			ContextMenuGameMode.DataContext = this;
-			ContextMenuBingoTileType.DataContext = this;
+			ContextMenuBingoMode.DataContext = this;
 			ContextMenuTargetNameFormat.ItemsSource = TargetNameFormatEntries;
 			ContextMenuTargetNameFormat.DataContext = this;
 			ContextMenuHistory.ItemsSource = HistoryEntries;
@@ -909,7 +910,7 @@ namespace Croupier
 			ContextMenuRouletteKillConfirmations.Visibility = IsRouletteMode ? Visibility.Visible : Visibility.Collapsed;
 			ContextMenuTopSeparator.Visibility = IsRouletteMode ? Visibility.Visible : Visibility.Collapsed;
 			ContextMenuSpinSeparator.Visibility = IsRouletteMode ? Visibility.Visible : Visibility.Collapsed;
-			ContextMenuBingoTileType.Visibility = IsBingoMode ? Visibility.Visible : Visibility.Collapsed;
+			ContextMenuBingoMode.Visibility = IsBingoMode ? Visibility.Visible : Visibility.Collapsed;
 
 			DisplayOptionUseNoKOBanner.Visibility = IsRouletteMode ? Visibility.Visible : Visibility.Collapsed;
 			DisplayOptionRTL.Visibility = IsRouletteMode ? Visibility.Visible : Visibility.Collapsed;
@@ -1547,6 +1548,7 @@ namespace Croupier
 
 		private void BingoSizeSelected(object param) {
 			GameController.Main.Bingo.CardSize = param switch {
+				"3x3" => 3 * 3,
 				"4x4" => 4 * 4,
 				"5x5" => 5 * 5,
 				"6x6" => 6 * 6,
@@ -1555,6 +1557,7 @@ namespace Croupier
 				_ => 5 * 5,
 			};
 
+			OnPropertyChanged(nameof(BingoSize3x3));
 			OnPropertyChanged(nameof(BingoSize4x4));
 			OnPropertyChanged(nameof(BingoSize5x5));
 			OnPropertyChanged(nameof(BingoSize6x6));
@@ -2280,6 +2283,10 @@ namespace Croupier
 		private void BingoTile_MouseDown(object sender, RoutedEventArgs e) {
 			var tile = (BingoTile)((Button)sender).DataContext;
 			tile.Complete = !tile.Complete;
+		}
+
+		private void EditSpinCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
+			e.CanExecute = IsRouletteMode;
 		}
 	}
 }

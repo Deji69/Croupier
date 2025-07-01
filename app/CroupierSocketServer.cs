@@ -49,7 +49,7 @@ namespace Croupier
 		public static void Start() {
 			try {
 				var ipAddress = IPAddress.Parse("127.0.0.1");
-				var serverSocket = new TcpListener(ipAddress, PORT);
+				using var serverSocket = new TcpListener(ipAddress, PORT);
 				serverSocket.Start();
 				System.Diagnostics.Debug.WriteLine("[SOCKET] Waiting for connection...");
 
@@ -57,12 +57,11 @@ namespace Croupier
 
 				Task.Run(async () => {
 					while (!CancelConnection.IsCancellationRequested) {
-						var client = await serverSocket.AcceptTcpClientAsync();
-						var stream = client.GetStream();
+						using var client = await serverSocket.AcceptTcpClientAsync();
 
 						System.Diagnostics.Debug.WriteLine("[SOCKET] Client connected.");
-						var receive = HandleClientReceiveAsync(client, CancelConnection.Token);
-						var send = HandleClientSendAsync(client, CancelConnection.Token);
+						using var receive = HandleClientReceiveAsync(client, CancelConnection.Token);
+						using var send = HandleClientSendAsync(client, CancelConnection.Token);
 
 						App.Current.Dispatcher.Invoke(new Action(() => Connected?.Invoke(null, 0)));
 						
@@ -93,7 +92,7 @@ namespace Croupier
 		}
 
 		private static async Task HandleClientReceiveAsync(TcpClient client, CancellationToken ct) {
-			var stream = client.GetStream();
+			using var stream = client.GetStream();
 			var buffer = new byte[4096];
 
 			try {
@@ -114,7 +113,7 @@ namespace Croupier
 
 		private static async Task HandleClientSendAsync(TcpClient client, CancellationToken ct) {
 			await Task.Run(async () => {
-				var stream = client.GetStream();
+				using var stream = client.GetStream();
 
 				try {
 					while (!ct.IsCancellationRequested && client.Connected) {
