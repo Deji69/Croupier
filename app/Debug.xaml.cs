@@ -1,10 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.ComponentModel;
 using System.Windows;
 
 namespace Croupier {
 	public class DebugWindowViewModel : ViewModel {
 		private string legalSpinText = "";
+		private int totalBingoTiles = 0;
+		private int totalBingoObjectiveTiles = 0;
+		private int totalBingoComplicationTiles = 0;
+		private int totalBingoTilesCurrentMap = 0;
+		private int totalBingoObjectiveTilesCurrentMap = 0;
+		private int totalBingoComplicationTilesCurrentMap = 0;
 
 		public string LegalSpinText {
 			get => legalSpinText;
@@ -12,6 +20,36 @@ namespace Croupier {
 				legalSpinText = value;
 				UpdateProperty(nameof(LegalSpinText));
 			}
+		}
+
+		public int TotalBingoTiles {
+			get => totalBingoTiles;
+			set => SetProperty(ref totalBingoTiles, value);
+		}
+
+		public int TotalBingoObjectiveTiles {
+			get => totalBingoObjectiveTiles;
+			set => SetProperty(ref totalBingoObjectiveTiles, value);
+		}
+
+		public int TotalBingoComplicationTiles {
+			get => totalBingoComplicationTiles;
+			set => SetProperty(ref totalBingoComplicationTiles, value);
+		}
+
+		public int TotalBingoTilesCurrentMap {
+			get => totalBingoTilesCurrentMap;
+			set => SetProperty(ref totalBingoTilesCurrentMap, value);
+		}
+
+		public int TotalBingoObjectiveTilesCurrentMap {
+			get => totalBingoObjectiveTilesCurrentMap;
+			set => SetProperty(ref totalBingoObjectiveTilesCurrentMap, value);
+		}
+
+		public int TotalBingoComplicationTilesCurrentMap {
+			get => totalBingoComplicationTilesCurrentMap;
+			set => SetProperty(ref totalBingoComplicationTilesCurrentMap, value);
 		}
 	}
 	
@@ -26,6 +64,17 @@ namespace Croupier {
 
 			viewModel.PropertyChanged += OnPropertyChanged;
 			GameController.Main.Roulette.SpinEdited += OnSpinChanged;
+
+			var bingo = Bingo.Main;
+			var mission = GameController.Main.MissionID;
+			var enabledTiles = bingo.Tiles.Where(t => !t.Disabled);
+			var currentMapTiles = enabledTiles.Where(t => t.Missions.Count == 0 || t.Missions.Contains(mission));
+			viewModel.TotalBingoTiles = enabledTiles.Count();
+			viewModel.TotalBingoObjectiveTiles = enabledTiles.Count(t => t.Type == BingoTileType.Objective);
+			viewModel.TotalBingoComplicationTiles = enabledTiles.Count(t => t.Type == BingoTileType.Complication);
+			viewModel.TotalBingoTilesCurrentMap = currentMapTiles.Count();
+			viewModel.TotalBingoObjectiveTilesCurrentMap = currentMapTiles.Count(t => t.Type == BingoTileType.Objective);
+			viewModel.TotalBingoComplicationTilesCurrentMap = currentMapTiles.Count(t => t.Type == BingoTileType.Complication);
 		}
 
 		private void OnSpinChanged(object? sender, Spin? e) {

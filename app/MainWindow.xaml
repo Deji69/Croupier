@@ -25,7 +25,7 @@
 		<CommandBinding Command="{x:Static local:MainWindow.CopySpinCommand}" CanExecute="Command_AlwaysCanExecute" Executed="CopySpinCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.CopySpinLinkCommand}" CanExecute="Command_AlwaysCanExecute" Executed="CopySpinLinkCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.PasteSpinCommand}" CanExecute="PasteSpinCommand_CanExecute" Executed="PasteSpinCommand_Executed" />
-		<CommandBinding Command="{x:Static local:MainWindow.EditSpinCommand}" CanExecute="Command_AlwaysCanExecute" Executed="EditSpinCommand_Executed" />
+		<CommandBinding Command="{x:Static local:MainWindow.EditSpinCommand}" CanExecute="EditSpinCommand_CanExecute" Executed="EditSpinCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.ShowStatisticsWindowCommand}" CanExecute="Command_AlwaysCanExecute" Executed="ShowStatisticsWindowCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.ShowHitmapsWindowCommand}" CanExecute="Command_AlwaysCanExecute" Executed="ShowHitmapsWindowCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.ShowLiveSplitWindowCommand}" CanExecute="Command_AlwaysCanExecute" Executed="ShowLiveSplitWindowCommand_Executed" />
@@ -267,6 +267,7 @@
 						OverridesDefaultStyle="True"
 						VerticalContentAlignment="Stretch"
 						VerticalAlignment="Stretch"
+                        ToolTip="{Binding Tip}"
 					>
 						<Grid
 							Width="{Binding DataContext.GridTileWidth, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorLevel=2, AncestorType=UniformGrid}}"
@@ -630,7 +631,7 @@
 					</MenuItem.ItemContainerStyle>
 				</MenuItem>
 				<MenuItem
-					Name="ContextMenuBingoTileType"
+					Name="ContextMenuBingoMode"
 					Header="Bingo Mode"
 				>
 					<MenuItem.ItemContainerStyle>
@@ -642,6 +643,7 @@
                     <MenuItem Header="Complications" Command="{Binding BingoModeSelectCommand}" CommandParameter="{x:Static local:BingoTileType.Complication}" IsChecked="{Binding IsBingoTileTypeComplication, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                     <MenuItem Header="Mixed" Command="{Binding BingoModeSelectCommand}" CommandParameter="{x:Static local:BingoTileType.Mixed}" IsChecked="{Binding IsBingoTileTypeMixed, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                     <Separator />
+                    <MenuItem Header="3x3" Command="{Binding SetBoardSizeCommand}" CommandParameter="3x3" IsChecked="{Binding BingoSize3x3, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                     <MenuItem Header="4x4" Command="{Binding SetBoardSizeCommand}" CommandParameter="4x4" IsChecked="{Binding BingoSize4x4, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                     <MenuItem Header="5x5" Command="{Binding SetBoardSizeCommand}" CommandParameter="5x5" IsChecked="{Binding BingoSize5x5, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                     <MenuItem Header="6x6" Command="{Binding SetBoardSizeCommand}" CommandParameter="6x6" IsChecked="{Binding BingoSize6x6, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />

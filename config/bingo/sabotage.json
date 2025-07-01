@@ -1,6 +1,7 @@
 [
 	{
 		"Name": "Erase Security Recorder",
+		"Tip": "Destroy or hack the camera recorder.",
 		"Group": "Sabotage",
 		"Missions": [],
 		"Tags": ["Action", "Sabotage"],
@@ -14,6 +15,7 @@
 	{
 		"Name": "Destroy {1} Cameras",
 		"NameSingular": "Destroy {1} Camera",
+		"Tip": "Destroy {0} cameras by any means necessary.",
 		"Group": "Sabotage",
 		"Missions": [],
 		"Tags": ["Action", "Sabotage"],
@@ -24,6 +26,7 @@
 	},
 	{
 		"Name": "Ignite Oil Drum",
+		"Tip": "Leak and ignite an oil barrel like a pyromaniac.",
 		"Group": "Sabotage",
 		"Missions": ["The Showstopper", "Holiday Hoarders"],
 		"Tags": ["Action", "Sabotage"],
@@ -34,8 +37,11 @@
 	},
 	{
 		"Name": "Explode a Vehicle",
+		"Tip": "Make someone walk home to help the environment.",
 		"Group": "Sabotage",
-		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Missions": [
+			"The Showstopper", "Holiday Hoarders", "World of Tomorrow", "A Gilded Cage"
+		],
 		"Tags": ["Action", "Sabotage"],
 		"Setpiece": {
 			"RepositoryId": "2b29d641-2a0d-4781-b2dd-0df02bc2674b",
@@ -45,6 +51,7 @@
 	{
 		"Name": "Explode {1} Gas Heater Lamps",
 		"NameSingular": "Explode {1} Gas Heater Lamp",
+		"Tip": "Cause {0} gas heater lamps to explode.",
 		"Group": "Sabotage",
 		"Missions": ["The Showstopper", "Holiday Hoarders"],
 		"Tags": ["Action", "Sabotage"],
@@ -56,6 +63,7 @@
 	},
 	{
 		"Name": "Break Museum Vase",
+		"Tip": "Assassinate the antique vase.",
 		"Group": "Sabotage",
 		"Missions": ["The Showstopper", "Holiday Hoarders"],
 		"Tags": ["Action", "Sabotage"],
@@ -65,6 +73,7 @@
 	},
 	{
 		"Name": "Explode Fire Extinguisher",
+		"Tip": "Cause a fire extinguisher to explode. Remember to cover your ears.",
 		"Group": "Sabotage",
 		"Missions": ["The Showstopper", "Holiday Hoarders"],
 		"Tags": ["Action", "Sabotage"],
@@ -75,6 +84,7 @@
 	},
 	{
 		"Name": "Explode Propane Flask",
+		"Tip": "Blow up a propane flask.",
 		"Group": "Sabotage",
 		"Missions": ["The Showstopper", "Holiday Hoarders"],
 		"Tags": ["Action", "Sabotage"],
@@ -85,6 +95,7 @@
 	},
 	{
 		"Name": "Explode Gas Canister",
+		"Tip": "Blow up a gas canister. The large red ones.",
 		"Group": "Sabotage",
 		"Missions": ["The Showstopper", "Holiday Hoarders"],
 		"Tags": ["Action", "Sabotage"],

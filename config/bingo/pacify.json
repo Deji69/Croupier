@@ -1,6 +1,7 @@
 [
 	{
 		"Name": "{1} Male NPCs",
+		"Tip": "Pacify {0} male NPCs by any means.",
 		"Group": "Pacify",
 		"Tags": ["Action", "Pacify"],
 		"Pacify": {
@@ -10,6 +11,7 @@
 	},
 	{
 		"Name": "{1} Female NPCs",
+		"Tip": "Pacify {0} female NPCs by any means.",
 		"Group": "Pacify",
 		"Tags": ["Action", "Pacify"],
 		"Pacify": {
@@ -19,6 +21,7 @@
 	},
 	{
 		"Name": "{1} Guard NPCs",
+		"Tip": "Pacify {0} guard NPCs by any means.",
 		"Group": "Pacify",
 		"Tags": ["Action", "Pacify"],
 		"Pacify": {
@@ -28,6 +31,7 @@
 	},
 	{
 		"Name": "{1} Civilian NPCs",
+		"Tip": "Pacify {0} civilian NPCs by any means.",
 		"Group": "Pacify",
 		"Tags": ["Action", "Pacify"],
 		"Pacify": {
@@ -37,6 +41,7 @@
 	},
 	{
 		"Name": "With Piano",
+		"Tip": "Pacify any NPC by pushing the pin on the piano.",
 		"Group": "Pacify",
 		"Missions": ["The Showstopper", "Holiday Hoarders"],
 		"Tags": ["Action", "Pacify"],
@@ -46,6 +51,7 @@
 	},
 	{
 		"Name": "With Police Baton",
+		"Tip": "Pacify any NPC with the police baton from the Dining Room.",
 		"Group": "Pacify",
 		"Missions": ["The Showstopper", "Holiday Hoarders"],
 		"Tags": ["Action", "Pacify"],
@@ -55,6 +61,7 @@
 	},
 	{
 		"Name": "With Golf Club",
+		"Tip": "Pacify any NPC with the golf club from the Museum Owner's Study.",
 		"Group": "Pacify",
 		"Missions": ["The Showstopper", "Holiday Hoarders"],
 		"Tags": ["Action", "Pacify"],
@@ -64,6 +71,7 @@
 	},
 	{
 		"Name": "Helmut Kruger",
+		"Tip": "Pacify Helmut Kruger by any means.",
 		"Group": "Pacify",
 		"Missions": ["The Showstopper", "Holiday Hoarders"],
 		"Tags": ["Action", "Pacify"],

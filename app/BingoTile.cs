@@ -44,8 +44,21 @@ namespace Croupier {
 		public required StringCollection Tags { get; set; }
 		public required BingoTrigger Trigger { get; set; }
 		public string Text => ToString();
+		public string? Tip {
+			get {
+				var fmt = tip ?? Group?.Tip;
+				if (fmt == null) return null;
+				var args = Trigger.GetFormatArgs(state);
+				var res = string.Format(fmt, args);
+				return res;
+			}
+			set {
+				tip = value;
+				OnPropertyChanged(nameof(Tip));
+			}
+		}
 		public string GroupText => Group != null ? $"{Group.Name}" : "";
-		public Visibility GroupTextVisibility => Group != null ? Visibility.Visible : Visibility.Collapsed;
+		public Visibility GroupTextVisibility => Group != null && !Group.Hidden ? Visibility.Visible : Visibility.Collapsed;
 		public SolidColorBrush GroupTextColor => Config.Default.EnableGroupTileColors ? groupTextBrush : defaultBrush;
 
 		private BingoGroup? group = null;
@@ -53,6 +66,7 @@ namespace Croupier {
 		private SolidColorBrush groupTextBrush = new(new() { R = 200, G = 200, B = 200, A = 255 });
 		private readonly SolidColorBrush defaultBrush = new(new() { R = 200, G = 200, B = 200, A = 255 });
 		private bool isScored = false;
+		private string? tip = null;
 
 		public bool Complete {
 			get => state.Complete;
@@ -118,6 +132,7 @@ namespace Croupier {
 			var name = (json["Name"]?.GetValue<string>()) ?? throw new BingoTileConfigException("Invalid 'Name' property.");
 			var nameSingular = json["NameSingular"]?.GetValue<string>();
 			var disabled = json["Disabled"]?.GetValue<bool>() ?? false;
+			var tip = json["Tip"]?.GetValue<string>();
 			var groupName = json["Group"]?.GetValue<string>();
 			var tags = (StringCollection)[];
 			var missions = (List<MissionID>)[];
@@ -158,6 +173,7 @@ namespace Croupier {
 					NameSingular = nameSingular,
 					Disabled = disabled,
 					Type = type,
+					Tip = tip,
 					Group = group,
 					Missions = missions,
 					Tags = tags,

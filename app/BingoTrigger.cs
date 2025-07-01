@@ -223,8 +223,12 @@ namespace Croupier {
 		}
 
 		public void Load(JsonNode? json) {
-			if (json?.GetValueKind() != JsonValueKind.Object)
-				throw new BingoTileConfigException("Expected object for position.");
+			if (json == null) {
+				X = Y = Z = null;
+				return;
+			}
+			if (json.GetValueKind() != JsonValueKind.Object)
+				throw new BingoTileConfigException("Property 'Position' should be an object.");
 			LoadObject(json.AsObject());
 		}
 
@@ -276,7 +280,7 @@ namespace Croupier {
 		}
 
 		public virtual object[] GetFormatArgs(BingoTileState state) {
-			return [state.Counter, (Count ?? 1) - (state.Complete ? 0 : state.Counter)];
+			return [Count ?? 1, (Count ?? 1) - (state.Complete ? 0 : state.Counter), state.Counter];
 		}
 
 		public static BingoTrigger? Load(JsonNode json, Func<JsonNode, BingoTrigger?> create) {
@@ -342,7 +346,7 @@ namespace Croupier {
 				"ItemDropped" => json => new BingoTriggerItemDropped(json),
 				"OnTakeDamage" => json => new BingoTriggerOnTakeDamage(json),
 				"InstinctActive" => json => new BingoTriggerInstinctActive(json),
-				"OnWeaponReload" => json => new BingoTriggerOnWeaponReload(json),
+				"OnWeaponReload" => json => new BingoTriggerOnWeaponReload(json.AsObject()),
 				"OnIsFullyInCrowd" => json => new BingoTriggerOnIsFullyInCrowd(json),
 				"OnIsFullyInVegetation" => json => new BingoTriggerOnIsFullyInVegetation(json),
 				"IsRunning" => json => new BingoTriggerIsRunning(json),

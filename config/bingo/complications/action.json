@@ -2,6 +2,7 @@
 	{
 		"Name": "No Body Shots",
 		"Type": "Complication",
+		"Tip": "Do not shoot any NPC unless it is a headshot.",
 		"Group": "Action",
 		"Difficulty": "Medium",
 		"ProjectileBodyShot": {}
@@ -9,6 +10,7 @@
 	{
 		"Name": "No Climbing Drain Pipes",
 		"Type": "Complication",
+		"Tip": "Don't climb any drain pipe.",
 		"Group": "Action",
 		"Difficulty": "Medium",
 		"DrainPipeClimbed": {}
@@ -17,6 +19,7 @@
 		"Disabled": true,
 		"Name": "No Crouch Running",
 		"Type": "Complication",
+		"Tip": "Avoid running while crouched.",
 		"Group": "Action",
 		"Difficulty": "High",
 		"IsCrouchRunning": {}
@@ -25,6 +28,7 @@
 		"Disabled": true,
 		"Name": "No Crouch Movement",
 		"Type": "Complication",
+		"Tip": "If you crouch, you must stay still.",
 		"Group": "Action",
 		"Difficulty": "High",
 		"OR": [
@@ -43,6 +47,7 @@
 		"Disabled": true,
 		"Name": "No Crouch Move in Trespassing",
 		"Type": "Complication",
+		"Tip": "If you crouch while in trespassing, you must stay still.",
 		"Group": "Action",
 		"Difficulty": "High",
 		"OR": [
@@ -60,6 +65,7 @@
 	{
 		"Name": "No Crowd Blending",
 		"Type": "Complication",
+		"Tip": "Avoid becoming concealed in crowded areas.",
 		"Group": "Action",
 		"Difficulty": "Medium",
 		"OnIsFullyInCrowd": {}
@@ -67,6 +73,7 @@
 	{
 		"Name": "No Vegetation Concealing",
 		"Type": "Complication",
+		"Tip": "Avoid concealing yourself in foliage.",
 		"Group": "Action",
 		"Difficulty": "Medium",
 		"OnIsFullyInVegetation": {}
@@ -74,6 +81,7 @@
 	{
 		"Name": "No Damage",
 		"Type": "Complication",
+		"Tip": "Do not take damage, not even friendly fire.",
 		"Group": "Action",
 		"Difficulty": "Medium",
 		"OnTakeDamage": {}
@@ -81,6 +89,7 @@
 	{
 		"Name": "No Instinct",
 		"Type": "Complication",
+		"Tip": "Go against your instincts and avoid using instinct.",
 		"Group": "Action",
 		"Difficulty": "Medium",
 		"InstinctActive": {}
@@ -88,12 +97,14 @@
 	{
 		"Name": "No Reloading",
 		"Type": "Complication",
+		"Tip": "Do not reload any weapon. Avoid leaving clips around the place as evidence.",
 		"Difficulty": "Medium",
 		"OnWeaponReload": {}
 	},
 	{
 		"Name": "No Shots Fired",
 		"Type": "Complication",
+		"Tip": "Do not fire any shots.",
 		"Group": "Action",
 		"Difficulty": "Medium",
 		"PlayerShot": {}
@@ -101,6 +112,7 @@
 	{
 		"Name": "No Shooting Indoors",
 		"Type": "Complication",
+		"Tip": "Do not fire any shots while inside any building (balconies count as outside).",
 		"Group": "Action",
 		"Difficulty": "Medium",
 		"Missions": ["The Showstopper", "Holiday Hoarders"],
@@ -113,6 +125,7 @@
 	{
 		"Name": "No Shooting Outside",
 		"Type": "Complication",
+		"Tip": "Do not fire any shots while outdoors (balconies count as outdoors).",
 		"Group": "Action",
 		"Difficulty": "Medium",
 		"Missions": ["The Showstopper", "Holiday Hoarders"],
@@ -123,6 +136,7 @@
 	{
 		"Name": "No Throwing",
 		"Type": "Complication",
+		"Tip": "Do not throw any item.",
 		"Group": "Action",
 		"Difficulty": "High",
 		"ItemThrown": {}
@@ -131,6 +145,7 @@
 		"Disabled": true,
 		"Name": "Only Run Crouched",
 		"Type": "Complication",
+		"Tip": "Do not run while standing upright, only run while crouching.",
 		"Group": "Action",
 		"Difficulty": "High",
 		"IsRunning": {}

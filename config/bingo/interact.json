@@ -2,6 +2,7 @@
 	{
 		"Name": "Enter {1} Containers",
 		"NameSingular": "Enter {1} Container",
+		"Tip": "Hide in {0} different crates/closets/containers.",
 		"Group": "Interact",
 		"Tags": ["Action", "Interact"],
 		"Setpiece": {
@@ -13,6 +14,7 @@
 	{
 		"Name": "Hide {1} Bodies",
 		"NameSingular": "Hide {1} Body",
+		"Tip": "Hide {0} bodies.",
 		"Group": "Interact",
 		"Tags": ["Action", "Interact"],
 		"BodyHidden": {
@@ -21,6 +23,7 @@
 	},
 	{
 		"Name": "Activate Fire Alarm",
+		"Tip": "Pull a fire alarm. You know you want to.",
 		"Group": "Interact",
 		"Missions": ["The Showstopper", "Holiday Hoarders"],
 		"Tags": ["Action", "Interact"],
@@ -31,6 +34,7 @@
 	{
 		"Name": "Flood {1} Sinks",
 		"NameSingular": "Flood {1} Sink",
+		"Tip": "Cause {0} sinks to overfill and flood.",
 		"Group": "Interact",
 		"Missions": ["The Showstopper", "Holiday Hoarders"],
 		"Tags": ["Action", "Interact"],
@@ -43,6 +47,7 @@
 	},
 	{
 		"Name": "Activate Diorama",
+		"Tip": "Activate the diorama.",
 		"Group": "Interact",
 		"Missions": ["The Showstopper", "Holiday Hoarders"],
 		"Tags": ["Action", "Interact"],
@@ -53,6 +58,7 @@
 	{
 		"Name": "Release {1} Winches Manually",
 		"NameSingular": "Release {1} Winch Manually",
+		"Tip": "Interact with {0} winches to release them by hand.",
 		"Group": "Interact",
 		"Missions": ["The Showstopper", "Holiday Hoarders"],
 		"Tags": ["Action", "Interact"],
@@ -66,6 +72,7 @@
 	},
 	{
 		"Name": "Poison a Sushi Plate",
+		"Tip": "Poison any of the sushi trays.",
 		"Group": "Interact",
 		"Missions": ["The Showstopper", "Holiday Hoarders"],
 		"Tags": ["Action", "Interact"],
@@ -81,6 +88,7 @@
 	},
 	{
 		"Name": "Poison Sato's Drink",
+		"Tip": "Poison Sebastian Sato's champagne glass.",
 		"Group": "Interact",
 		"Missions": ["The Showstopper", "Holiday Hoarders"],
 		"Tags": ["Action", "Interact"],
@@ -91,6 +99,7 @@
 	},
 	{
 		"Name": "Examine Fireworks Schedule",
+		"Tip": "Examine the fireworks schedule intel.",
 		"Group": "Interact",
 		"Missions": ["The Showstopper", "Holiday Hoarders"],
 		"Tags": ["Action", "Interact"],
@@ -100,6 +109,7 @@
 	},
 	{
 		"Name": "Read Cocktail Recipe",
+		"Tip": "Examine the cocktail recipe intel.",
 		"Group": "Interact",
 		"Missions": ["The Showstopper", "Holiday Hoarders"],
 		"Tags": ["Action", "Interact"],
