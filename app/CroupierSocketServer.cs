@@ -49,7 +49,7 @@ namespace Croupier
 		public static void Start() {
 			try {
 				var ipAddress = IPAddress.Parse("127.0.0.1");
-				using var serverSocket = new TcpListener(ipAddress, PORT);
+				var serverSocket = new TcpListener(ipAddress, PORT);
 				serverSocket.Start();
 				System.Diagnostics.Debug.WriteLine("[SOCKET] Waiting for connection...");
 
@@ -57,14 +57,15 @@ namespace Croupier
 
 				Task.Run(async () => {
 					while (!CancelConnection.IsCancellationRequested) {
-						using var client = await serverSocket.AcceptTcpClientAsync();
+						var client = await serverSocket.AcceptTcpClientAsync();
 
 						System.Diagnostics.Debug.WriteLine("[SOCKET] Client connected.");
-						using var receive = HandleClientReceiveAsync(client, CancelConnection.Token);
-						using var send = HandleClientSendAsync(client, CancelConnection.Token);
 
 						App.Current.Dispatcher.Invoke(new Action(() => Connected?.Invoke(null, 0)));
-						
+
+						var receive = HandleClientReceiveAsync(client, CancelConnection.Token);
+						var send = HandleClientSendAsync(client, CancelConnection.Token);
+
 						await receive.WaitAsync(CancelConnection.Token);
 						await send.WaitAsync(CancelConnection.Token);
 					}
@@ -112,25 +113,23 @@ namespace Croupier
 		}
 
 		private static async Task HandleClientSendAsync(TcpClient client, CancellationToken ct) {
-			await Task.Run(async () => {
-				using var stream = client.GetStream();
+			using var stream = client.GetStream();
 
-				try {
-					while (!ct.IsCancellationRequested && client.Connected) {
-						if (clientMessages.Count <= 0) {
-							Thread.Sleep(100);
-							continue;
-						}
-
-						while (clientMessages.TryTake(out var message)) {
-							var buffer = Encoding.UTF8.GetBytes(message.Data + "\n");
-							await stream.WriteAsync(buffer.AsMemory(0, buffer.Length), ct);
-						}
+			try {
+				while (!ct.IsCancellationRequested && client.Connected) {
+					if (clientMessages.Count <= 0) {
+						Thread.Sleep(100);
+						continue;
 					}
-				} catch (System.IO.IOException) { }
 
-				Console.WriteLine("[SOCKET] Client disconnected.");
-			}, ct);
+					while (clientMessages.TryTake(out var message)) {
+						var buffer = Encoding.UTF8.GetBytes(message.Data + "\n");
+						await stream.WriteAsync(buffer.AsMemory(0, buffer.Length), ct);
+					}
+				}
+			} catch (System.IO.IOException) { }
+
+			Console.WriteLine("[SOCKET] Client disconnected.");
 		}
 
 		public static void SpoofMessage(string msg) {
