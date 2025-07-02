@@ -363,6 +363,9 @@ public:
 	auto SendLoadFinished() -> void;
 	auto GetOutfitByRepoId(std::string_view repoId) -> const ZGlobalOutfitKit*;
 	auto GetOutfitByRepoId(ZRepositoryID repoId) -> const ZGlobalOutfitKit*;
+	auto ImbueDisguiseEvent(const std::string& repoId) -> nlohmann::json;
+	auto ImbueItemEvent(const ItemEventValue& ev, EActionType actionType) -> std::optional<nlohmann::json>;
+	auto ImbuePacifyEvent(const PacifyEventValue& ev) -> std::optional<nlohmann::json>;
 
 	template<Events T> auto SendImbuedEvent(const ServerEvent<T>& ev, nlohmann::json eventValue) -> void {
 		nlohmann::json json = {
