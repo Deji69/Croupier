@@ -83,11 +83,7 @@
 		"Group": "Location",
 		"Missions": ["The Showstopper", "Holiday Hoarders"],
 		"Difficulty": "Medium",
-		"EnterArea": {
-			"ID": "Helipad",
-			"From": [-279.825, -2.929, -4.935],
-			"To": [-328.375, 32.669, 0.215]
-		}
+		"EnterArea": "Helipad"
 	},
 	{
 		"Name": "No Entry: Kitchens",
