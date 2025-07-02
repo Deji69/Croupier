@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -128,46 +129,52 @@ namespace Croupier {
 			return MemberwiseClone();
 		}
 
-		public static BingoTile FromJson(JsonObject json, string? filename = null) {
-			var name = (json["Name"]?.GetValue<string>()) ?? throw new BingoTileConfigException("Invalid 'Name' property.");
-			var nameSingular = json["NameSingular"]?.GetValue<string>();
-			var disabled = json["Disabled"]?.GetValue<bool>() ?? false;
-			var tip = json["Tip"]?.GetValue<string>();
-			var groupName = json["Group"]?.GetValue<string>();
-			var tags = (StringCollection)[];
-			var missions = (List<MissionID>)[];
-			var group = Bingo.Main.Groups.Find(g => g.ID == groupName);
-			var typeName = json["Type"]?.GetValue<string>();
+		public static BingoTile FromJson(JsonElement json) {
+			if (!json.TryGetProperty("Name", out var nameProp))
+				throw new BingoTileConfigException("Missing required property 'Name' for bingo tile.");
+			if (nameProp.ValueKind != JsonValueKind.String)
+				throw new BingoTileConfigException($"Invalid property 'Name' for bingo tile, expected string but got {nameProp.ValueKind}.");
 
-			var type = typeName != null ? Enum.Parse<BingoTileType>(typeName) : BingoTileType.Objective;
-
-			foreach (var node in json["Tags"]?.AsArray() ?? []) {
-				try {
-					if (node == null) throw new BingoTileConfigException("Invalid entry in 'Tags' array.");
-					var v = node.GetValue<string>();
-					if (v == null || v.Length == 0) throw new BingoTileConfigException("Invalid entry in 'Tags' array.");
-					tags.Add(v);
-				}
-				catch (BingoConfigException e) {
-					MessageBox.Show($"{(filename != null ? $"File: {filename}\n" : "")}Exception: {e.Message}", "Bingo tiles JSON error", MessageBoxButton.OK, MessageBoxImage.Warning);
-				}
-			}
-
-			foreach (var node in json["Missions"]?.AsArray() ?? []) {
-				try {
-					if (node == null) throw new BingoTileConfigException("Invalid entry in 'Missions' array.");
-					var v = node.GetValue<string>();
-					if (v == null || v.Length == 0) throw new BingoTileConfigException("Invalid entry in 'Missions' array.");
-					var id = MissionIDMethods.FromName(v);
-					if (id == MissionID.NONE) throw new BingoTileConfigException($"Unknown mission '{v}' in 'Missions' array.");
-					missions.Add(id);
-				}
-				catch (BingoConfigException e) {
-					MessageBox.Show($"{(filename != null ? $"File: {filename}\n" : "")}Exception: {e.Message}", "Bingo tiles JSON error", MessageBoxButton.OK, MessageBoxImage.Warning);
-				}
-			}
+			var name = nameProp.GetString()!;
 
 			try {
+				var nameSingular = json.TryGetProperty("Name", out var nameSingularProp) ? nameSingularProp.GetString() : null;
+				var disabled = json.TryGetProperty("Disabled", out var disabledProp) ? disabledProp.GetBoolean() : false;
+				var tip = json.TryGetProperty("Tip", out var tipProp) ? tipProp.GetString() : null;
+				var groupName = json.TryGetProperty("Group", out var groupProp) ? groupProp.GetString() : null;
+				var typeName = json.TryGetProperty("Type", out var typeProp) ? typeProp.GetString() : null;
+			
+				var group = Bingo.Main.Groups.Find(g => g.ID == groupName);
+				var type = typeName != null ? Enum.Parse<BingoTileType>(typeName) : BingoTileType.Objective;
+
+				var tags = (StringCollection)[];
+				var missions = (List<MissionID>)[];
+
+				if (json.TryGetProperty("Tags", out var tagsProp)) {
+					if (tagsProp.ValueKind != JsonValueKind.Array)
+						throw new BingoTileConfigException($"Invalid property 'Tags', expected array but got {tagsProp.ValueKind}.");
+					foreach (var node in tagsProp.EnumerateArray()) {
+						if (node.ValueKind != JsonValueKind.String)
+							throw new BingoTileConfigException($"Invalid element in 'Tags', expected string but got {node.ValueKind}.");
+						var v = node.GetString();
+						if (v == null || v.Length == 0) throw new BingoTileConfigException("Empty or invalid tag in 'Tags' array.");
+						tags.Add(v);
+					}
+				}
+
+				if (json.TryGetProperty("Missions", out var missionsProp)) {
+					if (missionsProp.ValueKind != JsonValueKind.Array)
+						throw new BingoTileConfigException($"Invalid property 'Missions', expected array but got {missionsProp.ValueKind}.");
+					foreach (var node in missionsProp.EnumerateArray()) {
+						if (node.ValueKind != JsonValueKind.String)
+							throw new BingoTileConfigException($"Invalid element in 'Missions', expected string but got {node.ValueKind}.");
+						var v = node.GetString();
+						var id = MissionIDMethods.FromName(v ?? "");
+						if (id == MissionID.NONE) throw new BingoTileConfigException($"Unknown mission '{v}' in 'Missions' array.");
+						missions.Add(id);
+					}
+				}
+
 				return new() {
 					Name = name,
 					NameSingular = nameSingular,

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
+using System.Linq;
 using System.Text.Json;
 using System.Windows;
 
@@ -55,7 +56,10 @@ namespace Croupier {
 
 		public BingoGame(GameController controller) {
 			this.controller = controller;
-			CroupierSocketServer.MissionStart += (sender, start) => card?.Reset();
+			CroupierSocketServer.MissionStart += (sender, start) => {
+				card?.Reset();
+				SendAreasToClient();
+			};
 			CroupierSocketServer.MissionComplete += (sender, arg) => card?.Finish();
 			CroupierSocketServer.Event += OnEvent;
 			CroupierSocketServer.Connected += (sender, arg) => {
@@ -105,11 +109,11 @@ namespace Croupier {
 			obj.Name = "Areas";
 			var areas = new List<dynamic>();
 
-			foreach (var trigger in card.GetEnterAreaTriggers()) {
-				dynamic area = new ExpandoObject();
-				area.ID = trigger.IDRaw;
-				area.From = new double[3] { trigger.From.X, trigger.From.Y, trigger.From.Z };
-				area.To = new double[3] { trigger.To.X, trigger.To.Y, trigger.To.Z };
+			foreach (var area in Bingo.Main.Areas.Where(a => a.Missions.Count == 0 || a.Missions.Contains(Mission))) {
+				dynamic data = new ExpandoObject();
+				data.ID = area.ID;
+				data.From = area.From;
+				data.To = area.To;
 				areas.Add(area);
 			}
 
