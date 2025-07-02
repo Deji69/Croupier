@@ -1,6 +1,9 @@
 ﻿using Croupier.Exceptions;
+using Croupier.GameEvents;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Windows;
@@ -39,61 +42,176 @@ namespace Croupier {
 		}
 	}
 
+	public class BingoArea {
+		public required string ID { get; set; }
+		public List<MissionID> Missions { get; set; } = [];
+		public SVector3? From { get; set; } = null;
+		public SVector3? To { get; set; } = null;
+
+		public static BingoArea FromJson(JsonElement json) {
+			if (!json.TryGetProperty("ID", out var idProp))
+				throw new BingoTileConfigException($"Missing property 'ID'.");
+			if (idProp.ValueKind != JsonValueKind.String)
+				throw new BingoTileConfigException($"Invalid type of property 'ID', expected string but got {idProp.ValueKind}.");
+
+			try {
+				var area = new BingoArea() {
+					ID = idProp.GetString()!,
+				};
+
+				if (json.TryGetProperty("Missions", out var missionsProp)) {
+					if (missionsProp.ValueKind != JsonValueKind.Array)
+						throw new BingoTileConfigException($"Invalid property 'Missions', expected array but got {missionsProp.ValueKind}.");
+					foreach (var node in missionsProp.EnumerateArray()) {
+						if (node.ValueKind != JsonValueKind.String)
+							throw new BingoTileConfigException($"Invalid element in 'Missions', expected string but got {node.ValueKind}.");
+						var v = node.GetString();
+						var mid = MissionIDMethods.FromName(v ?? "");
+						if (mid == MissionID.NONE) throw new BingoTileConfigException($"Unknown mission '{v}' in 'Missions' array.");
+						area.Missions.Add(mid);
+					}
+				}
+
+				if (json.TryGetProperty("From", out var fromProp))
+					area.From = LoadSVector3(fromProp, "From");
+				if (json.TryGetProperty("To", out var toProp))
+					area.To = LoadSVector3(toProp, "To");
+				return area;
+			} catch (Exception e) {
+				throw new BingoConfigException($"Exception while loading bingo area '{idProp.GetString()}'.", e);
+			}
+		}
+
+		private static SVector3 LoadSVector3(JsonElement json, string prop) {
+			if (json.ValueKind != JsonValueKind.Array)
+				throw new BingoConfigException($"Invalid property '{prop}', expected array but got {json.ValueKind}.");
+			if (json.GetArrayLength() != 3)
+				throw new BingoConfigException($"Invalid property '{prop}', expected array of length 3 but the length is {json.GetArrayLength()}.");
+			if (json[0].ValueKind != JsonValueKind.Number || json[1].ValueKind != JsonValueKind.Number || json[2].ValueKind != JsonValueKind.Number)
+				throw new BingoConfigException($"Invalid property '{prop}', all values must be numbers.");
+			return new() {
+				X = json[0].GetDouble(),
+				Y = json[1].GetDouble(),
+				Z = json[2].GetDouble(),
+			};
+		}
+	}
+
 	public class Bingo {
+		private struct ConfigSection {
+			public string Filename;
+			public JsonElement Element;
+		}
+		private struct ConfigSections {
+			public List<ConfigSection> areas = [];
+			public List<ConfigSection> groups = [];
+			public List<ConfigSection> tiles = [];
+
+			public ConfigSections() { }
+		}
+
 		public static readonly Bingo Main = new();
 
 		public List<BingoTile> Tiles { get; } = [];
 		public List<BingoGroup> Groups { get; } = [];
+		public List<BingoArea> Areas { get; } = [];
 
 		private bool loaded = false;
 
 		public void LoadConfiguration(bool reload = false) {
 			if (loaded && !reload) return;
-			Tiles.Clear();
+			
+			Areas.Clear();
 			Groups.Clear();
-			if (File.Exists("config/bingo/group.json"))
-				LoadGroupsFromFile("config/bingo/group.json");
+			Tiles.Clear();
+
+			var jsonDocuments = new List<JsonDocument>();
+			var sections = new ConfigSections();
+
 			foreach (var file in Directory.GetFiles("config/bingo", "*.json", SearchOption.AllDirectories)) {
-				if (file.EndsWith("group.json")) continue;
-				LoadTilesFromFile(file);
+				try {
+					var options = new JsonDocumentOptions {
+						CommentHandling = JsonCommentHandling.Skip,
+						AllowTrailingCommas = true,
+					};
+					var json = JsonDocument.Parse(File.ReadAllText(file), options) ?? throw new BingoConfigException("Failed to parse JSON.");
+					jsonDocuments.Add(json);
+					if (json.RootElement.ValueKind == JsonValueKind.Array)
+						sections.tiles.Add(new(){ Filename = file, Element = json.RootElement });
+					else if (json.RootElement.ValueKind == JsonValueKind.Object) {
+						var subSections = LoadJsonObject(json.RootElement, file);
+						sections.areas.AddRange(subSections.areas);
+						sections.groups.AddRange(subSections.groups);
+						sections.tiles.AddRange(subSections.tiles);
+					}
+					else
+						throw new BingoConfigException("Expected array or object as JSON root node.");
+				}
+				catch (Exception e) {
+					MessageBox.Show($"File: {file}\nException: {e.Message}", "Config Error - Croupier", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+				}
 			}
+
+			// Load the config sections in a specific order.
+			foreach (var cfg in sections.areas)
+				LoadAreasFromJson(cfg.Element);
+			foreach (var cfg in sections.groups)
+				LoadGroupsFromJson(cfg.Element);
+			foreach (var cfg in sections.tiles)
+				LoadTilesFromJson(cfg.Element);
+
+			foreach (var doc in jsonDocuments)
+				doc.Dispose();
+
 			loaded = true;
 		}
 
-		public void LoadGroupsFromFile(string file) {
-			try {
-				var options = new JsonDocumentOptions {
-					CommentHandling = JsonCommentHandling.Skip,
-					AllowTrailingCommas = true,
-				};
-				using var json = JsonDocument.Parse(File.ReadAllText(file), options) ?? throw new BingoTileConfigException($"Failed to parse JSON file {file}.");
-				LoadGroupsFromJson(json.RootElement);
+		private static ConfigSections LoadJsonObject(JsonElement json, string filename) {
+			var sections = new ConfigSections();
+			foreach (var elem in json.EnumerateObject()) {
+				try {
+					switch (elem.Name) {
+						case "Areas":
+							sections.areas.Add(new() { Element = elem.Value, Filename = filename });
+							break;
+						case "Groups":
+							sections.groups.Add(new() { Element = elem.Value, Filename = filename });
+							break;
+						case "Tiles":
+							sections.tiles.Add(new() { Element = elem.Value, Filename = filename });
+							break;
+					}
+				} catch (Exception e) {
+					throw new BingoConfigException($"Exception while loading '{elem.Name}' in JSON.\n{e.Message}", e);
+				}
 			}
-			catch (BingoConfigException e) {
-				MessageBox.Show($"File: {file}\nException: {e.Message}", "Config Error - Croupier", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+			return sections;
+		}
+
+		private void LoadAreasFromJson(JsonElement json) {
+			if (json.ValueKind != JsonValueKind.Array)
+				throw new BingoConfigException($"Expected array but got {json.ValueKind}.");
+			foreach (var elem in json.EnumerateArray()) {
+				if (elem.ValueKind != JsonValueKind.Object)
+					throw new BingoConfigException($"Invalid array element, expected object but got {elem.ValueKind}.");
+				Areas.Add(BingoArea.FromJson(elem));
 			}
 		}
 
-		public void LoadTilesFromFile(string file) {
-			try {
-				var json = JsonNode.Parse(File.ReadAllText(file)) ?? throw new BingoTileConfigException($"Failed to parse JSON file {file}.");
-				LoadTilesFromJson(json, file);
-			}
-			catch (BingoConfigException e) {
-				MessageBox.Show($"File: {file}\nException: {e.Message}", "Config Error - Croupier", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-			}
-		}
-
-		public void LoadTilesFromJson(JsonNode json, string? file = null) {
-			var jsonArray = json.AsArray();
-			foreach (var item in jsonArray) {
-				var obj = item?.AsObject() ?? throw new BingoTileConfigException($"Invalid bingo tile entry.");
-				var tile = BingoTile.FromJson(obj, file);
+		private void LoadTilesFromJson(JsonElement json) {
+			foreach (var item in json.EnumerateArray()) {
+				if (item.ValueKind != JsonValueKind.Object)
+					throw new BingoTileConfigException($"Expected object for bingo tile array entry, found {item.ValueKind}.");
+				
+				var tile = BingoTile.FromJson(item);
 				Tiles.Add(tile);
 			}
 		}
 
-		public void LoadGroupsFromJson(JsonElement json) {
+		private void LoadGroupsFromJson(JsonElement json) {
+			if (json.ValueKind != JsonValueKind.Object)
+				throw new BingoConfigException("Expected object.");
+
 			using var jsonArray = json.EnumerateObject();
 			foreach (var elem in jsonArray) {
 				if (elem.Value.ValueKind != JsonValueKind.Object)
