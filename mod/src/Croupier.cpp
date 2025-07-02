@@ -50,7 +50,6 @@ static auto randomVectorElement(const std::vector<T>& vec) -> const T&
 
 Croupier::Croupier() : sharedSpin(spin), respinAction("Respin"), shuffleAction("Shuffle") {
 	ZHMExtension::Init();
-	this->SetupEvents();
 	this->rules = makeRouletteRuleset(this->ruleset);
 
 	CHAR filename[MAX_PATH] = {};
@@ -335,8 +334,11 @@ auto Croupier::ParseSpin(std::string_view sv) -> std::optional<RouletteSpin> {
 auto Croupier::OnEngineInitialized() -> void {
 	Logger::Info("Croupier has been initialized!");
 
+	this->SetupEvents();
+
 	client = std::make_unique<CroupierClient>();
 	client->start();
+
 	this->InstallHooks();
 	this->LoadConfiguration();
 
@@ -395,9 +397,9 @@ auto Croupier::OnFrameUpdate_PlayMode(const SGameUpdateEvent& ev) -> void {
 	this->ProcessPlayerState();
 }
 
-/*static std::vector<std::string> propNames;
+static std::vector<std::string> propNames;
 
-auto getEntityPropNames(ZEntityType* s_EntityType) -> const std::vector<std::string>& {
+static auto getEntityPropNames(ZEntityType* s_EntityType) -> const std::vector<std::string>& {
 	propNames.clear();
 	if (s_EntityType && s_EntityType->m_pProperties01) {
 		for (uint32_t i = 0; i < s_EntityType->m_pProperties01->size(); ++i) {
@@ -410,13 +412,12 @@ auto getEntityPropNames(ZEntityType* s_EntityType) -> const std::vector<std::str
 			const std::string s_TypeName = s_PropertyInfo->m_pType->typeInfo()->m_pTypeName;
 			const std::string s_InputId = std::format("##Property{}", i);
 
-			if (s_PropertyInfo->m_pType->typeInfo()->isResource() || s_PropertyInfo->m_nPropertyID != s_Property->
-				m_nPropertyId) {
+			if (s_PropertyInfo->m_pType->typeInfo()->isResource() || s_PropertyInfo->m_nPropertyID != s_Property->m_nPropertyId) {
 				// Some properties don't have a name for some reason. Try to find using RL.
-				const auto s_PropertyName = HM3_GetPropertyName(s_Property->m_nPropertyId);
+				//const auto s_PropertyName = s_TypeName;//HM3_GetPropertyName(s_Property->);
 
-				if (s_PropertyName.Size > 0)
-					propNames.push_back(std::string(s_PropertyName.Data, s_PropertyName.Size));
+				if (s_TypeName.size() > 0)
+					propNames.push_back(s_TypeName);
 				else
 					propNames.push_back(std::format("{}", s_Property->m_nPropertyId));
 			}
@@ -424,7 +425,7 @@ auto getEntityPropNames(ZEntityType* s_EntityType) -> const std::vector<std::str
 		}
 	}
 	return propNames;
-}*/
+}
 
 auto Croupier::ProcessPlayerState() -> void {
 	if (!this->sharedSpin.playerInInstinctSinceFrame && this->sharedSpin.playerInInstinct)
@@ -542,21 +543,28 @@ auto Croupier::ProcessClientEvent(std::string_view name, const nlohmann::json& j
 			if (!id.is_string()) continue;
 
 			auto const& fromJson = areaJson["From"];
-			if (!fromJson.is_array()) continue;
+			if (!fromJson.is_object()) continue;
 			if (fromJson.size() != 3) continue;
 
 			auto const& toJson = areaJson["To"];
-			if (!toJson.is_array()) continue;
+			if (!toJson.is_object()) continue;
 			if (toJson.size() != 3) continue;
+
+			auto const& fromXJson = fromJson["X"];
+			auto const& fromYJson = fromJson["Y"];
+			auto const& fromZJson = fromJson["Z"];
+			auto const& toXJson = toJson["X"];
+			auto const& toYJson = toJson["Y"];
+			auto const& toZJson = toJson["Z"];
 
 			Area area;
 			area.ID = id.get<std::string>();
-			area.From.x = fromJson[0].get<float32>();
-			area.From.y = fromJson[1].get<float32>();
-			area.From.z = fromJson[2].get<float32>();
-			area.To.x = toJson[0].get<float32>();
-			area.To.y = toJson[1].get<float32>();
-			area.To.z = toJson[2].get<float32>();
+			area.From.x = fromXJson.get<float32>();
+			area.From.y = fromYJson.get<float32>();
+			area.From.z = fromZJson.get<float32>();
+			area.To.x = toXJson.get<float32>();
+			area.To.y = toYJson.get<float32>();
+			area.To.z = toZJson.get<float32>();
 
 			this->sharedSpin.areas.push_back(std::move(area));
 		}
@@ -1668,27 +1676,15 @@ auto Croupier::GetOutfitByRepoId(ZRepositoryID repoId) -> const ZGlobalOutfitKit
 	return it->second.m_pInterfaceRef;
 }
 
-auto Croupier::SetupEvents() -> void {
-	const auto imbueDisguiseEvent = [this](const std::string& repoId) -> nlohmann::json {
-		auto outfit = this->GetOutfitByRepoId(repoId);
-		if (outfit) {
-			return {
-				{"Title", outfit->m_sTitle},
-				{"RepositoryId", repoId},
-				{"ActorType", outfit->m_eActorType},
-				{"IsSuit", outfit->m_bIsHitmanSuit},
-				{"OutfitType", outfit->m_eOutfitType},
-				{"Room", this->sharedSpin.roomId},
-				{"Area", this->sharedSpin.area ? this->sharedSpin.area->ID : ""},
-				{"Position", {
-					{"X", this->sharedSpin.playerMatrix.Trans.x},
-					{"Y", this->sharedSpin.playerMatrix.Trans.y},
-					{"Z", this->sharedSpin.playerMatrix.Trans.z},
-				}},
-			};
-		}
+auto Croupier::ImbueDisguiseEvent(const std::string& repoId) -> nlohmann::json {
+	auto outfit = this->GetOutfitByRepoId(repoId);
+	if (outfit) {
 		return {
+			{"Title", outfit->m_sTitle},
 			{"RepositoryId", repoId},
+			{"ActorType", outfit->m_eActorType},
+			{"IsSuit", outfit->m_bIsHitmanSuit},
+			{"OutfitType", outfit->m_eOutfitType},
 			{"Room", this->sharedSpin.roomId},
 			{"Area", this->sharedSpin.area ? this->sharedSpin.area->ID : ""},
 			{"Position", {
@@ -1697,83 +1693,98 @@ auto Croupier::SetupEvents() -> void {
 				{"Z", this->sharedSpin.playerMatrix.Trans.z},
 			}},
 		};
+	}
+	return {
+		{"RepositoryId", repoId},
+		{"Room", this->sharedSpin.roomId},
+		{"Area", this->sharedSpin.area ? this->sharedSpin.area->ID : ""},
+		{"Position", {
+			{"X", this->sharedSpin.playerMatrix.Trans.x},
+			{"Y", this->sharedSpin.playerMatrix.Trans.y},
+			{"Z", this->sharedSpin.playerMatrix.Trans.z},
+		}},
 	};
-	const auto imbueItemEvent = [this](const ItemEventValue& ev, EActionType actionType) -> std::optional<nlohmann::json> {
-		for (const auto action : Globals::HM5ActionManager->m_Actions) {
-			if (!action || action->m_eActionType != actionType)
-				continue;
-			const ZHM5Item* item = action->m_Object.QueryInterface<ZHM5Item>();
-			if (!item) continue;
-			if (item->m_pItemConfigDescriptor->m_RepositoryId.ToString() != ZRepositoryID(ev.RepositoryId))
-				continue;
-			auto const instanceId = reinterpret_cast<uintptr_t>(item);
-			if (this->sharedSpin.collectedItemInstances.contains(instanceId))
-				continue;
-			this->sharedSpin.collectedItemInstances.insert(instanceId);
-			return nlohmann::json{
-				{"RepositoryId", ev.RepositoryId},
-				{"InstanceId", std::format("{}", instanceId)},
-				{"ItemType", ev.ItemType},
-				{"ItemName", ev.ItemName},
-				{"Room", this->sharedSpin.roomId},
-				{"Area", this->sharedSpin.area ? this->sharedSpin.area->ID : ""},
-				{"Position", {
-					{"X", this->sharedSpin.playerMatrix.Trans.x},
-					{"Y", this->sharedSpin.playerMatrix.Trans.y},
-					{"Z", this->sharedSpin.playerMatrix.Trans.z},
-				}},
-			};
-		}
-		return std::nullopt;
-	};
-	const auto imbuePacifyEvent = [this](const PacifyEventValue& ev) -> std::optional<nlohmann::json> {
-		const auto actorData = this->sharedSpin.getActorDataByRepoId(ev.RepositoryId);
-		if (!actorData) return std::nullopt;
-		auto const playerOutfitRepoId = ZRepositoryID(ev.OutfitRepositoryId);
-		auto const actorOutfit = actorData->disguiseRepoId ? this->GetOutfitByRepoId(*actorData->disguiseRepoId) : nullptr;
+}
+
+auto Croupier::ImbueItemEvent(const ItemEventValue& ev, EActionType actionType) -> std::optional<nlohmann::json> {
+	for (const auto action : Globals::HM5ActionManager->m_Actions) {
+		if (!action || action->m_eActionType != actionType)
+			continue;
+		const ZHM5Item* item = action->m_Object.QueryInterface<ZHM5Item>();
+		if (!item) continue;
+		if (item->m_pItemConfigDescriptor->m_RepositoryId.ToString() != ZRepositoryID(ev.RepositoryId))
+			continue;
+		auto const instanceId = reinterpret_cast<uintptr_t>(item);
+		if (this->sharedSpin.collectedItemInstances.contains(instanceId))
+			continue;
+		this->sharedSpin.collectedItemInstances.insert(instanceId);
 		return nlohmann::json{
 			{"RepositoryId", ev.RepositoryId},
-			{"Accident", ev.Accident},
-			{"ActorName", ev.ActorName},
-			{"ActorType", ev.ActorType},
-			{"DamageEvents", ev.DamageEvents},
-			{"ExplosionType", ev.ExplosionType},
-			{"Explosive", ev.Explosive},
-			{"IsHeadshot", ev.IsHeadshot},
-			{"IsTarget", ev.IsTarget},
-			{"OutfitIsHitmanSuit", ev.OutfitIsHitmanSuit},
-			{"OutfitRepositoryId", ev.OutfitRepositoryId},
-			{"KillClass", ev.KillClass},
-			{"KillContext", ev.KillContext},
-			{"KillItemCategory", ev.KillItemCategory},
-			{"KillItemRepositoryId", ev.KillItemRepositoryId},
-			{"KillMethodBroad", ev.KillMethodBroad},
-			{"KillMethodStrict", ev.KillMethodStrict},
-			{"KillType", ev.KillType},
-			{"Projectile", ev.Projectile},
-			{"SetPieceId", ev.SetPieceId},
-			{"SetPieceType", ev.SetPieceType},
-			{"Sniper", ev.Sniper},
-			{"WeaponSilenced", ev.WeaponSilenced},
-			{"ActorHasDisguise", actorData->hasDisguise},
-			{"ActorOutfitType", actorData->outfitType},
-			{"IsFemale", actorData->isFemale},
-			{"ActorHasSameOutfit", actorData->disguiseRepoId && *actorData->disguiseRepoId == playerOutfitRepoId},
-			{"ActorOutfitRepositoryId", actorData->disguiseRepoId ? toLowerCase(actorData->disguiseRepoId->ToString()) : ""},
-			{"RoomId", ev.RoomId},
-			//{"ActorOutfitIsUnique", actorOutfit ? actorOutfit->m_eOutfitType},
-			{"ActorPosition", {
-				{"X", actorData->transform.Trans.x},
-				{"Y", actorData->transform.Trans.y},
-				{"Z", actorData->transform.Trans.z},
-			}},
-			{"HeroPosition", {
+			{"InstanceId", std::format("{}", instanceId)},
+			{"ItemType", ev.ItemType},
+			{"ItemName", ev.ItemName},
+			{"Room", this->sharedSpin.roomId},
+			{"Area", this->sharedSpin.area ? this->sharedSpin.area->ID : ""},
+			{"Position", {
 				{"X", this->sharedSpin.playerMatrix.Trans.x},
 				{"Y", this->sharedSpin.playerMatrix.Trans.y},
 				{"Z", this->sharedSpin.playerMatrix.Trans.z},
 			}},
 		};
+	}
+	return std::nullopt;
+}
+
+auto Croupier::ImbuePacifyEvent(const PacifyEventValue& ev) -> std::optional<nlohmann::json> {
+	const auto actorData = this->sharedSpin.getActorDataByRepoId(ev.RepositoryId);
+	if (!actorData) return std::nullopt;
+	auto const playerOutfitRepoId = ZRepositoryID(ev.OutfitRepositoryId);
+	auto const actorOutfit = actorData->disguiseRepoId ? this->GetOutfitByRepoId(*actorData->disguiseRepoId) : nullptr;
+	return nlohmann::json{
+		{"RepositoryId", ev.RepositoryId},
+		{"Accident", ev.Accident},
+		{"ActorName", ev.ActorName},
+		{"ActorType", ev.ActorType},
+		{"DamageEvents", ev.DamageEvents},
+		{"ExplosionType", ev.ExplosionType},
+		{"Explosive", ev.Explosive},
+		{"IsHeadshot", ev.IsHeadshot},
+		{"IsTarget", ev.IsTarget},
+		{"OutfitIsHitmanSuit", ev.OutfitIsHitmanSuit},
+		{"OutfitRepositoryId", ev.OutfitRepositoryId},
+		{"KillClass", ev.KillClass},
+		{"KillContext", ev.KillContext},
+		{"KillItemCategory", ev.KillItemCategory},
+		{"KillItemRepositoryId", ev.KillItemRepositoryId},
+		{"KillMethodBroad", ev.KillMethodBroad},
+		{"KillMethodStrict", ev.KillMethodStrict},
+		{"KillType", ev.KillType},
+		{"Projectile", ev.Projectile},
+		{"SetPieceId", ev.SetPieceId},
+		{"SetPieceType", ev.SetPieceType},
+		{"Sniper", ev.Sniper},
+		{"WeaponSilenced", ev.WeaponSilenced},
+		{"ActorHasDisguise", actorData->hasDisguise},
+		{"ActorOutfitType", actorData->outfitType},
+		{"IsFemale", actorData->isFemale},
+		{"ActorHasSameOutfit", actorData->disguiseRepoId && *actorData->disguiseRepoId == playerOutfitRepoId},
+		{"ActorOutfitRepositoryId", actorData->disguiseRepoId ? toLowerCase(actorData->disguiseRepoId->ToString()) : ""},
+		{"RoomId", ev.RoomId},
+		//{"ActorOutfitIsUnique", actorOutfit ? actorOutfit->m_eOutfitType},
+		{"ActorPosition", {
+			{"X", actorData->transform.Trans.x},
+			{"Y", actorData->transform.Trans.y},
+			{"Z", actorData->transform.Trans.z},
+		}},
+		{"HeroPosition", {
+			{"X", this->sharedSpin.playerMatrix.Trans.x},
+			{"Y", this->sharedSpin.playerMatrix.Trans.y},
+			{"Z", this->sharedSpin.playerMatrix.Trans.z},
+		}},
 	};
+}
+
+auto Croupier::SetupEvents() -> void {
 	events.listen<Events::ContractStart>([this](const ServerEvent<Events::ContractStart>& ev) {
 		this->sharedSpin.playerStart();
 		this->sharedSpin.locationId = ev.Value.LocationId;
@@ -1842,14 +1853,14 @@ auto Croupier::SetupEvents() -> void {
 		this->SendMissionFailed();
 		Logger::Info("Croupier: ContractFailed {}", ev.Value.value.dump());
 	});
-	events.listen<Events::StartingSuit>([this, &imbueDisguiseEvent](const ServerEvent<Events::StartingSuit>& ev) {
-		this->SendImbuedEvent(ev, imbueDisguiseEvent(ev.Value.value));
+	events.listen<Events::StartingSuit>([this](const ServerEvent<Events::StartingSuit>& ev) {
+		this->SendImbuedEvent(ev, this->ImbueDisguiseEvent(ev.Value.value));
 
 		if (this->spinCompleted) return;
 		this->sharedSpin.disguiseChanges.emplace_back(ev.Value.value, ev.Timestamp);
 	});
-	events.listen<Events::Disguise>([this, &imbueDisguiseEvent](const ServerEvent<Events::Disguise>& ev) {
-		this->SendImbuedEvent(ev, imbueDisguiseEvent(ev.Value.value));
+	events.listen<Events::Disguise>([this](const ServerEvent<Events::Disguise>& ev) {
+		this->SendImbuedEvent(ev, this->ImbueDisguiseEvent(ev.Value.value));
 
 		if (this->spinCompleted) return;
 		this->sharedSpin.disguiseChanges.emplace_back(ev.Value.value, ev.Timestamp);
@@ -1871,8 +1882,8 @@ auto Croupier::SetupEvents() -> void {
 		//if (imbued) this->SendImbuedEvent(ev, *imbued);
 		lastThrownItem = ev.Value.RepositoryId;
 	});
-	events.listen<Events::ItemPickedUp>([this, imbueItemEvent](const ServerEvent<Events::ItemPickedUp>& ev) {
-		auto imbued = imbueItemEvent(ev.Value, EActionType::AT_PICKUP);
+	events.listen<Events::ItemPickedUp>([this](const ServerEvent<Events::ItemPickedUp>& ev) {
+		auto imbued = this->ImbueItemEvent(ev.Value, EActionType::AT_PICKUP);
 		if (imbued) this->SendImbuedEvent(ev, *imbued);
 	});
 	events.listen<Events::Trespassing>([this](const ServerEvent<Events::Trespassing>& ev) {
@@ -1880,11 +1891,15 @@ auto Croupier::SetupEvents() -> void {
 			{"IsTrespassing", ev.Value.IsTrespassing},
 			{"Room", ev.Value.RoomId},
 			{"Area", this->sharedSpin.area ? this->sharedSpin.area->ID : ""},
-			{"Position", { "X", this->sharedSpin.playerMatrix.Trans.x }, { "Y", this->sharedSpin.playerMatrix.Trans.y }, { "Z", this->sharedSpin.playerMatrix.Trans.z }},
+			{"Position", {
+				{ "X", this->sharedSpin.playerMatrix.Trans.x },
+				{ "Y", this->sharedSpin.playerMatrix.Trans.y },
+				{ "Z", this->sharedSpin.playerMatrix.Trans.z }
+			}},
 		});
 	});
-	events.listen<Events::Pacify>([this, imbuePacifyEvent](const ServerEvent<Events::Pacify>& ev) {
-		auto data = imbuePacifyEvent(ev.Value);
+	events.listen<Events::Pacify>([this](const ServerEvent<Events::Pacify>& ev) {
+		auto data = this->ImbuePacifyEvent(ev.Value);
 		if (data) this->SendImbuedEvent(ev, *data);
 
 		if (!ev.Value.IsTarget) return;
@@ -1957,8 +1972,8 @@ auto Croupier::SetupEvents() -> void {
 			break;
 		}
 	});
-	events.listen<Events::Kill>([this, imbuePacifyEvent](const ServerEvent<Events::Kill>& ev) {
-		auto data = imbuePacifyEvent(ev.Value);
+	events.listen<Events::Kill>([this](const ServerEvent<Events::Kill>& ev) {
+		auto data = this->ImbuePacifyEvent(ev.Value);
 		if (data) this->SendImbuedEvent(ev, *data);
 
 		static auto isBerlinAgent = [](eTargetID id) -> bool {
@@ -2954,6 +2969,17 @@ static std::set<std::string> eventsNotToSend = {
 	"Drain_Pipe_Climbed",
 };
 
+auto guessPinName(int32_t pinId) -> const char* {
+	switch (pinId) {
+		case 4076250155: return "Exploded";
+		case 415881887: return "OnLockdownStart";
+		case -1680993007: return "Explode";
+		case 178442533: return "BlowUp";
+		case 163852977: return "BlownUp";
+	}
+	return nullptr;
+}
+
 DEFINE_PLUGIN_DETOUR(Croupier, void, OnEventSent, ZAchievementManagerSimple* th, uint32_t eventIndex, const ZDynamicObject& ev) {
 	ZString eventData = ZDynamicObjectToString(const_cast<ZDynamicObject&>(ev));
 
@@ -3002,6 +3028,8 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 	// Try: DoorBroken, NormalShot
 	// ZHMPin::OnIsFullyInCrowd - Test, should work
 	// ZHMPin::OnIsFullyInVegetation
+
+	// OnItemDestroyed???
 
 #if _DEBUG
 	// Skip all the garbage
@@ -3052,6 +3080,9 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 		case ZHMPin::HM_HitNPCAt: // ZBulletImpactListenerEntity,
 		case ZHMPin::HMState_StartRun: // ZHM5HMStateSoundController, ZHM5HealthSoundController,
 		case ZHMPin::HMState_CloseDoor:
+		case ZHMPin::EnterSniperMode:
+		case ZHMPin::ExitSniperMode:
+		case ZHMPin::OnExitScopeMode:
 		case ZHMPin::OnDrop:
 		case ZHMPin::OnDropByHero:
 		case ZHMPin::OnActionY:
@@ -3060,6 +3091,7 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 		case ZHMPin::OnActionA:
 		case ZHMPin::ExecutedData:
 		case ZHMPin::PlaySound:
+		case ZHMPin::Intensity:
 		case ZHMPin::StealthKill:
 		case ZHMPin::OnMurdered:
 		case ZHMPin::OnGetEntityRef:
@@ -3112,6 +3144,7 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 		case ZHMPin::OnGetItem:
 		case ZHMPin::OnItemConsumed:
 		case ZHMPin::OnTargetOutOfRange:
+		case ZHMPin::NoPageTabAvailable:
 		case ZHMPin::SomeonePacified:
 		case ZHMPin::KillData:
 		case ZHMPin::RepositoryID:
@@ -3680,7 +3713,19 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 			{
 				ZString pinName;
 				if (SDK()->GetPinName(pinId, pinName)) {
-					//Logger::Debug("PIN: {} from {}, (data: {})", pinName, typeName, dataTypeName);
+					Logger::Debug("PIN: {} from {}, (data: {})", pinName, typeName, dataTypeName);
+				}
+				else {
+					auto pinName = guessPinName(pinId);
+					if (pinName) {
+						Logger::Debug("NEW PIN: {} from {} (data: {})", pinName, typeName, dataTypeName);
+						if (entity.m_pEntity) {
+							auto const& props = getEntityPropNames(*entity.m_pEntity);
+							Logger::Debug("Props:");
+							for (auto const& prop : props)
+								Logger::Debug("  {}", prop);
+						}
+					}
 				}
 			}
 #endif
@@ -3694,6 +3739,9 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 		//case ZHMPin::Bodyshot:
 		//	Logger::Debug("PIN: Bodyshot {}", typeName);
 		//	break;
+		case static_cast<ZHMPin>(-1680993007): // Explode
+			
+			break;
 		case ZHMPin::ShotBegin:
 			SendCustomEvent("PlayerShot", {
 				{"Room", this->sharedSpin.roomId},
