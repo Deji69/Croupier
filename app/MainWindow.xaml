@@ -268,6 +268,7 @@
 						VerticalContentAlignment="Stretch"
 						VerticalAlignment="Stretch"
                         ToolTip="{Binding Tip}"
+						ToolTipService.InitialShowDelay="1000"
 					>
 						<Grid
 							Width="{Binding DataContext.GridTileWidth, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorLevel=2, AncestorType=UniformGrid}}"
