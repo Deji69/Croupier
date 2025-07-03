@@ -23,6 +23,7 @@
 #include <Glacier/ZContentKitManager.h>
 #include <Glacier/ZHM5BaseCharacter.h>
 #include <Glacier/Pins.h>
+#include "Debug.h"
 #include "Events.h"
 #include "InputUtil.h"
 #include "KillConfirmation.h"
@@ -451,10 +452,12 @@ static auto getEntityPropNames(ZEntityType* s_EntityType) -> const std::vector<s
 				//const auto s_PropertyName = s_TypeName;//HM3_GetPropertyName(s_Property->);
 
 				if (s_TypeName.size() > 0)
-					propNames.push_back(s_TypeName);
+					propNames.push_back(std::format("{} {}", s_TypeName, s_Property->m_nPropertyId));
 				else
 					propNames.push_back(std::format("{}", s_Property->m_nPropertyId));
 			}
+			else if (!s_TypeName.empty())
+				propNames.push_back(std::format("{} {}", s_TypeName, s_PropertyInfo->m_pName));
 			else propNames.push_back(s_PropertyInfo->m_pName);
 		}
 	}
@@ -1988,6 +1991,16 @@ auto Croupier::SetupEvents() -> void {
 		this->sharedSpin.isTrespassing = ev.Value.IsTrespassing;
 		this->SendImbuedEvent(ev, ImbuedPlayerLocation());
 	});
+	events.listen<Events::BodyFound>([this](const ServerEvent<Events::BodyFound>& ev) {
+		this->SendImbuedEvent(ev, nlohmann::json{
+			{"DeadBody", {
+				{"RepositoryId", ev.Value.DeadBody.RepositoryId},
+				{"DeathContext", ev.Value.DeadBody.DeathContext},
+				{"DeathType", ev.Value.DeadBody.DeathType},
+				{"IsCrowdActor", ev.Value.DeadBody.IsCrowdActor},
+			}}
+		});
+	});
 	events.listen<Events::Pacify>([this](const ServerEvent<Events::Pacify>& ev) {
 		auto data = this->ImbuePacifyEvent(ev.Value);
 		if (data) this->SendImbuedEvent(ev, *data);
@@ -3035,17 +3048,19 @@ static std::set<std::string> eventsNotToSend = {
 	"DisguiseBlown",
 	"47_FoundTrespassing",
 	"ShotsFired",
+
 	// Imbued
-	"Trespassing",
-	"Pacify",
-	"Kill",
+	"BodyFound",
 	"Dart_Hit",
 	"Disguise",
-	"StartingSuit",
 	"Drain_Pipe_Climbed",
+	"Kill",
+	"Pacify",
+	"StartingSuit",
+	"Trespassing",
 };
 
-auto guessPinName(int32_t pinId) -> const char* {
+static auto guessPinName(int32_t pinId) -> const char* {
 	switch (pinId) {
 		case 4076250155: return "Exploded";
 		case 178442533: return "BlowUp";
@@ -3053,6 +3068,73 @@ auto guessPinName(int32_t pinId) -> const char* {
 		case 4101414679: return "OnExplosion";
 	}
 	return nullptr;
+}
+
+static auto tracePin(int32 pinId, ZEntityRef entity, const ZObjectRef& data) -> void {
+	static std::string pinName;
+	static ZString zPinName;
+	bool isNew = false;
+	pinName.clear();
+
+	if (SDK()->GetPinName(pinId, zPinName)) {
+		pinName = zPinName.c_str();
+	}
+	else {
+		auto guessedPinName = guessPinName(pinId);
+		if (guessedPinName) pinName = guessedPinName;
+		isNew = true;
+	}
+
+	
+	auto ent = entity.GetEntity();
+	std::string typeName;
+	if (ent) {
+		auto type = ent->GetType();
+		if (type && type->m_pInterfaces)
+			typeName = type->m_pInterfaces->operator[](0).m_pTypeId->typeInfo()->m_pTypeName;
+	}
+
+	auto dataType = data.GetTypeID();
+	std::string dataTypeName;
+	if (dataType && dataType->m_pType && dataType->m_pType->m_pTypeName) {
+		dataTypeName = dataType->m_pType->m_pTypeName;
+		if (data.Is<ZString>()) {
+			dataTypeName = std::format("\"{}\"", data.As<ZString>()->c_str());
+		}
+	}
+
+	if (isNew)
+		Logger::Debug("NEW PIN: {} from {} (data: {})", !pinName.empty() ? pinName : std::to_string(pinId), typeName, dataTypeName);
+	else
+		Logger::Debug("PIN: {} from {} (data: {})", !pinName.empty() ? pinName : std::to_string(pinId), typeName, dataTypeName);
+
+	if (entity.m_pEntity) {
+		auto const& props = getEntityPropNames(*entity.m_pEntity);
+		Logger::Debug("| Props:");
+		for (auto const& prop : props)
+			Logger::Debug("|  {}", prop);
+		auto const& intfcs = getEntityInterfaceNames(*entity.m_pEntity);
+		Logger::Debug("| Interfaces:");
+		for (auto const& intfc : intfcs)
+			Logger::Debug("|  {}", intfc);
+		auto parent = entity.GetLogicalParent();
+		static std::string space;
+		space = "  ";
+		int depthLimit = 3;
+		while (parent && --depthLimit) {
+			auto ent = parent.GetEntity();
+			auto const& props = getEntityPropNames(ent->GetType());
+			Logger::Debug("|{}Parent Props:", space);
+			for (auto const& prop : props)
+				Logger::Debug("|{}  {}", space, prop);
+			auto const& intfcs = getEntityInterfaceNames(ent->GetType());
+			Logger::Debug("|{}Parent Interfaces:", space);
+			for (auto const& intfc : intfcs)
+				Logger::Debug("|{}  {}", space, intfc);
+			space += "  ";
+			parent = parent.GetLogicalParent();
+		}
+	}
 }
 
 DEFINE_PLUGIN_DETOUR(Croupier, void, OnEventSent, ZAchievementManagerSimple* th, uint32_t eventIndex, const ZDynamicObject& ev) {
@@ -3106,726 +3188,15 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 
 	// OnItemDestroyed???
 
-#if _DEBUG
 	// Skip all the garbage
-	switch (static_cast<ZHMPin>(pinId)) {
-		case ZHMPin::NavigateSlots: // inventory slot navigation - maybe?
-		case ZHMPin::WeaponUnEquip: // fires a lot
-		case ZHMPin::WeaponUnEquipped: // fires a lot
-		case ZHMPin::WeaponUnEquipLegal: // fires a lot
-		case ZHMPin::WeaponEquip: // fires a lot
-		case ZHMPin::NPCDead: // can be triggered by pacification??
-		case ZHMPin::OnHolster: // fires a lot
-		case ZHMPin::OwnedByHitman: // fires a lot at start
-		case ZHMPin::DeadBodySeenAccident: // fired a lot + we can get this easier
-		case ZHMPin::HoldingIllegalWeapon: // fired a lot + there's an event
-		case ZHMPin::DisguiseBlown: // fired a lot + there's an event
-		case ZHMPin::DisguiseHealth: // fired a lot + idk what it is
-		case ZHMPin::SpottedThroughDisguise: // ZGameStatsEvent could be interesting
-		case ZHMPin::HitmanSpotted: // ZGameStatsEntityStealth could be interesting
-		case ZHMPin::DisguiseBroken: // ZHUDAIGuide
-		case ZHMPin::BlendInActivated: // no blending?
-		case ZHMPin::BlendInStart: // no blending?
-		case ZHMPin::InDisguise: // fired a lot
-		case ZHMPin::WeaponEquipLegal: // ZWeaponSoundController, fired a bunch, maybe useful?
-		case ZHMPin::WeaponEquipMelee: // ZWeaponSoundController, fired a bunch, maybe useful?
-		case ZHMPin::WeaponPlayerEquipped: // ZHM5ItemCCWeapon, ZEntity, probably more useful
-		case ZHMPin::Equipped: // ZHM5ItemCCWeapon, ZEntity, ???
-		case ZHMPin::HMState_StartSneak: // could be usable, just annoyed by the log spam
-		case ZHMPin::HMState_StopSneak: // could be usable, just annoyed by the log spam
-		case ZHMPin::WeaponAimStop: // ZWeaponSoundController
-		case ZHMPin::InvestigateCautious: // ZGameStatsEvent, maybe useful
-		case ZHMPin::NPCAlerted: // ZCrowdEntity (data: SDynObstaclePinArg)
-		case ZHMPin::NPCHasExclamationMark: // ZAIEventEmitterEntity, (data: bool), fired a lot... maybe
-		case ZHMPin::WeaponEquipSinglePistol: // ZWeaponSoundController, (data: void)
-		case ZHMPin::WeaponEquipIllegal: // ZWeaponSoundController
-		case ZHMPin::HMState_OpenDoor: // bit repetitive
-		case ZHMPin::WeaponEquipped: // bit repetitive
-		case ZHMPin::EnterCover: // ZHM5HMStateSoundController, ZHM5InstinctSoundController, and other sound controllers
-		case ZHMPin::ExitCover: // ^
-		case ZHMPin::CoverUsed: // maybe but also repetitive
-		case ZHMPin::OnHeroEnterCover: // maybe but also repetitive
-		case ZHMPin::OnHeroLeaveCover: // ZCoverPlane
-		case ZHMPin::HitmanInCoverBegin: // ZHM5CrowdReactionEntity
-		case ZHMPin::HitmanInCoverEnd: // ZHM5CrowdReactionEntity
-		case ZHMPin::RunUsed: // maybe but also repetitive
-		case ZHMPin::WeaponFire: // ZWeaponSoundController
-		case ZHMPin::PlayerEndBurstShot: // ZHM5ItemWeapon
-		case ZHMPin::HM_HitNPC: // ZBulletImpactListenerEntity,
-		case ZHMPin::HM_HitNPCAt: // ZBulletImpactListenerEntity,
-		case ZHMPin::HMState_StartRun: // ZHM5HMStateSoundController, ZHM5HealthSoundController,
-		case ZHMPin::HMState_CloseDoor:
-		case ZHMPin::ChangedDisguise:
-		case ZHMPin::TakingNewDisguise:
-		case ZHMPin::EnterSniperMode:
-		case ZHMPin::ExitSniperMode:
-		case ZHMPin::OnExitScopeMode:
-		case ZHMPin::OnDrop:
-		case ZHMPin::OnDropByHero:
-		case ZHMPin::OnActionY:
-		case ZHMPin::OnActionB:
-		case ZHMPin::OnActionX:
-		case ZHMPin::OnActionA:
-		case ZHMPin::ExecutedData:
-		case ZHMPin::PlaySound:
-		case ZHMPin::Intensity:
-		case ZHMPin::StealthKill:
-		case ZHMPin::OnMurdered:
-		case ZHMPin::OnGetEntityRef:
-		case ZHMPin::OnDead:
-		case ZHMPin::OnDying:
-		case ZHMPin::OnTargetDead:
-		case ZHMPin::StartExecuteKill:
-		case ZHMPin::HitmanCCBegin:
-		case ZHMPin::HitmanCCEnd:
-		case ZHMPin::InstinctUnavailable:
-		case ZHMPin::CC_Start:
-		case ZHMPin::CC_Start_Hitman:
-		case ZHMPin::CC_End:
-		case ZHMPin::CC_End_Win:
-		case ZHMPin::CC_Final_Impact:
-		case ZHMPin::EliminateUsed:
-		case ZHMPin::HM_HitNPCCloseCombatShot:
-		case ZHMPin::Weapon:
-		case ZHMPin::Kill:
-		case ZHMPin::TargetDied:
-		case ZHMPin::WeaponPlayerUnEquipped:
-		case ZHMPin::DeadlyThrowImpact:
-		case ZHMPin::DataStart:
-		case ZHMPin::IActor:
-		case ZHMPin::Unequipped:
-		case ZHMPin::Triggered:
-		case ZHMPin::DoorClose:
-		case ZHMPin::DoorCloseByHitmanFirst:
-		case ZHMPin::DoorOpenByHitmanFirst:
-		case ZHMPin::DisguiseBlendInActivated:
-		case ZHMPin::ObjectiveCompleted:
-		case ZHMPin::PrimaryObjectiveCompleted:
-		case ZHMPin::PrimaryObjectiveFailed:
-		case ZHMPin::ScoreCommon:
-		case ZHMPin::Trespassing:
-		case ZHMPin::WeaponUnEquipIllegal:
-		case ZHMPin::CombatHitmanSpotted:
-		case ZHMPin::Failed:
-		case ZHMPin::OnThrown:
-		case ZHMPin::OnFailed:
-		case ZHMPin::OnCombatStarted:
-		case ZHMPin::OnChallengeCompleted:
-		case ZHMPin::OnCombatEnded:
-		case ZHMPin::OnNoReceiversRegistered:
-		case ZHMPin::OnIActor:
-		case ZHMPin::OnDestroyed:
-		case ZHMPin::OnReadySetpiece:
-		case ZHMPin::OnPickup:
-		case ZHMPin::OnWarning:
-		case ZHMPin::OnGetItem:
-		case ZHMPin::OnItemConsumed:
-		case ZHMPin::OnTargetOutOfRange:
-		case ZHMPin::NoPageTabAvailable:
-		case ZHMPin::SomeonePacified:
-		case ZHMPin::KillData:
-		case ZHMPin::RepositoryID:
-		case ZHMPin::RoomID:
-		case ZHMPin::RoomId:
-		case ZHMPin::ActorId:
-		case ZHMPin::ActorName:
-		case ZHMPin::ActorType:
-		case ZHMPin::DeathContext:
-		case ZHMPin::HitmanGuardKill:
-		case ZHMPin::DeadlyThrowOn:
-		case ZHMPin::DeadlyThrowOff:
-		case ZHMPin::DeadlyThrowActivated:
-		case ZHMPin::ReleasedItem:
-		case ZHMPin::HitmanPush:
-		case ZHMPin::HitmanPushSignal:
-		case ZHMPin::HitmanSuspiciousSignal:
-		case ZHMPin::HitmanNotSuspiciousSignal:
-		case ZHMPin::HitmanGuardSilenced:
-		case ZHMPin::HM_HitNPCHeadShot:
-		case ZHMPin::HM_HitNPCHeadShot_IActor:
-		case ZHMPin::HM_HitNPCHeadShotAt:
-		case ZHMPin::KillerHero:
-		case ZHMPin::KillItemInstanceId:
-		case ZHMPin::KillItemRepositoryId:
-		case ZHMPin::KillItemCategory:
-		case ZHMPin::WeaponAimStart:
-		case ZHMPin::DataEnd:
-		case ZHMPin::Dead:
-		case ZHMPin::Fired: // not what it sounds like
-		case ZHMPin::OnFireProjectiles:
-		case ZHMPin::OnFireProjectilesLocal:
-		case ZHMPin::EnterAimAt:
-		case ZHMPin::ExitAimAt:
-		case ZHMPin::HitmanAimBegin:
-		case ZHMPin::HitmanAimEnd:
-		case ZHMPin::PageBack:
-		case ZHMPin::OnStateChanged:
-		case ZHMPin::PageClosed:
-		case ZHMPin::UpToWhite:
-		case ZHMPin::Impact:
-		case ZHMPin::HitmanBumping:
-		case ZHMPin::OnJoinNPC:
-		case ZHMPin::ShotsPerSecondNPC:
-		case ZHMPin::ShotsPerSecondHero:
-		case ZHMPin::HaveActiveParticles:
-		case ZHMPin::DeadBodySeenMurder:
-		case ZHMPin::DeadBodySeenMurderId:
-		case ZHMPin::BodyFoundMurder:
-		case ZHMPin::HitmanCivilianKill:
-		case ZHMPin::NPC_HitHM:
-		case ZHMPin::NPC_HitHMAt:
-		case ZHMPin::UnsetCurrentAmbience:
-		case ZHMPin::OnBusy:
-		case ZHMPin::OnLast:
-		case ZHMPin::OnCastRole:
-		case ZHMPin::VisiblyArmed:
-		case ZHMPin::StateEntered:
-		case ZHMPin::IsInState:
-		case ZHMPin::OnEntered: // ZHM5DisguiseSafeZoneEntity, ZCompositeEntity, ZSpatialEntity, ...
-		case ZHMPin::InLoop:
-		case ZHMPin::OnNext:
-		case ZHMPin::EnterSafeZoneAny:
-		case ZHMPin::ExitSafeZoneAny:
-		case ZHMPin::LastEnemyKilled:
-		case ZHMPin::EnemiesIsInCombat:
-		case ZHMPin::HitmanTrespassingSpotted:
-		case ZHMPin::OnReleased:
-		case ZHMPin::Generic00:
-		case ZHMPin::Generic01:
-		case ZHMPin::Generic02:
-		case ZHMPin::Generic03:
-		case ZHMPin::Generic04:
-		case ZHMPin::Generic05:
-		case ZHMPin::Generic06:
-		case ZHMPin::Generic07:
-		case ZHMPin::ObjectEvent01:
-		case ZHMPin::ObjectEvent02:
-		case ZHMPin::ObjectEvent03:
-		case ZHMPin::ObjectEvent04:
-		case ZHMPin::OnLeft:
-		case ZHMPin::BlendInStop:
-		case ZHMPin::OnLeaving:
-		case ZHMPin::NPCCivilianAlerted:
-		case ZHMPin::NPCCivilianScared:
-		case ZHMPin::OnAbort:
-		case ZHMPin::Death:
-		case ZHMPin::IsTarget:
-		case ZHMPin::IsHeadshot:
-		case ZHMPin::KillType:
-		case ZHMPin::ActorPosition:
-		case ZHMPin::Actor:
-		case ZHMPin::PacifiedData:
-		case ZHMPin::ThrowArcOn:
-		case ZHMPin::ThrowArcOff:
-		case ZHMPin::LocaleChanged:
-		case ZHMPin::AngleLookAt:
-		case ZHMPin::SyncBeat:
-		case ZHMPin::SyncBar:
-		case ZHMPin::TextLocaleChanged:
-		case ZHMPin::Speaking:
-		case ZHMPin::HMFootstepMaterialChanged:
-		case ZHMPin::Keyword:
-		case ZHMPin::PageOpen:
-		case ZHMPin::IdleStart:
-		case ZHMPin::OnSet:
-		case ZHMPin::OnReset:
-		case ZHMPin::Selected:
-		case ZHMPin::OnEntering:
-		case ZHMPin::OnActorChanged:
-		case ZHMPin::OnStarted:
-		case ZHMPin::OnActivated:
-		case ZHMPin::OnDeactivate:
-		case ZHMPin::Deactivated:
-		case ZHMPin::InactiveStage:
-		case ZHMPin::TriggerBeforeRaycast:
-		case ZHMPin::OnPositionReached:
-		case ZHMPin::HMMovementIndex:
-		case ZHMPin::HMState_LeftStep:
-		case ZHMPin::HMState_RightStep:
-		case ZHMPin::OnEvent:
-		case ZHMPin::OnEnabled:
-		case ZHMPin::OnReached:
-		case ZHMPin::OnInterrupted:
-		case ZHMPin::SoundTensionAmbient:
-		case ZHMPin::NPCHasQuestionMark:
-		case ZHMPin::Enabled:
-		case ZHMPin::OutX:
-		case ZHMPin::OutY:
-		case ZHMPin::OutZ:
-		case ZHMPin::OnGet:
-		case ZHMPin::CanNotOpenCPDoor:
-		case ZHMPin::CurrentGait:
-		case ZHMPin::CurrentHealth:
-		case ZHMPin::OutsideMonitorDistance:
-		//case ZHMPin::DisguiseHealth: // ?
-		case ZHMPin::OnFracture:
-		case ZHMPin::OnAnchorsLost:
-		case ZHMPin::OnInitialFracture:
-		case ZHMPin::OnInitialDetach:
-		case ZHMPin::OnAttach:
-		case ZHMPin::OnAttached:
-		case ZHMPin::OnAttachToNPC:
-		case ZHMPin::OnAttachToHitman:
-		case ZHMPin::OnDetach:
-		case ZHMPin::OnDetached:
-		case ZHMPin::EnemiesIsAlerted:
-		case ZHMPin::EnemiesIsAlertedArmed:
-		case ZHMPin::EnemiesIsEngaged:
-		case ZHMPin::SyncUserCue:
-		case ZHMPin::SendSourcePosition:
-		case ZHMPin::AudibleAttentionMax:
-		case ZHMPin::AudibleAttentionMaxPan:
-		case ZHMPin::AttentionMax:
-		case ZHMPin::AttentionMaxPan:
-		case ZHMPin::TrespassingAttentionMax:
-		case ZHMPin::TrespassingAttentionMaxPan:
-		case ZHMPin::DisguiseAttentionMax:
-		case ZHMPin::DisguiseAttentionMaxPan:
-		case ZHMPin::RepositoryId:
-		case ZHMPin::HidingObjectivesBar:
-		case ZHMPin::CutSequenceEnded:
-		case ZHMPin::ChannelA:
-		case ZHMPin::ChannelB:
-		case ZHMPin::Activated:
-		case ZHMPin::Insideness:
-		case ZHMPin::ActiveStage:
-		case ZHMPin::OnDisabled:
-		case ZHMPin::Disabled:
-		case ZHMPin::IsLastTriggeredAndNotTracked:
-		case ZHMPin::OnAlive:
-		case ZHMPin::OnMaxSightAttentionToPlayer:
-		case ZHMPin::SetImageRID:
-		case ZHMPin::GlowColor1:
-		case ZHMPin::GlowColor2:
-		case ZHMPin::ReportOwner:
-		case ZHMPin::OnTargetInRange:
-		case ZHMPin::OnValueChanged:
-		case ZHMPin::GlowType:
-		case ZHMPin::SetOpenCalled:
-		case ZHMPin::CoverDisabled:
-		case ZHMPin::OnAvailable:
-		case ZHMPin::ClothBundleSpawned:
-		case ZHMPin::InTrespassArea:
-		case ZHMPin::InTrespassEntryArea:
-		case ZHMPin::ParentRepositoryId:
-		case ZHMPin::NumOccupiedSpots:
-		case ZHMPin::NumOccupiedSpotsMale:
-		case ZHMPin::NumOccupiedSpotsFemale:
-		case ZHMPin::NumOccupiedSpotsMalePercent:
-		case ZHMPin::ItemReady:
-		case ZHMPin::ItemSpawned:
-		case ZHMPin::OnSetItem:
-		case ZHMPin::Keyword2:
-		case ZHMPin::Keyword3:
-		case ZHMPin::PromptPositionIndex:
-		case ZHMPin::RayLength:
-		case ZHMPin::StepCounter:
-		case ZHMPin::LoopCounter:
-		case ZHMPin::OnFirst:
-		case ZHMPin::OnStep:
-		case ZHMPin::DisplayingObjectivesBarWithoutChanges:
-		case ZHMPin::OnActDone:
-		case ZHMPin::OnItemSet:
-		case ZHMPin::OnCompleted:
-		case ZHMPin::OpenCalled:
-		case ZHMPin::SendValue:
-		case ZHMPin::CrossForward:
-		case ZHMPin::CrossBackward:
-		case ZHMPin::OnActorReleased:
-		case ZHMPin::SendDestinationPosition:
-		case ZHMPin::SendEventName:
-		case ZHMPin::OnAborted:
-		case ZHMPin::Aborted:
-		case ZHMPin::OnFree:
-		case ZHMPin::OnEffectActivated:
-		case ZHMPin::OnEffectDeactivated:
-		case ZHMPin::FloatValue:
-		case ZHMPin::OnShow:
-		case ZHMPin::Changed:
-		case ZHMPin::FocusGained:
-		case ZHMPin::OnDramaNewBehavior:
-		case ZHMPin::OnEnterRole:
-		case ZHMPin::OnPauseRole:
-		case ZHMPin::OnResumingRole:
-		case ZHMPin::OnDramaResuming:
-		case ZHMPin::OnReadyActor:
-		case ZHMPin::OnReadyActorAsEntity:
-		case ZHMPin::OnWrap:
-		case ZHMPin::GetDelayValue:
-		case ZHMPin::OnExitRole:
-		case ZHMPin::ControllerHintOpened:
-		case ZHMPin::ControllerHintClosed:
-		case ZHMPin::CrowdActStarted:
-		case ZHMPin::CrowdActEnded:
-		case ZHMPin::CrowdActorSelected:
-		case ZHMPin::CrowdActorSelectedID:
-		case ZHMPin::CrowdActorDeselected:
-		case ZHMPin::CrowdActorDeselectedID:
-		case ZHMPin::CrowdActorSelectionFailed:
-		case ZHMPin::CrowdDensityTotal:
-		case ZHMPin::CrowdAlertNearestActor:
-		case ZHMPin::CrowdAlertNearestActor_Back:
-		case ZHMPin::CrowdAlertNearestActor_Left:
-		case ZHMPin::CrowdAlertNearestActor_Right:
-		case ZHMPin::CrowdAmbientNearestActor:
-		case ZHMPin::CrowdAmbientNearestActor_Back:
-		case ZHMPin::CrowdAmbientNearestActor_Left:
-		case ZHMPin::CrowdAmbientNearestActor_Right:
-		case ZHMPin::CrowdAmbientRatio:
-		case ZHMPin::CrowdAmbientRatio_Back:
-		case ZHMPin::CrowdAmbientRatio_Left:
-		case ZHMPin::CrowdAmbientRatio_Right:
-		case ZHMPin::CrowdDownNearestActor:
-		case ZHMPin::CrowdDownNearestActor_Back:
-		case ZHMPin::CrowdDownNearestActor_Left:
-		case ZHMPin::CrowdDownNearestActor_Right:
-		case ZHMPin::CrowdScaredNearestActor:
-		case ZHMPin::CrowdScaredNearestActor_Back:
-		case ZHMPin::CrowdScaredNearestActor_Left:
-		case ZHMPin::CrowdScaredNearestActor_Right:
-		case ZHMPin::OnPauseDrama:
-		case ZHMPin::OnPause:
-		case ZHMPin::OnActorSet:
-		case ZHMPin::OnCurrent:
-		case ZHMPin::OnNotCurrent:
-		case ZHMPin::ActEvent4001:
-		case ZHMPin::ActEvent4002:
-		case ZHMPin::ActEvent4003:
-		case ZHMPin::ActEvent4004:
-		case ZHMPin::ActEvent4005:
-		case ZHMPin::ActEvent4006:
-		case ZHMPin::ActEvent4007:
-		case ZHMPin::OnNoItem:
-		case ZHMPin::OnTrue:
-		case ZHMPin::OnFalse:
-		case ZHMPin::Output:
-		case ZHMPin::Output1:
-		case ZHMPin::Output2:
-		case ZHMPin::Output3:
-		case ZHMPin::Output4:
-		case ZHMPin::Output5:
-		case ZHMPin::Color:
-		case ZHMPin::Duration:
-		case ZHMPin::StopEventEnded:
-		case ZHMPin::AimLookAt:
-		case ZHMPin::Lerp:
-		case ZHMPin::Result:
-		case ZHMPin::Power:
-		case ZHMPin::DiffusePower:
-		case ZHMPin::OnValue:
-		case ZHMPin::TimeOut:
-		case ZHMPin::PollValue:
-		case ZHMPin::GetValue:
-		case ZHMPin::Done:
-		case ZHMPin::FilterOut:
-		case ZHMPin::RemovedKeyword:
-		case ZHMPin::ReactionTriggeredAtPos:
-		case ZHMPin::On:
-		case ZHMPin::Off:
-		case ZHMPin::Count:
-		case ZHMPin::Out1:
-		case ZHMPin::Out2:
-		case ZHMPin::Out3:
-		case ZHMPin::Out4:
-		case ZHMPin::Out5:
-		case ZHMPin::Out6:
-		case ZHMPin::Out7:
-		case ZHMPin::Out8:
-		case ZHMPin::Out00:
-		case ZHMPin::Out01:
-		case ZHMPin::Out02:
-		case ZHMPin::Out03:
-		case ZHMPin::Out04:
-		case ZHMPin::Out05:
-		case ZHMPin::Out06:
-		case ZHMPin::Out07:
-		case ZHMPin::Out08:
-		case ZHMPin::IdleStop:
-		case ZHMPin::InstinctTimeMultiplier:
-		case ZHMPin::ForwardVector:
-		case ZHMPin::BackwardVector:
-		case ZHMPin::PrincipalTargetDistance:
-		case ZHMPin::EventOccurred:
-		case ZHMPin::EventReceived:
-		case ZHMPin::Distance:
-		case ZHMPin::Trigger:
-		case ZHMPin::BulletFlyByHitman:
-		case ZHMPin::Closed:
-		case ZHMPin::MenuClosed:
-		case ZHMPin::OnActorCast:
-		case ZHMPin::SomeoneScared: //ZCrowdEntity, (data: SDynObstaclePinArg)
-		case ZHMPin::SomeoneDied: // ZCrowdEntity, (data: SDynObstaclePinArg)
-		case ZHMPin::ShotFiredIntoCrowd:
-		case ZHMPin::IsPlayer:
-		case ZHMPin::Play:
-		case ZHMPin::Stop:
-		case ZHMPin::CrowdCulledRatio:
-		case ZHMPin::CrowdCulledRatio_Back:
-		case ZHMPin::CrowdCulledRatio_Left:
-		case ZHMPin::CrowdCulledRatio_Right:
-		case ZHMPin::CrowdDensity1:
-		case ZHMPin::CrowdDensity1_Back:
-		case ZHMPin::CrowdDensity1_Left:
-		case ZHMPin::CrowdDensity1_Right:
-		case ZHMPin::CrowdAlertRatio:
-		case ZHMPin::CrowdAlertRatio_Back:
-		case ZHMPin::CrowdAlertRatio_Left:
-		case ZHMPin::CrowdAlertRatio_Right:
-		case ZHMPin::CrowdScaredRatio:
-		case ZHMPin::CrowdScaredRatio_Back:
-		case ZHMPin::CrowdScaredRatio_Left:
-		case ZHMPin::CrowdScaredRatio_Right:
-		case ZHMPin::OnGetAccessoryItem:
-		case ZHMPin::OnTriggeredEvent01:
-		case ZHMPin::OnTriggeredEvent02:
-		case ZHMPin::OnTriggeredEvent03:
-		case ZHMPin::OnTriggeredEvent04:
-		case ZHMPin::OnTriggeredEvent05:
-		case ZHMPin::OnTriggeredEvent06:
-		case ZHMPin::OnTriggeredEvent07:
-		case ZHMPin::OnTriggeredEvent08:
-		case ZHMPin::OnItemFocus:
-		case ZHMPin::OnItemChanged:
-		case ZHMPin::OnActTimeout:
-		case ZHMPin::OnEnterDrama:
-		case ZHMPin::OnStart:
-		case ZHMPin::OnIActorChanged:
-		case ZHMPin::OnGetSetpieceUsed:
-		case ZHMPin::OnGetItemUsed:
-		case ZHMPin::OnResumed:
-		case ZHMPin::OnItemGrabbed:
-		case ZHMPin::Completed:
-		case ZHMPin::MinDimension:
-		case ZHMPin::MaxDimension:
-		case ZHMPin::Glow:
-		case ZHMPin::GameTension:
-		case ZHMPin::GameTensionAmbient:
-		case ZHMPin::GameTensionAgitated:
-		case ZHMPin::GameTensionAlertedHigh:
-		case ZHMPin::GameTensionAlertedLow:
-		case ZHMPin::GameTensionArrest:
-		case ZHMPin::GameTensionCombat:
-		case ZHMPin::GameTensionHunting:
-		case ZHMPin::GameTensionGuardHM:
-		case ZHMPin::GameTensionGuardHM_Agitated:
-		case ZHMPin::GameTensionGuardHM_AlertedHigh:
-		case ZHMPin::GameTensionGuardHM_AlertedLow:
-		case ZHMPin::GameTensionGuardHM_Ambient:
-		case ZHMPin::GameTensionGuardHM_Arrest:
-		case ZHMPin::GameTensionGuardHM_Combat:
-		case ZHMPin::GameTensionGuardHM_Hunting:
-		case ZHMPin::GameTensionCivilian:
-		case ZHMPin::GameTensionCivilian_Combat:
-		case ZHMPin::GameTensionCivilian_Hunting:
-		case ZHMPin::GameTensionCivilian_Ambient:
-		case ZHMPin::GameTensionCivilian_Agitated:
-		case ZHMPin::GameTensionCivilian_AlertedHigh:
-		case ZHMPin::GameTensionCivilian_AlertedLow:
-		case ZHMPin::GameTensionCivilian_Arrest:
-		case ZHMPin::GameTensionCivilianHM:
-		case ZHMPin::GameTensionCivilianHM_Ambient:
-		case ZHMPin::GameTensionCivilianHM_Agitated:
-		case ZHMPin::GameTensionCivilianHM_AlertedHigh:
-		case ZHMPin::GameTensionCivilianHM_AlertedLow:
-		case ZHMPin::GameTensionCivilianHM_Arrest:
-		case ZHMPin::GameTensionCivilianHM_Combat:
-		case ZHMPin::GameTensionCivilianHM_Hunting:
-		case ZHMPin::AttentionOSDVisible:
-		case ZHMPin::MusicStarted:
-		case ZHMPin::HitmanVisibleWeaponBegin:
-		case ZHMPin::CivilianGameTensionAlertedLow:
-		case ZHMPin::EventRegistered:
-		case ZHMPin::OnUnlocked:
-		case ZHMPin::Executed:
-		case ZHMPin::OnAbortEntering:
-		case ZHMPin::WentIntoRange:
-		case ZHMPin::WithinProximityChanged:
-		case ZHMPin::CutSequenceStarted:
-		case ZHMPin::OnPlay:
-		case ZHMPin::X:
-		case ZHMPin::Y:
-		case ZHMPin::Z:
-		case ZHMPin::LoadingTransitionDelayStarted:
-		case ZHMPin::LoadingTransitionDelayEnded:
-		case ZHMPin::PositionOutput:
-		case ZHMPin::Same:
-		case ZHMPin::Invert:
-		case ZHMPin::GetTrue:
-		case ZHMPin::GetFalse:
-		case ZHMPin::Value:
-		case ZHMPin::Negate:
-		case ZHMPin::Else:
-		case ZHMPin::OnReady:
-		case ZHMPin::OnChange:
-		case ZHMPin::AddedKeyword:
-		case ZHMPin::LowClamped:
-		case ZHMPin::HighClamped:
-		case ZHMPin::Unclamped:
-		case ZHMPin::Clamped:
-		case ZHMPin::Abs:
-		case ZHMPin::WentBelowMin:
-		case ZHMPin::WentAboveMax:
-		case ZHMPin::Deselected:
-		case ZHMPin::ButtonPressed:
-		case ZHMPin::SelectionChanged:
-		case ZHMPin::PageSelectionChanged:
-		case ZHMPin::NextPageTabSelected:
-		case ZHMPin::PreviousPageTabSelected:
-		case ZHMPin::MainEventEnded:
-		case ZHMPin::DistanceChanged:
-		case ZHMPin::Opened:
-		case ZHMPin::TotalCoverValue:
-		case ZHMPin::TurnLightOn:
-		case ZHMPin::MinValue:
-		case ZHMPin::MaxValue:
-		case ZHMPin::MinIndex:
-		case ZHMPin::MaxIndex:
-		case ZHMPin::PrincipalTargetAngleHoriz:
-		case ZHMPin::PrincipalTargetAngleVert:
-		case ZHMPin::PrincipalTargetIndex:
-		case ZHMPin::PrincipalTargetVisible:
-		case ZHMPin::MaxNumberOfTargets:
-		case ZHMPin::SecurityCameraAttentionMax:
-		case ZHMPin::SecurityCameraAttentionMaxPan:
-		case ZHMPin::Started:
-		case ZHMPin::Stopped:
-		case ZHMPin::Inside:
-		case ZHMPin::Outside:
-		case ZHMPin::OnWake:
-		case ZHMPin::OnSleep:
-		case ZHMPin::OnImpact:
-		case ZHMPin::OnImpactInfo:
-		case ZHMPin::OutSignal:
-		case ZHMPin::InDisguiseZone:
-		case ZHMPin::NPCHasWhiteDot:
-		case ZHMPin::RotationOutput:
-		case ZHMPin::SetGlowType:
-		case ZHMPin::Then:
-		case ZHMPin::Run:
-		case ZHMPin::OutputEvent:
-		case ZHMPin::OnStopped:
-		case ZHMPin::DoorClosed:
-		case ZHMPin::LadderSlideStop:
-		case ZHMPin::LadderSlideStart:
-		case ZHMPin::CoverEnabled:
-		case ZHMPin::OnLeaveDrama:
-		case ZHMPin::OnDone:
-		case ZHMPin::OnEnd:
-		case ZHMPin::OnUnpause:
-		case ZHMPin::OnUnpauseDrama:
-		case ZHMPin::OnTerminate:
-		case ZHMPin::Weight:
-		case ZHMPin::CurrentAmbience:
-		case ZHMPin::DoorOpenByAny:
-		case ZHMPin::DoorOpenByAnyIn:
-		case ZHMPin::DoorOpenByAnyOut:
-		case ZHMPin::DoorCloseByAny:
-		case ZHMPin::DoorCloseNoOperator:
-		case ZHMPin::CloseCalled:
-		case ZHMPin::OnGetIActor:
-		case ZHMPin::OnProjectionTurnedOn:
-		case ZHMPin::OnProjectionTurnedOff:
-		case ZHMPin::ClosestDistance:
-		case ZHMPin::WireDetach:
-		case ZHMPin::OnActivate:
-		case ZHMPin::OnLostOwnership:
-		case ZHMPin::OnInvisible:
-		case ZHMPin::FocusLost:
-		case ZHMPin::OnBehaviorStarted:
-		case ZHMPin::OnBehaviorEnded:
-		case ZHMPin::OnCooldown:
-		case ZHMPin::OnStop:
-		case ZHMPin::AudioDone:
-		case ZHMPin::SubtitleChanged:
-		case ZHMPin::GentlePush:
-		case ZHMPin::GentlePushSignal:
-		case ZHMPin::HardPush:
-		case ZHMPin::HardPushSignal:
-		case ZHMPin::HMState_StopRun:
-		//case ZHMPin::HMState_StopSneak:
-		//case ZHMPin::HMState_StartSneak:
-		case ZHMPin::Vector2:
-		case ZHMPin::Vector3:
-		case ZHMPin::AddedToPhysicsWorld:
-		case ZHMPin::OwnedByNPC:
-		case ZHMPin::EnablePickup:
-		case ZHMPin::OnRelease:
-		case ZHMPin::OnVisible:
-		case ZHMPin::OutRGBA:
-		case ZHMPin::OnSetVisible:
-		case ZHMPin::OnSetKinematic:
-		case ZHMPin::OnBecomeInvisible:
-		case ZHMPin::OnBecomeVisible:
-		case ZHMPin::OnSelected:
-		case ZHMPin::OnSelectedSkin:
-		case ZHMPin::OnSelectedScope:
-		case ZHMPin::OnSelectedMuzzleExtension:
-		case ZHMPin::Item:
-		case ZHMPin::ShotInterval:
-		case ZHMPin::ShotsPerMinute:
-			return HookAction::Continue();
-	}
-
-	auto ent = entity.GetEntity();
-	std::string typeName;
-	if (ent) {
-		auto type = ent->GetType();
-		if (type && type->m_pInterfaces)
-			typeName = type->m_pInterfaces->operator[](0).m_pTypeId->typeInfo()->m_pTypeName;
-	}
-
-	auto dataType = data.GetTypeID();
-	std::string dataTypeName;
-	if (dataType && dataType->m_pType && dataType->m_pType->m_pTypeName) {
-		dataTypeName = dataType->m_pType->m_pTypeName;
-		if (data.Is<ZString>()) {
-			dataTypeName = std::format("\"{}\"", data.As<ZString>()->c_str());
-		}
-	}
-#endif
+	if (Debug::ShouldSkipPin(pinId))
+		return HookAction::Continue();
 
 	switch (static_cast<ZHMPin>(pinId)) {
 #if _DEBUG
 		default:
-		case static_cast<ZHMPin>(4101414679): { // OnExplosion
-			ZString pinName;
-			if (SDK()->GetPinName(pinId, pinName)) {
-				Logger::Debug("PIN: {} from {}, (data: {})", pinName, typeName, dataTypeName);
-			}
-			else {
-				auto pinName = guessPinName(pinId);
-				if (pinName) {
-					Logger::Debug("NEW PIN: {} from {} (data: {})", pinName, typeName, dataTypeName);
-					if (entity.m_pEntity) {
-						auto const& props = getEntityPropNames(*entity.m_pEntity);
-						Logger::Debug("Props:");
-						for (auto const& prop : props)
-							Logger::Debug("  {}", prop);
-						auto const& intfcs = getEntityInterfaceNames(*entity.m_pEntity);
-						Logger::Debug("Interfaces:");
-						for (auto const& intfc : intfcs)
-							Logger::Debug("  {}", intfc);
-						auto parent = entity.GetLogicalParent();
-						static std::string space;
-						space = "  ";
-						while (parent) {
-							auto ent = parent.GetEntity();
-							auto const& props = getEntityPropNames(ent->GetType());
-							Logger::Debug("{}Parent Props:", space);
-							for (auto const& prop : props)
-								Logger::Debug("{}  {}", space, prop);
-							auto const& intfcs = getEntityInterfaceNames(ent->GetType());
-							Logger::Debug("{}Parent Interfaces:", space);
-							for (auto const& intfc : intfcs)
-								Logger::Debug("{}  {}", space, intfc);
-							space += "  ";
-							parent = parent.GetLogicalParent();
-						}
-					}
-				}
-			}
+			tracePin(pinId, entity, data);
 			break;
-		}
 #endif
 		case ZHMPin::HitmanInVision:
 			// "Never seen by targets", "Never seen by guards" etc?
@@ -3861,6 +3232,7 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 			break;
 		}
 		case ZHMPin::ShotBegin:
+			tracePin(pinId, entity, data);
 			SendCustomEvent("PlayerShot", ImbuedPlayerLocation());
 			break;
 		case ZHMPin::SpawnPhysicsClip:
