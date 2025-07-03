@@ -71,20 +71,22 @@
 		"OnIsFullyInCrowd": {}
 	},
 	{
-		"Name": "No Vegetation Concealing",
-		"Type": "Complication",
-		"Tip": "Avoid concealing yourself in foliage.",
-		"Group": "Action",
-		"Difficulty": "Medium",
-		"OnIsFullyInVegetation": {}
-	},
-	{
 		"Name": "No Damage",
 		"Type": "Complication",
 		"Tip": "Do not take damage, not even friendly fire.",
 		"Group": "Action",
 		"Difficulty": "Medium",
 		"OnTakeDamage": {}
+	},
+	{
+		"Name": "No Double Doors Opened",
+		"Type": "Complication",
+		"Tip": "Do not open any double doors by hand.",
+		"Group": "Action",
+		"Difficulty": "Medium",
+		"OpenDoor": {
+			"Type": "Double"
+		}
 	},
 	{
 		"Name": "No Instinct",
@@ -100,14 +102,6 @@
 		"Tip": "Do not reload any weapon. Avoid leaving clips around the place as evidence.",
 		"Difficulty": "Medium",
 		"OnWeaponReload": {}
-	},
-	{
-		"Name": "No Shots Fired",
-		"Type": "Complication",
-		"Tip": "Do not fire any shots.",
-		"Group": "Action",
-		"Difficulty": "Medium",
-		"PlayerShot": {}
 	},
 	{
 		"Name": "No Shooting Indoors",
@@ -134,12 +128,28 @@
 		}
 	},
 	{
+		"Name": "No Shots Fired",
+		"Type": "Complication",
+		"Tip": "Do not fire any shots.",
+		"Group": "Action",
+		"Difficulty": "Medium",
+		"PlayerShot": {}
+	},
+	{
 		"Name": "No Throwing",
 		"Type": "Complication",
 		"Tip": "Do not throw any item.",
 		"Group": "Action",
 		"Difficulty": "High",
 		"ItemThrown": {}
+	},
+	{
+		"Name": "No Vegetation Concealing",
+		"Type": "Complication",
+		"Tip": "Avoid concealing yourself in foliage.",
+		"Group": "Action",
+		"Difficulty": "Medium",
+		"OnIsFullyInVegetation": {}
 	},
 	{
 		"Disabled": true,
