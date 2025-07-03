@@ -1,13 +1,5 @@
 [
 	{
-		"Name": "No Target Lockdown",
-		"Type": "Complication",
-		"Tip": "Do not cause any target to enter Target Lockdown.",
-		"Group": "Opportunity",
-		"Difficulty": "High",
-		"OnEvacuationStarted": {}
-	},
-	{
 		"Name": "Dalia: No Emetic",
 		"Type": "Complication",
 		"Tip": "Do not make Dalia Margolis sick.",
@@ -19,6 +11,16 @@
 		}
 	},
 	{
+		"Name": "Dalia: No Lockdown",
+		"Type": "Complication",
+		"Tip": "Do not cause Dalia Margolis to enter Target Lockdown.",
+		"Group": "Opportunity",
+		"Difficulty": "High",
+		"OnEvacuationStarted": {
+			"ActorName": "Dalia Margolis"
+		}
+	},
+	{
 		"Name": "Viktor: No Emetic",
 		"Type": "Complication",
 		"Tip": "Do not make Viktor Novikov sick.",
@@ -26,6 +28,16 @@
 		"Missions": ["The Showstopper"],
 		"Difficulty": "Medium",
 		"ActorSick": {
+			"ActorName": "Viktor Novikov"
+		}
+	},
+	{
+		"Name": "Viktor: No Lockdown",
+		"Type": "Complication",
+		"Tip": "Do not cause Viktor Novikov to enter Target Lockdown.",
+		"Group": "Opportunity",
+		"Difficulty": "High",
+		"OnEvacuationStarted": {
 			"ActorName": "Viktor Novikov"
 		}
 	}

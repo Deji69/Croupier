@@ -14,6 +14,7 @@
 #include <Glacier/ZObject.h>
 #include <Glacier/ZOutfit.h>
 #include <Glacier/ZString.h>
+#include <Logging.h>
 #include <filesystem>
 #include <stack>
 #include <unordered_map>
@@ -108,12 +109,9 @@ struct SharedRouletteSpin {
 	PlayerMoveType playerMoveType;
 	bool playerInInstinct = false;
 	bool playerInInstinctSinceFrame = false;
-	int shotFiredPinCounter = 0;
-	std::string room;
+	bool isTrespassing = false;
 	const Area* area = nullptr;
-	const Area* lastArea = nullptr;
 	int16_t roomId = -1;
-	int16_t lastRoomId = -1;
 
 	SharedRouletteSpin(const RouletteSpin& spin) : spin(spin), timeElapsed(0) {
 		timeStarted = std::chrono::steady_clock().now();
@@ -129,8 +127,11 @@ struct SharedRouletteSpin {
 		collectedItemInstances.clear();
 		actorDataRepoIdMap.clear();
 
+		roomId = -1;
 		playerMoveType = PlayerMoveType::Unknown;
+		isTrespassing = false;
 		playerInInstinct = false;
+		area = nullptr;
 
 		for (auto& actorData : this->actorData)
 			actorData = ActorData{};
@@ -364,6 +365,8 @@ public:
 	auto ImbueDisguiseEvent(const std::string& repoId) -> nlohmann::json;
 	auto ImbueItemEvent(const ItemEventValue& ev, EActionType actionType) -> std::optional<nlohmann::json>;
 	auto ImbuePacifyEvent(const PacifyEventValue& ev) -> std::optional<nlohmann::json>;
+	auto ImbuePlayerLocation(nlohmann::json& json, const char* positionPropName = "Position") -> void;
+	auto ImbuedPlayerLocation(nlohmann::json&& json = {}, const char* positionPropName = "Position") -> nlohmann::json;
 
 	template<Events T> auto SendImbuedEvent(const ServerEvent<T>& ev, nlohmann::json eventValue) -> void {
 		nlohmann::json json = {
@@ -373,6 +376,8 @@ public:
 			{"ContractSessionId", ev.ContractSessionId},
 			{"Value", eventValue},
 		};
+		auto dump = json.dump();
+		Logger::Debug("<--- {}", dump);
 		this->client->sendRaw(json.dump());
 	}
 
@@ -381,7 +386,9 @@ public:
 			{"Name", name},
 			{"Value", eventValue},
 		};
-		this->client->sendRaw(json.dump());
+		auto dump = json.dump();
+		Logger::Debug("<--- {}", dump);
+		this->client->sendRaw(dump);
 	}
 
 	auto InstallHooks() -> void;

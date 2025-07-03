@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Octokit;
+using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
@@ -73,7 +74,10 @@ namespace Croupier.GameEvents {
 	public class LocationImbuedEventValue : EventValue {
 		public int? Room { get; set; }
 		public string? Area { get; set; }
+		public bool? IsTrespassing { get; set; }
 		public SVector3? Position { get; set; }
+		public SVector3? ActorPosition { get; set; }
+		public SVector3? HeroPosition { get; set; }
 	}
 
 	public class DoorUnlockedEventValue : EventValue {
@@ -204,7 +208,7 @@ namespace Croupier.GameEvents {
 
 	public class BodyEventValue : EventValue {
 		public required string RepositoryId { get; set; }
-		public required bool IsCrowdActor { get; set; }
+		public bool? IsCrowdActor { get; set; }
 	}
 
 	public class BodyKillInfoEventValue : EventValue {
@@ -217,36 +221,51 @@ namespace Croupier.GameEvents {
 		public required BodyKillInfoEventValue DeadBody { get; set; }
 	}
 
-	public abstract class ItemEventValue : LocationImbuedEventValue {
-		public required string RepositoryId { get; set; }
-		public required string InstanceId { get; set; }
-		public required string ItemType { get; set; }
-		public required string ItemName { get; set; }
+	public class CarExplodedEventValue : EventValue {
+		public int CarSize { get; set; }
+		public SVector3? CarPosition { get; set; }
+		public string? CarArea { get; set; }
 	}
 
-	public class ItemPickedUpEventValue : ItemEventValue { }
+	public abstract class ItemEventValue : LocationImbuedEventValue {
+		public required string RepositoryId { get; set; }
+		public required string? InstanceId { get; set; }
+		public required string? ItemType { get; set; }
+		public required string? ItemName { get; set; }
+	}
+
+	public class ItemDestroyedEventValue : ItemEventValue { }
 	public class ItemDroppedEventValue : ItemEventValue { }
-	public class ItemThrownEventValue : ItemEventValue { }
+	public class ItemPickedUpEventValue : ItemEventValue { }
 	public class ItemRemovedFromInventoryEventValue : ItemEventValue { }
+	public class ItemThrownEventValue : ItemEventValue { }
 
 	public class SetpiecesEventValue : EventValue {
 		public required string RepositoryId { get; set; }
-		public required string name_metricvalue { get; set; }
-		public required string setpieceHelper_metricvalue { get; set; }
-		public required string setpieceType_metricvalue { get; set; }
-		public required string toolUsed_metricvalue { get; set; }
-		public required string Item_triggered_metricvalue { get; set; }
-		public required string Position { get; set; }
+		[JsonPropertyName("name_metricvalue")]
+		public string? Name { get; set; }
+		[JsonPropertyName("setpieceHelper_metricvalue")]
+		public string? Helper { get; set; }
+		[JsonPropertyName("setpieceType_metricvalue")]
+		public string? Type { get; set; }
+		[JsonPropertyName("toolUsed_metricvalue")]
+		public string? ToolUsed { get; set; }
+		[JsonPropertyName("Item_triggered_metricvalue")]
+		public string? ItemTriggered { get; set; }
+		public string? Position { get; set; }
 	}
 
 	public class ActorSickEventValue : EventValue {
 		//public required SVector3 ActorPosition { get; set; }
 		//public required uint ActorId { get; set; }
 		public required string ActorName { get; set; }
-		public required string actor_R_ID { get; set; }
+		[JsonPropertyName("actor_R_ID")]
+		public required string ActorRepositoryId { get; set; }
 		public required bool IsTarget { get; set; }
-		public required string item_R_ID { get; set; }
-		public required string setpiece_R_ID { get; set; }
+		[JsonPropertyName("item_R_ID")]
+		public required string ItemRepositoryId { get; set; }
+		[JsonPropertyName("setpiece_R_ID")]
+		public required string SetpieceRepositoryId { get; set; }
 		public required EActorType ActorType { get; set; }
 	}
 
@@ -262,9 +281,7 @@ namespace Croupier.GameEvents {
 		public bool? Sick { get; set; }
 	}
 
-	public class TrespassingEventValue : LocationImbuedEventValue {
-		public required bool IsTrespassing { get; set; }
-	}
+	public class TrespassingEventValue : LocationImbuedEventValue { }
 
 	public class DisguiseEventValue : LocationImbuedEventValue {
 		public required string RepositoryId { get; set; }
@@ -289,12 +306,21 @@ namespace Croupier.GameEvents {
 		public double? Recorder { get; set; }
 	}
 
+	public class OnEvacuationStartedEventValue : LocationImbuedEventValue {
+		public string? ActorName { get; set; }
+		public bool? IsTarget { get; set; }
+	}
+
 	public class OnIsFullyInCrowdEventValue : EventValue {
 
 	}
 
 	public class OnIsFullyInVegetationEventValue : EventValue {
 
+	}
+
+	public class OpenDoorEventValue : LocationImbuedEventValue {
+		public string? Type { get; set; }
 	}
 
 	public class OnTakeDamageEventValue : EventValue {
@@ -305,7 +331,7 @@ namespace Croupier.GameEvents {
 
 	}
 
-	public class InstinctActiveEventValue : EventValue {
+	public class InstinctActiveEventValue : LocationImbuedEventValue {
 
 	}
 
