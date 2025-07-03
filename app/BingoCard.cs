@@ -74,15 +74,7 @@ namespace Croupier {
 			return TestDiagonal() || TestReverseDiagonal();
 		}
 
-		public List<BingoTriggerEnterArea> GetEnterAreaTriggers() {
-			var results = new List<BingoTriggerEnterArea>();
-			foreach (var tile in Tiles) {
-				results.AddRange(GetEnterAreaTriggerChildren(tile.Trigger));
-			}
-			return results;
-		}
-
-		private static List<BingoTriggerEnterArea> GetEnterAreaTriggerChildren(BingoTrigger trigger) {
+		private static List<BingoTriggerEnterArea> GetEnterAreaTriggerChildren(IBingoTrigger trigger) {
 			if (trigger is BingoTriggerEnterArea t) return [t];
 			if (trigger is BingoTriggerComplication c)
 				return c.Trigger != null ? GetEnterAreaTriggerChildren(c.Trigger) : [];
