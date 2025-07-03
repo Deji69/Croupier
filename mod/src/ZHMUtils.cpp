@@ -11,7 +11,7 @@ uint32_t ZHMExtension::ImageSize;
 ZRoomManagerCreator* ZHMExtension::RoomManagerCreator = nullptr;
 static std::unique_ptr<PatternEngineFunction<int16(ZRoomManager* th, const float4 vPointWS)>> ZRoomManager_CheckPointInRoom;
 
-void ZHMExtension::Init() {
+auto ZHMExtension::Init() -> void {
 	Module = GetModuleHandleA(nullptr);
 	ModuleBase = reinterpret_cast<uintptr_t>(Module) + Util::ProcessUtils::GetBaseOfCode(Module);
 	SizeOfCode = Util::ProcessUtils::GetSizeOfCode(Module);
@@ -35,8 +35,16 @@ void ZHMExtension::Init() {
 	}
 }
 
-int16 ZRoomManager::GetRoomID(const float4 vPointWS) {
+auto ZRoomManagerCreator::GetRoomID(const float4 pos) -> int16 {
+	if (!ZHMExtension::RoomManagerCreator) return -1;
+	auto roomManager = ZHMExtension::RoomManagerCreator->m_pRoomManager;
+	if (!roomManager) return -1;
+	return roomManager->GetRoomID(pos);
+}
+
+auto ZRoomManager::GetRoomID(const float4 vPointWS) -> int16 {
 	return ZRoomManager_CheckPointInRoom->IsFound()
 		? ZRoomManager_CheckPointInRoom->Call(this, vPointWS)
 		: -1;
 }
+

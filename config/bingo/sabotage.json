@@ -37,16 +37,13 @@
 	},
 	{
 		"Name": "Explode a Vehicle",
-		"Tip": "Make someone walk home to help the environment.",
+		"Tip": "Make someone walk home.",
 		"Group": "Sabotage",
 		"Missions": [
 			"The Showstopper", "Holiday Hoarders", "World of Tomorrow", "A Gilded Cage"
 		],
 		"Tags": ["Action", "Sabotage"],
-		"Setpiece": {
-			"RepositoryId": "2b29d641-2a0d-4781-b2dd-0df02bc2674b",
-			"ToolUsed": "Exploded"
-		}
+		"CarExploded": {}
 	},
 	{
 		"Name": "Explode {1} Gas Heater Lamps",
@@ -77,9 +74,8 @@
 		"Group": "Sabotage",
 		"Missions": ["The Showstopper", "Holiday Hoarders"],
 		"Tags": ["Action", "Sabotage"],
-		"Setpiece": {
-			"RepositoryId": "2b29d641-2a0d-4781-b2dd-0df02bc2674b",
-			"ToolUsed": "Exploded"
+		"ItemDestroyed": {
+			"RepositoryId": "d64eb5f2-1e9b-402d-855b-c714cfde50db"
 		}
 	},
 	{
