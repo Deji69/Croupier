@@ -37,7 +37,7 @@
 	},
 	{
 		"Name": "Explode a Vehicle",
-		"Tip": "Make someone walk home.",
+		"Tip": "Cause a vehicle to explode and make someone walk home.",
 		"Group": "Sabotage",
 		"Missions": [
 			"The Showstopper", "Holiday Hoarders", "World of Tomorrow", "A Gilded Cage"
