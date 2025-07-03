@@ -74,10 +74,14 @@ namespace Croupier.GameEvents {
 	public class LocationImbuedEventValue : EventValue {
 		public int? Room { get; set; }
 		public string? Area { get; set; }
+		public string? ActorArea { get; set; }
+		public SVector3? ActorPosition { get; set; }
+		public int? ActorRoom { get; set; }
+		public string? HeroArea { get; set; }
+		public SVector3? HeroPosition { get; set; }
+		public int? HeroRoom { get; set; }
 		public bool? IsTrespassing { get; set; }
 		public SVector3? Position { get; set; }
-		public SVector3? ActorPosition { get; set; }
-		public SVector3? HeroPosition { get; set; }
 	}
 
 	public class DoorUnlockedEventValue : EventValue {
