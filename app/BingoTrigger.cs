@@ -337,6 +337,7 @@ namespace Croupier {
 				"ActorSick" => json => new BingoTriggerActorSick(json),
 				"BodyFound" => json => new BingoTriggerBodyFound(json),
 				"BodyHidden" => json => new BingoTriggerBodyHidden(json),
+				"CarExploded" => json => new BingoTriggerCarExploded(json),
 				"Collect" => json => new BingoTriggerCollect(json),
 				"DartHit" => json => new BingoTriggerDartHit(json),
 				"Disguise" => json => new BingoTriggerDisguise(json),
@@ -692,6 +693,26 @@ namespace Croupier {
 		public override bool Test(EventValue ev, BingoTileState state) {
 			return ev is PlayerShotEventValue
 				&& locationTrigger.Test(ev, state);
+		}
+	}
+
+	public class BingoTriggerCarExploded : BingoTrigger {
+		readonly BingoTriggerString CarArea = new();
+		readonly BingoTriggerPosition CarPosition = new();
+		readonly BingoTriggerInt CarSize = new();
+
+		public BingoTriggerCarExploded(JsonElement json) : base(json) {
+			CarArea.Load(json, "CarArea");
+			CarPosition.Load(json, "CarPosition");
+			CarSize.Load(json, "CarSize");
+		}
+
+		public override bool Test(EventValue ev, BingoTileState state) {
+			return ev is CarExplodedEventValue v
+				&& base.Test(ev, state)
+				&& CarArea.Test(v.CarArea, state)
+				&& CarPosition.Test(v.CarPosition, state)
+				&& CarSize.Test(v.CarSize, state);
 		}
 	}
 
