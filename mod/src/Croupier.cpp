@@ -3790,7 +3790,7 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 		case ZHMPin::DoorOpen: {
 			auto singleDoor = entity.QueryInterface<ZHM5SingleDoor2>();
 			auto doubleDoor = entity.QueryInterface<ZHM5DoubleDoor2>();
-			if (!singleDoor && !doubleDoor) return;
+			if (!singleDoor && !doubleDoor) break;
 			SendCustomEvent("OpenDoor", ImbuedPlayerLocation({
 				{"Type", doubleDoor ? "Double" : "Single"}
 			}));

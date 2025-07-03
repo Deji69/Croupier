@@ -1,12 +1,13 @@
 #pragma once
-#include <Hooks.h>
-#include <IPluginInterface.h>
 #include <EngineFunction.h>
 #include <Glacier/TArray.h>
 #include <Glacier/ZGameUIManager.h>
 #include <Glacier/ZInput.h>
 #include <Glacier/ZObject.h>
+#include <Glacier/ZSpatialEntity.h>
 #include <Glacier/ZString.h>
+#include <Hooks.h>
+#include <IPluginInterface.h>
 #include <Logging.h>
 #include "ProcessUtils.h"
 
@@ -27,6 +28,11 @@ class ZExplodingPropCounter : public ZEntityImpl
 {
 public:
 	EGSExplodingPropType m_eExplodingPropType; // 0x18
+};
+
+class ISoundGateController {
+public:
+	virtual ~ISoundGateController() = 0;
 };
 
 class IHM5Door : public ISoundGateController {
@@ -51,11 +57,6 @@ public:
 	};
 
 	virtual ~IHM5Door() = 0;
-};
-
-class ISoundGateController {
-public:
-	virtual ~ISoundGateController() = 0;
 };
 
 class ZHM5SingleDoor2 :
