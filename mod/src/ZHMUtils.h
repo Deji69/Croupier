@@ -2,14 +2,60 @@
 #include <EngineFunction.h>
 #include <Glacier/TArray.h>
 #include <Glacier/ZGameUIManager.h>
+#include <Glacier/ZHitman5.h>
 #include <Glacier/ZInput.h>
+#include <Glacier/ZItem.h>
 #include <Glacier/ZObject.h>
+#include <Glacier/ZResource.h>
 #include <Glacier/ZSpatialEntity.h>
 #include <Glacier/ZString.h>
 #include <Hooks.h>
 #include <IPluginInterface.h>
 #include <Logging.h>
 #include "ProcessUtils.h"
+
+class IItemWeapon : public IComponentInterface
+{
+public:
+	virtual ~IItemWeapon() = 0;
+};
+
+class IFirearm : public IComponentInterface
+{
+public:
+	virtual ~IFirearm() = 0;
+};
+
+class ZHM5ItemWeapon :
+	public ZHM5Item, // Offset 0x0 
+	public IItemWeapon, // Offset 0x440 
+	public IFirearm // Offset 0x448 
+{
+public:
+	PAD(0x4);
+	eWeaponType m_WeaponType; // 0x464
+	ZRuntimeResourceID m_ridClipTemplate; // 0x468
+	EWeaponAnimationCategory m_eAnimationCategory; // 0x470
+	ZEntityRef m_MuzzleExit; // 0x478
+	ZEntityRef m_CartridgeEject; // 0x480
+	float32 m_fCartridgeEjectForceMultiplier; // 0x488
+	TEntityRef<void> m_MuzzleFlashEffect; // 0x490
+	TEntityRef<void> m_MuzzleSmokeEffect; // 0x4A0
+	TEntityRef<void> m_MuzzleFlashEffectGroup; // 0x4B0
+	TEntityRef<void> m_MuzzleSmokeEffectGroup; // 0x4C0
+	TEntityRef<void> m_SoundSetup; // 0x4D0
+	TEntityRef<void> m_AudioSetup; // 0x4E0
+	TEntityRef<void> m_LeftHandPos; // 0x4F0
+	ZEntityRef m_AmmoProperties; // 0x500
+	bool m_bConnectsToTarget; // 0x508
+	float32 m_fMuzzleEnergyMultiplier; // 0x50C
+	bool m_bScopedWeapon; // 0x510
+	ZEntityRef m_ScopePosition; // 0x518
+	ZEntityRef m_ScopeCrossHair; // 0x520
+	ZEntityRef m_rSpecialImpactAct; // 0x528
+	ZEntityRef m_rSuperSpecialTriggerEffect; // 0x530
+	PAD(0x398);
+};
 
 class ZVIPControllerEntity : public ZEntityImpl
 {

@@ -2992,6 +2992,9 @@ static auto guessPinName(int32_t pinId) -> const char* {
 }
 
 static auto tracePin(int32 pinId, ZEntityRef entity, const ZObjectRef& data) -> void {
+	if (Debug::ShouldSkipPin(pinId))
+		return;
+
 	static std::string pinName;
 	static ZString zPinName;
 	bool isNew = false;
@@ -3109,10 +3112,6 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 
 	// OnItemDestroyed???
 
-	// Skip all the garbage
-	if (Debug::ShouldSkipPin(pinId))
-		return HookAction::Continue();
-
 	switch (static_cast<ZHMPin>(pinId)) {
 #if _DEBUG
 		default:
@@ -3122,6 +3121,11 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 		case ZHMPin::HitmanInVision:
 			// "Never seen by targets", "Never seen by guards" etc?
 			break;
+		//case ZHMPin::HM_WeaponEquipped: // ZWeaponSoundSetupEntity (data: void), child of zhmitemweapon or whatever
+		//case ZHMPin::OnRemovedFromContainer: // ZHM5ItemWeapon (data: void)
+		//case ZHMPin::ThrowActivated: // ZThrowSoundController
+		//case ZHMPin::ThrowImpact:
+		//case ZHMPin::OnTurnOn: // ZHM5ItemCCWeapon, - probably refers to physics being enabled
 		case ZHMPin::OnEvacuationStarted: {
 			auto vip = entity.QueryInterface<ZVIPControllerEntity>();
 			if (!vip || !vip->m_rVIP.m_pInterfaceRef) break;
@@ -3152,13 +3156,36 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 			});
 			break;
 		}
-		case ZHMPin::ShotBegin:
-			tracePin(pinId, entity, data);
-			SendCustomEvent("PlayerShot", ImbuedPlayerLocation());
+		case static_cast<ZHMPin>(-1633404151): {
+			if (!data.Is<ZString>()) break;
+			auto mapSlice = data.As<ZString>();
+			Logger::Info("LEVEL CHANGE: {}", mapSlice->ToStringView());
 			break;
-		case ZHMPin::SpawnPhysicsClip:
-			SendCustomEvent("OnWeaponReload", ImbuedPlayerLocation());
+		}
+		//case ZHMPin::ShotBegin:
+		case ZHMPin::PlayerAllShots: {
+			auto weap = entity.QueryInterface<ZHM5ItemWeapon>();
+			if (!weap) break;
+			auto descriptor = weap->m_pItemConfigDescriptor;
+			SendCustomEvent("PlayerShot", ImbuedPlayerLocation({
+				{"RepositoryId", descriptor ? descriptor->m_RepositoryId.ToString() : ""},
+				{"ItemName", descriptor ? descriptor->m_sTitle : ""},
+				{"WeaponCategory", weap->m_eAnimationCategory},
+			}));
 			break;
+		}
+		//case ZHMPin::SpawnPhysicsClip:
+		case ZHMPin::WeaponStartReload: {
+			auto weap = entity.QueryInterface<ZHM5ItemWeapon>();
+			if (!weap) break;
+			auto descriptor = weap->m_pItemConfigDescriptor;
+			SendCustomEvent("OnWeaponReload", ImbuedPlayerLocation({
+				{"RepositoryId", descriptor ? descriptor->m_RepositoryId.ToString() : ""},
+				{"ItemName", descriptor ? descriptor->m_sTitle : ""},
+				{"WeaponCategory", weap->m_eAnimationCategory},
+			}));
+			break;
+		}
 		case ZHMPin::DoorOpen: {
 			auto singleDoor = entity.QueryInterface<ZHM5SingleDoor2>();
 			auto doubleDoor = entity.QueryInterface<ZHM5DoubleDoor2>();
