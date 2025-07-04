@@ -10,6 +10,7 @@ public:
 #endif
 		switch (pin) {
 			case 501542: // ZEntity (data: bool)
+			case 9579636: // ZEntity (data: void)
 			case 36746103: // ZCompositeEntity (data: void)
 			case 44660150: // ZCompositeEntity (data: void)
 			case 71035488: // ZEntity (data: void)
@@ -17,17 +18,25 @@ public:
 			case 122894096: // ZEntity (data: void)
 			case 129546075: // ZMenuSoundControllerEntity, ZSniperSoundControllerEntity, ZScoreSoundControllerEntity, ZMenuSoundEventToPinControllerEntity, etc. (data: void)
 			case 148920563: // ZEntity (data: void)
+			case 179438730: // ZEntity (data: "L2")
 			case 211203475: // ZEntity (data: void)
+			case 228081014: // ZContractsGamestateEmitterEntity (data: ZDynamicObject)
+			case 229468423: // ZTriggerSwitchEntity (data: void)
 			case 230702392: // ZMenuSoundControllerEntity (data: void)
 			case 230775901: // ZDynamicObjectEntity (data: ZDynamicObject)
 			case 253055846: // ZCompositeEntity (data: float32)
 			case 271288499: // ZEntity (data: void) - escort situation?
+			case 277563714: // ZEntity (data: int32)
+			case 281998697: // ZEntity (data: void)
+			case 301040445: // ZEntity (data: void)
 			case 301147094: // ZEntity (data: void)
 			case 306002251: // ZEntity (data: void)
 			case 310671713: // ZEntity (data: void)
 			case 322468906: // ZEntity (data: void)
 			case 357910907: // ZEntity (data: void)
+			case 372880910: // ZEntity (data: void)
 			case 374906731: // ZEntity (data: bool)
+			case 377503514: // ZEntity (data: float32)
 			case 403074860: // ZEntity (data: int32)
 			case 403940158: // ZEntity (data: void)
 			case 416678229: // ZEntity (data: void)
@@ -56,15 +65,21 @@ public:
 			case 489993566: // ZEntity (data: void)
 			case 500373993: // ZEntity (data: void)
 			case 515211791: // ZCompositeEntity (data: void)
+			case 521978576: // ZSequenceEntity (data: void)
 			case 556922020: // ZMenuSoundEventToPinControllerEntity (data: void)
+			case 573986084: // ZEntity (data: bool)
 			case 601231859: // ZEntity (data: void)
 			case 601896093: // ZEntity (data: void)
+			//case 607230171: // ZEntity (data: "L2") - Box volumes, level changes?
 			case 635678676: // ZEntity (data: void)
 			case 668485891: // ZEntity (data: void)
+			case 669530264: // ZEntity (data: int32)
 			case 674185058: // ZCompositeEntity (data: void)
+			case 683393201: // ZEntity (data: void)
 			case 691848172: // ZEntity (data: void)
 			case 717138142: // ZEntity (data: void)
 			case 741687867: // ZEntity (data: void)
+			case 745799826: // ZEntity (data: void)
 			case 752606684: // ZEntity (data: void)
 			case 754018329: // ZEntity (data: void) - ZEscortSituationEntity, ISituation
 				/*
@@ -106,6 +121,7 @@ public:
 			case 856531663: // ZEntity (data: bool)
 			case 859762941: // ZEntity (data: void)
 			case 866574461: // ZCompositeEntity (data: void)
+			case 873418195: // ZEntity (data: bool)
 			case 877868260: // ZEntity (data: void)
 			case 882644225: // ZEntity (data: void)
 			case 889090044: // ZEntity (data: void)
@@ -113,12 +129,14 @@ public:
 			case 891260949: // ZEntity (data: SColorRGB)
 			case 894903842: // ZCompositeEntity (data: void)
 			case 908785572: // ZCompositeEntity (data: float32)
+			case 930506055: // ZEntity (data: float32)
 			case 935673879: // ZEntity (data: void) -- ZReplicableAspect?
 			case 937832496: // ZCompositeEntity (data: void)
 			case 937885519: // ZEntity (data: void)
 			case 946677172: // ZUIControlEntity (data: int32)
 			case 947557433: // ZEntity (data: bool)
 			case 950003767: // ZEntity (data: void)
+			case 952836605: // ZEntity (data: void)
 			case 961221181: // ZEntity (data: void)
 			case 963803069: // ZEntity (data: void)
 			case 975996388: // ZEntity (data: void)
@@ -133,8 +151,10 @@ public:
 			case 1089554643: // ZEntity (data: bool)
 			case 1101737245: // ZEntity (data: void)
 			case 1129579634: // ZEntity (data: void)
+			case 1131861442: // ZEntity (data: void)
 			case 1144635499: // ZEntity (data: void)
 			case 1156972293: // ZEntity (data: ZEntityRef)
+			case 1163998226: // ZEntity (data: void)
 			case 1170839340: // ZEntity (data: void) - ZMenuSoundControllerEntity related
 			case 1202154661: // ZEntity (data: "inc +1-WhiteDot")
 			case 1204287162: // ZEntity (data: void)
@@ -152,11 +172,14 @@ public:
 			case 1377209749: // ZEntity (data: bool)
 			case 1405650200: // ZEntity (data: ZEntityRef)
 			case 1413678324: // ZEntity (data: void)
+			case 1414783256: // ZEntity (data: void)
 			case 1429745763: // ZEntity (data: void)
 			case 1434133646: // ZEntity (data: void)
 			case 1449711450: // ZGeomEntity (data: bool)
 			case 1458155033: // ZEntity (data: void)
 			case 1477225221: // ZEventTrack (data: void)
+			case 1489696997: // ZEntity (data: void)
+			case 1511806660: // ZEntity (data: void)
 			case 1513651282: // ZSequenceEntity (data: void)
 			case 1516324495: // ZEntity (data: SVector3)
 			case 1528949279: // ZEntity (data: void)
@@ -167,10 +190,13 @@ public:
 			case 1628839158: // ZEntity (data: bool)
 			case 1631403235: // ZEntity (data: void)
 			case 1643757213: // ZEntity (data: void)
+			case 1644512933: // ZEntity (data: void)
 			case 1651641059: // ZEntity (data: void)
 			case 1664933465: // ZEntity (data: void)
 			case 1666580196: // ZEntity (data: void)
+			case 1679099051: // ZEntity (data: void)
 			case 1680474940: // ZEntity (data: bool)
+			case 1708316975: // ZMenuSoundControllerEntity, ZSniperSoundControllerEntity, ZScoreSoundControllerEntity... (data: void)
 			case 1720290305: // ZEntity (data: void)
 			case 1727745808: // ZCompositeEntity (data: void)
 			case 1737185346: // ZEntity (data: bool)
@@ -187,6 +213,7 @@ public:
 				|  void
 				*/
 			case 1789489423: // ZGeomEntity (data: void)
+			case 1818736075: // ZEntity (data: void)
 			case 1822771111: // ZEntity (data: "inc +1-WhiteDot")
 			case 1831366352: // ZEntity (data: void)
 			case 1842488873: // ZEntity (data: void)
@@ -195,9 +222,13 @@ public:
 			case 1858673265: // ZCompositeEntity (data: void)
 			case 1863619496: // ZEntity (data: void)
 			case 1895620862: // ZEntity (data: bool)
+			case 1901097519: // ZEntity (data: void)
 			case 1903696663: // ZEntity (data: float32)
+			case 1921326538: // ZEntity (data: void)
+			case 1940498321: // ZEntity (data: "L2")
 			case 1940520998: // ZEntity (data: ZEntityRef)
 			case 1944367749: // ZEntity (data: void)
+			case 1954375505: // ZEntity (data: void)
 			case 1956952087: // ZEntity (data: void)
 			case 1959624952: // ZEntity (data: void)
 			case 1980660862: // ZEntity (data: void)
@@ -210,6 +241,7 @@ public:
 			case 2057984401: // ZTriggerSwitchEntity (data: void)
 			case 2076541628: // ZCompositeEntity (data: float32)
 			case 2086034889: // ZEntity (data: float32)
+			case 2089164703: // ZEntity (data: bool)
 			case 2089510909: // ZEntity (data: void)
 			case 2098590534: // ZEntity (data: float32)
 			case 2100872677: // ZEntity (data: "Dec-1 - NoActivity")
@@ -218,9 +250,13 @@ public:
 			case -38235880: // ZEntity (data: void)
 			case -55772032: // ZEntity (data: void)
 			case -88134018: // ZEntity (data: void)
+			case -103069261: // ZEntity (data: void)
 			case -106164073: // ZEntity (data: void)
 			case -114013006: // ZEntity (data: bool)
 			case -114346585: // ZUIControlEntity (data: int32)
+			case -119187254: // ZEntity (data: void)
+			case -125993919: // ZEntity (data: void)
+			case -177663794: // ZEntity (data: void)
 			case -183274817: // ZGeomEntity (data: void)
 			case -213952696: // ZEntity (data: void)
 			case -220964066: // ZEntity (data: void)
@@ -233,38 +269,50 @@ public:
 			case -307063471: // ZEntity (data: void)
 			case -318742697: // ZEntity (data: void)
 			case -322926365: // ZEntity (data: void)
+			case -327208175: // ZEntity (data: void)
 			case -351248558: // ZItemSpawner (data: void)
 			case -357930714: // ZEntity (data: void)
 			case -358295328: // ZEntity (data: void)
 			case -390209647: // ZEntity (data: bool)
 			case -393803563: // ZEntity (data: float32)
 			case -395574818: // ZEntity (data: void)
+			case -399027006: // ZEntity (data: void)
 			case -402475892: // ZEntity (data: void)
 			case -410343194: // ZEntity (data: ZEntityRef)
+			case -417854196: // ZEntity (data: void)
 			case -418092396: // ZCompositeEntity (data: void)
 			case -421224544: // ZEntity (data: void)
 			case -423737797: // ZEntity (data: TEntityRef<IActor>)
 			case -427559050: // ZEntity (data: void)
 			case -432873473: // ZEntity (data: void)
+			case -443162547: // ZEntity (data: void)
 			case -456209358: // ZTriggerSwitchEntity (data: void)
 			case -469755470: // ZMenuSoundEventToPinControllerEntity (data: void)
 			case -475854805: // ZTriggerSwitchEntity (data: void)
 			case -498354609: // ZEntity (data: void)
 			case -495579654: // ZEntity (data: void)
+			case -518499245: // ZEntity (data: void)
 			case -519995521: // ZEntity (data: bool)
+			case -531765867: // ZEntity (data: void)
+			case -534381239: // ZEntity (data: void)
 			case -584019503: // ZEntity (data: void)
 			case -588961975: // ZCompositeEntity (data: float32)
 			case -603950521: // ZEntity (data: void)
 			case -624852522: // ZEntity (data: void)
 			case -631417400: // ZEntity (data: void)
 			case -640252619: // ZEntity (data: void)
+			case -651205166: // ZEntity (data: void)
+			case -708689034: // ZEntity (data: void)
+			case -712745208: // ZEntity (data: void)
 			case -747304223: // ZEntity (data: void)
 			case -754735179: // ZEntity (data: bool)
 			case -757798211: // ZEntity (data: void)
+			case -766372164: // ZEntity (data: void) - opportunity related?
 			case -774731285: // ZEntity (data: void)
 			case -782324219: // ZEntity (data: bool)
 			case -796675733: // ZCompositeEntity (data: void)
 			case -805067403: // ZEntity (data: void)
+			case -805990237: // ZUIMapControllerEntity (data: void)
 			case -814087883: // ZEntity (data: void)
 			case -855313396: // ZEntity (data: void)
 			case -861928259: // ZCompositeEntity (data: SColorRGB)
@@ -272,6 +320,7 @@ public:
 			case -895397753: // ZEntity (data: bool)
 			case -908102272: // ZEventTrack (data: void)
 			case -909792276: // ZEntity (data: void) - waypoint stuff possibly
+			case -916355607: // ZCompositeEntity (data: float32)
 			case -917093329: // ZEntity (data: void)
 			case -924185415: // ZMenuSoundEventToPinControllerEntity (data: void)
 			case -937580624: // ZEntity (data: void)
@@ -283,6 +332,7 @@ public:
 			case -966059140: // ZEntity (data: ZEntityRef)
 			case -972667076: // ZEntity (data: void)
 			case -980979663: // ZEntity (data: void)
+			case -991045767: // ZEntity (data: void)
 			case -1002691499: // ZMenuSoundEventToPinControllerEntity (data: void)
 			case -1007933124: // ZEntity (data: void)
 			case -1043195759: // ZCompositeEntity (data: void)
@@ -292,6 +342,8 @@ public:
 			case -1102398408: // ZEntity (data: void)
 			case -1116158045: // ZEntity (data: void)
 			case -1118215983: // ZEntity (data: void)
+			case -1110338595: // ZContractsGamestateEmitterEntity (data: ZRepositoryID)
+			case -1111308979: // ZEntity (data: void)
 			case -1168358397: // ZEntity (data: void)
 			case -1176065269: // ZCompositeEntity (data: float32)
 			case -1180291634: // ZEntity (data: void)
@@ -304,10 +356,14 @@ public:
 			case -1208951912: // ZEntity (data: void)
 			case -1219054791: // ZEntity (data: float32)
 			case -1222512624: // ZEntity (data: void)
+			case -1224423696: // ZEntity (data: void) - opportunity related?
 			case -1229587178: // ZEntity (data: void)
+			case -1230876178: // ZEntity (data: void)
+			case -1240590791: // ZEntity (data: void)
 			case -1249253121: // ZEntity (data: void)
 			case -1258157561: // ZEntity (data: ZEntityRef)
 			case -1269514813: // ZEntity (data: void)
+			case -1297124618: // ZEntity (data: void)
 			case -1302741857: // ZEntity (data: void)
 			case -1326194532: // ZEntity (data: void)
 			case -1329698620: // ZUISubtitleDataProvider (data: void)
@@ -315,10 +371,13 @@ public:
 			case -1333480518: // ZEntity (data: void)
 			case -1369714487: // ZEntity (data: void)
 			case -1379886238: // ZEntity (data: void)
+			case -1383748470: // ZEntity (data: void)
+			case -1385943967: // ZLevelControlEntity (data: bool)
 			case -1386584738: // ZEntity (data: void)
 			case -1386708075: // ZEntity (data: void)
 			case -1389845701: // ZEntity (data: void)
 			case -1391241443: // ZUIControlEntity (data: void)
+			case -1405413752: // ZEntity (data: void)
 			case -1405696677: // ZEntity (data: void)
 			case -1427322264: // ZEntity (data: void)
 			case -1439194809: // ZEntity (data: void)
@@ -345,18 +404,22 @@ public:
 			case -1542831599: // ZSequenceEntity (data: void)
 			case -1543545464: // ZEntity (data: void)
 			case -1551962697: // ZGeomEntity (data: ZEntityRef)
+			case -1567676047: // ZDefaultMetricsSenderEntity (data: ZRepositoryID)
 			case -1570316685: // ZEntity (data: void)
 			case -1584511657: // ZEntity (data: ZEntityRef)
+			case -1603967581: // ZEntity (data: void)
 			case -1611503415: // ZEntity (data: void)
 			case -1626476704: // ZEntity (data: void)
 			case -1629124598: // ZEntity (data: void)
 			case -1635003431: // ZEntity (data: SVector3)
+			case -1649071104: // ZEntity (data: "L2")
 			case -1668320543: // ZEntity (data: void)
 			case -1670848567: // ZMenuSoundEventToPinControllerEntity (data: void)
 			case -1687807995: // ZEntity (data: void)
 			case -1692386444: // ZEntity (data: void)
 			case -1727780610: // ZEntity (data: void)
 			case -1743318979: // ZEntity (data: void)
+			case -1777714596: // ZHM5SequenceSkipEntity (data: void)
 			case -1779235007: // ZEntity (data: void)
 				/*
 				| Props:
@@ -377,20 +440,27 @@ public:
 			case -1801176899: // ZEntity (data: void)
 			case -1807379210: // ZEntity (data: void)
 			case -1808189318: // ZEntity (data: bool)
+			case -1823528714: // ZUIControlEntity (data: void)
+			case -1839449382: // ZEntity (data: int32)
 			case -1844322573: // ZUIControlEntity (data: void)
 			case -1860897575: // ZEntity (data: void)
+			case -1866239072: // ZEntity (data: void)
 			case -1868879805: // ZSequenceEntity (data: void)
 			case -1874226852: // ZEntity (data: void)
 			case -1877658337: // ZEntity (data: SColorRGB)
 			case -1888797396: // ZCompositeEntity (data: void)
 			case -1895895177: // ZEntity (data: void)
+			case -1910763817: // ZEntity (data: void)
 			case -1915321744: // ZEntity (data: void)
 			case -1928553780: // ZMenuSoundControllerEntity (data: void)
+			case -1945579104: // ZEntity (data: "Triggered"), (data: "StageActive")
 			case -1965092106: // ZEntity (data: void)
+			case -1985984869: // ZUIMapControllerEntity (data: void)
 			case -1986069737: // ZEntity (data: void)
 			case -1999718269: // ZEntity (data: void)
 			case -2013991646: // ZValueFloat_Set (data: float32)
 			case -2017399598: // ZEntity (data: bool)
+			case -2039424415: // ZEventTrack (data: void)
 			case -2043592962: // ZEntity (data: float32)
 			case -2054374999: // ZCompositeEntity (data: float32)
 			case -2062003256: // ZEntity (data: ZEntityRef)
@@ -399,7 +469,413 @@ public:
 			case -2103525802: // ZEntity (data: void)
 			case -2112315580: // 
 			case -2119750791: // ZMathMultiplyDivide (data: float32)
+			case -2128352618: // ZEntity (data: "L2")
 			case -2136102573: // ZEntity (data: void)
+				// cba to order them manually anymore
+			case 1055672457:
+			case 1050280336:
+			case 786902495:
+			case 1408858392:
+			case -1182262940:
+			case -1940939528:
+			case -1040838345:
+			case -1092819537:
+			case -1293974422:
+			case -1989077684:
+			case -1659968349:
+			case 367000212:
+			case 1745615803:
+			case 83764816:
+			case 927954381:
+			case 2102031519:
+			case 197827954:
+			case 746633541:
+			case 1667166751:
+			case -232823970:
+			case -1615459667:
+			case 130104470:
+			case 607230171:
+			case 465660913:
+			case 1810963393:
+			case 315378891:
+			case 1288377036:
+			case 1072462684:
+			case 620644750:
+			case -1844692125:
+			case 1216954092:
+			case 1764558887:
+			case -336133481:
+			case -1754336644:
+			case -1713424973:
+			case -1508536457:
+			case 307963197:
+			case 1227760737:
+			case 1225968056:
+			case 590174460:
+			case -1030825879:
+			case -1903875009:
+			case -462606922: // ZContractsGamestateEmitterEntity (data: ZDynamicObject)
+			case 811610981: // ZCompositeEntity (data: void)
+			case -43794944: // ZContractsGamestateEmitterEntity (data: ZDynamicObject)
+			case 1025206181:
+			case -1672469205:
+			case -2035442526: // ZEntity(data: void)
+			case 1866770608:
+			case 300449051:
+			case 698225228: // ZEntity (data: "NPCdist_SusEvent"), (data: "ST abort"), (data: "PlotRew-Challenge Comp.")
+			case 2107441970:
+			case 53640605:
+			case -193275709:
+			case 1814441712:
+			case -129357127:
+			case 105741800:
+				// case -291562784: - enter crouch?
+				// case -2101353226: // ZEntity (data: void) - item pick up?
+			// place item (briefcase
+				// OnPlaced from ZEntity (data: void) - child of ZItem - free win (fired multiple)
+				// 406361362 - ZCompositeEntity (data: void)
+			// enter climb ladder
+			case -908111829: // ZEntity(data: void)
+			// climb down
+			case 1356509126:
+			// level change
+			//case -1633404151: // ZUIMapConfig (data: "SLICE_02")
+			// get off lander
+			case 902815389:
+			// unholster weapon
+				// HM_WeaponEquipped from ZWeaponSoundSetupEntity (data: void)
+				/*
+				| Props:
+				|  TEntityRef<ZSignalSwitchEntity_void> m_rSwitchWeaponClass
+				|  TEntityRef<ZSignalSwitchEntity_void> m_rSwitchWeaponFamily
+				|  TEntityRef<ZSignalSwitchEntity_void> m_rSwitchFireType
+				|  TEntityRef<ZSignalSwitchEntity_void> m_rSwitchAudioHeadType
+				|  TEntityRef<ZSignalSwitchEntity_void> m_rSwitchAudioTailType
+				|  TEntityRef<ZSignalSwitchEntity_void> m_rSwitchExoticType
+				|  TEntityRef<ZSignalSwitchEntity_void> m_rSwitchHighPassFilter
+				|  TEntityRef<ZSignalSwitchEntity_void> m_rSwitchLowPassFilter
+				| Interfaces:
+				|  ZWeaponSoundSetupEntity
+				|  IEntity
+				|  void
+				|  Parent Props:
+				|    ZSpatialEntity.ERoomBehaviour m_eRoomBehaviour
+				|    bool m_bForceVisible
+				|    SMatrix43 m_mTransform
+				|    bool m_bVisible
+				|    bool m_bIsPrivate
+				|    bool m_bVisibleInBoxReflection
+				|    uint8 m_nViewportVisibility
+				|    TEntityRef<ZSpatialEntity> m_eidParent
+				|    TResourcePtr 4146518947
+				|    TResourcePtr 4252183518
+				|    TResourcePtr 2165728840
+				|    TResourcePtr 1969181366
+				|    TResourcePtr 3319749964
+				|    TResourcePtr 2530662484
+				|    TResourcePtr 3291758847
+				|    TResourcePtr 2224538749
+				|    ZEntityRef m_rHolder
+				|    ZString 1787637954
+				|    float32 1951200754
+				|    float32 3980764232
+				|    float32 2588054750
+				|    float32 69599613
+				|    float32 1931555307
+				|    float32 964779477
+				|    float32 2693270639
+				|    float32 3616488697
+				|    float32 1240181082
+				|    float32 1055693260
+				|    TResourcePtr 1185988173
+				|    TResourcePtr 656729747
+				|    TResourcePtr 2781052016
+				|  Parent Interfaces:
+				|    ZSpatialEntity
+				|    IEntity
+				|    ZWeaponSoundSetupEntity
+				|    void
+				|    Parent Props:
+				|      ZEntityRef m_ScopeCrossHair
+				|      bool m_bConnectsToTarget
+				|      float32 m_fMass
+				|      TResourcePtr 3424998006
+				|      ZRuntimeResourceID m_ridClipTemplate
+				|      TEntityRef<IAnimPlayerEntity> 232855195
+				|      TEntityRef<ZHM5WeaponHandPosBox> m_LeftHandPos
+				|      eWeaponType m_WeaponType
+				|      ZEntityRef m_ScopePosition
+				|      bool m_bScopedWeapon
+				|      float32 m_fMuzzleEnergyMultiplier
+				|      ZEntityRef m_CartridgeEject
+				|      ZEntityRef m_MuzzleExit
+				|      ZEntityRef m_AmmoProperties
+				|      bool m_bRemovePhysics
+				|      float32 m_fCartridgeEjectForceMultiplier
+				|      TEntityRef<IVariationResourceEntity> m_pVariationResource
+				|      EWeaponAnimationCategory m_eAnimationCategory
+				|      TEntityRef<ZGeomEntity> m_rGeomentity
+				|      TEntityRef<ZSpatialEntity> m_PosBackAttach
+				|      ZString 1787637954
+				|      TEntityRef<ZSpatialEntity> 2190610389
+				|      ZEntityRef m_rHolder
+				|      EDisposalType m_DisposalType
+				|      ZEntityRef m_rSpecialImpactAct
+				|      ZEntityRef m_rSuperSpecialTriggerEffect
+				|      TEntityRef<ZSpatialEntity> m_Geom
+				|      bool m_bKinematic
+				|      TArray<TEntityRef<ZSubaction>> m_aSubactions
+				|      TEntityRef<IChildNetworkEntity> m_pIdleAnimNetworkEntity
+				|      bool m_bRandomStartState
+				|      TEntityRef<ZSpatialEntity> m_rBeaconSpatial
+				|      TEntityRef<ZSpatialEntity> m_PosPlacementAttach
+				|      TEntityRef<ZBoxVolumeEntity> m_PlacementVolume
+				|      EActorSoundDefs m_eInvestigateSoundDef
+				|      TEntityRef<IBoolCondition> m_rVisibleInInventory
+				|      TArray<TEntityRef<ZSpatialEntity>> m_aPromptPositions
+				|      TEntityRef<ZEventConsumerCollection> m_EventConsumerCollection
+				|      TResourcePtr 1185988173
+				|      TResourcePtr 2224538749
+				|      TResourcePtr 3291758847
+				|      TResourcePtr 2530662484
+				|      TResourcePtr 3319749964
+				|      TResourcePtr 1969181366
+				|      ERenderGlowTypes m_eGeomGlowType
+				|      TResourcePtr 2781052016
+				|      TResourcePtr 656729747
+				|      TEntityRef<ZSpatialEntity> m_PosHandAttach
+				|    Parent Interfaces:
+				|      ZEntity
+				|      IEntity
+				|      IItemBase
+				|      IFirearm
+				|      IPhysicsAccessor
+				|      IDynamicPhysics
+				|      IItemWeapon
+				|      IItem
+				|      ZHM5ItemWeapon
+				|      ZHM5Item
+				|      void
+				*/
+			case 1019863584:
+			// fire headshot kill guard
+				// TriggerPressed from ZHM5ItemWeapon (data: void)
+			case 1290557591: // sound related
+				/*
+				| PIN: PlayerAllShots from ZEntity (data: void) - fired twice
+				| Props:
+				|  ZEntityRef m_ScopeCrossHair
+				|  bool m_bConnectsToTarget
+				|  float32 m_fMass
+				|  TResourcePtr 3424998006
+				|  ZRuntimeResourceID m_ridClipTemplate
+				|  TEntityRef<IAnimPlayerEntity> 232855195
+				|  TEntityRef<ZHM5WeaponHandPosBox> m_LeftHandPos
+				|  eWeaponType m_WeaponType
+				|  ZEntityRef m_ScopePosition
+				|  bool m_bScopedWeapon
+				|  float32 m_fMuzzleEnergyMultiplier
+				|  ZEntityRef m_CartridgeEject
+				|  ZEntityRef m_MuzzleExit
+				|  ZEntityRef m_AmmoProperties
+				|  bool m_bRemovePhysics
+				|  float32 m_fCartridgeEjectForceMultiplier
+				|  TEntityRef<IVariationResourceEntity> m_pVariationResource
+				|  EWeaponAnimationCategory m_eAnimationCategory
+				|  TEntityRef<ZGeomEntity> m_rGeomentity
+				|  TEntityRef<ZSpatialEntity> m_PosBackAttach
+				|  ZString 1787637954
+				|  TEntityRef<ZSpatialEntity> 2190610389
+				|  ZEntityRef m_rHolder
+				|  EDisposalType m_DisposalType
+				|  ZEntityRef m_rSpecialImpactAct
+				|  ZEntityRef m_rSuperSpecialTriggerEffect
+				|  TEntityRef<ZSpatialEntity> m_Geom
+				|  bool m_bKinematic
+				|  TArray<TEntityRef<ZSubaction>> m_aSubactions
+				|  TEntityRef<IChildNetworkEntity> m_pIdleAnimNetworkEntity
+				|  bool m_bRandomStartState
+				|  TEntityRef<ZSpatialEntity> m_rBeaconSpatial
+				|  TEntityRef<ZSpatialEntity> m_PosPlacementAttach
+				|  TEntityRef<ZBoxVolumeEntity> m_PlacementVolume
+				|  EActorSoundDefs m_eInvestigateSoundDef
+				|  TEntityRef<IBoolCondition> m_rVisibleInInventory
+				|  TArray<TEntityRef<ZSpatialEntity>> m_aPromptPositions
+				|  TEntityRef<ZEventConsumerCollection> m_EventConsumerCollection
+				|  TResourcePtr 1185988173
+				|  TResourcePtr 2224538749
+				|  TResourcePtr 3291758847
+				|  TResourcePtr 2530662484
+				|  TResourcePtr 3319749964
+				|  TResourcePtr 1969181366
+				|  ERenderGlowTypes m_eGeomGlowType
+				|  TResourcePtr 2781052016
+				|  TResourcePtr 656729747
+				|  TEntityRef<ZSpatialEntity> m_PosHandAttach
+				| Interfaces:
+				|  ZEntity
+				|  IEntity
+				|  IItemBase
+				|  IFirearm
+				|  IPhysicsAccessor
+				|  IDynamicPhysics
+				|  IItemWeapon
+				|  IItem
+				|  ZHM5ItemWeapon
+				|  ZHM5Item
+				|  void
+				*/
+				// ShotBegin - ZWeaponSoundSetupEntity (data: void)
+				// Discharge_ShotSilenced - ZAISoundEventObjectProxyProbe_FirearmDischarge (data: void)
+				// EjectCartridgeHitman
+			case 1332335305: // ZLinkedEntity (data: void)
+			case 2034673660: // ZSpatialEntity (data: float32) child of ZWeaponSoundSetupEntity, ZHM5Item, fired multiple times
+			//--------
+			case -1281814091:
+			case -229749455:
+			case -557889416:
+			case 391580448:
+			case -1777854548:
+			case 266425415:
+			case 1413943265:
+			case -1056662080:
+			case 890198583:
+			case 926649696:
+			case 294438097:
+			case 367579676:
+			case 818029569:
+			case -196240032:
+			case 1346445482:
+			case 1559263426:
+			case 1743628183:
+			case -1810941947:
+			case 391650318:
+			case -1973613329:
+			case 3480739:
+			case 908098612:
+			case -802474842:
+			case 905823080: // (data: ZRepositoryID)
+			case -1031334549:
+			case 2074703694:
+			case -2061100126:
+			case 172688250:
+			case -615215956:
+			case 1060043035:
+			case 1401231302:
+			case 640249298:
+			case -854908369:
+			case 1405826326:
+			case -1518524019:
+			case -808252192:
+			case -318099271:
+			case -1428458509:
+			case 1704424960:
+			case 406361362:
+			case 1901561271:
+			case 719193945:
+			case 398854508:
+			case 2328200:
+			case 801910836:
+				// WeaponStartReload
+			case 1158123228:
+			case -215566393:
+			case 680813622:
+			case 1990439715:
+			case -1315545446:
+			case -367005483:
+			case 1881503160:
+			case -821723473:
+			case -24459860:
+			case 802783049:
+			case 1983877692:
+			case -681415085:
+			case 13655135:
+			case 1542653414:
+			case -1848617060:
+			case 1255368527:
+			case 509323699:
+			case 1893966515:
+			case -2141485201:
+			case -388421209:
+			case -1355959696:
+			case 2075782866:
+			case 1316936680:
+			case 1770243176:
+			case 894003887:
+			case -1197939925:
+			case 1942493734:
+			case 1789867337:
+			case -777586257:
+			case -1806081432:
+			case -197409945:
+			case -390935135:
+			case 1444905342:
+			case 2125379121:
+			case 157760052: // IActor
+			case -1724102975:
+			case 1903192347:
+			case -377375279:
+			case -429407685:
+			case 1855284431:
+			case -727064886:
+			case -805149983:
+			case 89770573:
+			case 1545443214:
+			case 918672854:
+			case -1664564677:
+			case -1407712754:
+			case -2039267478:
+			case -936966498:
+			case -107809259:
+			case -424849847:
+			case -608465234:
+			case -637366345:
+			case -155940248:
+			case 1343317345:
+			case -1032651361:
+			case -145533265:
+			case -1898542098:
+			case 86424699:
+			case 323428690:
+			case 828291008:
+			case 980248263:
+			case -1089068114:
+			case -597598179:
+			case -1570624266:
+			case -1132788442:
+			case 1113137131:
+			case -710517353:
+			case -637732865:
+			case 172789393:
+			case 1165547372:
+			case -1416447954:
+			case 1323991424: // ZEntity (data: "TrgtAppear")
+			case 1149412963:
+			case 621812145:
+			case 1230024838:
+			case 214192701:
+			case -2085613975:
+			case -549217609:
+			case 780777879:
+			case -672301174:
+			case 911321668:
+			case 1836656427:
+			case -1183905124:
+			case -1675516562:
+			case -1397239191:
+			case -994240909:
+			case -1481421327:
+			case 359383687:
+			case 1162880474:
+			case -1651064648:
+			case 53117872:
+			case -2001530837:
+			case 261544537:
+			case -2085616854:
+			case 1614324719:
+			case 1481503785:
+			// take back disguise/suit bundle
+				// ButtonHoldComplete from ZHM5InputActionEventEmitter (data: void)
 				return true;
 		}
 		switch (static_cast<ZHMPin>(pin)) {
@@ -459,7 +935,12 @@ public:
 			case ZHMPin::BodyFoundPacify:
 			case ZHMPin::BodyFoundPacifyId:
 			case ZHMPin::ChangedDisguiseClean:
+			case ZHMPin::IntegerCount:
+			case ZHMPin::FloatCount:
 			case ZHMPin::Attenuation:
+			case ZHMPin::ActorEntered:
+			case ZHMPin::ActorExited:
+			case ZHMPin::Armed:
 			case ZHMPin::Pitch:
 			case ZHMPin::Show:
 			case ZHMPin::Hide:
@@ -492,6 +973,7 @@ public:
 			case ZHMPin::StartExecuteKill:
 			case ZHMPin::HitmanCCBegin:
 			case ZHMPin::HitmanCCEnd:
+			case ZHMPin::PageOpened:
 			case ZHMPin::InstinctUnavailable:
 			case ZHMPin::CC_Start:
 			case ZHMPin::CC_Start_Hitman:
@@ -1078,7 +1560,9 @@ public:
 			case ZHMPin::Item:
 			case ZHMPin::ShotInterval:
 			case ZHMPin::ShotsPerMinute:
+			case ZHMPin::HitmanVisibleWeaponEnd:
 			case ZHMPin::MenuOpened:
+			case ZHMPin::ScoreFail:
 				return true;
 		}
 		return false;
