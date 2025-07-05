@@ -205,14 +205,14 @@
 	{
 		"Name": "Movie Crew",
 		"Group": "Disguise",
-		"Missions": ["World of Tomorrow"],
+		"Missions": ["The Icon"],
 		"Tags": ["Disguise", "Civilian"],
 		"Disguise": ["79a767f7-5473-4380-b778-e93028e4fc2f"]
 	},
 	{
 		"Name": "Photographer",
 		"Group": "Disguise",
-		"Missions": ["World of Tomorrow"],
+		"Missions": ["Landslide"],
 		"Tags": ["Disguise", "Unique", "Civilian"],
 		"Disguise": ["b110cb05-0a38-4d77-b199-16e15a98b111"]
 	},
@@ -1328,5 +1328,124 @@
 		"Missions": ["Another Life", "A Bitter Pill"],
 		"Disguise": ["6d1a3100-5dc0-4a8a-b9fc-341c864e3841"],
 		"Tags": ["Disguise", "Guard", "Unique"]
+	},
+	{
+		"Name": "Architect",
+		"Group": "Disguise",
+		"Missions": ["The Ark Society"],
+		"Disguise": ["8d2b15f2-1d23-4b5e-b128-d2f47b53faf7"],
+		"Tags": ["Disguise", "Civilian"]
+	},
+	{
+		"Name": "Ark Member",
+		"Group": "Disguise",
+		"Missions": ["The Ark Society"],
+		"Disguise": ["b8b1d3c2-cf47-4a44-acc8-d8aa965ec8d8"],
+		"Tags": ["Disguise", "Civilian"]
+	},
+	{
+		"Name": "Blake Nathaniel",
+		"Group": "Disguise",
+		"Missions": ["The Ark Society"],
+		"Disguise": ["d40fe7e8-ec8d-429b-a86b-7844c0e4d1c7"],
+		"Tags": ["Disguise", "Civilian", "Unique"]
+	},
+	{
+		"Name": "Burial Robes",
+		"Group": "Disguise",
+		"Missions": ["The Ark Society"],
+		"Disguise": ["ae340f4d-6282-48d0-8e0d-c3dcb414bb4f"],
+		"Tags": ["Disguise", "Hostile", "Unique"]
+	},
+	{
+		"Name": "Butler",
+		"Group": "Disguise",
+		"Missions": ["The Ark Society"],
+		"Disguise": ["e9a9b20d-93de-48b7-8840-73411bace252"],
+		"Tags": ["Disguise", "Civilian", "Unique"]
+	},
+	{
+		"Name": "Castle Staff",
+		"Group": "Disguise",
+		"Missions": ["The Ark Society"],
+		"Disguise": ["415c3c97-3c45-43a8-b930-40bece444a55"],
+		"Tags": ["Disguise", "Civilian"]
+	},
+	{
+		"Name": "Chef",
+		"Group": "Disguise",
+		"Missions": ["The Ark Society"],
+		"Disguise": ["e4aeb186-bedd-41a1-b4c0-bb9c49bc7982"],
+		"Tags": ["Disguise", "Civilian"]
+	},
+	{
+		"Name": "Custodian",
+		"Group": "Disguise",
+		"Missions": ["The Ark Society"],
+		"Disguise": ["04d72492-1b6b-4e6b-8372-5e65dc209cc4"],
+		"Tags": ["Disguise", "Civilian"]
+	},
+	{
+		"Name": "Elite Guard",
+		"Group": "Disguise",
+		"Missions": ["The Ark Society"],
+		"Disguise": ["84c55eed-6891-40b3-9449-6881b53fabdd"],
+		"Tags": ["Disguise", "Guard"]
+	},
+	{
+		"Name": "Entertainer",
+		"Group": "Disguise",
+		"Missions": ["The Ark Society"],
+		"Disguise": ["f9a34b19-f9ff-44a9-b232-86b1b8fcdbb0"],
+		"Tags": ["Disguise", "Civilian"]
+	},
+	{
+		"Name": "Event Staff",
+		"Group": "Disguise",
+		"Missions": ["The Ark Society"],
+		"Disguise": ["e3d61bbf-5b28-45cb-88bd-b386f5daa605"],
+		"Tags": ["Disguise", "Civilian"]
+	},
+	{
+		"Name": "Guard",
+		"Group": "Disguise",
+		"Missions": ["The Ark Society"],
+		"Disguise": ["6565bf3a-aa59-44f5-9b89-ef645f99d4fa"],
+		"Tags": ["Disguise", "Guard"]
+	},
+	{
+		"Name": "Initiate",
+		"Group": "Disguise",
+		"Missions": ["The Ark Society"],
+		"Disguise": ["daf223e8-0b22-405f-a3b9-40d2b9992c2f"],
+		"Tags": ["Disguise", "Civilian"]
+	},
+	{
+		"Name": "Jebediah Block",
+		"Group": "Disguise",
+		"Missions": ["The Ark Society"],
+		"Disguise": ["bef91840-e5aa-4a44-9f2e-30c732b1f7be"],
+		"Tags": ["Disguise", "Civilian", "Unique"]
+	},
+	{
+		"Name": "Knight's Armor",
+		"Group": "Disguise",
+		"Missions": ["The Ark Society"],
+		"Disguise": ["fae73e92-2307-4163-8e9f-30401ca884bf"],
+		"Tags": ["Disguise", "Hostile"]
+	},
+	{
+		"Name": "Master of Ceremonies",
+		"Group": "Disguise",
+		"Missions": ["The Ark Society"],
+		"Disguise": ["9db0a810-7549-4932-b0ab-9d6241afdc2c"],
+		"Tags": ["Disguise", "Civilian", "Unique"]
+	},
+	{
+		"Name": "Raider",
+		"Group": "Disguise",
+		"Missions": ["The Ark Society"],
+		"Disguise": ["58f91772-a202-49e4-a558-159f762d78e3"],
+		"Tags": ["Disguise", "Guard"]
 	}
 ]

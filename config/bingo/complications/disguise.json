@@ -2,6 +2,7 @@
 	{
 		"Name": "No Civilian Disguises",
 		"Type": "Complication",
+		"Tip": "Do not start in or take any civilian disguise.",
 		"Difficulty": "Medium",
 		"OR": [
 			{
@@ -19,12 +20,14 @@
 	{
 		"Name": "No Disguise Changes",
 		"Type": "Complication",
+		"Tip": "Do not change disguise after starting the mission.",
 		"Difficulty": "High",
 		"Disguise": []
 	},
 	{
 		"Name": "No Guard Disguises",
 		"Type": "Complication",
+		"Tip": "Do not start in or take any guard disguise.",
 		"Difficulty": "Medium",
 		"OR": [
 			{
@@ -42,6 +45,7 @@
 	{
 		"Name": "No Unique Disguises",
 		"Type": "Complication",
+		"Tip": "Do not start in or take any unique disguise (a disguise worn by only one or zero NPCs).",
 		"Difficulty": "Medium",
 		"OR": [
 			{
@@ -57,8 +61,11 @@
 		]
 	},
 	{
+		// OutfitType = Waiter doesn't seem to be used in Paris at least.
+		"Disabled": true,
 		"Name": "No Waiter Disguises",
 		"Type": "Complication",
+		"Tip": "Do not start in or take any waiter disguise (disguises allowed to openly poison food/drink).",
 		"Difficulty": "Medium",
 		"OR": [
 			{

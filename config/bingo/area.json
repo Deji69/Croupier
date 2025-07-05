@@ -1,13 +1,2 @@
 {
-	// Define areas in missions.
-	// These are defined here so they can be used in multiple tiles.
-	// Also, the coords need to be sent to the mod in order for *it* to check when the player enters an area, otherwise the game would have to constantly send position updates back to the app.
-	"Areas": [
-		{
-			"ID": "Helipad",
-			"Missions": ["The Showstopper", "Holiday Hoarders"],
-			"From": [-279.825, -2.929, -4.935],
-			"To": [-328.375, 32.669, 0.215]
-		}
-	]
 }

@@ -88,7 +88,7 @@ namespace Croupier.GameEvents {
 
 	}
 
-	public class DoorBrokenEventValue : EventValue {
+	public class DoorBrokenEventValue : LocationImbuedEventValue {
 
 	}
 
@@ -221,8 +221,7 @@ namespace Croupier.GameEvents {
 		public EDeathType? DeathType { get; set; }
 	}
 
-	public class BodyFoundEventValue : EventValue {
-		public required BodyKillInfoEventValue DeadBody { get; set; }
+	public class BodyFoundEventValue : BodyKillInfoEventValue {
 	}
 
 	public class CarExplodedEventValue : EventValue {
@@ -232,10 +231,10 @@ namespace Croupier.GameEvents {
 	}
 
 	public abstract class ItemEventValue : LocationImbuedEventValue {
-		public required string RepositoryId { get; set; }
-		public required string? InstanceId { get; set; }
-		public required string? ItemType { get; set; }
-		public required string? ItemName { get; set; }
+		public string? RepositoryId { get; set; }
+		public string? InstanceId { get; set; }
+		public string? ItemType { get; set; }
+		public string? ItemName { get; set; }
 	}
 
 	public class ItemDestroyedEventValue : ItemEventValue { }

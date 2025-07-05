@@ -1,32 +1,28 @@
 [
 	{
 		"Name": "Doors Stay Locked",
+		"Tip": "Do not unlock any locked door using a key, crowbar or lockpick.",
 		"Type": "Complication",
 		"Difficulty": "Medium",
 		"DoorUnlocked": {}
 	},
 	{
 		"Name": "No Bodies Found",
+		"Tip": "Do not let any bodies be found, even if they are 'unsuspicious'.",
 		"Type": "Complication",
 		"Difficulty": "Medium",
 		"BodyFound": {}
 	},
 	{
 		"Name": "No Broken Doors",
+		"Tip": "Do not force entry by breaking any doors.",
 		"Type": "Complication",
 		"Difficulty": "Low",
 		"DoorBroken": {}
 	},
 	{
 		"Name": "No Cameras Destroyed",
-		"Type": "Complication",
-		"Difficulty": "Medium",
-		"SecuritySystemRecorder": {
-			"Event": "CameraDestroyed"
-		}
-	},
-	{
-		"Name": "No Cameras Destroyed",
+		"Tip": "Leave all surveillance cameras intact.",
 		"Type": "Complication",
 		"Difficulty": "Medium",
 		"SecuritySystemRecorder": {
@@ -35,6 +31,7 @@
 	},
 	{
 		"Name": "No Weapons Confiscated",
+		"Tip": "Do not let any guard put a weapon in a weapon crate (briefcases are okay).",
 		"Type": "Complication",
 		"Group": "Action",
 		"Difficulty": "Easy",

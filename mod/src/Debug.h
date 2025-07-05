@@ -5,6 +5,7 @@
 class Debug {
 public:
 	static auto ShouldSkipPin(int32 pin) -> bool {
+		return true;
 #ifndef _DEBUG
 		return true;
 #endif
@@ -869,8 +870,79 @@ public:
 			case 1162880474:
 			case -1651064648:
 			case 53117872:
+			case -2048276127:
+			case -1758882301:
+			case 33315694:
+			case -1633404151: // SLICE_03
+			case -2007714212:
+			case 1687923183:
+			case -621174603:
+			case -1815479132:
+			case 1605431993:
+			case 133889592:
+			case -1007205975: // ZEntity (data: ERenderGlowTypes)
+			case -764071373:
+			case -2145623898:
+			case 613910341:
+			case -1390814615:
+			case 751511393:
+			case -1482841856:
+			case -826127117:
+			case -13426278:
+			case 659152101:
+			case -441577358:
+			case 1769060596:
+			case -1564118048:
+			case 539716339:
+			case -1573469607:
+			case -753543393:
+			case -1907581052:
+			case 1944101573:
+			case -1989969109:
+			case 1676313741:
+			case -696196529:
+			case 226797423:
+			case 694742008:
+			case 1552998439:
+			case 2028105979:
+			case 1300028044:
+			case 1020570752:
+			case 1283917883:
+			case -1191728832:
+			case -1920560339:
+			case 1848142315:
+			case 1287190862:
+			case -2122734423:
 			case -2001530837:
 			case 261544537:
+			case -310869991:
+			case -1688119945:
+			case 1376378285:
+			case 1374388249: // ZEntity (data: void) - prompt text
+			case 915021195:
+			case 592929223: // ZEntity (data: "<b>m_fGameTimeMultiplier:</b> 1.000000")
+			case -1349121180:
+			case 292352463:
+			case 1593167583:
+			case -1141877413:
+			case 1071196376:
+			case 1526478573: // ZSpottedEventListenerEntity (data: TEntityRef<IActor>)
+			case 487436958: // ZSpottedEventListenerEntity (data: TEntityRef<IActor>)
+			case 2061569261: // ZSpottedEventListenerEntity (data: void)
+			case 1370764816: // ZActorMetricValueEntity (data: void)
+			case -1992707040: // ZEntity (data: TEntityRef<IActor>)
+			case -1801263111: // ZEntity (data: void)
+			case -1096676263:
+			case -15372486:
+			case 1847767675:
+			case 199978105:
+			case 1890263204:
+			case 1993179751:
+			case 615204733:
+			case -1448970805:
+			case 1402434225:
+			case -1410500981:
+			case 1473399582:
 			case -2085616854:
 			case 1614324719:
 			case 1481503785:
@@ -929,6 +1001,9 @@ public:
 			case ZHMPin::TakingNewDisguise:
 			case ZHMPin::EnterSniperMode:
 			case ZHMPin::ExitSniperMode:
+			case ZHMPin::ButtonHoldTerminated:
+			case ZHMPin::ButtonHoldFraction:
+			case ZHMPin::ButtonHoldStart:
 			case ZHMPin::IsNPC:
 			case ZHMPin::NPCFirstBurstShot:
 			case ZHMPin::BodyFound:
@@ -937,6 +1012,7 @@ public:
 			case ZHMPin::ChangedDisguiseClean:
 			case ZHMPin::IntegerCount:
 			case ZHMPin::FloatCount:
+			case ZHMPin::DisguiseBeingInvestigated:
 			case ZHMPin::Attenuation:
 			case ZHMPin::ActorEntered:
 			case ZHMPin::ActorExited:

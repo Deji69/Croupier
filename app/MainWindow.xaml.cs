@@ -737,7 +737,6 @@ namespace Croupier
 				foreach (var entry in GameModeEntries)
 					entry.Refresh();
 				SetupGameMode();
-				LoadBingoConfiguration();
 				GameController.Main.AssureRoundIsStarted();
 				PostConditionUpdate();
 			};
@@ -851,7 +850,6 @@ namespace Croupier
 
 			SetupGameControllerEvents();
 			LoadSettings();
-			SetupGameMode();
 			LoadSpinHistory();
 			SetupHotkeys();
 			SetupSocketServerEvents();
@@ -886,7 +884,11 @@ namespace Croupier
 		}
 
 		private void SetupGameMode() {
-			if (IsRouletteMode) LoadRouletteConfiguration();
+			if (IsRouletteMode) {
+				LoadRouletteConfiguration();
+				if (spinHistory.Count > 0 && spinHistory.Count < spinHistoryIndex)
+					GameController.Main.Roulette.SetSpin(spinHistory[^spinHistoryIndex]);
+			}
 			else LoadBingoConfiguration();
 
 			UpdateStreakStatus();
@@ -1118,7 +1120,8 @@ namespace Croupier
 
 		public void SetSpinHistory(int idx) {
 			spinHistoryIndex = idx;
-			GameController.Main.Roulette.SetSpin(spinHistory[^spinHistoryIndex]);
+			if (IsRouletteMode)
+				GameController.Main.Roulette.SetSpin(spinHistory[^spinHistoryIndex]);
 			SyncHistoryEntries();
 		}
 

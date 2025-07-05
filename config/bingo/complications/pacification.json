@@ -117,7 +117,7 @@
 		"Group": "Pacification",
 		"Difficulty": "High",
 		"Pacify": {
-			"ActorHasSameOutfit": true
+			"ActorHasSameOutfit": false
 		}
 	},
 	{
