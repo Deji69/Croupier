@@ -362,34 +362,12 @@ public:
 	auto SendLoadFinished() -> void;
 	auto GetOutfitByRepoId(std::string_view repoId) -> const ZGlobalOutfitKit*;
 	auto GetOutfitByRepoId(ZRepositoryID repoId) -> const ZGlobalOutfitKit*;
-	auto ImbueDisguiseEvent(const std::string& repoId) -> nlohmann::json;
+	auto SendCustomEvent(std::string_view name, nlohmann::json eventValue) -> void;
 	auto ImbueItemEvent(const ItemEventValue& ev, EActionType actionType) -> std::optional<nlohmann::json>;
 	auto ImbuePacifyEvent(const PacifyEventValue& ev) -> std::optional<nlohmann::json>;
-	auto ImbuePlayerLocation(nlohmann::json& json, const char* positionPropName = "Position") -> void;
-	auto ImbuedPlayerLocation(nlohmann::json&& json = {}, const char* positionPropName = "Position") -> nlohmann::json;
-
-	template<Events T> auto SendImbuedEvent(const ServerEvent<T>& ev, nlohmann::json eventValue) -> void {
-		nlohmann::json json = {
-			{"Name", ev.Name},
-			{"Timestamp", ev.Timestamp},
-			{"ContractId", ev.ContractId},
-			{"ContractSessionId", ev.ContractSessionId},
-			{"Value", eventValue},
-		};
-		auto dump = json.dump();
-		Logger::Debug("<--- {}", dump);
-		this->client->sendRaw(json.dump());
-	}
-
-	auto SendCustomEvent(std::string_view name, nlohmann::json eventValue) -> void {
-		nlohmann::json json = {
-			{"Name", name},
-			{"Value", eventValue},
-		};
-		auto dump = json.dump();
-		Logger::Debug("<--- {}", dump);
-		this->client->sendRaw(dump);
-	}
+	auto ImbueDisguiseEvent(const std::string& repoId) -> nlohmann::json;
+	auto ImbuePlayerLocation(nlohmann::json& json, bool asHero = false) -> void;
+	auto ImbuedPlayerLocation(nlohmann::json&& json = {}, bool asHero = false) -> nlohmann::json;
 
 	auto InstallHooks() -> void;
 	auto UninstallHooks() -> void;

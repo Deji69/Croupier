@@ -19,7 +19,6 @@ namespace Croupier {
 	public class BingoTileState {
 		public bool Complete { get; set; } = false;
 		public int Counter { get; set; } = 0;
-		public object? Data { get; set; } = null;
 		public object? History { get; set; } = null;
 	}
 
@@ -85,6 +84,8 @@ namespace Croupier {
 				Complete = Type != BingoTileType.Objective
 			};
 			isScored = false;
+			OnPropertyChanged(nameof(Tip));
+			OnPropertyChanged(nameof(Text));
 			OnPropertyChanged(nameof(Complete));
 			OnPropertyChanged(nameof(Achieved));
 			OnPropertyChanged(nameof(Failed));
@@ -96,6 +97,7 @@ namespace Croupier {
 
 		public void Advance() {
 			Trigger.Advance(state);
+			OnPropertyChanged(nameof(Tip));
 			OnPropertyChanged(nameof(Text));
 			OnPropertyChanged(nameof(Complete));
 			OnPropertyChanged(nameof(Achieved));
@@ -191,8 +193,8 @@ namespace Croupier {
 			}
 		}
 
-		[GeneratedRegex("/^(.+):\\s/i")]
-		private static partial Regex ColonSeparatorRegexGenerator();
-		private static Regex ColonSeparatorRegex = ColonSeparatorRegexGenerator();
+		//[GeneratedRegex("/^(.+):\\s/i")]
+		//private static partial Regex ColonSeparatorRegexGenerator();
+		//private static Regex ColonSeparatorRegex = ColonSeparatorRegexGenerator();
 	}
 }

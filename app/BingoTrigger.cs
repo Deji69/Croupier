@@ -144,6 +144,40 @@ namespace Croupier {
 		}
 	}
 
+	public class BingoTriggerCIString : BingoTriggerExpression {
+		private StringCollection? values;
+
+		public override bool Test(object? value, BingoTileState state) {
+			return values == null || values.Count == 0 || (
+				value is string v
+				&& values.Contains(v.ToLower())
+			);
+		}
+
+		public void Load(JsonElement json, string? propName = null) {
+			JsonElement prop = json;
+			if (propName != null) {
+				if (!json.TryGetProperty(propName, out var p)) return;
+				prop = p;
+			}
+			values = prop.ValueKind switch {
+				JsonValueKind.String => [prop.GetString()?.ToLower()],
+				JsonValueKind.Array => LoadStringArray(prop),
+				_ => throw new BingoTileConfigException("Expected string or string array.")
+			};
+		}
+
+		public static StringCollection LoadStringArray(JsonElement prop) {
+			if (prop.ValueKind != JsonValueKind.Array)
+				throw new BingoTileConfigException("Expected array property.");
+			var coll = new StringCollection();
+			foreach (var item in prop.EnumerateArray()) {
+				coll.Add(item.GetString()?.ToLower());
+			}
+			return coll;
+		}
+	}
+
 	public class BingoTriggerString : BingoTriggerExpression {
 		private StringCollection? values;
 
@@ -179,7 +213,7 @@ namespace Croupier {
 	}
 
 	public class BingoTriggerArray<T>(JsonValueKind jsonKind) : BingoTriggerExpression {
-		private JsonValueKind jsonKind = jsonKind;
+		private readonly JsonValueKind jsonKind = jsonKind;
 		private List<T>? values;
 
 		public override bool Test(object? value, BingoTileState state) {
@@ -225,10 +259,10 @@ namespace Croupier {
 		CoordRange? Z = new();
 
 		public override bool Test(object? value, BingoTileState state) {
-			return value is SVector3 v
-				&& (!X.HasValue || ((!X.Value.From.HasValue || X.Value.From.Value <= v.X) && (!X.Value.To.HasValue || X.Value.To.Value >= v.X)))
-				&& (!Y.HasValue || ((!Y.Value.From.HasValue || Y.Value.From.Value <= v.Y) && (!Y.Value.To.HasValue || Y.Value.To.Value >= v.Y)))
-				&& (!Z.HasValue || ((!Z.Value.From.HasValue || Z.Value.From.Value <= v.Z) && (!Z.Value.To.HasValue || Z.Value.To.Value >= v.Z)));
+			if (value is not SVector3 v) return true;
+			return TestAxis(X, v.X)
+				&& TestAxis(Y, v.Y)
+				&& TestAxis(Z, v.Z);
 		}
 
 		public void Load(JsonElement json, string propName) {
@@ -243,6 +277,14 @@ namespace Croupier {
 			X = LoadCoordRange("X", json);
 			Y = LoadCoordRange("Y", json);
 			Z = LoadCoordRange("Z", json);
+		}
+
+		private static bool TestAxis(CoordRange? range, double value) {
+			if (range.HasValue && range.Value.From.HasValue && range.Value.From.Value > value)
+				return false;
+			if (range.HasValue && range.Value.To.HasValue && range.Value.To.Value < value)
+				return false;
+			return true;
 		}
 
 		private static CoordRange? LoadCoordRange(string axis, JsonElement json) {
@@ -274,6 +316,10 @@ namespace Croupier {
 	}
 
 	public class BingoTrigger : IBingoTrigger {
+		class JsonHolder(JsonElement json) {
+			public readonly JsonElement json = json;
+		}
+
 		public int? Count { get; set; }
 
 		protected BingoTrigger() {}
@@ -295,13 +341,14 @@ namespace Croupier {
 			return [Count ?? 1, (Count ?? 1) - (state.Complete ? 0 : state.Counter), state.Counter];
 		}
 
-		public static BingoTrigger? Load(JsonElement json, Func<JsonElement, BingoTrigger?> create) {
+		private static BingoTrigger? Load(JsonHolder jsonHolder, Func<JsonHolder, BingoTrigger?> create) {
+			var json = jsonHolder.json;
 			var kind = json.ValueKind;
 
 			if (kind == JsonValueKind.Object) {
 				var triggers = new List<IBingoTrigger>();
 				if (json.TryGetProperty("NOT", out var NOT)) {
-					var t = Load(NOT, json => create(json));
+					var t = Load(new(NOT), json => create(json));
 					if (t != null)
 						triggers.Add(new BingoTriggerNOT(t));
 				}
@@ -310,80 +357,83 @@ namespace Croupier {
 						throw new BingoConfigException("Expected array for 'OR' trigger group.");
 					var orTriggers = new List<IBingoTrigger?>();
 					foreach (var j in OR.EnumerateArray()) {
-						var t = Load(j, json => create(json));
+						var t = Load(new(j), json => create(json));
 						if (t != null)
 							orTriggers.Add(t);
 					}
-					triggers.Add(new BingoTriggerOR(orTriggers));
+					if (orTriggers.Count > 0)
+						triggers.Add(new BingoTriggerOR(orTriggers));
 				}
 				if (triggers.Count > 0)
-					return new BingoTriggerAND([create(json), ..triggers], json);
+					return new BingoTriggerAND([create(jsonHolder), ..triggers], json);
 				//else if (triggers.Count == 1)
 				//	return triggers[0];
 			}
 
-			return create(json);
+			return create(jsonHolder);
 		}
 
 		public static BingoTrigger? FromJson(BingoTileType type, JsonElement json) {
-			var trigger = FromJson_Trigger(type, json);
+			var jsonHolder = new JsonHolder(json);
+			var trigger = FromJson_Trigger(type, jsonHolder);
 			if (trigger != null && type == BingoTileType.Complication)
 				return new BingoTriggerComplication(trigger);
 			return trigger;
 		}
 
-		private static Func<JsonElement, BingoTrigger>? FromJson_TriggerProp(string propName) {
+		private static Func<JsonHolder, BingoTrigger>? FromJson_TriggerProp(string propName) {
 			return propName switch {
-				"ActorSick" => json => new BingoTriggerActorSick(json),
-				"BodyFound" => json => new BingoTriggerBodyFound(json),
-				"BodyHidden" => json => new BingoTriggerBodyHidden(json),
-				"CarExploded" => json => new BingoTriggerCarExploded(json),
-				"Collect" => json => new BingoTriggerCollect(json),
-				"DartHit" => json => new BingoTriggerDartHit(json),
-				"Disguise" => json => new BingoTriggerDisguise(json),
-				"DoorBroken" => json => new BingoTriggerDoorBroken(json),
-				"DoorUnlocked" => json => new BingoTriggerDoorUnlocked(json),
-				"DrainPipeClimbed" => json => new BingoTriggerDrainPipeClimbed(json),
-				"EnterArea" => json => new BingoTriggerEnterArea(json),
-				"EnterRoom" => json => new BingoTriggerEnterRoom(json),
-				"InstinctActive" => json => new BingoTriggerInstinctActive(json),
-				"IsCrouchRunning" => json => new BingoTriggerIsCrouchRunning(json),
-				"IsCrouchWalking" => json => new BingoTriggerIsCrouchWalking(json),
-				"IsCrouchWalkingSlowly" => json => new BingoTriggerIsCrouchWalkingSlowly(json),
-				"IsRunning" => json => new BingoTriggerIsRunning(json),
-				"ItemDestroyed" => json => new BingoTriggerItemDestroyed(json),
-				"ItemDropped" => json => new BingoTriggerItemDropped(json),
-				"ItemStashed" => json => new BingoTriggerItemStashed(json),
-				"ItemThrown" => json => new BingoTriggerItemThrown(json),
-				"Kill" => json => new BingoTriggerKill(json),
-				"LevelSetupEvent" => json => new BingoTriggerLevelSetupEvent(json),
-				"OnIsFullyInCrowd" => json => new BingoTriggerOnIsFullyInCrowd(json),
-				"OnIsFullyInVegetation" => json => new BingoTriggerOnIsFullyInVegetation(json),
-				"OnEvacuationStarted" => json => new BingoTriggerOnEvacuationStarted(json),
-				"OnTakeDamage" => json => new BingoTriggerOnTakeDamage(json),
-				"OnWeaponReload" => json => new BingoTriggerOnWeaponReload(json),
-				"OpenDoor" => json => new BingoTriggerOpenDoor(json),
-				"Pacify" => json => new BingoTriggerPacify(json),
-				"PlayerShot" => json => new BingoTriggerPlayerShot(json),
-				"ProjectileBodyShot" => json => new BingoTriggerProjectileBodyShot(json),
-				"SecuritySystemRecorder" => json => new BingoTriggerSecuritySystemRecorder(json),
-				"Setpiece" => json => new BingoTriggerSetpiece(json),
-				"StartingSuit" => json => new BingoTriggerStartingSuit(json),
-				"Trespassing" => json => new BingoTriggerTrespassing(json),
+				"ActorSick" => jh => new BingoTriggerActorSick(jh.json),
+				"BodyFound" => jh => new BingoTriggerBodyFound(jh.json),
+				"BodyHidden" => jh => new BingoTriggerBodyHidden(jh.json),
+				"CarExploded" => jh => new BingoTriggerCarExploded(jh.json),
+				"Collect" => jh => new BingoTriggerCollect(jh.json),
+				"DartHit" => jh => new BingoTriggerDartHit(jh.json),
+				"Disguise" => jh => new BingoTriggerDisguise(jh.json),
+				"DoorBroken" => jh => new BingoTriggerDoorBroken(jh.json),
+				"DoorUnlocked" => jh => new BingoTriggerDoorUnlocked(jh.json),
+				"DrainPipeClimbed" => jh => new BingoTriggerDrainPipeClimbed(jh.json),
+				"EnterArea" => jh => new BingoTriggerEnterArea(jh.json),
+				"EnterRoom" => jh => new BingoTriggerEnterRoom(jh.json),
+				"InstinctActive" => jh => new BingoTriggerInstinctActive(jh.json),
+				"IsCrouchRunning" => jh => new BingoTriggerIsCrouchRunning(jh.json),
+				"IsCrouchWalking" => jh => new BingoTriggerIsCrouchWalking(jh.json),
+				"IsCrouchWalkingSlowly" => jh => new BingoTriggerIsCrouchWalkingSlowly(jh.json),
+				"IsRunning" => jh => new BingoTriggerIsRunning(jh.json),
+				"ItemDestroyed" => jh => new BingoTriggerItemDestroyed(jh.json),
+				"ItemDropped" => jh => new BingoTriggerItemDropped(jh.json),
+				"ItemStashed" => jh => new BingoTriggerItemStashed(jh.json),
+				"ItemThrown" => jh => new BingoTriggerItemThrown(jh.json),
+				"Kill" => jh => new BingoTriggerKill(jh.json),
+				"LevelSetupEvent" => jh => new BingoTriggerLevelSetupEvent(jh.json),
+				"OnIsFullyInCrowd" => jh => new BingoTriggerOnIsFullyInCrowd(jh.json),
+				"OnIsFullyInVegetation" => jh => new BingoTriggerOnIsFullyInVegetation(jh.json),
+				"OnEvacuationStarted" => jh => new BingoTriggerOnEvacuationStarted(jh.json),
+				"OnTakeDamage" => jh => new BingoTriggerOnTakeDamage(jh.json),
+				"OnWeaponReload" => jh => new BingoTriggerOnWeaponReload(jh.json),
+				"OpenDoor" => jh => new BingoTriggerOpenDoor(jh.json),
+				"Pacify" => jh => new BingoTriggerPacify(jh.json),
+				"PlayerShot" => jh => new BingoTriggerPlayerShot(jh.json),
+				"ProjectileBodyShot" => jh => new BingoTriggerProjectileBodyShot(jh.json),
+				"SecuritySystemRecorder" => jh => new BingoTriggerSecuritySystemRecorder(jh.json),
+				"Setpiece" => jh => new BingoTriggerSetpiece(jh.json),
+				"StartingSuit" => jh => new BingoTriggerStartingSuit(jh.json),
+				"Trespassing" => jh => new BingoTriggerTrespassing(jh.json),
 				_ => null,
 			};
 		}
 
-		private static BingoTrigger? FromJson_Trigger(BingoTileType type, JsonElement json) {
+		private static BingoTrigger? FromJson_Trigger(BingoTileType type, JsonHolder jsonHolder) {
+			var json = jsonHolder.json;
 			if (json.ValueKind != JsonValueKind.Object)
 				throw new BingoConfigException("Expected object for parent of trigger.");
 
 			foreach (var prop in json.EnumerateObject()) {
 				var fn = FromJson_TriggerProp(prop.Name);
 				if (fn == null) continue;
-				return Load(prop.Value, fn);
+				return Load(new(prop.Value), fn);
 			}
-			return Load(json, j => j.GetHashCode() != json.GetHashCode() ? FromJson_Trigger(type, j) : null);
+			return Load(jsonHolder, j => j != jsonHolder ? FromJson_Trigger(type, j) : null);
 		}
 	}
 
@@ -480,9 +530,9 @@ namespace Croupier {
 		readonly BingoTriggerBool ActorHasSameOutfit = new();
 		readonly BingoTriggerString ActorName = new();
 		readonly BingoTriggerBool ActorOutfitIsUnique = new();
-		public BingoTriggerEnum<EOutfitType> ActorOutfitType { get; set; } = new();
-		public BingoTriggerEnum<EActorType> ActorType { get; set; } = new();
-		public BingoTriggerArray<string> DamageEvents { get; set; } = new(JsonValueKind.String);
+		readonly BingoTriggerEnum<EOutfitType> ActorOutfitType = new();
+		readonly BingoTriggerEnum<EActorType> ActorType = new();
+		readonly BingoTriggerArray<string> DamageEvents = new(JsonValueKind.String);
 		readonly BingoTriggerInt ExplosionType = new();
 		readonly BingoTriggerBool Explosive = new();
 		readonly BingoTriggerBool IsFemale = new();
@@ -490,16 +540,16 @@ namespace Croupier {
 		readonly BingoTriggerBool IsTarget = new();
 		readonly BingoTriggerString KillClass = new();
 		readonly BingoTriggerString KillContext = new();
-		readonly BingoTriggerString KillItemRepositoryId = new();
+		readonly BingoTriggerCIString KillItemRepositoryId = new();
 		readonly BingoTriggerString KillItemCategory = new();
 		readonly BingoTriggerString KillMethodBroad = new();
 		readonly BingoTriggerString KillMethodStrict = new();
-		public BingoTriggerEnum<EKillType> KillType { get; set; } = new();
+		readonly BingoTriggerEnum<EKillType> KillType = new();
 		readonly BingoTriggerBool OutfitIsHitmanSuit = new();
 		readonly BingoTriggerBool OutfitIsUnique = new();
-		readonly BingoTriggerString OutfitRepositoryId = new();
+		readonly BingoTriggerCIString OutfitRepositoryId = new();
 		readonly BingoTriggerBool Projectile = new();
-		readonly BingoTriggerString RepositoryId = new();
+		readonly BingoTriggerCIString RepositoryId = new();
 		readonly BingoTriggerInt RoomId = new();
 		readonly BingoTriggerString SetPieceId = new();
 		readonly BingoTriggerString SetPieceType = new();
@@ -644,11 +694,11 @@ namespace Croupier {
 
 	public class BingoTriggerActorSick : BingoTrigger {
 		readonly BingoTriggerString ActorName = new();
-		readonly BingoTriggerString ActorRepositoryId = new();
+		readonly BingoTriggerCIString ActorRepositoryId = new();
 		readonly BingoTriggerBool IsTarget	 = new();
 		readonly BingoTriggerString ItemRepositoryId = new();
-		readonly BingoTriggerString SetPieceRepositoryId = new();
-		public BingoTriggerEnum<EActorType> ActorType { get; set; } = new();
+		readonly BingoTriggerCIString SetPieceRepositoryId = new();
+		readonly BingoTriggerEnum<EActorType> ActorType = new();
 		readonly BingoTriggerUnique Unique = new();
 
 		public BingoTriggerActorSick(JsonElement json) : base(json) {
@@ -677,11 +727,7 @@ namespace Croupier {
 		}
 	}
 
-	public class BingoTriggerItemStashed : BingoTrigger {
-		public BingoTriggerItemStashed(JsonElement json) : base(json) {
-
-		}
-
+	public class BingoTriggerItemStashed(JsonElement json) : BingoTrigger(json) {
 		public override bool Test(EventValue ev, BingoTileState state) {
 			return ev is ItemStashedEventValue;
 		}
@@ -717,8 +763,8 @@ namespace Croupier {
 	}
 
 	public class BingoTriggerDartHit : BingoTrigger {
-		readonly BingoTriggerString RepositoryId = new();
-		public BingoTriggerEnum<EActorType> ActorType { get; set; } = new();
+		readonly BingoTriggerCIString RepositoryId = new();
+		readonly BingoTriggerEnum<EActorType> ActorType = new();
 		readonly BingoTriggerBool IsTarget = new();
 		readonly BingoTriggerBool Blind = new();
 		readonly BingoTriggerBool Sedative = new();
@@ -730,7 +776,7 @@ namespace Croupier {
 			ActorType.Load(json, "ActorType", str => str switch {
 				"Guard" => EActorType.eAT_Guard,
 				"Civilian" => EActorType.eAT_Civilian,
-				_ => throw new BingoConfigException("Invalid ActorType - expected 'Guard' or 'Civilian'.")
+				_ => throw new BingoConfigException("Invalid ActorType - expected 'Guard' or 'Civilian'."),
 			});
 			IsTarget.Load(json, "IsTarget");
 			Blind.Load(json, "Blind");
@@ -751,21 +797,17 @@ namespace Croupier {
 		}
 	}
 
-	public class BingoTriggerDoorBroken : BingoTrigger {
-		public BingoTriggerDoorBroken(JsonElement json) : base(json) {
-
-		}
+	public class BingoTriggerDoorBroken(JsonElement json) : BingoTrigger(json) {
+		readonly BingoTriggerLocationImbued locationTrigger = new(json);
 
 		public override bool Test(EventValue ev, BingoTileState state) {
-			return ev is DoorBrokenEventValue;
+			return ev is DoorBrokenEventValue v
+				&& base.Test(ev, state)
+				&& locationTrigger.Test(v, state);
 		}
 	}
 
-	public class BingoTriggerDoorUnlocked : BingoTrigger {
-		public BingoTriggerDoorUnlocked(JsonElement json) : base(json) {
-
-		}
-
+	public class BingoTriggerDoorUnlocked(JsonElement json) : BingoTrigger(json) {
 		public override bool Test(EventValue ev, BingoTileState state) {
 			return ev is DoorUnlockedEventValue;
 		}
@@ -774,7 +816,7 @@ namespace Croupier {
 	public class BingoTriggerItemThrown : BingoTrigger {
 		readonly BingoTriggerString ItemName = new();
 		readonly BingoTriggerString ItemType = new();
-		readonly BingoTriggerString RepositoryId = new();
+		readonly BingoTriggerCIString RepositoryId = new();
 		public BingoTriggerItemThrown(JsonElement json) : base(json) {
 			ItemName.Load(json, nameof(ItemName));
 			ItemType.Load(json, nameof(ItemType));
@@ -790,7 +832,7 @@ namespace Croupier {
 	}
 
 	public class BingoTriggerItemDestroyed : BingoTrigger {
-		readonly BingoTriggerString RepositoryId = new();
+		readonly BingoTriggerCIString RepositoryId = new();
 		readonly BingoTriggerLocationImbued locationTrigger;
 
 		public BingoTriggerItemDestroyed(JsonElement json) : base(json) {
@@ -808,7 +850,7 @@ namespace Croupier {
 	public class BingoTriggerItemDropped : BingoTrigger {
 		readonly BingoTriggerString ItemName = new();
 		readonly BingoTriggerString ItemType = new();
-		readonly BingoTriggerString RepositoryId = new();
+		readonly BingoTriggerCIString RepositoryId = new();
 		readonly BingoTriggerLocationImbued locationTrigger;
 
 		public BingoTriggerItemDropped(JsonElement json) : base(json) {
@@ -828,7 +870,7 @@ namespace Croupier {
 	}
 
 	public class BingoTriggerSetpiece : BingoTrigger {
-		readonly BingoTriggerString RepositoryId = new();
+		readonly BingoTriggerCIString RepositoryId = new();
 		readonly BingoTriggerString Name = new();
 		readonly BingoTriggerString Type = new();
 		readonly BingoTriggerString Helper = new();
@@ -881,7 +923,7 @@ namespace Croupier {
 	}
 
 	public class BingoTriggerBodyFound : BingoTrigger {
-		readonly BingoTriggerString RepositoryId = new();
+		readonly BingoTriggerCIString RepositoryId = new();
 		readonly BingoTriggerEnum<EDeathContext> DeathContext = new();
 		readonly BingoTriggerEnum<EDeathType> DeathType = new();
 
@@ -904,15 +946,15 @@ namespace Croupier {
 
 		public override bool Test(EventValue ev, BingoTileState state) {
 			return ev is BodyFoundEventValue v
-				&& RepositoryId.Test(v.DeadBody.RepositoryId, state)
-				&& DeathContext.Test(v.DeadBody.DeathContext, state)
-				&& DeathType.Test(v.DeadBody.DeathType, state);
+				&& RepositoryId.Test(v.RepositoryId, state)
+				&& DeathContext.Test(v.DeathContext, state)
+				&& DeathType.Test(v.DeathType, state);
 		}
 	}
 
 	public class BingoTriggerBodyHidden : BingoTrigger {
 		readonly BingoTriggerString ActorName = new();
-		readonly BingoTriggerString RepositoryId = new();
+		readonly BingoTriggerCIString RepositoryId = new();
 		readonly BingoTriggerUnique Unique = new();
 
 		public BingoTriggerBodyHidden(JsonElement obj) : base(obj) {
@@ -930,8 +972,12 @@ namespace Croupier {
 	}
 
 	public class BingoTriggerProjectileBodyShot(JsonElement json) : BingoTrigger(json) {
+		readonly BingoTriggerLocationImbued locationTrigger = new(json);
+
 		public override bool Test(EventValue ev, BingoTileState state) {
-			return ev is ProjectileBodyShotEventValue;
+			return ev is ProjectileBodyShotEventValue
+				&& base.Test(ev, state)
+				&& locationTrigger.Test(ev, state);
 		}
 	}
 
@@ -961,7 +1007,7 @@ namespace Croupier {
 	}
 
 	public class BingoTriggerCollect : BingoTrigger {
-		readonly BingoTriggerString Items = new();
+		readonly BingoTriggerCIString Items = new();
 
 		public BingoTriggerCollect(JsonElement json) : base(json) {
 			Items.Load(json, "Items");
@@ -980,7 +1026,7 @@ namespace Croupier {
 		readonly BingoTriggerBool IsSuit = new();
 		readonly BingoTriggerBool IsUnique = new();
 		readonly BingoTriggerEnum<EOutfitType> OutfitType = new();
-		readonly BingoTriggerString RepositoryId = new();
+		readonly BingoTriggerCIString RepositoryId = new();
 		readonly BingoTriggerString Title = new();
 		readonly BingoTriggerUnique Unique = new();
 		readonly BingoTriggerLocationImbued locationTrigger;
@@ -1101,13 +1147,20 @@ namespace Croupier {
 		}
 	}
 
-	public class BingoTriggerOnEvacuationStarted(JsonElement json) : BingoTrigger(json) {
+	public class BingoTriggerOnEvacuationStarted : BingoTrigger {
 		readonly BingoTriggerString ActorName = new();
 		readonly BingoTriggerBool IsTarget = new();
-		readonly BingoTriggerLocationImbued locationTrigger = new(json);
+		readonly BingoTriggerLocationImbued locationTrigger;
+
+		public BingoTriggerOnEvacuationStarted(JsonElement json) {
+			locationTrigger = new(json);
+			ActorName.Load(json, nameof(ActorName));
+			IsTarget.Load(json, nameof(IsTarget));
+		}
 
 		public override bool Test(EventValue ev, BingoTileState state) {
 			return ev is OnEvacuationStartedEventValue v
+				&& base.Test(ev, state)
 				&& locationTrigger.Test(v, state)
 				&& ActorName.Test(v.ActorName, state)
 				&& IsTarget.Test(v.IsTarget, state);

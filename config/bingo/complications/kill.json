@@ -1,6 +1,7 @@
 [
 	{
 		"Name": "No Accident Kills",
+		"Tip": "Avoid killing anyone in an accident.",
 		"Type": "Complication",
 		"Group": "Kill",
 		"Difficulty": "High",
@@ -10,6 +11,7 @@
 	},
 	{
 		"Name": "No Accident Explosion Kills",
+		"Tip": "Avoid killing anyone in an 'accident' explosion.",
 		"Type": "Complication",
 		"Group": "Kill",
 		"Difficulty": "High",
@@ -19,6 +21,7 @@
 	},
 	{
 		"Name": "No Consumed Poison Kills",
+		"Tip": "Avoid killing anyone using consumed poison.",
 		"Type": "Complication",
 		"Group": "Kill",
 		"Difficulty": "Medium",
@@ -28,6 +31,7 @@
 	},
 	{
 		"Name": "No Drown Kills",
+		"Tip": "Avoid killing anyone by drowning.",
 		"Type": "Complication",
 		"Group": "Kill",
 		"Difficulty": "Low",
@@ -37,6 +41,7 @@
 	},
 	{
 		"Name": "No Electrocution Kills",
+		"Tip": "Avoid killing anyone by electrocution.",
 		"Type": "Complication",
 		"Group": "Kill",
 		"Difficulty": "Low",
@@ -45,16 +50,8 @@
 		}
 	},
 	{
-		"Name": "No Falling Object Kills",
-		"Type": "Complication",
-		"Group": "Kill",
-		"Difficulty": "Low",
-		"Kill": {
-			"KillMethodStrict": "accident_suspended_object"
-		}
-	},
-	{
 		"Name": "No Headshot Kills",
+		"Tip": "Avoid killing anyone with a ballistic headshot.",
 		"Type": "Complication",
 		"Group": "Kill",
 		"Difficulty": "Medium",
@@ -64,6 +61,7 @@
 	},
 	{
 		"Name": "No Injected Poison Kills",
+		"Tip": "Avoid killing anyone with injected poison.",
 		"Type": "Complication",
 		"Group": "Kill",
 		"Difficulty": "Medium",
@@ -73,6 +71,7 @@
 	},
 	{
 		"Name": "No Melee Kills",
+		"Tip": "Avoid killing anyone with a melee attack. Throwing melee items is allowed.",
 		"Type": "Complication",
 		"Group": "Kill",
 		"Difficulty": "Medium",
@@ -86,6 +85,7 @@
 	},
 	{
 		"Name": "No Non Elimination Firearm Kills",
+		"Tip": "Avoid using a firearm to kill, unless it is done as an elimination kill.",
 		"Type": "Complication",
 		"Group": "Kill",
 		"Difficulty": "Medium",
@@ -111,6 +111,7 @@
 	},
 	{
 		"Name": "No Pistol Kills",
+		"Tip": "Avoid killing anyone using a pistol.",
 		"Type": "Complication",
 		"Group": "Kill",
 		"Difficulty": "Medium",
@@ -127,6 +128,7 @@
 	},
 	{
 		"Name": "No Poison Kills",
+		"Tip": "Avoid killing anyone using any kind of poison.",
 		"Type": "Complication",
 		"Group": "Kill",
 		"Difficulty": "Medium",
@@ -136,6 +138,7 @@
 	},
 	{
 		"Name": "No Silenced Weapon Kills",
+		"Tip": "Avoid killing anyone using any silenced firearm.",
 		"Type": "Complication",
 		"Group": "Kill",
 		"Difficulty": "Medium",
@@ -145,6 +148,7 @@
 	},
 	{
 		"Name": "No Suspended Object Kills",
+		"Tip": "Avoid killing anyone using a suspended/falling object.",
 		"Type": "Complication",
 		"Group": "Kill",
 		"Difficulty": "Medium",
@@ -154,6 +158,7 @@
 	},
 	{
 		"Name": "No Throw Kills",
+		"Tip": "Avoid killing anyone using a deadly throw.",
 		"Type": "Complication",
 		"Group": "Kill",
 		"Difficulty": "Medium",
@@ -163,6 +168,7 @@
 	},
 	{
 		"Name": "No Unarmed Kills",
+		"Tip": "Avoid killing anyone with your bare hands.",
 		"Type": "Complication",
 		"Group": "Kill",
 		"Difficulty": "Low",

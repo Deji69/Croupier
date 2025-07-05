@@ -64,6 +64,7 @@
 	{
 		"Name": "Fireworks Remote",
 		"Group": "Collect",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
 		"Collect": {
 			"Items": ["e83c4ea3-e964-43b0-9804-55cfbb32c83a"]
 		}

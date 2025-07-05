@@ -1,5 +1,16 @@
 [
 	{
+		"Disabled": true,
+		"Name": "No Assault Rifle Shots",
+		"Type": "Complication",
+		"Tip": "Do not fire any shots using an assault rifle.",
+		"Group": "Action",
+		"Difficulty": "Medium",
+		"PlayerShot": {
+			"WeaponCategory": "Rifle"
+		}
+	},
+	{
 		"Name": "No Body Shots",
 		"Type": "Complication",
 		"Tip": "Do not shoot any NPC unless it is a headshot.",
@@ -89,6 +100,15 @@
 		}
 	},
 	{
+		"Name": "No Dropping Items",
+		"Type": "Complication",
+		"Tip": "Do not drop any item from your hands or inventory. Placing them is fine.",
+		"Group": "Action",
+		"Difficulty": "Medium",
+		"ItemDropped": {}
+	},
+	{
+		"Disabled": true,
 		"Name": "No Instinct",
 		"Type": "Complication",
 		"Tip": "Go against your instincts and avoid using instinct.",
@@ -97,35 +117,69 @@
 		"InstinctActive": {}
 	},
 	{
+		"Disabled": true,
+		"Name": "No Pistol Shots",
+		"Type": "Complication",
+		"Tip": "Do not fire any shots using a pistol.",
+		"Group": "Action",
+		"Difficulty": "Medium",
+		"PlayerShot": {
+			"WeaponCategory": "Pistol"
+		}
+	},
+	{
+		"Disabled": true,
+		"Name": "No SMG Shots",
+		"Type": "Complication",
+		"Tip": "Do not fire any shots using an SMG.",
+		"Group": "Action",
+		"Difficulty": "Medium",
+		"PlayerShot": {
+			"OR": [
+				{
+					"WeaponCategory": "SMG1H"
+				},
+				{
+					"WeaponCategory": "SMG2H"
+				}
+			]
+		}
+	},
+	{
+		"Disabled": true,
+		"Name": "No Shotgun Shots",
+		"Type": "Complication",
+		"Tip": "Do not fire any shots using a shotgun.",
+		"Group": "Action",
+		"Difficulty": "Medium",
+		"PlayerShot": {
+			"OR": [
+				{
+					"WeaponCategory": "ShotgunPump"
+				},
+				{
+					"WeaponCategory": "ShotgunSemi"
+				}
+			]
+		}
+	},
+	{
+		"Disabled": true,
+		"Name": "No Sniper Shots",
+		"Type": "Complication",
+		"Tip": "Do not fire any shots using an SMG.",
+		"Group": "Action",
+		"Difficulty": "Medium",
+		"PlayerShot": {
+			"WeaponCategory": "Sniper"
+		}
+	},
+	{
 		"Name": "No Reloading",
 		"Type": "Complication",
 		"Tip": "Do not reload any weapon. Avoid leaving clips around the place as evidence.",
 		"Difficulty": "Medium",
 		"OnWeaponReload": {}
-	},
-	{
-		"Name": "No Shooting Indoors",
-		"Type": "Complication",
-		"Tip": "Do not fire any shots while inside any building (balconies count as outside).",
-		"Group": "Action",
-		"Difficulty": "Medium",
-		"Missions": ["The Showstopper", "Holiday Hoarders"],
-		"PlayerShot": {
-			"NOT": {
-				"Room": [81]
-			}
-		}
-	},
-	{
-		"Name": "No Shooting Outside",
-		"Type": "Complication",
-		"Tip": "Do not fire any shots while outdoors (balconies count as outdoors).",
-		"Group": "Action",
-		"Difficulty": "Medium",
-		"Missions": ["The Showstopper", "Holiday Hoarders"],
-		"PlayerShot": {
-			"Room": [81]
-		}
 	},
 	{
 		"Name": "No Shots Fired",

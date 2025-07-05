@@ -162,17 +162,21 @@ namespace Croupier {
 		private EventValue? DeserializeEventValue(string name, JsonElement? jsonEl = null) {
 			if (jsonEl is JsonElement json) {
 				return name switch {
-					"Actorsick" => json.Deserialize<ActorSickEventValue>(jsonGameEventSerializerOptions),
+					"Actorsick" =>  json.Deserialize<ActorSickEventValue>(jsonGameEventSerializerOptions),
 					"BodyBagged" => json.Deserialize<BodyBaggedEventValue>(jsonGameEventSerializerOptions),
 					"BodyFound" => json.Deserialize<BodyFoundEventValue>(jsonGameEventSerializerOptions),
 					"BodyHidden" => json.Deserialize<BodyHiddenEventValue>(jsonGameEventSerializerOptions),
 					"CarExploded" => json.Deserialize<CarExplodedEventValue>(jsonGameEventSerializerOptions),
-					"Dart_Hit" => json.Deserialize<DartHitEventValue>(jsonGameEventSerializerOptions),
+					"DartHit" => json.Deserialize<DartHitEventValue>(jsonGameEventSerializerOptions),
 					"Disguise" => ImbueDisguiseEvent(json.Deserialize<DisguiseEventValue>(jsonGameEventSerializerOptions)),
+					"DoorBroken" => json.Deserialize<DoorBrokenEventValue>(jsonGameEventSerializerOptions),
+					"DoorUnlocked" => json.Deserialize<DoorUnlockedEventValue>(jsonGameEventSerializerOptions),
+					"DrainPipeClimbed" => json.Deserialize<DrainPipeClimbedEventValue>(jsonGameEventSerializerOptions),
 					"EnterArea" => json.Deserialize<EnterAreaEventValue>(jsonGameEventSerializerOptions),
 					"EnterRoom" => json.Deserialize<EnterRoomEventValue>(jsonGameEventSerializerOptions),
 					"InstinctActive" => json.Deserialize<InstinctActiveEventValue>(jsonGameEventSerializerOptions),
 					"Investigate_Curious" => json.Deserialize<InvestigateCuriousEventValue>(jsonGameEventSerializerOptions),
+					"ItemDestroyed" => json.Deserialize<ItemDestroyedEventValue>(jsonGameEventSerializerOptions),
 					"ItemDropped" => json.Deserialize<ItemDroppedEventValue>(jsonGameEventSerializerOptions),
 					"ItemPickedUp" => json.Deserialize<ItemPickedUpEventValue>(jsonGameEventSerializerOptions),
 					"ItemRemovedFromInventory" => json.Deserialize<ItemRemovedFromInventoryEventValue>(jsonGameEventSerializerOptions),
@@ -185,6 +189,7 @@ namespace Croupier {
 					"OnWeaponReload" => json.Deserialize<OnWeaponReloadEventValue>(jsonGameEventSerializerOptions),
 					"Pacify" => ImbuePacifyEvent(json.Deserialize<PacifyEventValue>(jsonGameEventSerializerOptions)),
 					"PlayerShot" => json.Deserialize<PlayerShotEventValue>(jsonGameEventSerializerOptions),
+					"ProjectileBodyShot" => json.Deserialize<ProjectileBodyShotEventValue>(jsonGameEventSerializerOptions),
 					"setpieces" => json.Deserialize<SetpiecesEventValue>(jsonGameEventSerializerOptions),
 					"SecuritySystemRecorder" => json.Deserialize<SecuritySystemRecorderEventValue>(jsonGameEventSerializerOptions),
 					"StartingSuit" => ImbueDisguiseEvent(json.Deserialize<StartingSuitEventValue>(jsonGameEventSerializerOptions)),
@@ -193,9 +198,6 @@ namespace Croupier {
 				};
 			}
 			return name switch {
-				"DoorBroken" => new DoorBrokenEventValue(),
-				"Door_Unlocked" => new DoorUnlockedEventValue(),
-				"DrainPipe_climbed" => new DrainPipeClimbedEventValue(),
 				"IsCrouchRunning" => new IsCrouchRunningEventValue(),
 				"IsCrouchWalking" => new IsCrouchWalkingEventValue(),
 				"IsCrouchWalkingSlowly" => new IsCrouchWalkingSlowlyEventValue(),

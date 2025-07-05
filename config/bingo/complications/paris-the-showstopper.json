@@ -1,0 +1,365 @@
+{
+	"Areas": [
+		// These are defined here so they can be used in multiple tiles.
+		// Note that only one can be active at a time, so overlaps will conflict.
+		{
+			"ID": "Helipad",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"From": [-279.825, -2.929, -4.935],
+			"To": [-328.375, 32.669, 0.215]
+		},
+		{
+			"ID": "TopFloor",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"From": [-261.0, -24.0, 15.3],
+			"To": [-124.0, 55.0, 20.0]
+		}
+	],
+	"Tiles": [
+		// Action Complications
+		{
+			"Name": "No Shooting Indoors",
+			"Type": "Complication",
+			"Tip": "Do not fire any shots while inside any building (balconies count as outside).",
+			"Group": "Action",
+			"Difficulty": "Medium",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"PlayerShot": {
+				"NOT": {
+					"Room": [81]
+				}
+			}
+		},
+		{
+			"Name": "No Shooting Outside",
+			"Type": "Complication",
+			"Tip": "Do not fire any shots while outdoors (balconies count as outdoors).",
+			"Group": "Action",
+			"Difficulty": "Medium",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"PlayerShot": {
+				"Room": [81]
+			}
+		},
+		
+		// Disguise Complications
+		{
+			"Disabled": true,
+			"Name": "Bad Disguise: Auction Staff",
+			"Tip": "Do not take an Auction Staff disguise.",
+			"Type": "Complication",
+			"Group": "Disguise",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Difficulty": "Medium",
+			"Disguise": {
+				"RepositoryId": "d2c76544-3a12-43a8-abc3-c7ce51830c1e"
+			}
+		},
+		{
+			"Disabled": true,
+			"Name": "Bad Disguise: CICADA Bodyguard",
+			"Tip": "Do not take a CICADA Bodyguard disguise.",
+			"Type": "Complication",
+			"Group": "Disguise",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Difficulty": "Medium",
+			"Disguise": {
+				"RepositoryId": "d2c76544-3a12-43a8-abc3-c7ce51830c1e"
+			}
+		},
+		{
+			"Disabled": true,
+			"Name": "Bad Disguise: Tech Crew",
+			"Tip": "Do not take a Tech Crew disguise.",
+			"Type": "Complication",
+			"Group": "Disguise",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Difficulty": "Medium",
+			"Disguise": {
+				"RepositoryId": "d2c76544-3a12-43a8-abc3-c7ce51830c1e"
+			}
+		},
+		
+		// Opportunity Complications
+		{
+			"Name": "No Fireworks",
+			"Type": "Complication",
+			"Tip": "Do not trigger the fireworks.",
+			"Group": "Opportunity",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Difficulty": "Medium",
+			"LevelSetupEvent": {
+				"Event": "FireworkStart"
+			}
+		},
+		
+		// Target Complications
+		{
+			"Name": "Dalia: No Emetic",
+			"Type": "Complication",
+			"Tip": "Do not make Dalia Margolis sick.",
+			"Group": "Target",
+			"Missions": ["The Showstopper"],
+			"Difficulty": "Medium",
+			"ActorSick": {
+				"ActorName": "Dalia Margolis"
+			}
+		},
+		{
+			"Name": "Dalia: No Lockdown",
+			"Type": "Complication",
+			"Tip": "Do not cause Dalia Margolis to enter Target Lockdown.",
+			"Group": "Target",
+			"Missions": ["The Showstopper"],
+			"Difficulty": "High",
+			"OnEvacuationStarted": {
+				"ActorName": "Dalia Margolis"
+			}
+		},
+		{
+			"Name": "Viktor: No Emetic",
+			"Type": "Complication",
+			"Tip": "Do not make Viktor Novikov sick.",
+			"Group": "Target",
+			"Missions": ["The Showstopper"],
+			"Difficulty": "Medium",
+			"ActorSick": {
+				"ActorName": "Viktor Novikov"
+			}
+		},
+		{
+			"Name": "Viktor: No Lockdown",
+			"Type": "Complication",
+			"Tip": "Do not cause Viktor Novikov to enter Target Lockdown.",
+			"Group": "Opportunity",
+			"Difficulty": "High",
+			"OnEvacuationStarted": {
+				"ActorName": "Viktor Novikov"
+			}
+		},
+		
+		// Location Complications
+		{
+			"Name": "No Entry: Auction Room",
+			"Type": "Complication",
+			"Tip": "Avoid entering the room where the auction is taking place.",
+			"Group": "Location",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Difficulty": "High",
+			"EnterRoom": {
+				"Room": [34]
+			}
+		},
+		{
+			"Name": "No Entry: Attic",
+			"Type": "Complication",
+			"Tip": "Do not step foot in the attic.",
+			"Group": "Location",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Difficulty": "High",
+			"EnterRoom": {
+				"Room": [1, 5, 17, 18, 28, 35, 62]
+			}
+		},
+		{
+			"Name": "No Entry: Bar",
+			"Type": "Complication",
+			"Tip": "Avoid the Bar room.",
+			"Group": "Location",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Difficulty": "Medium",
+			"EnterRoom": {
+				"Room": [52]
+			}
+		},
+		{
+			"Name": "No Entry: Basement",
+			"Type": "Complication",
+			"Tip": "Avoid stepping foot inside the entire basement floor.",
+			"Group": "Location",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Difficulty": "High",
+			"EnterRoom": {
+				"Room": [0, 2, 3, 9, 10, 11, 19, 20, 23, 30, 32, 46, 56, 60, 61, 74]
+			}
+		},
+		{
+			"Name": "No Entry: Dressing Room",
+			"Type": "Complication",
+			"Tip": "Do not enter the Dressing Room.",
+			"Group": "Location",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Difficulty": "Medium",
+			"EnterRoom": {
+				"Room": [13]
+			}
+		},
+		{
+			"Name": "No Entry: Entrance Hall",
+			"Type": "Complication",
+			"Tip": "Do not enter the Entrance Hall (the large 2-floor room where Viktor makes his entrance).",
+			"Group": "Location",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Difficulty": "Medium",
+			"EnterRoom": {
+				"Room": [65]
+			}
+		},
+		{
+			"Name": "No Entry: Grand Hall",
+			"Type": "Complication",
+			"Tip": "Do not enter the Grand Hall (the large room with doors leading outside to the helipad).",
+			"Group": "Location",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Difficulty": "Medium",
+			"EnterRoom": {
+				"Room": [39]
+			}
+		},
+		{
+			"Name": "No Entry: Helipad",
+			"Type": "Complication",
+			"Tip": "Do not step foot on the helipad.",
+			"Group": "Location",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Difficulty": "Medium",
+			"EnterArea": "Helipad"
+		},
+		{
+			"Name": "No Entry: Kitchens",
+			"Type": "Complication",
+			"Tip": "Avoid both the main kitchen and the basement kitchen.",
+			"Group": "Location",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Difficulty": "Medium",
+			"EnterRoom": {
+				"Room": [32, 77]
+			}
+		},
+		{
+			"Name": "No Entry: Library",
+			"Type": "Complication",
+			"Tip": "Avoid entering the 'Library' (Level 2 - check map).",
+			"Group": "Location",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Difficulty": "Medium",
+			"EnterRoom": {
+				"Room": [67]
+			}
+		},
+		{
+			"Name": "No Entry: Locker Room",
+			"Type": "Complication",
+			"Tip": "Avoid entering the Locker Room in the basement.",
+			"Group": "Location",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Difficulty": "Medium",
+			"EnterRoom": {
+				"Room": [3]
+			}
+		},
+		{
+			"Name": "No Entry: Public Restrooms",
+			"Type": "Complication",
+			"Tip": "Avoid all common area bathrooms. This excludes en-suite bathrooms.",
+			"Group": "Location",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Difficulty": "Medium",
+			"EnterRoom": {
+				"Room": [7, 12, 27, 45, 49, 58, 76]
+			}
+		},
+		{
+			"Name": "No Entry: Security Room",
+			"Type": "Complication",
+			"Tip": "Avoid entering the security room in the basement.",
+			"Group": "Location",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Difficulty": "Medium",
+			"EnterRoom": {
+				"Room": [10]
+			}
+		},
+		{
+			"Name": "No Entry: Sheds",
+			"Type": "Complication",
+			"Tip": "Avoid entering any of the outdoor sheds.",
+			"Group": "Location",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Difficulty": "Medium",
+			"EnterRoom": {
+				"Room": [24, 25, 79]
+			}
+		},
+		{
+			"Name": "No Entry: Sheikh's Room",
+			"Type": "Complication",
+			"Tip": "Avoid entering the Sheikh's suite.",
+			"Group": "Location",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Difficulty": "Medium",
+			"EnterRoom": {
+				"Room": [70]
+			}
+		},
+		{
+			"Name": "No Entry: Voltaire Suite",
+			"Type": "Complication",
+			"Tip": "Avoid entering the Voltaire Suite (Dalia's room).",
+			"Group": "Location",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Difficulty": "Medium",
+			"EnterRoom": {
+				"Room": [69, 63]
+			}
+		},
+		{
+			"Name": "No Trespassing on Top Floor",
+			"Type": "Complication",
+			"Tip": "Do not trespass anywhere on the top floor (Level 3).",
+			"Group": "Location",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Difficulty": "Medium",
+			"Trespassing": {
+				"IsTrespassing": true,
+				// Also check the position as the stairwell rooms (57, 75) cover the lower floor too
+				"Position": {
+					"Z": {
+						"From": 13.5,
+						"To": 20.0
+					}
+				},
+				"Room": [1, 5, 16, 17, 18, 28, 33, 34, 35, 36, 51, 57, 62, 75]
+			}
+		},
+		{
+			"Name": "No Trespassing in Basement",
+			"Type": "Complication",
+			"Tip": "You may only enter the basement (Level 0) while wearing a non-trespassing disguise.",
+			"Group": "Location",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Difficulty": "Medium",
+			"Trespassing": {
+				"IsTrespassing": true,
+				"Room": [0, 2, 3, 9, 10, 11, 19, 20, 23, 30, 32, 46, 56, 60, 61, 74]
+			}
+		},
+		{
+			"Name": "No Trespassing on Ground Floor",
+			"Type": "Complication",
+			"Tip": "Do not trespass anywhere while on the ground floor (Level 1).",
+			"Group": "Location",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Difficulty": "High",
+			"Trespassing": {
+				"IsTrespassing": true,
+				"Position": {
+					"Z": {
+						"From": -3.0,
+						"To": 2.5
+					}
+				}
+			}
+		}
+	]
+}

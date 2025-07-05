@@ -1,12 +1,2 @@
 [
-	{
-		"Name": "No Fireworks",
-		"Type": "Complication",
-		"Group": "Opportunity",
-		"Missions": ["The Showstopper", "Holiday Hoarders"],
-		"Difficulty": "Medium",
-		"LevelSetupEvent": {
-			"Event": "FireworkStart"
-		}
-	}
 ]
