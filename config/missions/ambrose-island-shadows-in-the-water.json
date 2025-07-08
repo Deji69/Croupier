@@ -30,23 +30,28 @@
 	"Disguises": [
 		{
 			"Name": "Suit",
+			"RepoId": "8b74c103-ec0d-4e4e-8664-d06dfe869e8f",
 			"Image": "outfit_8b74c103-ec0d-4e4e-8664-d06dfe869e8f_0.jpg",
 			"Suit": true
 		},
 		{
 			"Name": "Cook",
+			"RepoId": "d9d95b38-3708-4220-9838-597c078a1081",
 			"Image": "outfit_d9d95b38-3708-4220-9838-597c078a1081_0.jpg",
 			"Keywords": ["cook", "chef"]
 		},
 		{
 			"Name": "Engineer",
+			"RepoId": "c3af265c-7648-4ddb-a02b-ab605a053886",
 			"Image": "outfit_c3af265c-7648-4ddb-a02b-ab605a053886_0.jpg",
 			"Keywords": ["engineer"]
 		},
 		{
 			"Name": "Hippie",
+			"RepoId": "9f95337d-0316-4cfc-9881-13080e2bc365",
 			"Image": "outfit_9f95337d-0316-4cfc-9881-13080e2bc365_0.jpg",
-			"Keywords": ["hippie", "hippy", "bohemian", "torres", "piombo", "torrespiombo"]
+			"Keywords": ["hippie", "hippy", "bohemian", "torres", "piombo", "torrespiombo"],
+			"Unique": true
 		},
 		{
 			"Name": "Metal Worker",
