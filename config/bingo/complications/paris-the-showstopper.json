@@ -314,7 +314,7 @@
 			}
 		},
 		{
-			"Name": "No Trespassing on Top Floor",
+			"Name": "No Trespass: Top Floor",
 			"Type": "Complication",
 			"Tip": "Do not trespass anywhere on the top floor (Level 3).",
 			"Group": "Location",
@@ -333,7 +333,7 @@
 			}
 		},
 		{
-			"Name": "No Trespassing in Basement",
+			"Name": "No Trespass: Basement",
 			"Type": "Complication",
 			"Tip": "You may only enter the basement (Level 0) while wearing a non-trespassing disguise.",
 			"Group": "Location",
@@ -345,7 +345,7 @@
 			}
 		},
 		{
-			"Name": "No Trespassing on Ground Floor",
+			"Name": "No Trespass: Ground Floor",
 			"Type": "Complication",
 			"Tip": "Do not trespass anywhere while on the ground floor (Level 1).",
 			"Group": "Location",
