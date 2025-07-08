@@ -21,7 +21,7 @@
 	{
 		"Name": "No Climbing Drain Pipes",
 		"Type": "Complication",
-		"Tip": "Don't climb any drain pipe.",
+		"Tip": "Don't climb any drain pipe. This includes vines - anything you can slide down like a pipe. Ladders are okay.",
 		"Group": "Action",
 		"Difficulty": "Medium",
 		"DrainPipeClimbed": {}
