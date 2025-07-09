@@ -27,14 +27,18 @@ enum class DockMode {
 	BottomRight,
 };
 
-enum class PlayerMoveType {
+enum class PlayerStance {
 	Unknown,
-	CrouchWalking,
-	CrouchWalkingSlowly,
-	CrouchRunning,
-	Running,
-	Walking,
-	WalkingSlowly,
+	Crouching,
+	Standing,
+};
+
+enum class PlayerMoveType {
+	Idle = 0,
+	CrouchWalking = 1,
+	CrouchRunning = 2,
+	Walking = 3,
+	Running = 4,
 };
 
 struct KeyBindAssign {
@@ -128,7 +132,7 @@ struct SharedRouletteSpin {
 		actorDataRepoIdMap.clear();
 
 		roomId = -1;
-		playerMoveType = PlayerMoveType::Unknown;
+		playerMoveType = PlayerMoveType::Idle;
 		isTrespassing = false;
 		playerInInstinct = false;
 		area = nullptr;
