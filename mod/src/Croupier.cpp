@@ -37,6 +37,7 @@
 
 using namespace std::string_literals;
 using namespace std::string_view_literals;
+using nlohmann::json;
 
 class ZGlobalOutfitKit;
 
@@ -67,20 +68,6 @@ Croupier::~Croupier() {
 }
 
 auto Croupier::LoadConfiguration() -> void {
-	/*auto binds = std::format("CroupierInput={"
-			"Respin=tap("
-		"};");
-	auto respinKey1 = GetSetting("general", "respin_hotkey1", "");
-	auto respinKey2 = GetSetting("general", "respin_hotkey2", "");
-	auto shuffleKey1 = GetSetting("general", "shuffle_hotkey1", "");
-	auto shuffleKey2 = GetSetting("general", "shuffle_hotkey2", "");
-	respinKeyBind.key1 = respinKey1.size() ? KeyBind(respinKey1.c_str()) : KeyBind();
-	respinKeyBind.key2 = respinKey2.size() ? KeyBind(respinKey2.c_str()) : KeyBind();
-	shuffleKeyBind.key1 = shuffleKey1.size() ? KeyBind(shuffleKey1.c_str()) : KeyBind();
-	shuffleKeyBind.key2 = shuffleKey2.size() ? KeyBind(shuffleKey2.c_str()) : KeyBind();
-	if (!ZInputActionManager::AddBindings(binds.c_str()))
-		Logger::Error("Failed to add input bindings for Croupier.");*/
-
 	if (this->file.is_open()) return;
 
 	const auto filepath = this->modulePath / "mods" / "Croupier" / "croupier.txt";
@@ -560,7 +547,7 @@ auto Croupier::ProcessSpinState() -> void {
 	this->sharedSpin.actorDataSize = *Globals::NextActorId;
 }
 
-auto Croupier::ProcessClientEvent(std::string_view name, const nlohmann::json& json) -> void {
+auto Croupier::ProcessClientEvent(std::string_view name, const json& json) -> void {
 	if (name == "Areas") {
 		this->sharedSpin.areas.clear();
 		if (!json.is_array())
@@ -607,7 +594,7 @@ auto Croupier::ProcessClientMessages() -> void {
 		switch (message.type) {
 			case eClientMessage::Event:
 				{
-					auto json = nlohmann::json::parse(message.args);
+					auto json = json::parse(message.args);
 					auto name = json.value("Name", "");
 					if (name.empty()) return;
 					ProcessClientEvent(name, json["Data"]);
@@ -1784,9 +1771,9 @@ auto Croupier::GetOutfitByRepoId(ZRepositoryID repoId) -> const ZGlobalOutfitKit
 	return it->second.m_pInterfaceRef;
 }
 
-auto Croupier::ImbueDisguiseEvent(const std::string& repoId) -> nlohmann::json {
+auto Croupier::ImbueDisguiseEvent(const std::string& repoId) -> json {
 	auto outfit = this->GetOutfitByRepoId(repoId);
-	auto json = nlohmann::json::object({ {"RepositoryId", repoId} });
+	auto json = json::object({ {"RepositoryId", repoId} });
 	ImbuePlayerLocation(json);
 	if (outfit) {
 		json.merge_patch({
@@ -1800,7 +1787,7 @@ auto Croupier::ImbueDisguiseEvent(const std::string& repoId) -> nlohmann::json {
 	return json;
 }
 
-auto Croupier::ImbueItemEvent(const ItemEventValue& ev, EActionType actionType) -> std::optional<nlohmann::json> {
+auto Croupier::ImbueItemEvent(const ItemEventValue& ev, EActionType actionType) -> std::optional<json> {
 	for (const auto action : Globals::HM5ActionManager->m_Actions) {
 		if (!action || action->m_eActionType != actionType)
 			continue;
@@ -1823,12 +1810,12 @@ auto Croupier::ImbueItemEvent(const ItemEventValue& ev, EActionType actionType) 
 	return std::nullopt;
 }
 
-auto Croupier::ImbuePacifyEvent(const PacifyEventValue& ev) -> std::optional<nlohmann::json> {
+auto Croupier::ImbuePacifyEvent(const PacifyEventValue& ev) -> std::optional<json> {
 	const auto actorData = this->sharedSpin.getActorDataByRepoId(ev.RepositoryId);
 	if (!actorData) return std::nullopt;
 	auto const playerOutfitRepoId = ZRepositoryID(ev.OutfitRepositoryId);
 	auto const actorOutfit = actorData->disguiseRepoId ? this->GetOutfitByRepoId(*actorData->disguiseRepoId) : nullptr;
-	auto json = nlohmann::json{
+	auto js = json{
 		{"RepositoryId", ev.RepositoryId},
 		{"Accident", ev.Accident},
 		{"ActorName", ev.ActorName},
@@ -1865,12 +1852,16 @@ auto Croupier::ImbuePacifyEvent(const PacifyEventValue& ev) -> std::optional<nlo
 			{"Z", actorData->transform.Trans.z},
 		}},
 	};
-	ImbuePlayerLocation(json, true);
-	return json;
+	ImbuePlayerLocation(js, true);
+	return js;
 }
 
-auto Croupier::ImbuePlayerLocation(nlohmann::json& json, bool asHero) -> void {
+auto Croupier::ImbuePlayerLocation(json& json, bool asHero) -> void {
 	json.merge_patch({
+		{"IsIdle", this->sharedSpin.playerMoveType == PlayerMoveType::Idle},
+		{"IsCrouching", this->sharedSpin.playerMoveType == PlayerMoveType::CrouchRunning || this->sharedSpin.playerMoveType == PlayerMoveType::CrouchWalking},
+		{"IsRunning", this->sharedSpin.playerMoveType == PlayerMoveType::CrouchRunning || this->sharedSpin.playerMoveType == PlayerMoveType::Running},
+		{"IsWalking", this->sharedSpin.playerMoveType == PlayerMoveType::CrouchWalking || this->sharedSpin.playerMoveType == PlayerMoveType::Walking},
 		{"IsTrespassing", this->sharedSpin.isTrespassing},
 		{asHero ? "HeroRoom" : "Room", this->sharedSpin.roomId},
 		{asHero ? "HeroArea" : "Area", this->sharedSpin.area ? this->sharedSpin.area->ID : ""},
@@ -1882,14 +1873,14 @@ auto Croupier::ImbuePlayerLocation(nlohmann::json& json, bool asHero) -> void {
 	});
 }
 
-auto Croupier::ImbuedPlayerLocation(nlohmann::json&& json, bool asHero) -> nlohmann::json {
-	ImbuePlayerLocation(json, asHero);
-	return json;
+auto Croupier::ImbuedPlayerLocation(json&& j, bool asHero) -> json {
+	ImbuePlayerLocation(j, asHero);
+	return j;
 }
 
-auto Croupier::SendCustomEvent(std::string_view name, nlohmann::json eventValue) -> void {
+auto Croupier::SendCustomEvent(std::string_view name, json eventValue) -> void {
 	if (!this->client || !this->client->isConnected()) return;
-	nlohmann::json json = {
+	json json = {
 		{"Name", name},
 		{"Value", eventValue},
 	};
@@ -2009,7 +2000,7 @@ auto Croupier::SetupEvents() -> void {
 		this->SendCustomEvent("Trespassing", ImbuedPlayerLocation());
 	});
 	events.listen<Events::BodyFound>([this](const ServerEvent<Events::BodyFound>& ev) {
-		this->SendCustomEvent("BodyFound", nlohmann::json{
+		this->SendCustomEvent("BodyFound", json{
 			{"RepositoryId", ev.Value.DeadBody.RepositoryId},
 			{"DeathContext", ev.Value.DeadBody.DeathContext},
 			{"DeathType", ev.Value.DeadBody.DeathType},
@@ -2885,7 +2876,7 @@ static std::set<std::string> eventsNotToPrint = {
 	"BodyHidden",
 	"Dart_Hit",
 	"DeadBodySeen",
-	"Disguise",
+	//"Disguise",
 	"Door_Unlocked",
 	//"DrainPipe_climbed",
 	"Drain_Pipe_Climbed",
@@ -3164,7 +3155,7 @@ DEFINE_PLUGIN_DETOUR(Croupier, void, OnEventSent, ZAchievementManagerSimple* th,
 	ZString eventData = ZDynamicObjectToString(const_cast<ZDynamicObject&>(ev));
 
 	try {
-		auto json = nlohmann::json::parse(eventData.c_str(), eventData.c_str() + eventData.size());
+		auto json = json::parse(eventData.c_str(), eventData.c_str() + eventData.size());
 		auto const eventName = json.value("Name", "");
 		auto const dontPrint = eventsNotToPrint.contains(eventName);
 
@@ -3175,7 +3166,7 @@ DEFINE_PLUGIN_DETOUR(Croupier, void, OnEventSent, ZAchievementManagerSimple* th,
 		if (!eventsNotToSend.contains(eventName))
 			this->client->sendRaw(eventData.c_str());
 	}
-	catch (const nlohmann::json::exception& ex) {
+	catch (const json::exception& ex) {
 		Logger::Info("Error handling event: {}", eventData);
 		Logger::Error("{}", eventData);
 		Logger::Error("JSON exception: {}", ex.what());
@@ -3320,7 +3311,7 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 			}, true));
 			break;
 		}
-		case static_cast<ZHMPin>(-1680993007): {// Explode
+		case static_cast<ZHMPin>(-1680993007): { // Explode
 			// We should have Vehicle_Core.Explode which is a ZEntity, the Vehicle_Core should be a ZCompositeEntity
 			if (!entity.m_pEntity) break;
 			auto parent = entity.GetLogicalParent();
@@ -3330,7 +3321,7 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 			auto res = parent.GetProperty<int32>("Car_Size_Int");
 			if (res.IsEmpty()) break;
 
-			auto json = nlohmann::json::object({ {"CarSize", res.Get()} });
+			auto json = json::object({ {"CarSize", res.Get()} });
 			auto spatial = parent.QueryInterface<ZSpatialEntity>();
 			if (spatial) {
 				auto trans = spatial->m_mTransform.Trans;
@@ -3360,37 +3351,91 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 		case ZHMPin::TakeDamage:
 			SendCustomEvent("OnTakeDamage", {});
 			break;
+		case ZHMPin::HMMovementIndex: {
+			auto moveIdx = data.As<int32>();
+			if (!moveIdx) break;
+			auto moveType = static_cast<PlayerMoveType>(*moveIdx);
+			if (this->sharedSpin.playerMoveType != moveType) {
+				this->sharedSpin.playerMoveType = moveType;
+				SendCustomEvent("OnMovement", ImbuedPlayerLocation());
+			}
+			break;
+		}
+		/*case ZHMPin::HMState_StartSneak:
+			if (this->sharedSpin.playerStance != PlayerStance::Crouching) {
+				this->sharedSpin.playerStance = PlayerStance::Crouching;
+				SendCustomEvent("OnChangeStance", ImbuedPlayerLocation());
+			}
+			break;
+		case ZHMPin::HMState_StopSneak:
+			if (this->sharedSpin.playerStance != PlayerStance::Standing) {
+				this->sharedSpin.playerStance = PlayerStance::Standing;
+				SendCustomEvent("OnChangeStance", ImbuedPlayerLocation());
+			}
+			break;
+		case ZHMPin::HMState_StartRun:
+			if (this->sharedSpin.playerMoveType != PlayerMoveType::Running) {
+				this->sharedSpin.playerMoveType = PlayerMoveType::Running;
+				SendCustomEvent("OnMovement", ImbuedPlayerLocation());
+			}
+			break;
+		case ZHMPin::HMState_StopRun:
+			if (this->sharedSpin.playerMoveType == PlayerMoveType::Running) {
+				this->sharedSpin.playerMoveType = PlayerMoveType::Unknown;
+				SendCustomEvent("OnMovement", ImbuedPlayerLocation());
+			}
+			break;
+		case ZHMPin::IdleStart:
+			if (this->sharedSpin.playerMoveType != PlayerMoveType::Idle) {
+				this->sharedSpin.playerMoveType = PlayerMoveType::Idle;
+				SendCustomEvent("OnMovement", ImbuedPlayerLocation());
+			}
+			break;
+		case ZHMPin::IdleStop:
+			if (this->sharedSpin.playerMoveType == PlayerMoveType::Idle) {
+				this->sharedSpin.playerMoveType = PlayerMoveType::Unknown;
+				SendCustomEvent("OnMovement", ImbuedPlayerLocation());
+			}
+			break;*/
+		case ZHMPin::BundleDestroyed:
+			// ZClothBundleSpawnEntity
+			SendCustomEvent("OnDestroyClothBundle", ImbuedPlayerLocation());
+			break;
+		case ZHMPin::DisguiseTaken:
+			SendCustomEvent("DisguiseTaken", ImbuedPlayerLocation());
+			// disguise stolen - double check this
+			break;
 		// ONLY WORK WHILE TRESPASSING :(
-		case ZHMPin::IsCrouchWalkingSlowly:
-			if (this->sharedSpin.playerMoveType != PlayerMoveType::WalkingSlowly)
-				SendCustomEvent("IsCrouchWalkingSlowly", {});
-			this->sharedSpin.playerMoveType = PlayerMoveType::WalkingSlowly;
-			break;
-		case ZHMPin::IsCrouchWalking:
-			if (this->sharedSpin.playerMoveType != PlayerMoveType::CrouchWalkingSlowly)
-				SendCustomEvent("IsCrouchWalking", {});
-			this->sharedSpin.playerMoveType = PlayerMoveType::CrouchWalkingSlowly;
-			break;
-		case ZHMPin::IsCrouchRunning:
-			if (this->sharedSpin.playerMoveType != PlayerMoveType::CrouchRunning)
-				SendCustomEvent("IsCrouchRunning", {});
-			this->sharedSpin.playerMoveType = PlayerMoveType::CrouchRunning;
-			break;
-		case ZHMPin::IsRunning:
-			if (this->sharedSpin.playerMoveType != PlayerMoveType::Running)
-				SendCustomEvent("IsRunning", {});
-			this->sharedSpin.playerMoveType = PlayerMoveType::Running;
-			break;
-		case ZHMPin::IsWalking:
-			if (this->sharedSpin.playerMoveType != PlayerMoveType::Walking)
-				SendCustomEvent("IsWalking", {});
-			this->sharedSpin.playerMoveType = PlayerMoveType::Walking;
-			break;
-		case ZHMPin::IsWalkingSlowly:
-			if (this->sharedSpin.playerMoveType != PlayerMoveType::WalkingSlowly)
-				SendCustomEvent("IsWalkingSlowly", {});
-			this->sharedSpin.playerMoveType = PlayerMoveType::WalkingSlowly;
-			break;
+		//case ZHMPin::IsCrouchWalkingSlowly:
+		//	if (this->sharedSpin.playerMoveType != PlayerMoveType::WalkingSlowly)
+		//		SendCustomEvent("IsCrouchWalkingSlowly", {});
+		//	this->sharedSpin.playerMoveType = PlayerMoveType::WalkingSlowly;
+		//	break;
+		//case ZHMPin::IsCrouchWalking:
+		//	if (this->sharedSpin.playerMoveType != PlayerMoveType::CrouchWalkingSlowly)
+		//		SendCustomEvent("IsCrouchWalking", {});
+		//	this->sharedSpin.playerMoveType = PlayerMoveType::CrouchWalkingSlowly;
+		//	break;
+		//case ZHMPin::IsCrouchRunning:
+		//	if (this->sharedSpin.playerMoveType != PlayerMoveType::CrouchRunning)
+		//		SendCustomEvent("IsCrouchRunning", {});
+		//	this->sharedSpin.playerMoveType = PlayerMoveType::CrouchRunning;
+		//	break;
+		//case ZHMPin::IsRunning:
+		//	if (this->sharedSpin.playerMoveType != PlayerMoveType::Running)
+		//		SendCustomEvent("IsRunning", {});
+		//	this->sharedSpin.playerMoveType = PlayerMoveType::Running;
+		//	break;
+		//case ZHMPin::IsWalking:
+		//	if (this->sharedSpin.playerMoveType != PlayerMoveType::Walking)
+		//		SendCustomEvent("IsWalking", {});
+		//	this->sharedSpin.playerMoveType = PlayerMoveType::Walking;
+		//	break;
+		//case ZHMPin::IsWalkingSlowly:
+		//	if (this->sharedSpin.playerMoveType != PlayerMoveType::WalkingSlowly)
+		//		SendCustomEvent("IsWalkingSlowly", {});
+		//	this->sharedSpin.playerMoveType = PlayerMoveType::WalkingSlowly;
+		//	break;
 	}
 	return HookAction::Continue();
 }
