@@ -15,7 +15,7 @@ namespace Croupier.GameEvents {
 		eAT_Guard    = 1,
 		eAT_Hitman   = 2,
 		eAT_Last     = 3,
-	};
+	}
 	public enum EOutfitType {
 		eOT_None      = 0,
 		eOT_Suit      = 1,
@@ -23,7 +23,7 @@ namespace Croupier.GameEvents {
 		eOT_Worker    = 3,
 		eOT_Waiter    = 4,
 		eOT_LucasGrey = 5,
-	};
+	}
 	public enum EKillType {
 		EKillType_Undefined = 0,
 		EKillType_Throw = 1,
@@ -59,7 +59,7 @@ namespace Croupier.GameEvents {
 		Erased,
 		Destroyed,
 		CameraDestroyed,
-	};
+	}
 
 	public class Event {
 		public required string Name { get; set; }
@@ -80,6 +80,10 @@ namespace Croupier.GameEvents {
 		public string? HeroArea { get; set; }
 		public SVector3? HeroPosition { get; set; }
 		public int? HeroRoom { get; set; }
+		public bool? IsCrouching { get; set; }
+		public bool? IsIdle { get; set; }
+		public bool? IsRunning { get; set; }
+		public bool? IsWalking { get; set; }
 		public bool? IsTrespassing { get; set; }
 		public SVector3? Position { get; set; }
 	}
@@ -96,7 +100,7 @@ namespace Croupier.GameEvents {
 		public required string RepositoryId { get; set; }
 		public required string InstanceId { get; set; }
 		public required List<string> OnlineTraits { get; set; }
-	};
+	}
 
 	public class DamageHistoryEventValue : EventValue {
 		public required bool Explosive { get; set; }
@@ -342,22 +346,6 @@ namespace Croupier.GameEvents {
 
 	}
 
-	public class IsCrouchWalkingSlowlyEventValue : EventValue {
-
-	}
-
-	public class IsCrouchWalkingEventValue : EventValue {
-
-	}
-
-	public class IsCrouchRunningEventValue : EventValue {
-
-	}
-
-	public class IsRunningEventValue : EventValue {
-
-	}
-
 	public class DrainPipeClimbedEventValue : EventValue {
 
 	}
@@ -372,5 +360,9 @@ namespace Croupier.GameEvents {
 
 	public class EnterAreaEventValue : EventValue {
 		public required string Area { get; set; }
+	}
+
+	public class OnMovementEventValue : LocationImbuedEventValue {
+
 	}
 }

@@ -27,32 +27,33 @@
 		"DrainPipeClimbed": {}
 	},
 	{
-		"Disabled": true,
 		"Name": "No Crouch Running",
 		"Type": "Complication",
 		"Tip": "Avoid running while crouched.",
 		"Group": "Action",
 		"Difficulty": "High",
-		"IsCrouchRunning": {}
+		"OnMovement": {
+			"IsRunning": true,
+			"IsCrouching": true
+		}
 	},
 	{
-		"Disabled": true,
 		"Name": "No Crouch Movement",
 		"Type": "Complication",
 		"Tip": "If you crouch, you must stay still.",
 		"Group": "Action",
 		"Difficulty": "High",
-		"OR": [
-			{
-				"IsCrouchRunning": {}
-			},
-			{
-				"IsCrouchWalking": {}
-			},
-			{
-				"IsCrouchWalkingSlowly": {}
-			}
-		]
+		"OnMovement": {
+			"IsCrouching": true,
+			"OR": [
+				{
+					"IsRunning": true
+				},
+				{
+					"IsWalking": true
+				}
+			]
+		}
 	},
 	{
 		"Disabled": true,
@@ -61,17 +62,18 @@
 		"Tip": "If you crouch while in trespassing, you must stay still.",
 		"Group": "Action",
 		"Difficulty": "High",
-		"OR": [
-			{
-				"IsCrouchRunning": {}
-			},
-			{
-				"IsCrouchWalking": {}
-			},
-			{
-				"IsCrouchWalkingSlowly": {}
-			}
-		]
+		"OnMovement": {
+			"IsCrouching": true,
+			"IsTrespassing": true,
+			"OR": [
+				{
+					"IsRunning": true
+				},
+				{
+					"IsWalking": true
+				}
+			]
+		}
 	},
 	{
 		"Name": "No Crowd Blending",
@@ -108,7 +110,6 @@
 		"ItemDropped": {}
 	},
 	{
-		"Disabled": true,
 		"Name": "No Instinct",
 		"Type": "Complication",
 		"Tip": "Go against your instincts and avoid using instinct.",
@@ -212,6 +213,9 @@
 		"Tip": "Do not run while standing upright, only run while crouching.",
 		"Group": "Action",
 		"Difficulty": "High",
-		"IsRunning": {}
+		"OnMovement": {
+			"IsRunning": true,
+			"IsCrouching": false
+		}
 	}
 ]

@@ -184,6 +184,7 @@ namespace Croupier {
 					"Kill" => ImbuePacifyEvent(json.Deserialize<KillEventValue>(jsonGameEventSerializerOptions)),
 					"Level_Setup_Events" => json.Deserialize<LevelSetupEventValue>(jsonGameEventSerializerOptions),
 					"OnEvacuationStarted" => json.Deserialize<OnEvacuationStartedEventValue>(jsonGameEventSerializerOptions),
+					"OnMovement" => json.Deserialize<OnMovementEventValue>(jsonGameEventSerializerOptions),
 					"OpenDoor" => json.Deserialize<OpenDoorEventValue>(jsonGameEventSerializerOptions),
 					"OpportunityEvents" => json.Deserialize<OpportunityEventValue>(jsonGameEventSerializerOptions),
 					"OnWeaponReload" => json.Deserialize<OnWeaponReloadEventValue>(jsonGameEventSerializerOptions),
@@ -194,14 +195,11 @@ namespace Croupier {
 					"SecuritySystemRecorder" => json.Deserialize<SecuritySystemRecorderEventValue>(jsonGameEventSerializerOptions),
 					"StartingSuit" => ImbueDisguiseEvent(json.Deserialize<StartingSuitEventValue>(jsonGameEventSerializerOptions)),
 					"Trespassing" => json.Deserialize<TrespassingEventValue>(jsonGameEventSerializerOptions),
+					null => null,
 					_ => DeserializeEventValue(name),
 				};
 			}
 			return name switch {
-				"IsCrouchRunning" => new IsCrouchRunningEventValue(),
-				"IsCrouchWalking" => new IsCrouchWalkingEventValue(),
-				"IsCrouchWalkingSlowly" => new IsCrouchWalkingSlowlyEventValue(),
-				"IsRunning" => new IsRunningEventValue(),
 				"ItemStashed" => new ItemStashedEventValue(),
 				"OnIsFullyInCrowd" => new OnIsFullyInCrowdEventValue(),
 				"OnIsFullyInVegetation" => new OnIsFullyInVegetationEventValue(),
