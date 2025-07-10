@@ -25,6 +25,13 @@
 		"Disguise": []
 	},
 	{
+		"Name": "No Free Disguises",
+		"Type": "Complication",
+		"Tip": "Do not take any disguise bundles, only use disguises stolen from an NPC's body.",
+		"Difficulty": "High",
+		"OnDestroyClothBundle": {}
+	},
+	{
 		"Name": "No Guard Disguises",
 		"Type": "Complication",
 		"Tip": "Do not start in or take any guard disguise.",
@@ -79,5 +86,12 @@
 				}
 			}
 		]
+	},
+	{
+		"Name": "Only Free Disguises",
+		"Type": "Complication",
+		"Tip": "Do not steal any NPC's clothing from their body.",
+		"Difficulty": "High",
+		"OnOutfitTaken": {}
 	}
 ]

@@ -3401,8 +3401,8 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 			// ZClothBundleSpawnEntity
 			SendCustomEvent("OnDestroyClothBundle", ImbuedPlayerLocation());
 			break;
-		case ZHMPin::DisguiseTaken:
-			SendCustomEvent("DisguiseTaken", ImbuedPlayerLocation());
+		case ZHMPin::OutfitTaken:
+			SendCustomEvent("OnOutfitTaken", ImbuedPlayerLocation());
 			// disguise stolen - double check this
 			break;
 		// ONLY WORK WHILE TRESPASSING :(
