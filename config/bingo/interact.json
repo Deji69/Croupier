@@ -12,7 +12,7 @@
 		}
 	},
 	{
-		"Name": "Enter Blending {1}x",
+		"Name": "Blend In",
 		"Tip": "Enter {0} hidden-in-plain-sight blending spot(s).",
 		"Group": "Interact",
 		"Tags": ["Action", "Interact"],
