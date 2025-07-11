@@ -70,6 +70,12 @@ public:
 	bool m_bAllowSecondaryGuardsToEvacuate; // 0x62
 };
 
+class ZActorOutfitListener : public ZEntityImpl
+{
+public:
+	TEntityRef<ZActor> m_rActor; // 0x18
+};
+
 class ZExplodingPropCounter : public ZEntityImpl
 {
 public:

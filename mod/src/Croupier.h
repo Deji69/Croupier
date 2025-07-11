@@ -82,6 +82,15 @@ struct Area {
 	SVector3 To;
 };
 
+struct GameplayData {
+	struct DisguiseChangeData {
+		bool havePinData = false;
+		bool wasFree = false;
+	};
+
+	DisguiseChangeData disguiseChange;
+};
+
 // Poorly named and organised struct used as a catch-all, mostly for game mode data
 struct SharedRouletteSpin {
 	const RouletteSpin& spin;
@@ -408,6 +417,7 @@ private:
 	RouletteRuleset rules;
 	RouletteSpin spin;
 	SharedRouletteSpin sharedSpin;
+	GameplayData gameplay;
 	std::stack<RouletteSpin> spinHistory;
 	eMission currentMission = eMission::NONE;
 	eRouletteRuleset ruleset = eRouletteRuleset::RRWC2023;
