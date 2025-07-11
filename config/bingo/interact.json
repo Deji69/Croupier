@@ -12,6 +12,17 @@
 		}
 	},
 	{
+		"Name": "Enter Blending {1}x",
+		"Tip": "Enter {0} hidden-in-plain-sight blending spot(s).",
+		"Group": "Interact",
+		"Tags": ["Action", "Interact"],
+		"Setpiece": {
+			"Type": ["HIPS_Enter"],
+			"Unique": "Position",
+			"Count": 1
+		}
+	},
+	{
 		"Name": "Hide {1} Bodies",
 		"NameSingular": "Hide {1} Body",
 		"Tip": "Hide {0} bodies.",
