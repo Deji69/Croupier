@@ -1526,12 +1526,10 @@
 		"Tags": ["Disguise", "Guard", "Unique"]
 	},
 	{
-		// TODO: Get real repo ID.
-		"Disabled": true,
 		"Name": "Butler",
 		"Group": "Disguise",
 		"Missions": ["The Last Resort"],
-		"Disguise": ["95f2f02f-205b-422f-a315-875568f911da"],
+		"Disguise": ["fd4c537a-226f-448d-9635-941c6f09d388"],
 		"Tags": ["Disguise", "Civilian", "Unique"]
 	},
 	{
