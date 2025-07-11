@@ -6,10 +6,7 @@
 		"Missions": [],
 		"Tags": ["Action", "Sabotage"],
 		"SecuritySystemRecorder": {
-			"OR": [
-				{ "Event": "erased" },
-				{ "Event": "destroyed" }
-			]
+			"Event": ["erased", "destroyed"]
 		}
 	},
 	{
