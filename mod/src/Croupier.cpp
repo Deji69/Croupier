@@ -1699,11 +1699,14 @@ auto Croupier::ImbueDisguiseEvent(const std::string& repoId) -> json {
 	if (outfit) {
 		json.merge_patch({
 			{"Title", outfit->m_sTitle},
-			{"RepositoryId", repoId},
 			{"ActorType", outfit->m_eActorType},
 			{"IsSuit", outfit->m_bIsHitmanSuit},
 			{"OutfitType", outfit->m_eOutfitType},
 		});
+		if (gameplay.disguiseChange.havePinData)
+			json.merge_patch({
+				{"IsBundle" , gameplay.disguiseChange.wasFree},
+			});
 	}
 	return json;
 }
@@ -3273,6 +3276,26 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 			SendCustomEvent("CarExploded", json);
 			break;
 		}
+		//case ZHMPin::OnPickup: // ZItemSpawner pickups
+		//	break;
+		//case ZHMPin::OnDropByHero: // ZHM5ItemWeapon
+		//	break;
+		//case ZHMPin::OnDrop: // ZHM5ItemWeapon, ZEntity
+		//	break;
+		//case ZHMPin::WeaponUnEquipped: // ZHM5ItemWeapon, ZEntity
+		//	break;
+		//case ZHMPin::WeaponPlayerUnEquipped: // ZHM5ItemWeapon, ZEntity
+		//	break;
+		//case ZHMPin::WeaponPlayerEquipped: // ZHM5ItemWeapon, ZEntity
+		//	break;
+		//case ZHMPin::Equipped: // ZHM5ItemCCWeapon, ZEntity
+		//	break;
+		//case ZHMPin::OnAttachToHitman: // ZHM5Item, ZHM5ItemCCWeapon, ZEntity // accomodates coins etc.
+		//	break;
+		//case ZHMPin::ThrowImpact: // ZHM5Item, ZEntity
+		//	break;
+		//case ZHMPin::OnThrown: // ZHM5Item, ZEntity
+		//	break;
 		case ZHMPin::DoorBroken:
 			SendCustomEvent("DoorBroken", ImbuedPlayerLocation());
 			break;
@@ -3334,12 +3357,28 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 			break;*/
 		case ZHMPin::BundleDestroyed:
 			// ZClothBundleSpawnEntity
+			gameplay.disguiseChange.havePinData = true;
+			gameplay.disguiseChange.wasFree = true;
 			SendCustomEvent("OnDestroyClothBundle", ImbuedPlayerLocation());
 			break;
-		case ZHMPin::OutfitTaken:
+		case ZHMPin::OutfitTaken: {
+			// ZActorOutfitListener
+			gameplay.disguiseChange.havePinData = true;
+			gameplay.disguiseChange.wasFree = false;
+
+			/*if (!entity) break;
+			auto outfitListener = entity.QueryInterface<ZActorOutfitListener>();
+			auto actorRef = outfitListener->m_rActor;
+			if (!actorRef) break;
+
+			auto actor = actorRef.m_pInterfaceRef;
+			if (actor->m_rOutfit)
+				gameplay.disguiseChange.actorType = actor->m_rOutfit.m_pInterfaceRef->m_eActorType;*/
+
 			SendCustomEvent("OnOutfitTaken", ImbuedPlayerLocation());
 			// disguise stolen - double check this
 			break;
+		}
 		// ONLY WORK WHILE TRESPASSING :(
 		//case ZHMPin::IsCrouchWalkingSlowly:
 		//	if (this->sharedSpin.playerMoveType != PlayerMoveType::WalkingSlowly)
