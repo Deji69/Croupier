@@ -29,7 +29,9 @@
 		"Type": "Complication",
 		"Tip": "Do not take any disguise bundles, only use disguises stolen from an NPC's body.",
 		"Difficulty": "High",
-		"OnDestroyClothBundle": {}
+		"Disguise": {
+			"IsBundle": true
+		}
 	},
 	{
 		"Name": "No Guard Disguises",
