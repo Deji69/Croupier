@@ -65,7 +65,7 @@ The applicable properties for each object in the array are as follows:
 
 - (Required) `ID` - A name which will be used to uniquely identify and refer to this area in bingo tile configs.
 - `Missions` - An array of mission name strings this area applies to. Omitting this or leaving it empty will cause the area to be used in all missions (which probably won't ever make sense and will result in extra unnecessary computation). Be sure each string matches the name of the mission as defined in the `config/missions/*.json` files.
-- `From` - The position of the corner of the bounding box to check.
+- `From` - An array of floating point values representing the X,Y,Z position of the corner of the bounding box to check.
 - `To` - Same as `From` but on the opposite corner.
 
 ## Group Configuration
@@ -139,7 +139,12 @@ You can therefore define areas and tiles in the same file, but only when using t
 
 The applicable properties for each object in the array are as follows:
 
-- (Required) `Name` - The name of the tile, to be displayed in the grid cell.
+- (Required) `Name` - The name of the tile, to be displayed in the grid cell.  
+  This name can use dynamic formatting parameters e.g. `"Collect {1} Brick"`:
+    - `{0}` - The total provided by the `Count` property.
+    - `{1}` - The remaining difference between the counter and the target `Count`.
+- `NameSingular` - If provided, will replace the `Name` when the remaining difference between the counter and the target `Count` is 1. Can use the same format parameters as `Name`.
+- `Tip` - A less brief explanation of the tile for the user, displayed in a hover tooltip. Can use the same format parameters as `Name`.
 - `Group` - The ID of the group this tile belongs to.
 - `Type` - The type of the bingo tile ('Complication' or 'Objective').
 - `Disabled` - A boolean which if `true` will cause this tile to be disabled within Croupier. This is for convenient removal of the tile from the pool without having to erase it from the file.
@@ -160,7 +165,7 @@ A trigger definition is part of a tile's configuration.
 	"Name": "Disguise as Auction Staff",
 	"Type": "Objective",
 	// ...
-	"Disguise": ["b5664bed-462a-417c-bc07-6d9d3f666e2d"]
+	"Disguise": "b5664bed-462a-417c-bc07-6d9d3f666e2d" // same as "Disguise": ["..."]
 }
 ```
 
@@ -171,3 +176,98 @@ As this is an Objective tile, it will be marked as completed when a 'Disguise' e
 	"RepositoryId": "d2c76544-3a12-43a8-abc3-c7ce51830c1e"
 }
 ```
+
+Here the repository ID is a UUID (universally unique ID) referring to the specific disguise we want to check for. We provide a string meaning the trigger will pass only if the repo ID matches our string precisely.
+
+We could also provide an array of strings, meaning the trigger will pass if *any of* those strings match the disguise repo ID. This general concept applies to most properties we can assign on our triggers.
+
+For example:
+
+```json
+{
+	// ...
+	"Setpiece": {
+		"Type": ["Enter_Closet", "Enter_Crate"],
+		"Unique": "Position",
+		"Count": 3
+	}
+},
+```
+
+This trigger is bound to a 'setpiece' event. Setpiece events have a few properties, one of which is `Type`, which can be used to identify if the player entered a closet or crate. Since we provide an array of two strings, the trigger will pass if either of them match. Note that an array of only one string is effectively equal to providing just the string itself.
+
+A special property here is the `Unique` property, which asserts that in order for the trigger to count, the given property (the string value `"Position"`) must not be a repeat of one that previously passed. Since each closet or crate will have a specific unique position, this effectively prevents the same one from counting more than once.
+
+The `"Count"` property is also special, as it tells the trigger to only mark the tile as completed on the 3rd time the trigger passes.
+
+### Checking Multiple Properties
+
+Multiple properties of an event can be checked at once. In order for the trigger to pass, every property checked must pass.
+
+In this example, the trigger will only pass if the `Helper` property of the setpiece is `"PoisonSource_Logic"`, but the `RepositoryId` can be any one of the 4 provided values.
+
+```json
+"Setpiece": {
+	"Helper": "PosionSource_Logic",
+	"RepositoryId": [
+		"d36f17b9-eb30-47ef-967d-994db942c5aa",
+		"20d06859-95e0-4bc9-b9fc-dfbd16196bbb",
+		"f840c3d0-8df5-4971-b9ed-16230258b953",
+		"eb71599a-4c6a-4e9a-8df7-4dace0d0a82e"
+	]
+}
+```
+
+### Boolean Logic
+
+While being able to check every property for a certain value or set of values is nice, sometimes we may want our trigger to pass if ANY of a set of properties matches our values...
+
+```json
+{
+	"Name": "No Crouch Movement",
+	"Type": "Complication",
+	"Tip": "If you crouch, you must stay still.",
+	"OnMovement": {
+		"IsCrouching": true,
+		"OR": [
+			{
+				"IsRunning": true
+			},
+			{
+				"IsWalking": true
+			}
+		]
+	}
+}
+```
+
+In this example, `IsCrouching` *must* be true for the trigger to pass, however for the two checks within the `OR` array, only one of them needs to pass.
+
+`OR` is known as a logical operator. For convenience, triggers can also have `NOT` and `AND` logical operators. `NOT` will pass only if the ultimate result of the contained checks is a fail, and `AND` will pass if all of the contained checks pass (the default behaviour). These can be grouped and nested for relatively complex logical checks.
+
+### Checking Multiple Events
+
+Using the available logical operators, we can also check for multiple events in a single trigger...
+
+```json
+{
+	"Name": "No Guard Disguises",
+	"Type": "Complication",
+	"Tip": "Do not start in or take any guard disguise.",
+	"Difficulty": "Medium",
+	"OR": [
+		{
+			"Disguise": {
+				"ActorType": "Guard"
+			}
+		},
+		{
+			"StartingSuit": {
+				"ActorType": "Guard"
+			}
+		}
+	]
+},
+```
+
+In this example, both the `Disguise` and `StartingSuit` events are checked and if either of them pass their check, the complication will be failed.
