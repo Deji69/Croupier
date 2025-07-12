@@ -90,10 +90,12 @@
 		]
 	},
 	{
-		"Name": "Only Free Disguises",
+		"Name": "No Nudity",
 		"Type": "Complication",
-		"Tip": "Do not steal any NPC's clothing from their body.",
+		"Tip": "Do not steal a disguise from an NPC's body.",
 		"Difficulty": "High",
-		"OnOutfitTaken": {}
+		"Disguise": {
+			"IsBundle": false
+		}
 	}
 ]
