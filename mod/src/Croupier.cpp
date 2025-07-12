@@ -1973,6 +1973,9 @@ auto Croupier::SetupEvents() -> void {
 		if (this->spinCompleted) return;
 		this->sharedSpin.disguiseChanges.emplace_back(ev.Value.value, ev.Timestamp);
 	});
+	events.listen<Events::FriskedSuccess>([this](const ServerEvent<Events::FriskedSuccess>& ev) {
+		this->SendCustomEvent("FriskedSuccess", this->ImbuedPlayerLocation());
+	});
 	events.listen<Events::Dart_Hit>([this](const ServerEvent<Events::Dart_Hit>& ev) {
 		this->SendCustomEvent("DartHit", this->ImbuedPlayerLocation({
 			{"RepositoryId", ev.Value.RepositoryId},
@@ -3424,7 +3427,7 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 			// ZClothBundleSpawnEntity
 			gameplay.disguiseChange.havePinData = true;
 			gameplay.disguiseChange.wasFree = true;
-			SendCustomEvent("OnDestroyClothBundle", ImbuedPlayerLocation());
+			//SendCustomEvent("OnDestroyClothBundle", ImbuedPlayerLocation());
 			break;
 		case ZHMPin::OutfitTaken: {
 			// ZActorOutfitListener
@@ -3440,7 +3443,7 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 			if (actor->m_rOutfit)
 				gameplay.disguiseChange.actorType = actor->m_rOutfit.m_pInterfaceRef->m_eActorType;*/
 
-			SendCustomEvent("OnOutfitTaken", ImbuedPlayerLocation());
+			//SendCustomEvent("OnOutfitTaken", ImbuedPlayerLocation());
 			// disguise stolen - double check this
 			break;
 		}
