@@ -88,7 +88,7 @@ namespace Croupier.GameEvents {
 		public SVector3? Position { get; set; }
 	}
 
-	public class DoorUnlockedEventValue : EventValue {
+	public class DoorUnlockedEventValue : LocationImbuedEventValue {
 
 	}
 
