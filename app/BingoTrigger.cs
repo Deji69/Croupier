@@ -396,6 +396,7 @@ namespace Croupier {
 				"DrainPipeClimbed" => jh => new BingoTriggerDrainPipeClimbed(jh.json),
 				"EnterArea" => jh => new BingoTriggerEnterArea(jh.json),
 				"EnterRoom" => jh => new BingoTriggerEnterRoom(jh.json),
+				"FriskedSuccess" => jh => new BingoTriggerFriskedSuccess(jh.json),
 				"InstinctActive" => jh => new BingoTriggerInstinctActive(jh.json),
 				"ItemDestroyed" => jh => new BingoTriggerItemDestroyed(jh.json),
 				"ItemDropped" => jh => new BingoTriggerItemDropped(jh.json),
@@ -1123,6 +1124,16 @@ namespace Croupier {
 		public override bool Test(EventValue ev, BingoTileState state) {
 			return ev is EnterAreaEventValue v
 				&& ID.Test(v.Area, state);
+		}
+	}
+
+	public class BingoTriggerFriskedSuccess(JsonElement json) : BingoTrigger(json) {
+		readonly BingoTriggerLocationImbued locationTrigger = new(json);
+
+		public override bool Test(EventValue ev, BingoTileState state) {
+			return ev is FriskedSuccessEventValue
+				&& base.Test(ev, state)
+				&& locationTrigger.Test(ev, state);
 		}
 	}
 

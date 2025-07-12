@@ -358,6 +358,9 @@ namespace Croupier.GameEvents {
 		public required int Room { get; set; }
 	}
 
+	public class FriskedSuccessEventValue : LocationImbuedEventValue {
+	}
+
 	public class EnterAreaEventValue : EventValue {
 		public required string Area { get; set; }
 	}
