@@ -59,6 +59,7 @@ namespace Croupier {
 		public string GroupText => Group != null ? $"{Group.Name}" : "";
 		public Visibility GroupTextVisibility => Group != null && !Group.Hidden ? Visibility.Visible : Visibility.Collapsed;
 		public SolidColorBrush GroupTextColor => Config.Default.EnableGroupTileColors ? groupTextBrush : defaultBrush;
+		public BingoTile? Source { get; private set; }
 
 		private BingoGroup? group = null;
 		private BingoTileState state = new();
@@ -127,7 +128,9 @@ namespace Croupier {
 		}
 
 		public object Clone() {
-			return MemberwiseClone();
+			var obj = (BingoTile)MemberwiseClone();
+			obj.Source = this;
+			return obj;
 		}
 
 		public static BingoTile FromJson(JsonElement json) {

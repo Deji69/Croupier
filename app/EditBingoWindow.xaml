@@ -1,0 +1,79 @@
+﻿<Window x:Class="Croupier.EditBingoWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:local="clr-namespace:Croupier"
+		d:DataContext="{d:DesignInstance Type=local:EditBingoViewModel}"
+		mc:Ignorable="d"
+		Title="Edit Bingo Card - Croupier"
+		WindowStyle="SingleBorderWindow"
+		Width="600"
+		Height="400"
+		MaxHeight="540"
+		MinHeight="142"
+		MinWidth="500"
+		MaxWidth="720"
+		Icon="/CroupierLogoIconsFlatLg.png"
+		SizeChanged="OnSizeChange">
+	<Window.Resources>
+		<DataTemplate x:Key="TileSelectTemplate" DataType="{x:Type local:EditBingoComboBoxItem}">
+			<ContentPresenter Content="{Binding}" HorizontalAlignment="Stretch">
+				<ContentPresenter.Style>
+					<Style TargetType="{x:Type ContentPresenter}">
+						<Setter Property="ContentTemplate" Value="{StaticResource ComboBoxItemTemplate}" />
+						<Style.Triggers>
+							<DataTrigger Binding="{Binding IsSeparator}" Value="True">
+								<Setter Property="ContentTemplate" Value="{StaticResource MissionComboBoxSeparatorTemplate}" />
+							</DataTrigger>
+						</Style.Triggers>
+					</Style>
+				</ContentPresenter.Style>
+			</ContentPresenter>
+		</DataTemplate>
+	</Window.Resources>
+	<ScrollViewer DockPanel.Dock="Top" Background="Black">
+		<StackPanel UseLayoutRounding="True" Margin="0">
+			<ItemsControl Name="TilesEdit" ItemsSource="{Binding Tiles}">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate DataType="{x:Type local:EditTile}">
+						<Grid Margin="4,1">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="0" />
+								<ColumnDefinition Width="3*" />
+							</Grid.ColumnDefinitions>
+							<ComboBox
+								Grid.Column="1"
+								Style="{StaticResource ComboBoxFlatStyle}"
+								ItemsSource="{Binding AvailableTiles}"
+								ItemTemplate="{StaticResource TileSelectTemplate}"
+								SelectedIndex="{Binding SelectedIndex}"
+								FontSize="14"
+								Height="36"
+								VerticalAlignment="Top"
+							>
+								<ComboBox.Background>
+									<LinearGradientBrush EndPoint="0,1">
+										<GradientStop Color="#FF5C5C5C"/>
+										<GradientStop Color="#FF343434" Offset="1"/>
+										<GradientStop Color="#FF393939" Offset="0.856"/>
+									</LinearGradientBrush>
+								</ComboBox.Background>
+								<ComboBox.ItemContainerStyle>
+									<Style TargetType="ComboBoxItem">
+										<Style.Triggers>
+											<DataTrigger Binding="{Binding IsSeparator}" Value="True">
+												<Setter Property="HorizontalAlignment" Value="Center" />
+												<Setter Property="IsEnabled" Value="False"/>
+											</DataTrigger>
+										</Style.Triggers>
+									</Style>
+								</ComboBox.ItemContainerStyle>
+							</ComboBox>
+						</Grid>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</StackPanel>
+	</ScrollViewer>
+</Window>

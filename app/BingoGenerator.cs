@@ -19,10 +19,8 @@ namespace Croupier {
 
 			for (int i = 0; i < tiles; ++i) {
 				var tile = availableTiles[random.Next(availableTiles.Count)];
-				var liveTile = (BingoTile)tile.Clone();
-				liveTile.Reset();
 				availableTiles.Remove(tile);
-				card.Add(liveTile);
+				card.Add(tile);
 			}
 
 			return card;
