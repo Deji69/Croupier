@@ -816,8 +816,12 @@ namespace Croupier {
 	}
 
 	public class BingoTriggerDoorUnlocked(JsonElement json) : BingoTrigger(json) {
+		readonly BingoTriggerLocationImbued locationTrigger = new(json);
+
 		public override bool Test(EventValue ev, BingoTileState state) {
-			return ev is DoorUnlockedEventValue;
+			return ev is DoorUnlockedEventValue v
+				&& base.Test(ev, state)
+				&& locationTrigger.Test(v, state);
 		}
 	}
 
