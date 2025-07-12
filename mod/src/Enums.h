@@ -50,6 +50,7 @@ enum class Events {
 	FacilityExitEvent,
 	FirstMissedShot,
 	FirstNonHeadshot,
+	FriskedSuccess,
 	HeroSpawn_Location,
 	HoldingIllegalWeapon,
 	IntroCutEnd,

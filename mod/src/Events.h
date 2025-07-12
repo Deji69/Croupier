@@ -310,6 +310,12 @@ struct Event<Events::HeroSpawn_Location> {
 };
 
 template<>
+struct Event<Events::FriskedSuccess> {
+	static auto constexpr Name = "FriskedSuccess";
+	using EventValue = VoidEventValue;
+};
+
+template<>
 struct Event<Events::ContractFailed> {
 	static auto constexpr Name = "ContractFailed";
 	using EventValue = RawEventValue;
