@@ -2,6 +2,7 @@
 using Croupier.GameEvents;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
@@ -81,6 +82,7 @@ namespace Croupier {
 				Bingo.Main.LoadConfiguration();
 				var generator = new BingoGenerator(TileType);
 				card = generator.Generate(CardSize, controller.MissionID);
+				card.PropertyChanged += Card_PropertyChanged;
 				SendAreasToClient();
 			} catch (BingoGeneratorException e) {
 				MessageBox.Show(
@@ -94,10 +96,14 @@ namespace Croupier {
 			CardUpdated?.Invoke(this, card);
 		}
 
+		private void Card_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
+			CardUpdated?.Invoke(this, card);
+		}
+
 		public void RefreshColors() {
 			if (card == null) return;
 			foreach (var tile in card.Tiles) {
-				tile.RefreshColor();
+				tile?.RefreshColor();
 			}
 		}
 
@@ -174,6 +180,7 @@ namespace Croupier {
 					"DrainPipeClimbed" => json.Deserialize<DrainPipeClimbedEventValue>(jsonGameEventSerializerOptions),
 					"EnterArea" => json.Deserialize<EnterAreaEventValue>(jsonGameEventSerializerOptions),
 					"EnterRoom" => json.Deserialize<EnterRoomEventValue>(jsonGameEventSerializerOptions),
+					"FriskedPass" => json.Deserialize<FriskedSuccessEventValue>(jsonGameEventSerializerOptions),
 					"InstinctActive" => json.Deserialize<InstinctActiveEventValue>(jsonGameEventSerializerOptions),
 					"Investigate_Curious" => json.Deserialize<InvestigateCuriousEventValue>(jsonGameEventSerializerOptions),
 					"ItemDestroyed" => json.Deserialize<ItemDestroyedEventValue>(jsonGameEventSerializerOptions),

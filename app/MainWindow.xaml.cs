@@ -180,6 +180,7 @@ namespace Croupier
 		private TimerSettingsWindow? TimerSettingsWindowInst;
 		private StatisticsWindow? StatisticsWindowInst;
 		private EditSpinWindow? EditSpinWindowInst;
+		private EditBingoWindow? EditBingoWindowInst;
 		private HitmapsWindow? HitmapsWindowInst;
 		private LiveSplitWindow? LiveSplitWindowInst;
 		private TargetNameFormat _targetNameFormat = TargetNameFormat.Initials;
@@ -2092,18 +2093,34 @@ namespace Croupier
 		}
 
 		private void EditSpinCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
-			if (EditSpinWindowInst != null) {
-				EditSpinWindowInst.Activate();
-				return;
+			if (IsBingoMode) {
+				if (EditBingoWindowInst != null) {
+					EditBingoWindowInst.Activate();
+					return;
+				}
+				EditBingoWindowInst = new(GameController.Main.Bingo) {
+					Owner = this,
+					WindowStartupLocation = WindowStartupLocation.CenterOwner
+				};
+				EditBingoWindowInst.Closed += (object? sender, EventArgs e) => {
+					EditBingoWindowInst = null;
+				};
+				EditBingoWindowInst.Show();
 			}
-			EditSpinWindowInst = new(GameController.Main.Roulette) {
-				Owner = this,
-				WindowStartupLocation = WindowStartupLocation.CenterOwner
-			};
-			EditSpinWindowInst.Closed += (object? sender, EventArgs e) => {
-				EditSpinWindowInst = null;
-			};
-			EditSpinWindowInst.Show();
+			else {
+				if (EditSpinWindowInst != null) {
+					EditSpinWindowInst.Activate();
+					return;
+				}
+				EditSpinWindowInst = new(GameController.Main.Roulette) {
+					Owner = this,
+					WindowStartupLocation = WindowStartupLocation.CenterOwner
+				};
+				EditSpinWindowInst.Closed += (object? sender, EventArgs e) => {
+					EditSpinWindowInst = null;
+				};
+				EditSpinWindowInst.Show();
+			}
 		}
 
 		private void PrevCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
@@ -2289,7 +2306,7 @@ namespace Croupier
 		}
 
 		private void EditSpinCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
-			e.CanExecute = IsRouletteMode;
+			e.CanExecute = IsRouletteMode || IsBingoMode;
 		}
 	}
 }

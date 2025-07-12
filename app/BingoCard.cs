@@ -31,9 +31,9 @@ namespace Croupier {
 		public BingoTileType Mode = BingoTileType.Objective;
 		public MissionID Mission = MissionID.NONE;
 		public BingoCardSize Size => size;
-		public ReadOnlyObservableCollection<BingoTile> Tiles => new(tiles);
+		public ReadOnlyObservableCollection<BingoTile?> Tiles => new(tiles);
 
-		private readonly ObservableCollection<BingoTile> tiles = [];
+		private readonly ObservableCollection<BingoTile?> tiles = [];
 		private BingoCardSize size = new(0, 0, false);
 
 		public BingoCard(BingoTileType mode, MissionID mission = MissionID.NONE) {
@@ -46,22 +46,37 @@ namespace Croupier {
 		}
 
 		public void Add(BingoTile tile) {
-			tiles.Add(tile);
+			var liveTile = (BingoTile)tile.Clone();
+			liveTile.Reset();
+			tiles.Add(liveTile);
 			size = GetCardSize();
+		}
+
+		public void SetTile(int index, BingoTile? tile) {
+			if (index < 0 || index >= tiles.Count) throw new ArgumentOutOfRangeException($"Invalid index: {index}");
+			if (tile == null) tiles[index] = null;
+			else {
+				var liveTile = (BingoTile)tile.Clone();
+				liveTile.Reset();
+				tiles[index] = liveTile;
+			}
+			OnPropertyChanged(nameof(Tiles));
 		}
 
 		public bool TryAdvance(GameEvents.EventValue ev) {
 			bool advanced = false;
 			foreach (var tile in Tiles) {
-				if (!tile.Test(ev)) continue;
-				tile.Advance();
+				if (tile != null) {
+					if (!tile.Test(ev)) continue;
+					tile.Advance();
+				}
 				advanced = true;
 			}
 			return advanced;
 		}
 
 		public bool HasWon() {
-			var numCompleted = Tiles.Count(t => t.Complete);
+			var numCompleted = Tiles.Count(t => t?.Complete ?? true);
 			if (numCompleted == Tiles.Count)
 				return true;
 
@@ -102,7 +117,7 @@ namespace Croupier {
 		}
 
 		public BingoWinResult? CheckWin() {
-			var numCompleted = Tiles.Count(t => t.Complete);
+			var numCompleted = Tiles.Count(t => t?.Complete ?? true);
 			if (numCompleted == Tiles.Count)
 				return new(this, BingoWinType.Completion, [..Tiles.Select((t, i) => i)]);
 
@@ -149,7 +164,7 @@ namespace Croupier {
 		public bool TestPosition(int col, int row) {
 			var idx = PositionToIndex(col, row);
 			if (idx >= Tiles.Count) throw new BingoException("Noot noot (3)");
-			return Tiles[idx].Complete;
+			return Tiles[idx]?.Complete ?? true;
 		}
 
 		public bool TestDiagonal() {
@@ -215,7 +230,7 @@ namespace Croupier {
 		private void ScoreIndexes(List<int> indexes) {
 			foreach (var idx in indexes) {
 				if (idx >= Tiles.Count) continue;
-				Tiles[idx].Score();
+				Tiles[idx]?.Score();
 			}
 		}
 
@@ -226,7 +241,7 @@ namespace Croupier {
 
 		public void Reset() {
 			foreach (var tile in Tiles)
-				tile.Reset();
+				tile?.Reset();
 		}
 
 		private BingoCardSize GetCardSize() {
@@ -256,7 +271,7 @@ namespace Croupier {
 
 			foreach (var cond in Tiles) {
 				if (str.Length > 0) str += ", ";
-				str += cond.ToString();
+				str += cond?.ToString();
 			}
 
 			return str;
