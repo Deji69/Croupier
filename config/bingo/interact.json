@@ -33,6 +33,16 @@
 		}
 	},
 	{
+		"Name": "Activate Diorama",
+		"Tip": "Activate the diorama.",
+		"Group": "Interact",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Action", "Interact"],
+		"Setpiece": {
+			"Name": "Diorama_Napoleon_war"
+		}
+	},
+	{
 		"Name": "Activate Fire Alarm",
 		"Tip": "Pull a fire alarm. You know you want to.",
 		"Group": "Interact",
@@ -40,6 +50,16 @@
 		"Tags": ["Action", "Interact"],
 		"Setpiece": {
 			"Name": "FireAlarm"
+		}
+	},
+	{
+		"Name": "Examine Fireworks Schedule",
+		"Tip": "Examine the fireworks schedule intel.",
+		"Group": "Interact",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Action", "Interact"],
+		"Setpiece": {
+			"Name": "Paris_Firework_Schedule"
 		}
 	},
 	{
@@ -57,17 +77,7 @@
 		}
 	},
 	{
-		"Name": "Activate Diorama",
-		"Tip": "Activate the diorama.",
-		"Group": "Interact",
-		"Missions": ["The Showstopper", "Holiday Hoarders"],
-		"Tags": ["Action", "Interact"],
-		"Setpiece": {
-			"Name": "Diorama_Napoleon_war"
-		}
-	},
-	{
-		"Name": "Release {1} Winches Manually",
+		"Name": "Release {1} Winches By Hand",
 		"NameSingular": "Release {1} Winch Manually",
 		"Tip": "Interact with {0} winches to release them by hand.",
 		"Group": "Interact",
@@ -80,6 +90,14 @@
 			],
 			"Count": 2
 		}
+	},
+	{
+		"Name": "Pass Entrance Checkpoint",
+		"Tip": "Pass a frisk or guard invitation checkpoint.",
+		"Group": "Interact",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Action", "Interact"],
+		"FriskedSuccess": {}
 	},
 	{
 		"Name": "Poison a Sushi Plate",
@@ -106,16 +124,6 @@
 		"Setpiece": {
 			"Helper": "PosionSource_Logic",
 			"RepositoryId": "9d316f01-7701-41b8-a9bb-153908768168"
-		}
-	},
-	{
-		"Name": "Examine Fireworks Schedule",
-		"Tip": "Examine the fireworks schedule intel.",
-		"Group": "Interact",
-		"Missions": ["The Showstopper", "Holiday Hoarders"],
-		"Tags": ["Action", "Interact"],
-		"Setpiece": {
-			"Name": "Paris_Firework_Schedule"
 		}
 	},
 	{
