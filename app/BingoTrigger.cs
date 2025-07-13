@@ -396,6 +396,7 @@ namespace Croupier {
 				"DrainPipeClimbed" => jh => new BingoTriggerDrainPipeClimbed(jh.json),
 				"EnterArea" => jh => new BingoTriggerEnterArea(jh.json),
 				"EnterRoom" => jh => new BingoTriggerEnterRoom(jh.json),
+				"Explosion" => jh => new BingoTriggerExplosion(jh.json),
 				"FriskedSuccess" => jh => new BingoTriggerFriskedSuccess(jh.json),
 				"InstinctActive" => jh => new BingoTriggerInstinctActive(jh.json),
 				"ItemDestroyed" => jh => new BingoTriggerItemDestroyed(jh.json),
@@ -825,10 +826,21 @@ namespace Croupier {
 		}
 	}
 
+	public class BingoTriggerExplosion(JsonElement json) : BingoTrigger(json) {
+		readonly BingoTriggerLocationImbued locationTrigger = new(json);
+
+		public override bool Test(EventValue ev, BingoTileState state) {
+			return ev is ExplosionEventValue v
+				&& base.Test(ev, state)
+				&& locationTrigger.Test(v, state);
+		}
+	}
+
 	public class BingoTriggerItemThrown : BingoTrigger {
 		readonly BingoTriggerString ItemName = new();
 		readonly BingoTriggerString ItemType = new();
 		readonly BingoTriggerCIString RepositoryId = new();
+
 		public BingoTriggerItemThrown(JsonElement json) : base(json) {
 			ItemName.Load(json, nameof(ItemName));
 			ItemType.Load(json, nameof(ItemType));
@@ -1035,6 +1047,7 @@ namespace Croupier {
 
 	public class BingoTriggerDisguise : BingoTrigger {
 		readonly BingoTriggerEnum<EActorType> ActorType = new();
+		readonly BingoTriggerBool IsBundle = new();
 		readonly BingoTriggerBool IsSuit = new();
 		readonly BingoTriggerBool IsUnique = new();
 		readonly BingoTriggerEnum<EOutfitType> OutfitType = new();
@@ -1057,6 +1070,7 @@ namespace Croupier {
 						"Hitman" => EActorType.eAT_Hitman,
 						_ => throw new BingoConfigException("ActorType must be one of: Civilian, Guard, Hitman")
 					});
+					IsBundle.Load(obj, "IsBundle");
 					IsSuit.Load(obj, "IsSuit");
 					IsUnique.Load(obj, "IsUnique");
 					OutfitType.Load(obj, "OutfitType", s => s switch {
@@ -1082,6 +1096,7 @@ namespace Croupier {
 				&& base.Test(ev, state)
 				&& locationTrigger.Test(ev, state)
 				&& ActorType.Test(v.ActorType, state)
+				&& IsBundle.Test(v.IsBundle, state)
 				&& IsSuit.Test(v.IsSuit, state)
 				&& IsUnique.Test(v.IsUnique, state)
 				&& OutfitType.Test(v.OutfitType, state)

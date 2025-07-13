@@ -180,6 +180,7 @@ namespace Croupier {
 					"DrainPipeClimbed" => json.Deserialize<DrainPipeClimbedEventValue>(jsonGameEventSerializerOptions),
 					"EnterArea" => json.Deserialize<EnterAreaEventValue>(jsonGameEventSerializerOptions),
 					"EnterRoom" => json.Deserialize<EnterRoomEventValue>(jsonGameEventSerializerOptions),
+					"Explosion" => json.Deserialize<ExplosionEventValue>(jsonGameEventSerializerOptions),
 					"FriskedPass" => json.Deserialize<FriskedSuccessEventValue>(jsonGameEventSerializerOptions),
 					"InstinctActive" => json.Deserialize<InstinctActiveEventValue>(jsonGameEventSerializerOptions),
 					"Investigate_Curious" => json.Deserialize<InvestigateCuriousEventValue>(jsonGameEventSerializerOptions),
