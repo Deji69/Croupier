@@ -228,6 +228,9 @@ namespace Croupier.GameEvents {
 	public class BodyFoundEventValue : BodyKillInfoEventValue {
 	}
 
+	public class ExplosionEventValue : LocationImbuedEventValue {
+	}
+
 	public class CarExplodedEventValue : EventValue {
 		public int CarSize { get; set; }
 		public SVector3? CarPosition { get; set; }
@@ -296,6 +299,9 @@ namespace Croupier.GameEvents {
 		public EActorType? ActorType { get; set; }
 		public bool? IsSuit { get; set; }
 		public EOutfitType? OutfitType { get; set; }
+
+		// Imbued
+		public bool? IsBundle { get; set; }
 
 		// Self Imbued
 		public bool? IsUnique { get; set; }
