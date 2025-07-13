@@ -94,6 +94,9 @@ namespace Croupier {
 				if (spin.Mission != MissionID)
 					MissionID = spin.Mission;
 			};
+			CroupierSocketServer.MissionStart += (sender, arg) => {
+				IsFinished = false;
+			};
 			CroupierSocketServer.MissionComplete += (sender, arg) => {
 				if (IsFinished) return;
 				IsFinished = true;
