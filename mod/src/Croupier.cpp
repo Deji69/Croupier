@@ -248,91 +248,6 @@ auto Croupier::SaveConfiguration() -> void {
 	Logger::Info("Croupier - Config saved.");
 }
 
-auto Croupier::ParseSpin(std::string_view sv) -> std::optional<RouletteSpin> {
-	auto targetsSeparated = split(sv, ",");
-	auto lastTargetMission = eMission::NONE;
-	RouletteSpin spin;
-
-	for (const auto& targetCondText : targetsSeparated) {
-		auto condTextSeparatedTarget = split(targetCondText, ":");
-		if (condTextSeparatedTarget.size() < 2) return std::nullopt;
-
-		auto separatedConds = split(condTextSeparatedTarget[1], "/");
-		if (condTextSeparatedTarget.size() < 2) return std::nullopt;
-
-		auto targetName = std::string(Keyword::targetKeyToName(toUpperCase(trim(condTextSeparatedTarget[0]))));
-		if (targetName.empty()) return std::nullopt;
-
-		auto mission = getMissionForTarget(targetName);
-		if (mission == eMission::NONE) return std::nullopt;
-
-		auto missionGen = Missions::get(mission);
-		if (!missionGen) return std::nullopt;
-
-		if (lastTargetMission == eMission::NONE) spin = RouletteSpin(missionGen);
-		else if (mission != lastTargetMission) return std::nullopt;
-
-		lastTargetMission = mission;
-
-		auto condsFirstToken = trim(separatedConds[0]);
-
-		auto complication = eKillComplication::None;
-		auto killType = eKillType::Any;
-		auto killMethod = eKillMethod::NONE;
-		auto mapKillMethod = eMapKillMethod::NONE;
-
-		if (condsFirstToken.starts_with("(")) {
-			auto idx = condsFirstToken.find(")");
-			if (idx == condsFirstToken.npos) return std::nullopt;
-			auto complicationText = std::string(condsFirstToken.substr(1, idx - 1));
-			auto it = Keyword::getMap().find(toLowerCase(complicationText));
-			if (it != end(Keyword::getMap()) && std::holds_alternative<eKillComplication>(it->second))
-				complication = std::get<eKillComplication>(it->second);
-			condsFirstToken = trim(condsFirstToken.substr(idx + 1));
-		}
-
-		if (condsFirstToken.empty()) return std::nullopt;
-
-		auto methodTokens = split(condsFirstToken, " ");
-		for (const auto& methodToken : methodTokens) {
-			auto it = Keyword::getMap().find(toLowerCase(methodToken));
-			if (it == end(Keyword::getMap())) {
-				Logger::Error("SPIN PARSE: Unknown keyword '{}'", methodToken);
-				continue;
-			}
-			if (!std::visit(overloaded {
-				[&killType](eKillType kt) { killType = kt; return true; },
-				[&killMethod](eKillMethod km) { killMethod = km; return true; },
-				[&mapKillMethod](eMapKillMethod mkm) { mapKillMethod = mkm; return true; },
-				[](eKillComplication kc) { return false; },
-			}, it->second)) continue;
-		}
-
-		if (killMethod == eKillMethod::NONE && mapKillMethod == eMapKillMethod::NONE)
-			continue;
-
-		auto disguiseName = trim(separatedConds[1]);
-
-		auto target = missionGen->getTargetByName(targetName);
-		if (!target) return std::nullopt;
-
-		auto disguise = missionGen->getDisguiseByName(disguiseName);
-		if (!disguise) {
-			Logger::Error("SPIN PARSE: Unknown disguise '{}'", disguiseName);
-			return std::nullopt;
-		}
-
-		spin.add(RouletteSpinCondition(*target, *disguise, killMethod, mapKillMethod, killType, complication));
-	}
-
-	auto mission = Missions::get(lastTargetMission);
-
-	if (spin.getConditions().size() < mission->getTargets().size())
-		return std::nullopt;
-
-	return spin;
-}
-
 auto Croupier::OnEngineInitialized() -> void {
 	Logger::Info("Croupier has been initialized!");
 
@@ -1667,6 +1582,10 @@ auto Croupier::Respin(bool isAuto) -> void {
 }
 
 auto Croupier::LogSpin() -> void {
+#ifndef _DEBUG
+	return;
+#endif
+
 	std::string spinText;
 	for (auto& cond : this->spin.getConditions()) {
 		if (!spinText.empty()) spinText += " || ";
@@ -1703,11 +1622,16 @@ auto Croupier::ImbueDisguiseEvent(const std::string& repoId) -> json {
 			{"IsSuit", outfit->m_bIsHitmanSuit},
 			{"OutfitType", outfit->m_eOutfitType},
 		});
-		if (gameplay.disguiseChange.havePinData)
-			json.merge_patch({
-				{"IsBundle" , gameplay.disguiseChange.wasFree},
-			});
 	}
+	if (gameplay.disguiseChange.havePinData) {
+		json.merge_patch({
+			{"IsBundle" , gameplay.disguiseChange.wasFree},
+		});
+		gameplay.disguiseChange.havePinData = false;
+		gameplay.disguiseChange.wasFree = false;
+	}
+
+	gameplay.disguiseChange = GameplayData::DisguiseChangeData{};
 	return json;
 }
 
@@ -1739,7 +1663,7 @@ auto Croupier::ImbuePacifyEvent(const PacifyEventValue& ev) -> std::optional<jso
 	if (!actorData) return std::nullopt;
 	auto const playerOutfitRepoId = ZRepositoryID(ev.OutfitRepositoryId);
 	auto const actorOutfit = actorData->disguiseRepoId ? this->GetOutfitByRepoId(*actorData->disguiseRepoId) : nullptr;
-	auto js = json{
+	return ImbuedPlayerLocation({
 		{"RepositoryId", ev.RepositoryId},
 		{"Accident", ev.Accident},
 		{"ActorName", ev.ActorName},
@@ -1775,9 +1699,7 @@ auto Croupier::ImbuePacifyEvent(const PacifyEventValue& ev) -> std::optional<jso
 			{"Y", actorData->transform.Trans.y},
 			{"Z", actorData->transform.Trans.z},
 		}},
-	};
-	ImbuePlayerLocation(js, true);
-	return js;
+	}, true);
 }
 
 auto Croupier::ImbuePlayerLocation(json& json, bool asHero) -> void {
@@ -1804,11 +1726,11 @@ auto Croupier::ImbuedPlayerLocation(json&& j, bool asHero) -> json {
 
 auto Croupier::SendCustomEvent(std::string_view name, json eventValue) -> void {
 	if (!this->client || !this->client->isConnected()) return;
-	json json = {
+	json js = {
 		{"Name", name},
 		{"Value", eventValue},
 	};
-	auto dump = json.dump();
+	auto dump = js.dump();
 	Logger::Debug("<--- {}", dump);
 	this->client->sendRaw(dump);
 }
@@ -1883,22 +1805,27 @@ auto Croupier::SetupEvents() -> void {
 		Logger::Info("Croupier: ContractFailed {}", ev.Value.value.dump());
 	});
 	events.listen<Events::StartingSuit>([this](const ServerEvent<Events::StartingSuit>& ev) {
-		this->SendCustomEvent("StartingSuit", this->ImbueDisguiseEvent(ev.Value.value));
+		this->SendCustomEvent("StartingSuit", ImbueDisguiseEvent(ev.Value.value));
 
 		if (this->spinCompleted) return;
 		this->sharedSpin.disguiseChanges.emplace_back(ev.Value.value, ev.Timestamp);
 	});
 	events.listen<Events::Disguise>([this](const ServerEvent<Events::Disguise>& ev) {
-		this->SendCustomEvent("Disguise", this->ImbueDisguiseEvent(ev.Value.value));
+		if (gameplay.disguiseChange.havePinData)
+			this->SendCustomEvent("Disguise", ImbueDisguiseEvent(ev.Value.value));
+		else {
+			gameplay.disguiseChange.haveEventData = true;
+			gameplay.disguiseChange.eventData = ev.Value.value;
+		}
 
 		if (this->spinCompleted) return;
 		this->sharedSpin.disguiseChanges.emplace_back(ev.Value.value, ev.Timestamp);
 	});
 	events.listen<Events::FriskedSuccess>([this](const ServerEvent<Events::FriskedSuccess>& ev) {
-		this->SendCustomEvent("FriskedSuccess", this->ImbuedPlayerLocation());
+		this->SendCustomEvent("FriskedSuccess", ImbuedPlayerLocation());
 	});
 	events.listen<Events::Dart_Hit>([this](const ServerEvent<Events::Dart_Hit>& ev) {
-		this->SendCustomEvent("DartHit", this->ImbuedPlayerLocation({
+		this->SendCustomEvent("DartHit", ImbuedPlayerLocation({
 			{"RepositoryId", ev.Value.RepositoryId},
 			{"ActorType", ev.Value.ActorType},
 			{"Blind", ev.Value.Blind},
@@ -3232,11 +3159,40 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 		case ZHMPin::ProjectileBodyShot:
 			SendCustomEvent("ProjectileBodyShot", ImbuedPlayerLocation());
 			break;
+		case ZHMPin::ExplosionAtPos: {
+			auto pos = data.As<SVector3>();
+			if (pos) {
+				auto area = this->sharedSpin.getArea(*pos);
+				SendCustomEvent("Explosion", ImbuedPlayerLocation({
+					{"Position", {
+						{"X", pos->x},
+						{"Y", pos->y},
+						{"Z", pos->z},
+					}},
+					{"Area", area ? area->ID : ""},
+					{"Room", ZRoomManagerCreator::GetRoomID({pos->x, pos->y, pos->z, 1.0})},
+				}, true));
+			}
+			else SendCustomEvent("Explosion", ImbuedPlayerLocation({}, true));
+			break;
+		}
+		case ZHMPin::OnTurnOn: {// ZEntity > ZCompositeEntity > ZCompositeEntity > ZCompositeEntity
+			auto setpieceHelpersDistractionTargetedResetable = entity.GetLogicalParent();
+			auto setpiece = entity.GetLogicalParent();
+			// ???
+			if (!parent || !parent.GetEntity()) break;
+			auto parentType = parent.GetEntity()->GetType();
+			if (!parentType) break;
+			auto parentTypeName = parentType->m_pInterfaces->operator[](0).m_pTypeId->typeInfo()->m_pTypeName;
+			
+			break;
+		}
+		//case ZHMPin::OnTurnOff: // ZEntity > ZCompositeEntity > ZCompositeEntity > ZCompositeEntity
+		//	break;
 		case ZHMPin::OnItemDestroyed: {
 			auto itemSpawner = entity.QueryInterface<ZItemSpawner>();
 			if (!itemSpawner) break;
 			if (!itemSpawner->m_rMainItemKey) break;
-			tracePin(pinId, entity, data);
 			auto repoId = itemSpawner->m_rMainItemKey.m_pInterfaceRef->m_RepositoryId.ToString();
 			auto pos = itemSpawner->GetWorldMatrix().Pos;
 			auto area = this->sharedSpin.getArea(itemSpawner->m_mTransform.Trans);
@@ -3362,9 +3318,11 @@ DEFINE_PLUGIN_DETOUR(Croupier, bool, OnPinOutput, ZEntityRef entity, uint32_t pi
 			// ZClothBundleSpawnEntity
 			gameplay.disguiseChange.havePinData = true;
 			gameplay.disguiseChange.wasFree = true;
+			if (gameplay.disguiseChange.haveEventData)
+				this->SendCustomEvent("Disguise", ImbueDisguiseEvent(gameplay.disguiseChange.eventData));
 			//SendCustomEvent("OnDestroyClothBundle", ImbuedPlayerLocation());
 			break;
-		case ZHMPin::OutfitTaken: {
+		case ZHMPin::OnOutfitTaken: {
 			// ZActorOutfitListener
 			gameplay.disguiseChange.havePinData = true;
 			gameplay.disguiseChange.wasFree = false;

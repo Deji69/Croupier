@@ -2,6 +2,8 @@
 #include "CroupierClient.h"
 #include "Events.h"
 #include "EventSystem.h"
+#include "InputUtil.h"
+#include "json.hpp"
 #include "KillConfirmation.h"
 #include "Roulette.h"
 #include <Hooks.h>
@@ -84,7 +86,9 @@ struct Area {
 struct GameplayData {
 	struct DisguiseChangeData {
 		bool havePinData = false;
-		bool wasFree = false;
+		bool haveEventData = false;
+		bool wasFree = true;
+		nlohmann::json eventData;
 	};
 
 	DisguiseChangeData disguiseChange;
@@ -399,7 +403,6 @@ private:
 	auto ProcessMissionsMessage(const ClientMessage& message) -> void;
 	auto ProcessSpinDataMessage(const ClientMessage& message) -> void;
 	auto ProcessLoadRemoval() -> void;
-	auto ParseSpin(std::string_view str) -> std::optional<RouletteSpin>;
 
 	DECLARE_PLUGIN_DETOUR(Croupier, void*, OnZLevelManagerStateCondition, void* th, __int64 a2);
 	DECLARE_PLUGIN_DETOUR(Croupier, void*, OnLoadingScreenActivated, void* th, void* a1);
