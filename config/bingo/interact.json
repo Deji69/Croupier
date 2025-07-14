@@ -1,5 +1,16 @@
 [
 	{
+		"Name": "Blend In",
+		"Tip": "Enter {0} hidden-in-plain-sight blending spot(s).",
+		"Group": "Interact",
+		"Tags": ["Action", "Interact"],
+		"Setpiece": {
+			"Type": ["HIPS_Enter"],
+			"Unique": "Position",
+			"Count": 1
+		}
+	},
+	{
 		"Name": "Enter {1} Containers",
 		"NameSingular": "Enter {1} Container",
 		"Tip": "Hide in {0} different crates/closets/containers.",
@@ -9,17 +20,6 @@
 			"Type": ["Enter_Closet", "Enter_Crate"],
 			"Unique": "Position",
 			"Count": 3
-		}
-	},
-	{
-		"Name": "Blend In",
-		"Tip": "Enter {0} hidden-in-plain-sight blending spot(s).",
-		"Group": "Interact",
-		"Tags": ["Action", "Interact"],
-		"Setpiece": {
-			"Type": ["HIPS_Enter"],
-			"Unique": "Position",
-			"Count": 1
 		}
 	},
 	{
@@ -50,6 +50,16 @@
 		"Tags": ["Action", "Interact"],
 		"Setpiece": {
 			"Name": "FireAlarm"
+		}
+	},
+	{
+		"Name": "Call in Code 17",
+		"Tip": "Use the Bodyguard's Phone to call in a code 17.",
+		"Group": "Interact",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Action", "Interact"],
+		"LevelSetupEvent": {
+			"Event": "EvacuationTriggered"
 		}
 	},
 	{
@@ -134,6 +144,16 @@
 		"Tags": ["Action", "Interact"],
 		"Setpiece": {
 			"Name": "Paris_Cocktail_Recipe"
+		}
+	},
+	{
+		"Name": "Sabotage Auction",
+		"Tip": "Use the laptop dongle to sabotage the auction.",
+		"Group": "Interact",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Action", "Interact"],
+		"Setpiece": {
+			"RepositoryId": "e42cd800-eabe-45c9-b81e-acf1844a63af"
 		}
 	}
 ]

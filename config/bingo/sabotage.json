@@ -22,6 +22,20 @@
 		}
 	},
 	{
+		"Name": "Drop {1} Suspended Objects",
+		"NameSingular": "Drop {1} Suspended Object",
+		"Tip": "Cause {0} chandeliers or other suspended objects to fall.",
+		"Group": "Interact",
+		"Missions": [
+			"The Showstopper", "Holiday Hoarders"
+		],
+		"Tags": ["Action", "Interact"],
+		"Setpiece": {
+			"RepositoryId": "2d7a91b9-1b3a-4db3-a8bf-6249db70c339",
+			"Count": 3
+		}
+	},
+	{
 		"Name": "Ignite Oil Drum",
 		"Tip": "Leak and ignite an oil barrel like a pyromaniac.",
 		"Group": "Sabotage",

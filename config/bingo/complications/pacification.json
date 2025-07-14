@@ -113,7 +113,7 @@
 	{
 		"Name": "Only Same Disguise KOs",
 		"Type": "Complication",
-		"Tip": "Only pacify NPCs whose disguise you are wearing.",
+		"Tip": "You may only pacify NPCs whose disguise you are wearing.",
 		"Group": "Pacification",
 		"Difficulty": "High",
 		"Pacify": {
