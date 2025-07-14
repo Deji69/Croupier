@@ -16,6 +16,90 @@
 		}
 	],
 	"Tiles": [
+		// Disguise Objectives
+		{
+			"Name": "Auction Staff",
+			"Group": "Disguise",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Tags": ["Disguise", "Civilian"],
+			"Disguise": ["b5664bed-462a-417c-bc07-6d9d3f666e2d"]
+		},
+		{
+			"Name": "Chef",
+			"Group": "Disguise",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Tags": ["Disguise", "Civilian"],
+			"Disguise": ["26ae3261-2a1d-49b2-8cab-d626d0887836"]
+		},
+		{
+			"Name": "CICADA Bodyguard",
+			"Group": "Disguise",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Tags": ["Disguise", "Guard"],
+			"Disguise": ["d2c76544-3a12-43a8-abc3-c7ce51830c1e"]
+		},
+		{
+			"Name": "Helmut Kruger",
+			"Group": "Disguise",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Tags": ["Disguise", "Unique", "Civilian"],
+			"Disguise": ["642c20f9-bf41-41b4-b0bb-2491b5be938a"]
+		},
+		{
+			"Name": "Palace Staff",
+			"Group": "Disguise",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Tags": ["Disguise", "Free", "Civilian"],
+			"Disguise": ["2018db77-aa8a-4bf9-9afb-56bdaa161156"]
+		},
+		{
+			"Name": "Security Guard",
+			"Group": "Disguise",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Tags": ["Disguise", "Guard"],
+			"Disguise": ["992cc7b6-4ccf-4ae8-a467-e9b2aabaeeb5"]
+		},
+		{
+			"Name": "Sheikh",
+			"Group": "Disguise",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Tags": ["Disguise", "Unique", "Civilian"],
+			"Disguise": ["a8ecd823-6e08-4cfe-a04d-816d387fcf0c"]
+		},
+		{
+			"Name": "Stylist",
+			"Group": "Disguise",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Tags": ["Disguise", "Free", "Civilian"],
+			"Disguise": ["96e32a7a-129a-4dd6-9b5b-3000a58f2a0f"]
+		},
+		{
+			"Name": "Tech Crew",
+			"Group": "Disguise",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Tags": ["Disguise", "Civilian"],
+			"Disguise": ["69aac6db-461e-43af-89bc-2c27e50d430f"]
+		},
+		{
+			"Name": "Vampire Magician",
+			"Group": "Disguise",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Tags": ["Disguise", "Unique", "Free", "Civilian"],
+			"Disguise": ["1fdc259e-b96a-47f2-bbd8-e86e78d6df70"]
+		},
+	
+		// Pacify Objectives
+		{
+			"Name": "Max Decker",
+			"Tip": "Pacify Max Decker by any means.",
+			"Group": "Pacify",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Tags": ["Action", "Pacify"],
+			"Pacify": {
+				"RepositoryId": "19dd4206-5386-4a88-9899-0e1bd46d2805"
+			}
+		},
+	
 		// Action Complications
 		{
 			"Name": "No Shooting Indoors",
@@ -259,14 +343,14 @@
 			}
 		},
 		{
-			"Name": "No Entry: Public Restrooms",
+			"Name": "No Entry: Restrooms",
 			"Type": "Complication",
-			"Tip": "Avoid all common area bathrooms. This excludes en-suite bathrooms.",
+			"Tip": "Avoid entering any restrooms or bathrooms.",
 			"Group": "Location",
 			"Missions": ["The Showstopper", "Holiday Hoarders"],
 			"Difficulty": "Medium",
 			"EnterRoom": {
-				"Room": [7, 12, 27, 45, 49, 58, 76]
+				"Room": [7, 12, 27, 45, 49, 58, 76, 21, 63]
 			}
 		},
 		{

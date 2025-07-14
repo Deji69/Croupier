@@ -40,6 +40,25 @@
 		}
 	},
 	{
+		"Name": "In Accident",
+		"Tip": "Perform an accident pacification on any NPC.",
+		"Group": "Pacify",
+		"Tags": ["Action", "Pacify"],
+		"Pacify": {
+			"Accident": true
+		}
+	},
+	{
+		"Name": "With Golf Club",
+		"Tip": "Pacify any NPC with the golf club from the Museum Owner's Study.",
+		"Group": "Pacify",
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Tags": ["Action", "Pacify"],
+		"Pacify": {
+			"KillItemRepositoryId": "17615866-32e7-4e1e-951d-7ef2ada796e9"
+		}
+	},
+	{
 		"Name": "With Piano",
 		"Tip": "Pacify any NPC by pushing the pin on the piano.",
 		"Group": "Pacify",
@@ -57,26 +76,6 @@
 		"Tags": ["Action", "Pacify"],
 		"Pacify": {
 			"KillItemRepositoryId": "510c62c2-1f40-4a4d-9e42-da677bd116e7"
-		}
-	},
-	{
-		"Name": "With Golf Club",
-		"Tip": "Pacify any NPC with the golf club from the Museum Owner's Study.",
-		"Group": "Pacify",
-		"Missions": ["The Showstopper", "Holiday Hoarders"],
-		"Tags": ["Action", "Pacify"],
-		"Pacify": {
-			"KillItemRepositoryId": "17615866-32e7-4e1e-951d-7ef2ada796e9"
-		}
-	},
-	{
-		"Name": "Helmut Kruger",
-		"Tip": "Pacify Helmut Kruger by any means.",
-		"Group": "Pacify",
-		"Missions": ["The Showstopper", "Holiday Hoarders"],
-		"Tags": ["Action", "Pacify"],
-		"Pacify": {
-			"RepositoryId": "ab22f88d-f567-43a2-b20f-0ecc17257ffe"
 		}
 	}
 ]
