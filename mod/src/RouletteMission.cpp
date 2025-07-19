@@ -1485,6 +1485,18 @@ auto Missions::get(eMission id) -> const RouletteMission* {
 	return &*it;
 }
 
+RouletteMission::RouletteMission(eMission mission) : mission(mission), mapKillMethods(getMissionMethods(mission)), disguises(getMissionDisguises(mission))
+{ }
+
+auto RouletteMission::getObjectiveCount() const -> size_t {
+	return this->targets.size();
+}
+
+auto RouletteMission::addTarget(eTargetID id, std::string name, std::string image, eTargetType type) -> RouletteTarget& {
+	this->targets.emplace_back(id, name, image, type);
+	return this->targets.back();
+}
+
 auto RouletteMission::getTargetByName(std::string_view name) const -> const RouletteTarget* {
 	auto it = find_if(cbegin(this->targets), cend(this->targets), [name](const RouletteTarget& target) {
 		return target.getName() == name;

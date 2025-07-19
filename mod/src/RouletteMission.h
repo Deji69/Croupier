@@ -1,6 +1,7 @@
 #pragma once
 #include <optional>
 #include <string>
+#include <string_view>
 #include <unordered_map>
 #include "Disguise.h"
 #include "Exception.h"
@@ -123,14 +124,14 @@ inline auto getMissionCodename(eMission mission) -> std::optional<std::string_vi
 class RouletteMission
 {
 public:
-	RouletteMission(eMission mission) : mission(mission), mapKillMethods(getMissionMethods(mission)), disguises(getMissionDisguises(mission))
-	{ }
+	RouletteMission(eMission mission);
 
-	auto getMission() const { return this->mission; }
-	auto& getDisguises() const { return this->disguises; }
-	auto& getTargets() const { return this->targets; }
-	auto& getMapKillMethods() const { return this->mapKillMethods; }
-	auto getObjectiveCount() const { return this->targets.size(); }
+	inline auto getMission() const { return this->mission; }
+	inline auto& getDisguises() const { return this->disguises; }
+	inline auto& getTargets() const { return this->targets; }
+	inline auto& getMapKillMethods() const { return this->mapKillMethods; }
+
+	auto getObjectiveCount() const -> size_t;
 
 	auto getSuitDisguise() const {
 		auto it = find_if(cbegin(this->disguises), cend(this->disguises), [](const RouletteDisguise& disguise) { return disguise.suit; });
@@ -153,10 +154,7 @@ public:
 
 	auto getTargetByName(std::string_view name) const -> const RouletteTarget*;
 
-	auto& addTarget(eTargetID id, std::string name, std::string image, eTargetType type = eTargetType::Normal) {
-		this->targets.emplace_back(id, name, image, type);
-		return this->targets.back();
-	}
+	auto addTarget(eTargetID id, std::string name, std::string image, eTargetType type = eTargetType::Normal) -> RouletteTarget&;
 
 private:
 	eMission mission = eMission::NONE;

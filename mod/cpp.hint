@@ -1,0 +1,4 @@
+// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
+// such as names of functions and macros.
+// For more information see https://go.microsoft.com/fwlink/?linkid=865984
+#define DEFINE_ZHM_PLUGIN(PluginClass) static IPluginInterface* g_##PluginClass##_Instance = nullptr; extern "C" __declspec(dllexport) IPluginInterface* GetPluginInterface() { if (g_##PluginClass##_Instance == nullptr) g_##PluginClass##_Instance = new PluginClass(); return g_##PluginClass##_Instance; }

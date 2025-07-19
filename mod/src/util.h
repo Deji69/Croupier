@@ -88,6 +88,8 @@ inline auto toUpperCase(std::string_view p_String) -> std::string
 
 struct InsensitiveCompareLexicographic
 {
+	using is_transparent = int;
+
 	auto operator()(std::string_view a, std::string_view b) const -> bool {
 		return std::lexicographical_compare(a.begin(), a.end(), b.begin(), b.end(), [](unsigned char a, unsigned char b) {
 			return std::tolower(a) < std::tolower(b);

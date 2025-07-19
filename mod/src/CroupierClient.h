@@ -7,6 +7,9 @@
 #include <thread>
 #include <vector>
 #include <Windows.h>
+#include <winsock.h>
+#include "Events.h"
+#include "RouletteMission.h"
 
 enum class eClientMessage {
 	Spin,

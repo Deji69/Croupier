@@ -80,6 +80,10 @@ auto ClientMessage::toString() const -> std::string {
 
 CroupierClient::CroupierClient() {}
 
+CroupierClient::~CroupierClient() {
+	if (this->keepOpen) this->abort();
+}
+
 auto CroupierClient::reconnect() -> bool {
 	if (!this->keepOpen) return false;
 	if (this->connected) return true;
@@ -241,10 +245,6 @@ auto CroupierClient::abort() -> void {
 
 	WSACleanup();
 	Logger::Info("Croupier Shutdown - Socket client ended.");
-}
-
-CroupierClient::~CroupierClient() {
-	if (this->keepOpen) this->abort();
 }
 
 auto CroupierClient::writeMessage(const ClientMessage& msg) -> bool {
