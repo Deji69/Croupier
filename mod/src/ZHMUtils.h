@@ -1,5 +1,7 @@
 #pragma once
+#include <string_view>
 #include <EngineFunction.h>
+#include <Glacier/Hash.h>
 #include <Glacier/TArray.h>
 #include <Glacier/ZGameUIManager.h>
 #include <Glacier/ZHitman5.h>
@@ -12,7 +14,90 @@
 #include <Hooks.h>
 #include <IPluginInterface.h>
 #include <Logging.h>
+#include <memory>
+#include <optional>
 #include "ProcessUtils.h"
+
+inline auto GetPropertyIDs(ZEntityRef s_Entity) -> std::vector<std::pair<uint32, std::string_view>> {
+    if (!s_Entity || !*Globals::MemoryManager)
+		return {};
+
+    const auto s_Type = s_Entity->GetType();
+
+    if (!s_Type) return {};
+
+	std::vector<std::pair<uint32, std::string_view>> vec;
+
+    for (uint32_t i = 0; i < s_Type->m_pProperties01->size(); ++i) {
+        const ZEntityProperty* s_Property = &s_Type->m_pProperties01->operator[](i);
+		const auto* s_PropertyInfo = s_Property->m_pType->getPropertyInfo();
+		const std::string_view s_TypeName = s_PropertyInfo->m_pType->typeInfo()->m_pTypeName;
+		vec.emplace_back(s_Property->m_nPropertyId, s_TypeName);
+    }
+
+    return vec;
+}
+
+// Workaround for ZHM method not handling non default constructible types
+template<typename T>
+inline auto GetValueProperty(ZEntityRef s_Entity, const uint32_t nPropertyID) -> std::unique_ptr<T, std::function<void(T*)>> {
+    if (!s_Entity || !*Globals::MemoryManager)
+        return nullptr;
+
+    const auto s_Type = s_Entity->GetType();
+
+    if (!s_Type)
+        return nullptr;
+
+    for (uint32_t i = 0; i < s_Type->m_pProperties01->size(); ++i) {
+        const ZEntityProperty* s_Property = &s_Type->m_pProperties01->operator[](i);
+
+        if (s_Property->m_nPropertyId != nPropertyID)
+            continue;
+
+        const auto* s_PropertyInfo = s_Property->m_pType->getPropertyInfo();
+
+		if (!s_PropertyInfo || !s_PropertyInfo->m_pType)
+			continue;
+
+        const auto s_PropertyAddress = reinterpret_cast<uintptr_t>(s_Entity.m_pEntity) + s_Property->m_nOffset;
+
+        const uint16_t s_TypeSize = s_PropertyInfo->m_pType->typeInfo()->m_nTypeSize;
+        const uint16_t s_TypeAlignment = s_PropertyInfo->m_pType->typeInfo()->m_nTypeAlignment;
+		const std::string_view s_TypeName = s_PropertyInfo->m_pType->typeInfo()->m_pTypeName;
+
+        auto* s_Data = (*Globals::MemoryManager)->m_pNormalAllocator->AllocateAligned(s_TypeSize, s_TypeAlignment);
+		if (!s_Data) break;
+
+        if (s_PropertyInfo->m_nFlags & EPropertyInfoFlags::E_HAS_GETTER_SETTER) {
+            s_PropertyInfo->get(reinterpret_cast<void*>(s_PropertyAddress), s_Data, s_PropertyInfo->m_nOffset);
+        }
+        else {
+            s_PropertyInfo->m_pType->typeInfo()->m_pTypeFunctions->copyConstruct(
+                s_Data, reinterpret_cast<void*>(s_PropertyAddress)
+            );
+        }
+
+		return std::unique_ptr<T, std::function<void(T*)>>(reinterpret_cast<T*>(s_Data), [s_Data](T*) {
+			(*Globals::MemoryManager)->m_pNormalAllocator->Free(s_Data);
+		});
+    }
+
+    return nullptr;
+}
+
+template<typename T>
+inline auto GetValueProperty(ZEntityRef s_Entity, const ZString& p_PropertyName) -> std::unique_ptr<T, std::function<void(T*)>> {
+    return GetValueProperty<T>(s_Entity, Hash::Crc32(p_PropertyName.c_str(), p_PropertyName.size()));
+}
+
+template<typename T>
+inline auto QueryAnyParent(ZEntityRef entity) -> T* {
+	if (!entity) return nullptr;
+	auto interf = entity.QueryInterface<T>();
+	if (interf) return interf;
+	return QueryAnyParent<T>(entity.GetLogicalParent());
+}
 
 class IItemWeapon : public IComponentInterface
 {
@@ -32,7 +117,7 @@ class ZHM5ItemWeapon :
 	public IFirearm // Offset 0x448 
 {
 public:
-	PAD(0x4);
+	uint32 unk;
 	eWeaponType m_WeaponType; // 0x464
 	ZRuntimeResourceID m_ridClipTemplate; // 0x468
 	EWeaponAnimationCategory m_eAnimationCategory; // 0x470
@@ -55,6 +140,32 @@ public:
 	ZEntityRef m_rSpecialImpactAct; // 0x528
 	ZEntityRef m_rSuperSpecialTriggerEffect; // 0x530
 	PAD(0x398);
+};
+
+// 0x0000000144540BF0 (Size: 0x4C0)
+class ZHM5ItemCCWeapon : public ZHM5Item, public IItemWeapon
+{
+public:
+	ECCWeaponAnimSet m_eAnimSetFrontSide; // 0x448
+	ECCWeaponAnimSet m_eAnimSetBack; // 0x44C
+	PAD(0x18); // TArray<TEntityRef<ZCCEffectSetEntity>> m_aEffectSetsFrontSide; // 0x450
+	PAD(0x18); // TArray<TEntityRef<ZCCEffectSetEntity>> m_aEffectSetsBack; // 0x468
+	EActorSoundDefs m_eDeathSpeakFront; // 0x480
+	EActorSoundDefs m_eDeathSpeakBack; // 0x484
+	EActorSoundDefs m_eReactionSpeak; // 0x488
+	EDeathType m_eDeathTypeFront; // 0x48C
+	EDeathType m_eDeathTypeBack; // 0x490
+	int32 m_nLifeSpan; // 0x494
+	bool m_bCountsAsFiberWire; // 0x498
+	TEntityRef<ZValueBool> m_rCCWeaponBroken; // 0x4A0
+};
+
+class ZKeywordEntity : public ZEntityImpl
+{
+public:
+	ZString m_sKeyword; // 0x18
+	ZEntityRef m_rHolder; // 0x28
+	TArray<ZEntityRef> m_aHolders; // 0x30
 };
 
 class ZVIPControllerEntity : public ZEntityImpl

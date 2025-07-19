@@ -2,6 +2,7 @@
 #include <map>
 #include <string>
 #include <string_view>
+#include <Glacier/ZRepository.h>
 #include "util.h"
 
 enum class eTargetType {
@@ -106,9 +107,9 @@ enum class eTargetID {
 	SinhiAkkaVenthan,
 };
 
-extern std::map<std::string, eTargetID, InsensitiveCompareLexicographic> targetsByRepoId;
+extern std::map<ZRepositoryID, eTargetID> targetsByRepoId;
 
-inline auto GetTargetByRepoID(const std::string& repoId) -> eTargetID {
+inline auto GetTargetByRepoID(ZRepositoryID repoId) -> eTargetID {
 	auto it = targetsByRepoId.find(repoId);
 	return it != end(targetsByRepoId) ? it->second : eTargetID::Unknown;
 }
