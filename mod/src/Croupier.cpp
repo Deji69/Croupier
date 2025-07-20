@@ -698,10 +698,12 @@ auto CroupierPlugin::ImbueItemInfo(ZEntityRef entity, json& j) -> void {
 	if (!item) return;
 	auto ccWeapon = QueryAnyParent<ZHM5ItemCCWeapon>(entity);
 	auto isFiberWire = ccWeapon && ccWeapon->m_bCountsAsFiberWire;
-	std::string itemType;
-	std::string itemSize;
 	
 	if (const auto desc = item->m_pItemConfigDescriptor) {
+		std::string itemType;
+		std::string itemSize;
+		std::vector<std::string> perks;
+
 		if (repositoryResource.m_nResourceIndex == -1) {
 			const auto s_ID = ResId<"[assembly:/repository/pro.repo].pc_repo">;
 			Globals::ResourceManager->GetResourcePtr(repositoryResource, s_ID, 0);
@@ -715,9 +717,14 @@ auto CroupierPlugin::ImbueItemInfo(ZEntityRef entity, json& j) -> void {
 					if (entries) {
 						for (size_t i = 0; i < entries->size(); ++i) {
 							auto const& entry = (*entries)[i];
-							if (entry.sKey != "ItemType") continue;
-							itemType = *entry.value.As<ZString>();
-							break;
+							if (entry.sKey == "ItemType")
+								itemType = *entry.value.As<ZString>();
+							else if (entry.sKey == "Perks") {
+								auto perksArr = entry.value.As<TArray<ZString>>();
+								if (!perksArr) continue;
+								perks = std::vector<std::string>{perksArr->begin(), perksArr->end()};
+							}
+							else continue;
 						}
 					}
 				}
@@ -728,6 +735,9 @@ auto CroupierPlugin::ImbueItemInfo(ZEntityRef entity, json& j) -> void {
 			{"ItemName", desc->m_sTitle},
 			{"ItemInstanceId", reinterpret_cast<uintptr_t>(item)},
 			{"ItemRepositoryId", desc->m_RepositoryId.ToString()},
+			{"RepositoryItemSize", itemSize},
+			{"RepositoryItemType", itemType},
+			{"RepositoryPerks", perks},
 		});
 	}
 
@@ -749,8 +759,6 @@ auto CroupierPlugin::ImbueItemInfo(ZEntityRef entity, json& j) -> void {
 		{"IsCloseCombatWeapon", ccWeapon != nullptr},
 		{"IsFiberWire", isFiberWire},
 		{"IsFirearm", QueryAnyParent<IFirearm>(entity) != nullptr},
-		{"RepositoryItemType", itemType},
-		{"RepositoryItemSize", itemSize},
 	});
 }
 
@@ -2079,7 +2087,7 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 			const auto& trans = this->state.playerMatrix.Trans;
 			auto pos = float4{trans.x, trans.y, trans.z, 1.0};
 			if (this->gameplay.playerBodyShotPos != pos) {
-			SendCustomEvent("ProjectileBodyShot"sv, ImbuedPlayerLocation());
+				SendCustomEvent("ProjectileBodyShot"sv, ImbuedPlayerLocation());
 				this->gameplay.playerBodyShotPos = pos;
 			}
 			break;
