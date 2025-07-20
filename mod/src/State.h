@@ -78,6 +78,7 @@ namespace Croupier
 		};
 
 		DisguiseChangeData disguiseChange;
+		float4 playerBodyShotPos;
 		bool playerIsDragging = false;
 		bool sentPlayerDraggingEvent = false;
 	};
