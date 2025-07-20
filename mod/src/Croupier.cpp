@@ -2234,6 +2234,7 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 			if (spatial) {
 				auto trans = spatial->m_mTransform.Trans;
 				auto area = this->state.getArea(trans);
+				auto roomId = ZRoomManagerCreator::GetRoomID(spatial->GetWorldMatrix().Pos);
 				json.merge_patch({
 					{"CarPosition", {
 						{"X", trans.x},
@@ -2241,6 +2242,7 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 						{"Z", trans.z},
 					}},
 					{"CarArea", area ? area->ID : ""},
+					{"CarRoom", roomId},
 				});
 			}
 			SendCustomEvent("CarExploded"sv, ImbuedPlayerLocation(std::move(json)));
