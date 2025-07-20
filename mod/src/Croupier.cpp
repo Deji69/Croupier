@@ -2088,9 +2088,15 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 			this->state.playerInInstinct = true;
 			this->state.playerInInstinctSinceFrame = true;
 			break;
-		case ZHMPin::ProjectileBodyShot:
+		case ZHMPin::ProjectileBodyShot: {
+			const auto& trans = this->state.playerMatrix.Trans;
+			auto pos = float4{trans.x, trans.y, trans.z, 1.0};
+			if (this->gameplay.playerBodyShotPos != pos) {
 			SendCustomEvent("ProjectileBodyShot"sv, ImbuedPlayerLocation());
+				this->gameplay.playerBodyShotPos = pos;
+			}
 			break;
+		}
 		case ZHMPin::ExplosionAtPos: {
 			auto pos = data.As<SVector3>();
 			if (pos) {
