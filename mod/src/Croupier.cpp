@@ -1967,6 +1967,7 @@ static std::set<std::string> eventsNotToSend = {
 	"Disguise",
 	"Door_Unlocked",
 	"Drain_Pipe_Climbed",
+	"FriskedSuccess",
 	"ItemThrown",
 	"Kill",
 	"Pacify",
