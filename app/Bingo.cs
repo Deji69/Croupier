@@ -8,10 +8,16 @@ using System.Windows;
 using System.Windows.Media;
 
 namespace Croupier {
-	public class BingoGroup(string id, string name) {
-		public string ID { get; set; } = id;
+	public enum BingoTileType {
+		Objective,
+		Complication,
+		Mixed,
+	}
+
+	public class BingoGroup(string name) {
 		public string Name { get; set; } = name;
 		public bool Hidden { get; set; } = false;
+		public BingoTileType Type { get; set; } = BingoTileType.Mixed;
 		public string? Tip { get; set; }
 		public string? Color {
 			get => color;
@@ -20,22 +26,29 @@ namespace Croupier {
 
 		private string? color = null;
 
-		public static BingoGroup FromJson(string id, JsonElement json) {
+		public static BingoGroup FromJson(JsonElement json) {
 			if (!json.TryGetProperty("Name", out var nameProp))
-				throw new BingoTileConfigException($"Missing property 'Name' for group with ID '{id}'.");
+				throw new BingoTileConfigException($"Missing property 'Name' for group.");
 			if (nameProp.ValueKind != JsonValueKind.String)
-				throw new BingoTileConfigException($"Invalid type of property 'Name' for group with ID '{id}', expected string.");
+				throw new BingoTileConfigException($"Invalid type {nameProp.ValueKind} of property 'Name' for group, expected string.");
 
 			var name = nameProp.GetString()!;
 			var color = json.TryGetProperty("Color", out var colorProp) ? colorProp.GetString() : null;
 			var hidden = json.TryGetProperty("Hidden", out var hiddenProp) && hiddenProp.GetBoolean();
 			var tip = json.TryGetProperty("Tip", out var tipProp) ? tipProp.GetString() : null;
 			if (color != null)
-				_ = new BrushConverter().ConvertFromString(color) ?? throw new BingoTileConfigException($"Invalid Color property for group with ID '{id}'.");
-			return new(id, name) {
+				_ = new BrushConverter().ConvertFromString(color) ?? throw new BingoTileConfigException($"Invalid 'Color' property for group '{name}'.");
+			var type = json.TryGetProperty("Type", out var typeProp) ? typeProp.GetString() : null;
+
+			return new(name) {
 				Color = color,
 				Tip = tip,
 				Hidden = hidden,
+				Type = type switch {
+					"Objective" => BingoTileType.Objective,
+					"Complication" => BingoTileType.Complication,
+					_ => BingoTileType.Mixed,
+				},
 			};
 		}
 	}
@@ -197,6 +210,9 @@ namespace Croupier {
 		}
 
 		private void LoadTilesFromJson(JsonElement json) {
+			if (json.ValueKind != JsonValueKind.Array)
+				throw new BingoConfigException("Expected array.");
+
 			foreach (var item in json.EnumerateArray()) {
 				if (item.ValueKind != JsonValueKind.Object)
 					throw new BingoTileConfigException($"Expected object for bingo tile array entry, found {item.ValueKind}.");
@@ -207,14 +223,14 @@ namespace Croupier {
 		}
 
 		private void LoadGroupsFromJson(JsonElement json) {
-			if (json.ValueKind != JsonValueKind.Object)
-				throw new BingoConfigException("Expected object.");
+			if (json.ValueKind != JsonValueKind.Array)
+				throw new BingoConfigException("Expected array.");
 
-			using var jsonArray = json.EnumerateObject();
-			foreach (var elem in jsonArray) {
-				if (elem.Value.ValueKind != JsonValueKind.Object)
-					throw new BingoTileConfigException($"Invalid bingo group entry ({elem.Name}).");
-				var group = BingoGroup.FromJson(elem.Name, elem.Value);
+			foreach (var elem in json.EnumerateArray()) {
+				if (elem.ValueKind != JsonValueKind.Object)
+					throw new BingoTileConfigException($"Invalid bingo group entry ({elem.ValueKind}).");
+
+				var group = BingoGroup.FromJson(elem);
 				Groups.Add(group);
 			}
 		}

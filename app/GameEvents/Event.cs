@@ -1,6 +1,6 @@
-﻿using Octokit;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Croupier.GameEvents {
@@ -53,6 +53,30 @@ namespace Croupier.GameEvents {
 		eDT_BLOODY_KILL = 3,
 	}
 
+	public enum EWeaponAnimationCategory {
+		eWAC_Undefined = 0,
+		eWAC_Pistol = 1,
+		eWAC_Revolver = 2,
+		eWAC_SMG_2H = 3,
+		eWAC_SMG_1H = 4,
+		eWAC_Rifle = 5,
+		eWAC_Sniper = 6,
+		eWAC_Shotgun_Pump = 7,
+		eWAC_Shotgun_Semi = 8,
+	};
+
+	public enum EWeaponType {
+		WT_HANDGUN      = 0,
+		WT_SLOWGUN      = 1,
+		WT_ASSAULTRIFLE = 2,
+		WT_SMG          = 3,
+		WT_SNIPER       = 4,
+		WT_RPG          = 5,
+		WT_KNIFE        = 6,
+		WT_SHOTGUN      = 7,
+		WT_SPOTTER      = 8,
+	};
+
 	public enum SecuritySystemRecorderEvent {
 		Undefined,
 		Spotted,
@@ -68,7 +92,39 @@ namespace Croupier.GameEvents {
 	}
 
 	public class EventValue {
+	}
 
+	public class ActorInfoImbuedEventValue : EventValue {
+		public string? ActorName { get; set; }
+		public string? ActorRepositoryId { get; set; }
+		public string? ActorOutfitRepositoryId { get; set; }
+		public EActorType? ActorType { get; set; }
+		public int? ActorWeaponIndex { get; set; }
+		public bool? ActorHasDisguise { get; set; }
+		public bool? ActorIsAuthorityFigure { get; set; }
+		public bool? ActorIsDead { get; set; }
+		public bool? ActorIsFemale { get; set; }
+		public bool? ActorIsPacified { get; set; }
+		public bool? ActorIsTarget { get; set; }
+		public bool? ActorOutfitAllowsWeapons { get; set; }
+		public bool? ActorWeaponUnholstered { get; set; }
+	}
+
+	public class ItemInfoImbuedEventValue : EventValue {
+		public string? ItemName { get; set; }
+		public UInt64? ItemInstanceId { get; set; }
+		public string? ItemRepositoryId { get; set; }
+		public string? WeaponAnimFrontSide { get; set; }
+		public string? WeaponAnimBack { get; set; }
+		public bool? IsScopedWeapon { get; set; }
+		public EWeaponAnimationCategory? WeaponAnimationCategory { get; set; }
+		public EWeaponType? WeaponType { get; set; }
+		public bool? IsCloseCombatWeapon { get; set; }
+		public bool? IsFiberWire { get; set; }
+		public bool? IsFirearm { get; set; }
+		public string? RepositoryItemType { get; set; }
+		public string? RepositoryItemSize { get; set; }
+		public List<string>? RepositoryPerks { get; set; }
 	}
 
 	public class LocationImbuedEventValue : EventValue {
@@ -80,6 +136,9 @@ namespace Croupier.GameEvents {
 		public string? HeroArea { get; set; }
 		public SVector3? HeroPosition { get; set; }
 		public int? HeroRoom { get; set; }
+		public string? ItemArea { get; set; }
+		public SVector3? ItemPosition { get; set; }
+		public int? ItemRoom { get; set; }
 		public bool? IsCrouching { get; set; }
 		public bool? IsIdle { get; set; }
 		public bool? IsRunning { get; set; }
@@ -89,11 +148,9 @@ namespace Croupier.GameEvents {
 	}
 
 	public class DoorUnlockedEventValue : LocationImbuedEventValue {
-
 	}
 
 	public class DoorBrokenEventValue : LocationImbuedEventValue {
-
 	}
 
 	public class LoadoutItemEventValue {
@@ -165,14 +222,6 @@ namespace Croupier.GameEvents {
 	}
 
 	public class KillEventValue : PacifyEventValue {
-	}
-
-	public class StringEventValue(string val) : EventValue {
-		public string Value { get; set; } = val;
-	}
-
-	public class StringArrayEventValue(List<string> val) : EventValue {
-		public List<string> Value { get; set; } = val;
 	}
 
 	public class TakedownCleannessEventValue : EventValue {
@@ -279,10 +328,21 @@ namespace Croupier.GameEvents {
 		public required EActorType ActorType { get; set; }
 	}
 
-	public class PlayerShotEventValue : LocationImbuedEventValue {
+	public class PlayerShotEventValue : EventValue {
+		public required ItemInfoImbuedEventValue Weapon;
+		public required LocationImbuedEventValue Location;
+
+		public static PlayerShotEventValue? Load(JsonElement json) {
+			var weapon = json.Deserialize<ItemInfoImbuedEventValue>();
+			var location = json.Deserialize<LocationImbuedEventValue>();
+			return weapon != null && location != null ? new() {
+				Weapon = weapon,
+				Location = location,
+			} : null;
+		}
 	}
 
-	public class DartHitEventValue : EventValue {
+	public class DartHitEventValue : LocationImbuedEventValue {
 		public required string RepositoryId { get; set; }
 		public required EActorType ActorType { get; set; }
 		public required bool IsTarget { get; set; }
@@ -319,17 +379,46 @@ namespace Croupier.GameEvents {
 		public double? Recorder { get; set; }
 	}
 
+	public class OnTurnOnEventValue : LocationImbuedEventValue {
+		public UInt64? EntityID { get; set; }
+		public string? RepositoryId { get; set; }
+		public bool? InitialStateOn { get; set; }
+	}
+
+	public class OnTurnOffEventValue : LocationImbuedEventValue {
+		public UInt64? EntityID { get; set; }
+		public string? RepositoryId { get; set; }
+		public bool? InitialStateOn { get; set; }
+	}
+
+	public class OnDestroyEventValue : LocationImbuedEventValue {
+		public UInt64? EntityID { get; set; }
+		public bool? InitialStateOn { get; set; }
+	}
+
 	public class OnEvacuationStartedEventValue : LocationImbuedEventValue {
 		public string? ActorName { get; set; }
 		public bool? IsTarget { get; set; }
 	}
 
 	public class OnIsFullyInCrowdEventValue : EventValue {
-
 	}
 
 	public class OnIsFullyInVegetationEventValue : EventValue {
+	}
 
+	public class OnPickupEventValue : EventValue {
+		public required LocationImbuedEventValue Location { get; set; }
+		public required ItemInfoImbuedEventValue Item { get; set; }
+
+		public static OnPickupEventValue? Load(JsonElement json) {
+			var item = json.Deserialize<ItemInfoImbuedEventValue>();
+			var location = json.Deserialize<LocationImbuedEventValue>();
+			return item != null && location != null ? new() {
+				Item = item,
+				Location = location,
+			} : null;
+		}
 	}
 
 	public class OpenDoorEventValue : LocationImbuedEventValue {
@@ -337,41 +426,46 @@ namespace Croupier.GameEvents {
 	}
 
 	public class OnTakeDamageEventValue : EventValue {
-
 	}
 
 	public class OnWeaponReloadEventValue : LocationImbuedEventValue {
-
 	}
 
 	public class InstinctActiveEventValue : LocationImbuedEventValue {
-
 	}
 
 	public class ProjectileBodyShotEventValue : EventValue {
-
 	}
 
 	public class DrainPipeClimbedEventValue : EventValue {
-
 	}
 
 	public class ItemStashedEventValue : EventValue {
-
 	}
 
-	public class EnterRoomEventValue : EventValue {
-		public required int Room { get; set; }
+	public class EnterRoomEventValue : LocationImbuedEventValue {
 	}
 
 	public class FriskedSuccessEventValue : LocationImbuedEventValue {
 	}
 
-	public class EnterAreaEventValue : EventValue {
-		public required string Area { get; set; }
+	public class EnterAreaEventValue : LocationImbuedEventValue {
 	}
 
-	public class OnMovementEventValue : LocationImbuedEventValue {
+	public class MovementEventValue : LocationImbuedEventValue {
+	}
 
+	public class DragBodyMoveEventValue : EventValue {
+		public required ActorInfoImbuedEventValue Actor { get; set; }
+		public required LocationImbuedEventValue Location { get; set; }
+
+		public static DragBodyMoveEventValue? Load(JsonElement json) {
+			var actor = json.Deserialize<ActorInfoImbuedEventValue>();
+			var location = json.Deserialize<LocationImbuedEventValue>();
+			return actor != null && location != null ? new() {
+				Actor = actor,
+				Location = location,
+			} : null;
+		}
 	}
 }

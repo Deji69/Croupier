@@ -5,17 +5,10 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media;
 
 namespace Croupier {
-	public enum BingoTileType {
-		Objective,
-		Complication,
-		Mixed,
-	}
-
 	public class BingoTileState {
 		public bool Complete { get; set; } = false;
 		public int Counter { get; set; } = 0;
@@ -148,8 +141,8 @@ namespace Croupier {
 				var groupName = json.TryGetProperty("Group", out var groupProp) ? groupProp.GetString() : null;
 				var typeName = json.TryGetProperty("Type", out var typeProp) ? typeProp.GetString() : null;
 			
-				var group = Bingo.Main.Groups.Find(g => g.ID == groupName);
 				var type = typeName != null ? Enum.Parse<BingoTileType>(typeName) : BingoTileType.Objective;
+				var group = Bingo.Main.Groups.Find(g => g.Name == groupName && (g.Type == BingoTileType.Mixed || g.Type == type));
 
 				var tags = (StringCollection)[];
 				var missions = (List<MissionID>)[];
