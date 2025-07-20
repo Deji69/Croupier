@@ -78,14 +78,14 @@
 		"Kill": {
 			"KillMethodBroad": "melee_lethal",
 			"NOT": {
-				"_COMMENT": "SMG Elimination uses 'melee_lethal' for some reason, check against it.",
+				// SMG Elimination uses 'melee_lethal' for some reason, check against it.
 				"KillItemCategory": "smg"
 			}
 		}
 	},
 	{
 		"Name": "No Non Elimination Firearm Kills",
-		"Tip": "Avoid using a firearm to kill, unless it is done as an elimination kill.",
+		"Tip": "Avoid using a firearm to kill directly, unless it is done as an elimination kill.",
 		"Type": "Complication",
 		"Group": "Kill",
 		"Difficulty": "Medium",
@@ -111,7 +111,7 @@
 	},
 	{
 		"Name": "No Pistol Kills",
-		"Tip": "Avoid killing anyone using a pistol.",
+		"Tip": "Avoid killing anyone directly using a pistol shot.",
 		"Type": "Complication",
 		"Group": "Kill",
 		"Difficulty": "Medium",

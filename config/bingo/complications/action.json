@@ -11,6 +11,14 @@
 		}
 	},
 	{
+		"Name": "No Body Dragging",
+		"Type": "Complication",
+		"Tip": "Do not drag any NPC bodies. You may grab and box them, provided you do not move while holding onto them.",
+		"Group": "Action",
+		"Difficulty": "Medium",
+		"DragBodyMove": {}
+	},
+	{
 		"Name": "No Body Shots",
 		"Type": "Complication",
 		"Tip": "Do not shoot any NPC unless it is a headshot.",
@@ -32,7 +40,7 @@
 		"Tip": "Avoid running while crouched.",
 		"Group": "Action",
 		"Difficulty": "High",
-		"OnMovement": {
+		"Movement": {
 			"IsRunning": true,
 			"IsCrouching": true
 		}
@@ -43,7 +51,7 @@
 		"Tip": "If you crouch, you must stay still.",
 		"Group": "Action",
 		"Difficulty": "High",
-		"OnMovement": {
+		"Movement": {
 			"IsCrouching": true,
 			"OR": [
 				{
@@ -62,7 +70,7 @@
 		"Tip": "If you crouch while in trespassing, you must stay still.",
 		"Group": "Action",
 		"Difficulty": "High",
-		"OnMovement": {
+		"Movement": {
 			"IsCrouching": true,
 			"IsTrespassing": true,
 			"OR": [
@@ -191,6 +199,16 @@
 		"PlayerShot": {}
 	},
 	{
+		"Name": "No Suppressed Shots",
+		"Type": "Complication",
+		"Tip": "Do not fire any shots using a silenced or subsonic firearm.",
+		"Group": "Action",
+		"Difficulty": "Medium",
+		"PlayerShot": {
+			"RepositoryPerks": ["suppressor"]
+		}
+	},
+	{
 		"Name": "No Throwing",
 		"Type": "Complication",
 		"Tip": "Do not throw any item.",
@@ -213,7 +231,7 @@
 		"Tip": "Do not run while standing upright, only run while crouching.",
 		"Group": "Action",
 		"Difficulty": "High",
-		"OnMovement": {
+		"Movement": {
 			"IsRunning": true,
 			"IsCrouching": false
 		}

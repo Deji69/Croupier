@@ -99,18 +99,90 @@
 				"RepositoryId": "19dd4206-5386-4a88-9899-0e1bd46d2805"
 			}
 		},
+		
+		// Interact Objectives
+		{
+			"Name": "Destroy a Fusebox",
+			"Tip": "Damage a fusebox enough to destroy it permanently.",
+			"Group": "Interact",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"OnDestroy": {
+				"EntityID": [
+					3495762687448480204,
+					8048086997255927765
+				]
+			}
+		},
+		{
+			"Name": "Read Evacuation Plan",
+			"Tip": "Read the evac plan in the basement security room.",
+			"Group": "Interact",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Setpiece": {
+				"Name": "Paris_Evac_plan"
+			}
+		},
+		{
+			"Name": "Turn Off {1} Generators",
+			"NameSingular": "Turn Off {1} Generator",
+			"Tip": "Turn off {0} different generators controlling flood lights.",
+			"Group": "Interact",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"OnTurnOff": {
+				"Count": 2,
+				"EntityID": [
+					11152010954144089842,
+					10124024587741267219,
+					8059933745724105448
+				],
+				"Unique": "EntityID"
+			}
+		},
+		{
+			"Name": "Turn Off a Fusebox",
+			"Tip": "Turn off a fusebox.",
+			"Group": "Interact",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"OnTurnOff": {
+				"EntityID": [
+					3495762687448480204,
+					8048086997255927765
+				]
+			}
+		},
+		{
+			"Name": "Show an Invite",
+			"Tip": "Show an invite at an entrance checkpoint.",
+			"Group": "Interact",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Tags": ["Action", "Interact"],
+			"Level_Setup_Events": {
+				"Event": "47_ShowInvitation"
+			}
+		},
 	
 		// Action Complications
 		{
 			"Name": "No Shooting Indoors",
 			"Type": "Complication",
-			"Tip": "Do not fire any shots while inside any building (balconies count as outside).",
+			"Tip": "Do not fire any shots while inside any building.",
 			"Group": "Action",
 			"Difficulty": "Medium",
 			"Missions": ["The Showstopper", "Holiday Hoarders"],
 			"PlayerShot": {
 				"NOT": {
 					"Room": [81]
+				}
+			}
+		},
+		{
+			"Name": "No Explosions Indoors",
+			"Tip": "Do not cause unnecessary explosions inside any building.",
+			"Type": "Complication",
+			"Difficulty": "High",
+			"Explosion": {
+				"NOT": {
+					"Room": 81
 				}
 			}
 		},
@@ -123,6 +195,15 @@
 			"Missions": ["The Showstopper", "Holiday Hoarders"],
 			"PlayerShot": {
 				"Room": [81]
+			}
+		},
+		{
+			"Name": "No Explosions Outside",
+			"Tip": "Do not cause unnecessary explosions outdoors (includes balconies).",
+			"Type": "Complication",
+			"Difficulty": "High",
+			"Explosion": {
+				"Room": 81
 			}
 		},
 		
@@ -445,5 +526,39 @@
 				}
 			}
 		}
+		/*{
+			"Name": "No Firearms: Ground Floor",
+			"Type": "Complication",
+			"Tip": "Do not equip a firearm anywhere on the ground floor (Level 1).",
+			"Group": "Location",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Difficulty": "High",
+			"OnAttachToHitman": {
+				"IsFirearm": true,
+				"Position": {
+					"Z": {
+						"From": -3.0,
+						"To": 2.5
+					}
+				}
+			}
+		},
+		{
+			"Name": "No Firearms: Top Floor",
+			"Type": "Complication",
+			"Tip": "Do not equip a firearm anywhere on the ground floor (Level 1).",
+			"Group": "Location",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Difficulty": "High",
+			"OnAttachToHitman": {
+				"IsFirearm": true,
+				"Position": {
+					"Z": {
+						"From": -3.0,
+						"To": 2.5
+					}
+				}
+			}
+		}*/
 	]
 }

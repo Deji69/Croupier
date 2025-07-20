@@ -181,6 +181,8 @@ Here the repository ID is a UUID (universally unique ID) referring to the specif
 
 We could also provide an array of strings, meaning the trigger will pass if *any of* those strings match the disguise repo ID. This general concept applies to most properties we can assign on our triggers.
 
+All string comparisons are case-insensitive.
+
 For example:
 
 ```json
@@ -271,3 +273,5 @@ Using the available logical operators, we can also check for multiple events in 
 ```
 
 In this example, both the `Disguise` and `StartingSuit` events are checked and if either of them pass their check, the complication will be failed.
+
+# Trigger Reference
