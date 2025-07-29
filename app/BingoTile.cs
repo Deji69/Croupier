@@ -65,6 +65,7 @@ namespace Croupier {
 			get => state.Complete;
 			set {
 				state.Complete = value;
+				OnPropertyChanged(nameof(Achieved));
 				OnPropertyChanged(nameof(Complete));
 				OnPropertyChanged(nameof(Failed));
 			}
