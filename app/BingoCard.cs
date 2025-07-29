@@ -134,29 +134,6 @@ namespace Croupier {
 			return [];
 		}
 
-		public BingoWinResult? CheckWin() {
-			var numCompleted = Tiles.Count(t => t?.Complete ?? true);
-			if (numCompleted == Tiles.Count)
-				return new(this, BingoWinType.Completion, [..Tiles.Select((t, i) => i)]);
-
-			for (var row = 0; row < Size.Rows; ++row) {
-				if (TestRow(row))
-					return new(this, BingoWinType.Horizonal, GetRowIndexes(row));
-			}
-			for (var col = 0; col < Size.Columns; ++col) {
-				if (TestColumn(col))
-					return new(this, BingoWinType.Vertical, GetColumnIndexes(col));
-			}
-			if (TestDiagonal())
-				return new(this, BingoWinType.Diagonal, GetDiagonalIndexes());
-			if (TestReverseDiagonal())
-				return new(this, BingoWinType.Diagonal, GetReverseDiagonalIndexes());
-
-			//if (numCompleted > Tiles.Count / 2)
-			//	return new(this, BingoWinType.Majority, [..Tiles.Where(t => t.Complete).Select((t, i) => i)]);
-			return null;
-		}
-
 		public void Finish() {
 			if (Mode != BingoTileType.Complication && Mode != BingoTileType.Mixed) return;
 			for (var row = 0; row < Size.Rows; ++row) {
