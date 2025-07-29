@@ -1,5 +1,14 @@
 [
 	{
+		"Name": "Activate Fire Alarm",
+		"Tip": "Pull a fire alarm. You know you want to.",
+		"Group": "Interact",
+		"Tags": ["Action", "Interact"],
+		"Setpiece": {
+			"Name": "FireAlarm"
+		}
+	},
+	{
 		"Name": "Blend In",
 		"Tip": "Enter {0} hidden-in-plain-sight blending spot(s).",
 		"Group": "Interact",
@@ -23,6 +32,19 @@
 		}
 	},
 	{
+		"Name": "Flood {1} Sinks",
+		"NameSingular": "Flood {1} Sink",
+		"Tip": "Turn on {0} sinks.",
+		"Group": "Interact",
+		"Tags": ["Action", "Interact"],
+		"Setpiece": {
+			"RepositoryId": "95e7e530-dbd0-4e1a-95f6-8d5c165a7991",
+			"Type": "DefaultActivators",
+			"Unique": "Position",
+			"Count": 3
+		}
+	},
+	{
 		"Name": "Hide {1} Bodies",
 		"NameSingular": "Hide {1} Body",
 		"Tip": "Hide {0} bodies.",
@@ -33,152 +55,14 @@
 		}
 	},
 	{
-		"Name": "Activate Diorama",
-		"Tip": "Activate the diorama.",
-		"Group": "Interact",
-		"Missions": ["The Showstopper", "Holiday Hoarders"],
-		"Tags": ["Action", "Interact"],
-		"Setpiece": {
-			"Name": "Diorama_Napoleon_war"
-		}
-	},
-	{
-		"Name": "Activate Fire Alarm",
-		"Tip": "Pull a fire alarm. You know you want to.",
-		"Group": "Interact",
-		"Missions": ["The Showstopper", "Holiday Hoarders"],
-		"Tags": ["Action", "Interact"],
-		"Setpiece": {
-			"Name": "FireAlarm"
-		}
-	},
-	{
-		"Name": "Call in Code 17",
-		"Tip": "Use the Bodyguard's Phone to call in a code 17.",
-		"Group": "Interact",
-		"Missions": ["The Showstopper", "Holiday Hoarders"],
-		"Tags": ["Action", "Interact"],
-		"LevelSetupEvent": {
-			"Event": "EvacuationTriggered"
-		}
-	},
-	{
-		"Name": "Examine Fireworks Schedule",
-		"Tip": "Examine the fireworks schedule intel.",
-		"Group": "Interact",
-		"Missions": ["The Showstopper", "Holiday Hoarders"],
-		"Tags": ["Action", "Interact"],
-		"Setpiece": {
-			// Spaces are intentional - ask IOI
-			"Name": "Paris_Firework_Schedule     "
-		}
-	},
-	{
-		"Name": "Flood {1} Sinks",
-		"NameSingular": "Flood {1} Sink",
-		"Tip": "Cause {0} sinks to overfill and flood.",
-		"Group": "Interact",
-		"Missions": ["The Showstopper", "Holiday Hoarders"],
-		"Tags": ["Action", "Interact"],
-		"Setpiece": {
-			"RepositoryId": "95e7e530-dbd0-4e1a-95f6-8d5c165a7991",
-			"Type": "DefaultActivators",
-			"Unique": "Position",
-			"Count": 3
-		}
-	},
-	{
-		"Name": "Release {1} Winches By Hand",
-		"NameSingular": "Release {1} Winch Manually",
-		"Tip": "Interact with {0} winches to release them by hand.",
-		"Group": "Interact",
-		"Missions": ["The Showstopper", "Holiday Hoarders"],
-		"Tags": ["Action", "Interact"],
-		"Setpiece": {
-			"RepositoryId": [
-				"29223810-47ad-47d8-a71f-a4ebabeafa10", // SetPiece_Activator_Winch_Manual_A01
-				"a1943878-7cb9-4747-9f69-4e6c6cdfb566", // SetPiece_Activator_Winch_Manual_A02
-				"70515554-bbef-4c55-9aa4-a701d74309ba", // SetPiece_Activator_Winch_Manual_A04
-				"931a6156-e43b-409f-910e-df1147853cad", // SetPiece_Activator_Winch_Manual_A05
-				"08cc29b8-f256-4eca-813a-d75c0b076c0b", // SetPiece_Activator_Winch_Manual_A04
-				"0070fa39-f98c-4825-a9c8-2b960148e67a", // SetPiece_Activator_Winch_Manual_A05
-				"acd2fadc-f2a1-4de4-bc2c-b0daab15b214", // SetPiece_Activator_Winch_Manual_A06
-				"79f2494e-4606-4021-bda0-415a403fbf86", // SetPiece_Activator_Winch_Manual_A04
-				"ad46eb19-ea71-487e-a150-43d30bfe62bd", // SetPiece_Activator_Winch_Manual_A08
-				"10192589-2eea-447c-b8d0-4289ff7c1562", // SetPiece_Activator_Winch_Manual_A07
-				"f45a35af-7bd9-4c84-8843-5c3b56fe50b6", // SetPiece_Activator_Winch_Manual_A01
-				"2754e11a-8517-4086-a78f-0da5610e84ba", // SetPiece_Activator_Winch_Manual_A
-				"b903ffcf-ee56-4f33-8b09-0a3d20088e65", // SetPiece_Activator_Winch_Manual_A07
-				"20f35b22-5f5c-47ae-bf59-6b9e6a397524", // SetPiece_Activator_Winch_Manual_A05
-				"0344b47b-d862-47eb-8bfc-6dfd7e9dea86", // SetPiece_Activator_Winch_Manual_A06
-				"f2da77b3-2104-42ac-9b8c-3c20d0b60d7f", // SetPiece_Activator_Winch_Manual_A07
-				"683a099f-5d1b-4800-a781-5d9dfe13b12c", // SetPiece_Activator_Winch_Manual_A03
-				"dad7976c-0549-499a-a56d-b0c46b9347d1", // SetPiece_Activator_Winch_Manual_A03
-				"2e24e0fc-dade-4f19-84d3-ec2b9fc4b2a6", // SetPiece_Activator_Winch_Manual_A01
-				"3d479ab7-770d-4453-afdc-0bda84bce3c3", // SetPiece_Activator_Winch_Manual_A05
-				"d0c61e74-55e8-49d9-afa2-9dce5d6db394", // SetPiece_Activator_Winch_Manual_A06
-				"e70ec581-9369-464c-ae37-dee014352a18", // SetPiece_Activator_Winch_Manual_A03
-				"5441ee77-afff-4028-8968-1733bc135ce7", // SetPiece_Activator_Winch_Manual_A02
-				"b28e879e-53de-4196-9136-1e40b1146bf2", // SetPiece_Activator_Winch_Manual_A03
-				"f53f9cca-3a20-45e5-8f29-1c36e4e23c67", // SetPiece_Activator_Winch_Manual_A04
-				"fb33076e-897c-4af2-afe5-8c449c2e6a81" // SetPiece_Activator_Winch_Manual_A08
-			],
-			"Count": 2
-		}
-	},
-	{
 		"Name": "Pass a Frisk",
 		"Tip": "Pass a frisk entrance checkpoint.",
 		"Group": "Interact",
-		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Missions": [
+			"The Showstopper", "Holiday Hoarders",
+			"World of Tomorrow"
+		],
 		"Tags": ["Action", "Interact"],
 		"FriskedSuccess": {}
-	},
-	{
-		"Name": "Poison a Sushi Plate",
-		"Tip": "Poison any of the sushi trays.",
-		"Group": "Interact",
-		"Missions": ["The Showstopper", "Holiday Hoarders"],
-		"Tags": ["Action", "Interact"],
-		"Setpiece": {
-			"Helper": "PosionSource_Logic",
-			"RepositoryId": [
-				"d36f17b9-eb30-47ef-967d-994db942c5aa",
-				"20d06859-95e0-4bc9-b9fc-dfbd16196bbb",
-				"f840c3d0-8df5-4971-b9ed-16230258b953",
-				"eb71599a-4c6a-4e9a-8df7-4dace0d0a82e"
-			]
-		}
-	},
-	{
-		"Name": "Poison Sato's Drink",
-		"Tip": "Poison Sebastian Sato's champagne glass.",
-		"Group": "Interact",
-		"Missions": ["The Showstopper", "Holiday Hoarders"],
-		"Tags": ["Action", "Interact"],
-		"Setpiece": {
-			"Helper": "PosionSource_Logic",
-			"RepositoryId": "9d316f01-7701-41b8-a9bb-153908768168"
-		}
-	},
-	{
-		"Name": "Read Cocktail Recipe",
-		"Tip": "Examine the cocktail recipe intel.",
-		"Group": "Interact",
-		"Missions": ["The Showstopper", "Holiday Hoarders"],
-		"Tags": ["Action", "Interact"],
-		"Setpiece": {
-			"Name": "Paris_Cocktail_Recipe"
-		}
-	},
-	{
-		"Name": "Sabotage Auction",
-		"Tip": "Use the laptop dongle to sabotage the auction.",
-		"Group": "Interact",
-		"Missions": ["The Showstopper", "Holiday Hoarders"],
-		"Tags": ["Action", "Interact"],
-		"Setpiece": {
-			"RepositoryId": "e42cd800-eabe-45c9-b81e-acf1844a63af"
-		}
 	}
 ]
