@@ -132,30 +132,30 @@ auto CroupierPlugin::OnFrameUpdate_PlayMode(const SGameUpdateEvent& ev) -> void 
 }
 
 auto CroupierPlugin::ProcessPlayerState() -> void {
-	if (!this->state.playerInInstinctSinceFrame && this->state.playerInInstinct)
-		this->state.playerInInstinct = false;
-	this->state.playerInInstinctSinceFrame = false;
+	if (!State::current.playerInInstinctSinceFrame && State::current.playerInInstinct)
+		State::current.playerInInstinct = false;
+	State::current.playerInInstinctSinceFrame = false;
 
 	auto player = SDK()->GetLocalPlayer();
 	if (!player) return;
 
 	const auto spatial = player.m_ref.QueryInterface<ZSpatialEntity>();
-	this->state.playerMatrix = spatial->m_mTransform;
+	State::current.playerMatrix = spatial->m_mTransform;
 
 	// Process area entry for bingo
-	auto area = this->state.getArea(this->state.playerMatrix.Trans);
-	if (area && area != this->state.area) {
+	auto area = State::current.getArea(State::current.playerMatrix.Trans);
+	if (area && area != State::current.area) {
 		this->SendCustomEvent("EnterArea"sv, ImbuedPlayerLocation({
 			{"Area", area->ID},
 		}));
 	}
 
-	this->state.area = area;
+	State::current.area = area;
 
 	// Process room changes for bingo
 	auto roomId = ZRoomManagerCreator::GetRoomID(spatial->GetWorldMatrix().Pos);
-	if (roomId != this->state.roomId && roomId != -1) {
-		this->state.roomId = roomId;
+	if (roomId != State::current.roomId && roomId != -1) {
+		State::current.roomId = roomId;
 		this->SendCustomEvent("EnterRoom"sv, ImbuedPlayerLocation({
 			{"Room", roomId},
 		}));
@@ -163,11 +163,11 @@ auto CroupierPlugin::ProcessPlayerState() -> void {
 }
 
 auto CroupierPlugin::ProcessSpinState() -> void {
-	if (this->state.spinCompleted) return;
-	//if (this->state.hasLoadedGame) return;
+	if (State::current.spinCompleted) return;
+	//if (State::current.hasLoadedGame) return;
 
 	for (int i = 0; i < *Globals::NextActorId; ++i) {
-		auto& actorData = this->state.actorData[i];
+		auto& actorData = State::current.actorData[i];
 
 		auto const& actorRef = Globals::ActorManager->m_aActiveActors[i];
 		actorData.actor = &actorRef;
@@ -175,9 +175,9 @@ auto CroupierPlugin::ProcessSpinState() -> void {
 		auto repoEntity = actorRef.m_ref.QueryInterface<ZRepositoryItemEntity>();
 		if (repoEntity != nullptr && (!actorData.repoId || *actorData.repoId != repoEntity->m_sId)) {
 			if (actorData.repoId && *actorData.repoId != repoEntity->m_sId)
-				this->state.actorDataRepoIdMap.erase(*actorData.repoId);
+				State::current.actorDataRepoIdMap.erase(*actorData.repoId);
 			actorData.repoId = repoEntity->m_sId;
-			this->state.actorDataRepoIdMap.emplace(*actorData.repoId, i);
+			State::current.actorDataRepoIdMap.emplace(*actorData.repoId, i);
 		}
 
 		if (!actorRef.m_pInterfaceRef) continue;
@@ -213,14 +213,14 @@ auto CroupierPlugin::ProcessSpinState() -> void {
 		if (!actorData.isTarget || !actorData.repoId) continue;
 
 		auto targetId = GetTargetByRepoID(*actorData.repoId);
-		auto const& conditions = this->state.spin.getConditions();
+		auto const& conditions = State::current.spin.getConditions();
 		if (conditions.empty()) continue;
 
-		for (auto i = 0; i < conditions.size() && i < this->state.killValidations.size(); ++i) {
+		for (auto i = 0; i < conditions.size() && i < State::current.killValidations.size(); ++i) {
 			auto& cond = conditions[i];
 			auto& target = cond.target.get();
 			if (targetId != target.getID()) continue;
-			auto& kc = this->state.getKillConfirmation(i);
+			auto& kc = State::current.getKillConfirmation(i);
 			if (!kc.isPacified) break;
 
 			if (!actor.IsPacified() && !actor.IsDead())
@@ -228,12 +228,12 @@ auto CroupierPlugin::ProcessSpinState() -> void {
 		}
 	}
 
-	this->state.actorDataSize = *Globals::NextActorId;
+	State::current.actorDataSize = *Globals::NextActorId;
 }
 
 auto CroupierPlugin::ProcessClientEvent(std::string_view name, const json& json) -> void {
 	if (name == "Areas") {
-		this->state.areas.clear();
+		State::current.areas.clear();
 		if (!json.is_array())
 			return;
 
@@ -267,7 +267,7 @@ auto CroupierPlugin::ProcessClientEvent(std::string_view name, const json& json)
 			area.To.y = toYJson.get<float32>();
 			area.To.z = toZJson.get<float32>();
 
-			this->state.areas.push_back(std::move(area));
+			State::current.areas.push_back(std::move(area));
 		}
 	}
 }
@@ -300,10 +300,10 @@ auto CroupierPlugin::ProcessClientMessages() -> void {
 				if (parts.empty() || parts[0].empty()) return;
 				auto timerStopped = 0;
 				if (std::from_chars(parts[0].data(), parts[0].data() + parts[0].size(), timerStopped).ec != std::errc()) {
-					if (timerStopped) this->state.isFinished = true;
+					if (timerStopped) State::current.isFinished = true;
 					else {
-						this->state.isPlaying = true;
-						this->state.isFinished = false;
+						State::current.isPlaying = true;
+						State::current.isFinished = false;
 					}
 				}
 				if (parts.size() < 2) return;
@@ -311,8 +311,8 @@ auto CroupierPlugin::ProcessClientMessages() -> void {
 				auto res = std::from_chars(parts[1].data(), parts[1].data() + parts[1].size(), timeElapsed);
 				if (res.ec == std::errc()) {
 					auto now = std::chrono::steady_clock::now();
-					this->state.timeStarted = now - std::chrono::milliseconds(timeElapsed);
-					this->state.timeElapsed = std::chrono::duration_cast<std::chrono::seconds>(now - this->state.timeStarted);
+					State::current.timeStarted = now - std::chrono::milliseconds(timeElapsed);
+					State::current.timeElapsed = std::chrono::duration_cast<std::chrono::seconds>(now - State::current.timeStarted);
 				}
 				return;
 			}
@@ -335,7 +335,7 @@ auto CroupierPlugin::ProcessLoadRemoval() -> void {
 		PAD(0x14178);
 		ZRenderDevice* m_pDevice; // 0x14180, look for ZRenderDevice constructor
 		PAD(0xF8); // 0x14188
-		ZRenderContext* m_pRenderContext; // 0x14280, look for "ZRenderManager::RenderThread" string, first thing being constructed and assigned
+		ZRenderContext* m_pRenderContext; // 0x14280, look for "ZRenderManager::RenderThread                               " string, first thing being constructed and assigned
 	};
 
 	static_assert(offsetof(ZRenderManager, m_pDevice) == 0x14180);
@@ -383,10 +383,10 @@ auto CroupierPlugin::ProcessSpinDataMessage(const ClientMessage& message) -> voi
 	if (!spin.has_value()) return;
 
 	State::current.spin = std::move(*spin);
-	this->state.isPlaying = false;
+	State::current.isPlaying = false;
 	this->currentSpinSaved = true;
 	State::current.generator.setMission(State::current.spin.getMission());
-	this->state.spinCompleted = false;
+	State::current.spinCompleted = false;
 }
 
 auto CroupierPlugin::OnDrawMenu() -> void {
@@ -434,13 +434,13 @@ auto CroupierPlugin::PreviousSpin() -> void {
 	if (State::current.spinHistory.empty()) return;
 
 	State::current.spin = std::move(State::current.spinHistory.top());
-	this->state.isPlaying = false;
+	State::current.isPlaying = false;
 	this->currentSpinSaved = true;
 	State::current.generator.setMission(State::current.spin.getMission());
 	State::current.spinHistory.pop();
-	this->state.spinCompleted = false;
+	State::current.spinCompleted = false;
 
-	this->state.playerStart();
+	State::current.playerStart();
 }
 
 auto CroupierPlugin::Random() -> void {
@@ -482,9 +482,9 @@ auto CroupierPlugin::Respin(bool isAuto) -> void {
 		}
 
 		State::current.spin = State::current.generator.spin(&State::current.spin);
-		this->state.timeStarted = std::chrono::steady_clock::now();
+		State::current.timeStarted = std::chrono::steady_clock::now();
 		this->currentSpinSaved = false;
-		this->state.spinCompleted = false;
+		State::current.spinCompleted = false;
 	} catch (const std::runtime_error& ex) {
 		Logger::Error("Croupier: {}", ex.what());
 	}
@@ -542,8 +542,8 @@ auto CroupierPlugin::ImbueActorInfo(TEntityRef<ZActor> ref, json& j, bool asActo
 			{"ActorRepositoryId", repoEntity->m_sId.ToString()},
 		});
 
-		if (const auto actorData = this->state.getActorDataByRepoId(repoEntity->m_sId)) {
-			auto area = this->state.getArea(actorData->transform.Trans);
+		if (const auto actorData = State::current.getActorDataByRepoId(repoEntity->m_sId)) {
+			auto area = State::current.getArea(actorData->transform.Trans);
 			j.merge_patch({
 				{"ActorArea", area ? area->ID : ""},
 				{"ActorHasDisguise", actorData->hasDisguise},
@@ -580,7 +580,7 @@ auto CroupierPlugin::ImbueActorInfo(TEntityRef<ZActor> ref, json& j, bool asActo
 }
 
 auto CroupierPlugin::ImbuePacifyEvent(const PacifyEventValue& ev) -> std::optional<json> {
-	const auto actorData = this->state.getActorDataByRepoId(ZRepositoryID(ev.RepositoryId));
+	const auto actorData = State::current.getActorDataByRepoId(ZRepositoryID(ev.RepositoryId));
 	if (!actorData) return std::nullopt;
 	auto const playerOutfitRepoId = ZRepositoryID(ev.OutfitRepositoryId);
 	auto const actorOutfit = actorData->disguiseRepoId ? this->GetOutfitByRepoId(*actorData->disguiseRepoId) : nullptr;
@@ -623,15 +623,15 @@ auto CroupierPlugin::ImbuePacifyEvent(const PacifyEventValue& ev) -> std::option
 }
 
 auto CroupierPlugin::ImbuePlayerLocation(json& json, bool asHero) const -> void {
-	const auto& trans = this->state.playerMatrix.Trans;
+	const auto& trans = State::current.playerMatrix.Trans;
 	json.merge_patch({
-		{"IsIdle", this->state.playerMoveType == PlayerMoveType::Idle},
-		{"IsCrouching", this->state.playerMoveType == PlayerMoveType::CrouchRunning || this->state.playerMoveType == PlayerMoveType::CrouchWalking},
-		{"IsRunning", this->state.playerMoveType == PlayerMoveType::CrouchRunning || this->state.playerMoveType == PlayerMoveType::Running},
-		{"IsWalking", this->state.playerMoveType == PlayerMoveType::CrouchWalking || this->state.playerMoveType == PlayerMoveType::Walking},
-		{"IsTrespassing", this->state.isTrespassing},
-		{asHero ? "HeroRoom" : "Room", this->state.roomId},
-		{asHero ? "HeroArea" : "Area", this->state.area ? this->state.area->ID : ""},
+		{"IsIdle", State::current.playerMoveType == PlayerMoveType::Idle},
+		{"IsCrouching", State::current.playerMoveType == PlayerMoveType::CrouchRunning || State::current.playerMoveType == PlayerMoveType::CrouchWalking},
+		{"IsRunning", State::current.playerMoveType == PlayerMoveType::CrouchRunning || State::current.playerMoveType == PlayerMoveType::Running},
+		{"IsWalking", State::current.playerMoveType == PlayerMoveType::CrouchWalking || State::current.playerMoveType == PlayerMoveType::Walking},
+		{"IsTrespassing", State::current.isTrespassing},
+		{asHero ? "HeroRoom" : "Room", State::current.roomId},
+		{asHero ? "HeroArea" : "Area", State::current.area ? State::current.area->ID : ""},
 		{asHero ? "HeroPosition" : "Position", {
 			{"X", trans.x},
 			{"Y", trans.y},
@@ -680,9 +680,9 @@ auto CroupierPlugin::ImbueItemEvent(const ItemEventValue& ev, EActionType action
 		if (item->m_pItemConfigDescriptor->m_RepositoryId != ZRepositoryID(ev.RepositoryId))
 			continue;
 		auto const instanceId = reinterpret_cast<uintptr_t>(item);
-		if (this->state.collectedItemInstances.contains(instanceId))
+		if (State::current.collectedItemInstances.contains(instanceId))
 			continue;
-		this->state.collectedItemInstances.insert(instanceId);
+		State::current.collectedItemInstances.insert(instanceId);
 		return ImbuedPlayerLocation({
 			{"RepositoryId", ev.RepositoryId},
 			{"InstanceId", std::format("{}", instanceId)},
@@ -703,6 +703,7 @@ auto CroupierPlugin::ImbueItemInfo(ZEntityRef entity, json& j) -> void {
 		std::string itemType;
 		std::string itemSize;
 		std::vector<std::string> perks;
+		std::vector<std::string> onlineTraits;
 
 		if (repositoryResource.m_nResourceIndex == -1) {
 			const auto s_ID = ResId<"[assembly:/repository/pro.repo].pc_repo">;
@@ -724,6 +725,11 @@ auto CroupierPlugin::ImbueItemInfo(ZEntityRef entity, json& j) -> void {
 								if (!perksArr) continue;
 								perks = std::vector<std::string>{perksArr->begin(), perksArr->end()};
 							}
+							else if (entry.sKey == "OnlineTraits") {
+								auto perksArr = entry.value.As<TArray<ZString>>();
+								if (!perksArr) continue;
+								perks = std::vector<std::string>{perksArr->begin(), perksArr->end()};
+							}
 							else continue;
 						}
 					}
@@ -738,6 +744,7 @@ auto CroupierPlugin::ImbueItemInfo(ZEntityRef entity, json& j) -> void {
 			{"RepositoryItemSize", itemSize},
 			{"RepositoryItemType", itemType},
 			{"RepositoryPerks", perks},
+			{"RepositoryOnlineTraits", onlineTraits},
 		});
 	}
 
@@ -792,29 +799,29 @@ auto CroupierPlugin::SendCustomEvent(std::string_view name, json eventValue) -> 
 
 auto CroupierPlugin::SetupEvents() -> void {
 	events.listen<Events::ContractStart>([this](const ServerEvent<Events::ContractStart>& ev) {
-		this->state.playerStart();
-		this->state.locationId = ev.Value.LocationId;
-		this->state.loadout = ev.Value.Loadout;
-		this->state.spinCompleted = false;
+		State::current.playerStart();
+		State::current.locationId = ev.Value.LocationId;
+		State::current.loadout = ev.Value.Loadout;
+		State::current.spinCompleted = false;
 
 		SendKillValidationUpdate();
 	});
 	events.listen<Events::HeroSpawn_Location>([this](const ServerEvent<Events::HeroSpawn_Location>& ev) {
-		SendMissionStart(this->state.locationId, ev.Value.RepositoryId, this->state.loadout);
+		SendMissionStart(State::current.locationId, ev.Value.RepositoryId, State::current.loadout);
 	});
 	events.listen<Events::IntroCutEnd>([this](const ServerEvent<Events::IntroCutEnd>& ev) {
-		this->state.playerCutsceneEnd(ev.Timestamp);
+		State::current.playerCutsceneEnd(ev.Timestamp);
 	});
 	events.listen<Events::ContractLoad>([this](auto& ev) {
-		this->state.playerLoad();
+		State::current.playerLoad();
 		SendKillValidationUpdate();
 	});
 	events.listen<Events::ExitGate>([this](const ServerEvent<Events::ExitGate>& ev) {
-		this->state.playerExit(ev.Timestamp);
+		State::current.playerExit(ev.Timestamp);
 
 		// Mark any unfulfilled kill methods as invalid (never killed a Berlin agent with correct requirements, destroyed heart instead of killing Soders or vice-versa, etc.)
 		auto const& conds = State::current.spin.getConditions();
-		for (auto& kv : this->state.killValidations) {
+		for (auto& kv : State::current.killValidations) {
 			if (kv.correctMethod == eKillValidationType::Incomplete)
 				kv.correctMethod = eKillValidationType::Invalid;
 		}
@@ -826,11 +833,11 @@ auto CroupierPlugin::SetupEvents() -> void {
 		SendMissionOutroBegin();
 	});
 	events.listen<Events::FacilityExitEvent>([this](const ServerEvent<Events::FacilityExitEvent>& ev) {
-		this->state.playerExit(ev.Timestamp);
+		State::current.playerExit(ev.Timestamp);
 
 		// Mark any unfulfilled kill methods as invalid (never killed a Berlin agent with correct requirements, destroyed heart instead of killing Soders or vice-versa, etc.)
 		auto const& conds = State::current.spin.getConditions();
-		for (auto& kv : this->state.killValidations) {
+		for (auto& kv : State::current.killValidations) {
 			if (kv.correctMethod == eKillValidationType::Incomplete)
 				kv.correctMethod = eKillValidationType::Invalid;
 		}
@@ -839,12 +846,12 @@ auto CroupierPlugin::SetupEvents() -> void {
 		SendMissionComplete();
 	});
 	events.listen<Events::ContractEnd>([this](const ServerEvent<Events::ContractEnd>& ev) {
-		if (!this->state.isFinished) {
-			this->state.playerExit(ev.Timestamp);
+		if (!State::current.isFinished) {
+			State::current.playerExit(ev.Timestamp);
 
 			// Mark any unfulfilled kill methods as invalid (never killed a Berlin agent with correct requirements, destroyed heart instead of killing Soders or vice-versa, etc.)
 			auto const& conds = State::current.spin.getConditions();
-			for (auto& kv : this->state.killValidations) {
+			for (auto& kv : State::current.killValidations) {
 				if (kv.correctMethod == eKillValidationType::Incomplete)
 					kv.correctMethod = eKillValidationType::Invalid;
 			}
@@ -853,7 +860,7 @@ auto CroupierPlugin::SetupEvents() -> void {
 			SendMissionComplete();
 		}
 
-		this->state.spinCompleted = true;
+		State::current.spinCompleted = true;
 	});
 	events.listen<Events::ContractFailed>([this](const ServerEvent<Events::ContractFailed>& ev) {
 		SendMissionFailed();
@@ -862,8 +869,8 @@ auto CroupierPlugin::SetupEvents() -> void {
 	events.listen<Events::StartingSuit>([this](const ServerEvent<Events::StartingSuit>& ev) {
 		this->SendCustomEvent("StartingSuit"sv, ImbueDisguiseEvent(ev.Value.value));
 
-		if (this->state.spinCompleted) return;
-		this->state.disguiseChanges.emplace_back(ev.Value.value, ev.Timestamp);
+		if (State::current.spinCompleted) return;
+		State::current.disguiseChanges.emplace_back(ev.Value.value, ev.Timestamp);
 	});
 	events.listen<Events::Disguise>([this](const ServerEvent<Events::Disguise>& ev) {
 		if (gameplay.disguiseChange.havePinData)
@@ -873,8 +880,8 @@ auto CroupierPlugin::SetupEvents() -> void {
 			gameplay.disguiseChange.eventData = ev.Value.value;
 		}
 
-		if (this->state.spinCompleted) return;
-		this->state.disguiseChanges.emplace_back(ev.Value.value, ev.Timestamp);
+		if (State::current.spinCompleted) return;
+		State::current.disguiseChanges.emplace_back(ev.Value.value, ev.Timestamp);
 	});
 	events.listen<Events::FriskedSuccess>([this](const ServerEvent<Events::FriskedSuccess>& ev) {
 		this->SendCustomEvent("FriskedSuccess"sv, ImbuedPlayerLocation());
@@ -905,7 +912,7 @@ auto CroupierPlugin::SetupEvents() -> void {
 		if (imbued) this->SendCustomEvent("ItemPickedUp"sv, *imbued);
 	});
 	events.listen<Events::Trespassing>([this](const ServerEvent<Events::Trespassing>& ev) {
-		this->state.isTrespassing = ev.Value.IsTrespassing;
+		State::current.isTrespassing = ev.Value.IsTrespassing;
 		this->SendCustomEvent("Trespassing"sv, ImbuedPlayerLocation());
 	});
 	events.listen<Events::BodyFound>([this](const ServerEvent<Events::BodyFound>& ev) {
@@ -924,9 +931,9 @@ auto CroupierPlugin::SetupEvents() -> void {
 		if (data) this->SendCustomEvent("Pacify"sv, *data);
 
 		if (!ev.Value.IsTarget) return;
-		if (this->state.spinCompleted) return;
+		if (State::current.spinCompleted) return;
 
-		auto const& conditions = this->state.spin.getConditions();
+		auto const& conditions = State::current.spin.getConditions();
 		if (conditions.empty()) return;
 
 		auto targetId = GetTargetByRepoID(ZRepositoryID(ev.Value.RepositoryId));
@@ -944,18 +951,18 @@ auto CroupierPlugin::SetupEvents() -> void {
 				if (checkExplosiveKillType(lastThrownItem, eKillType::Impact)) return;
 			}
 
-			auto& kc = this->state.getKillConfirmation(i);
+			auto& kc = State::current.getKillConfirmation(i);
 			kc.target = target.getID();
 			kc.isPacified = true;
 		}
 	});
 	events.listen<Events::C_Hungry_Hippo>([this](const ServerEvent<Events::C_Hungry_Hippo>& ev) {
-		if (this->state.spinCompleted) return;
-		auto const mission = this->state.spin.getMission();
+		if (State::current.spinCompleted) return;
+		auto const mission = State::current.spin.getMission();
 		if (!mission) return;
 		if (mission->getMission() != eMission::SANTAFORTUNA_THREEHEADEDSERPENT) return;
 
-		auto const& conditions = this->state.spin.getConditions();
+		auto const& conditions = State::current.spin.getConditions();
 		if (conditions.empty()) return;
 
 		for (auto i = 0; i < conditions.size(); ++i) {
@@ -964,7 +971,7 @@ auto CroupierPlugin::SetupEvents() -> void {
 			if (cond.specificKillMethod.method != eMapKillMethod::Rico_FeedToHippo) return;
 			
 			auto const& target = cond.target.get();
-			auto& kc = this->state.getKillConfirmation(i);
+			auto& kc = State::current.getKillConfirmation(i);
 			kc.target = eTargetID::RicoDelgado;
 			kc.correctMethod = eKillValidationType::Valid;
 			SendKillValidationUpdate();
@@ -972,12 +979,12 @@ auto CroupierPlugin::SetupEvents() -> void {
 		}
 	});
 	events.listen<Events::TargetEscapeFoiled>([this](const ServerEvent<Events::TargetEscapeFoiled>& ev) {
-		if (this->state.spinCompleted) return;
-		auto const mission = this->state.spin.getMission();
+		if (State::current.spinCompleted) return;
+		auto const mission = State::current.spin.getMission();
 		if (!mission) return;
 		if (mission->getMission() != eMission::HOKKAIDO_SITUSINVERSUS) return;
 
-		auto const& conditions = this->state.spin.getConditions();
+		auto const& conditions = State::current.spin.getConditions();
 		if (conditions.empty()) return;
 
 		for (auto i = 0; i < conditions.size(); ++i) {
@@ -986,7 +993,7 @@ auto CroupierPlugin::SetupEvents() -> void {
 			if (cond.specificKillMethod.method != eMapKillMethod::Yuki_SabotageCableCar) return;
 			
 			auto const& target = cond.target.get();
-			auto& kc = this->state.getKillConfirmation(i);
+			auto& kc = State::current.getKillConfirmation(i);
 			kc.target = eTargetID::YukiYamazaki;
 			kc.correctMethod = eKillValidationType::Valid;
 			SendKillValidationUpdate();
@@ -1026,18 +1033,18 @@ auto CroupierPlugin::SetupEvents() -> void {
 			return false;
 		};
 
-		if (this->state.spinCompleted) return;
+		if (State::current.spinCompleted) return;
 
-		this->state.killed.insert(ev.Value.RepositoryId);
-		this->state.spottedNotKilled.erase(ev.Value.RepositoryId);
+		State::current.killed.insert(ev.Value.RepositoryId);
+		State::current.spottedNotKilled.erase(ev.Value.RepositoryId);
 
 		if (!ev.Value.IsTarget) {
 			if (ev.Value.KillContext != EDeathContext::eDC_NOT_HERO)
-				this->state.voidSA();
+				State::current.voidSA();
 			return;
 		}
 
-		auto const& conditions = this->state.spin.getConditions();
+		auto const& conditions = State::current.spin.getConditions();
 		if (conditions.empty()) return;
 
 		bool validationUpdated = false;
@@ -1048,7 +1055,7 @@ auto CroupierPlugin::SetupEvents() -> void {
 			auto const& cond = conditions[i];
 			auto const& target = cond.target.get();
 			bool isApexPrey = isBerlinAgent(target.getID()) && isBerlinAgent(targetId);
-			auto& kc = this->state.getKillConfirmation(i);
+			auto& kc = State::current.getKillConfirmation(i);
 
 			if (isApexPrey) {
 				if (kc.correctMethod != eKillValidationType::Incomplete)
@@ -1111,18 +1118,18 @@ auto CroupierPlugin::SetupEvents() -> void {
 		if (validationUpdated) SendKillValidationUpdate();
 	});
 	events.listen<Events::Level_Setup_Events>([this](const ServerEvent<Events::Level_Setup_Events>& ev) {
-		auto const& conditions = this->state.spin.getConditions();
-		auto mission = this->state.spin.getMission();
+		auto const& conditions = State::current.spin.getConditions();
+		auto mission = State::current.spin.getMission();
 
 
-		if (this->state.spinCompleted) return;
+		if (State::current.spinCompleted) return;
 
 		LevelSetupEvent data {};
 		//data.contractName = ev.Value.Contract_Name_metricvalue;
 		//data.location = ev.Value.Location_MetricValue;
 		data.event = ev.Value.Event_metricvalue;
 		data.timestamp = ev.Timestamp;
-		this->state.levelSetupEvents.push_back(std::move(data));
+		State::current.levelSetupEvents.push_back(std::move(data));
 
 		if (!mission || mission->getMission() != eMission::HOKKAIDO_SITUSINVERSUS) return;
 		if (ev.Value.Contract_Name_metricvalue != "SnowCrane") return;
@@ -1133,7 +1140,7 @@ auto CroupierPlugin::SetupEvents() -> void {
 			auto& cond = conditions[i];
 			if (cond.target.get().getID() != eTargetID::ErichSoders) continue;
 
-			auto& kc = this->state.getKillConfirmation(i);
+			auto& kc = State::current.getKillConfirmation(i);
 			auto& reqDisguise = cond.disguise.get();
 			kc.target = cond.target.get().getID();
 
@@ -1148,7 +1155,7 @@ auto CroupierPlugin::SetupEvents() -> void {
 			};
 			auto getSodersKillTriggerDisguiseChange = [this, getSodersKillDelay](std::string_view kill, double timestamp) -> const DisguiseChange* {
 				auto const delay = getSodersKillDelay(kill);
-				return this->state.getLastDisguiseChangeAtTimestamp(timestamp - delay);
+				return State::current.getLastDisguiseChangeAtTimestamp(timestamp - delay);
 			};
 
 			auto const triggerDisguiseChange = getSodersKillTriggerDisguiseChange(ev.Value.Event_metricvalue, ev.Timestamp);
@@ -1213,25 +1220,25 @@ auto CroupierPlugin::SetupEvents() -> void {
 		if (validationUpdated) SendKillValidationUpdate();
 	});
 	events.listen<Events::setpieces>([this](const ServerEvent<Events::setpieces>& ev) {
-		if (this->state.spinCompleted) return;
+		if (State::current.spinCompleted) return;
 
 		KillSetpieceEvent data{};
 		data.id = ev.Value.RepositoryId;
 		data.name = ev.Value.name_metricvalue;
 		data.type = ev.Value.setpieceType_metricvalue;
 		data.timestamp = ev.Timestamp;
-		this->state.killSetpieceEvents.push_back(std::move(data));
+		State::current.killSetpieceEvents.push_back(std::move(data));
 	});
 
 	// SA Tracking
 	events.listen<Events::MurderedBodySeen>([this](const ServerEvent<Events::MurderedBodySeen>& ev) {
 		if (ev.Value.IsWitnessTarget) return;
-		this->state.voidSA();
+		State::current.voidSA();
 	});
 	events.listen<Events::Spotted>([this](const ServerEvent<Events::Spotted>& ev) {
 		for (auto const& id : ev.Value.value) {
-			if (!this->state.killed.contains(id))
-				this->state.spottedNotKilled.insert(id);
+			if (!State::current.killed.contains(id))
+				State::current.spottedNotKilled.insert(id);
 		}
 	});
 	events.listen<Events::DrainPipe_climbed>([this](const ServerEvent<Events::DrainPipe_climbed>& ev) {
@@ -1240,15 +1247,15 @@ auto CroupierPlugin::SetupEvents() -> void {
 	events.listen<Events::SecuritySystemRecorder>([this](const ServerEvent<Events::SecuritySystemRecorder>& ev) {
 		switch (ev.Value.event) {
 			case SecuritySystemRecorderEvent::Spotted:
-				if (this->state.isCamsDestroyed) return;
-				this->state.isCaughtOnCams = true;
+				if (State::current.isCamsDestroyed) return;
+				State::current.isCaughtOnCams = true;
 				break;
 			case SecuritySystemRecorderEvent::Destroyed:
-				this->state.isCamsDestroyed = true;
-				this->state.isCaughtOnCams = false;
+				State::current.isCamsDestroyed = true;
+				State::current.isCaughtOnCams = false;
 				break;
 			case SecuritySystemRecorderEvent::Erased:
-				this->state.isCaughtOnCams = false;
+				State::current.isCaughtOnCams = false;
 				break;
 		}
 	});
@@ -1443,7 +1450,7 @@ auto CroupierPlugin::ValidateKillMethod(eTargetID target, const ServerEvent<Even
 	case eKillMethod::Fire:
 		{
 			// Validate incinerator fire kills (this may also pass for garden shredder kills)
-			auto fireSetpieceEv = this->state.getSetpieceEventAtTimestamp(ev.Timestamp);
+			auto fireSetpieceEv = State::current.getSetpieceEventAtTimestamp(ev.Timestamp);
 			if (killMethodStrict == ""
 				&& killType == EKillType::EKillType_ItemTakeOutFront
 				&& isKillClassUnknown
@@ -1470,7 +1477,7 @@ auto CroupierPlugin::ValidateKillMethod(eTargetID target, const ServerEvent<Even
 		if (method == eMapKillMethod::Silvio_SeaPlane) {
 			// Best we can really do is just check Silvio ever entered the plane
 			// and the kill was an accident (it is possible to kill him directly with explosive while he is in the plane).
-			auto lse = this->state.getLevelSetupEventByEvent("Silvio_InPlane");
+			auto lse = State::current.getLevelSetupEventByEvent("Silvio_InPlane");
 			return lse != nullptr && ev.Value.Accident
 				? eKillValidationType::Valid
 				: eKillValidationType::Invalid;
@@ -1502,7 +1509,7 @@ auto CroupierPlugin::ValidateKillMethod(eTargetID target, const ServerEvent<Even
 				: eKillValidationType::Invalid;
 		}
 		if (method == eMapKillMethod::Yuki_SabotageCableCar) {
-			auto lse = this->state.getLevelSetupEventByEvent("Cablecar_Down");
+			auto lse = State::current.getLevelSetupEventByEvent("Cablecar_Down");
 			return lse != nullptr
 				? eKillValidationType::Valid
 				: eKillValidationType::Invalid;
@@ -1588,7 +1595,7 @@ auto CroupierPlugin::ValidateKillMethod(eTargetID target, const ServerEvent<Even
 			// Accident explosion via water scooter
 			// Technically this can validate even if Steven is killed in an unrelated accident explosion and the scooter
 			// also gets blown up around the same time, but fuck it
-			auto const setpiece = this->state.getSetpieceEventAtTimestamp(ev.Timestamp, 0.3);
+			auto const setpiece = State::current.getSetpieceEventAtTimestamp(ev.Timestamp, 0.3);
 			return setpiece != nullptr && setpiece->id == "2f4a7b8f-a5f1-4c59-8a0e-678b3c2ee32f"
 				? ValidateKillMethod(target, ev, eKillMethod::Explosion, type)
 				: eKillValidationType::Invalid;
@@ -2077,14 +2084,17 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 		//case ZHMPin::WeaponEquipSuspicious:
 		//	Logger::Debug("PIN: WeaponEquipSuspicious {}", typeName);
 		//	break;
+		case static_cast<ZHMPin>(3896618861): // OnEquip
+			SendCustomEvent("OnEquip"sv, ImbuedPlayerLocation(ImbuedItemInfo(entity)));
+			break;
 		case ZHMPin::InstinctActive:
-			if (!this->state.playerInInstinct)
+			if (!State::current.playerInInstinct)
 				SendCustomEvent("InstinctActive"sv, ImbuedPlayerLocation());
-			this->state.playerInInstinct = true;
-			this->state.playerInInstinctSinceFrame = true;
+			State::current.playerInInstinct = true;
+			State::current.playerInInstinctSinceFrame = true;
 			break;
 		case ZHMPin::ProjectileBodyShot: {
-			const auto& trans = this->state.playerMatrix.Trans;
+			const auto& trans = State::current.playerMatrix.Trans;
 			auto pos = float4{trans.x, trans.y, trans.z, 1.0};
 			if (this->gameplay.playerBodyShotPos != pos) {
 				SendCustomEvent("ProjectileBodyShot"sv, ImbuedPlayerLocation());
@@ -2095,7 +2105,7 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 		case ZHMPin::ExplosionAtPos: {
 			auto pos = data.As<SVector3>();
 			if (pos) {
-				auto area = this->state.getArea(*pos);
+				auto area = State::current.getArea(*pos);
 				SendCustomEvent("Explosion"sv, ImbuedPlayerLocation({
 					{"Position", {
 						{"X", pos->x},
@@ -2120,7 +2130,7 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 			if (!spatial) break;
 			const auto& trans = spatial->GetWorldMatrix().Trans;
 			auto roomId = ZRoomManagerCreator::GetRoomID({ trans.x, trans.y, trans.z, 1.0 });
-			auto area = this->state.getArea({ trans.x, trans.y, trans.z });
+			auto area = State::current.getArea({ trans.x, trans.y, trans.z });
 			auto obj = json {
 				{"EntityID", setpiece->GetType()->m_nEntityId},
 				{"Position", {
@@ -2148,7 +2158,7 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 			if (!spatial) break;
 			const auto& trans = spatial->GetWorldMatrix().Trans;
 			auto roomId = ZRoomManagerCreator::GetRoomID({ trans.x, trans.y, trans.z, 1.0 });
-			auto area = this->state.getArea({ trans.x, trans.y, trans.z });
+			auto area = State::current.getArea({ trans.x, trans.y, trans.z });
 			auto obj = json {
 				{"RepositoryId", setpieceRepoIdPtr->ToString()},
 				{"EntityID", setpiece->GetType()->m_nEntityId},
@@ -2177,7 +2187,7 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 			if (!spatial) break;
 			const auto& trans = spatial->GetWorldMatrix().Trans;
 			auto roomId = ZRoomManagerCreator::GetRoomID({ trans.x, trans.y, trans.z, 1.0 });
-			auto area = this->state.getArea({ trans.x, trans.y, trans.z });
+			auto area = State::current.getArea({ trans.x, trans.y, trans.z });
 			auto obj = json {
 				{"RepositoryId", setpieceRepoIdPtr->ToString()},
 				{"EntityID", setpiece->GetType()->m_nEntityId},
@@ -2200,7 +2210,7 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 			if (!itemSpawner->m_rMainItemKey) break;
 			auto repoId = itemSpawner->m_rMainItemKey.m_pInterfaceRef->m_RepositoryId.ToString();
 			auto pos = itemSpawner->GetWorldMatrix().Pos;
-			auto area = this->state.getArea(itemSpawner->m_mTransform.Trans);
+			auto area = State::current.getArea(itemSpawner->m_mTransform.Trans);
 			SendCustomEvent("ItemDestroyed"sv, ImbuedPlayerLocation({
 				{"RepositoryId", repoId.c_str()},
 				{"Area", area ? area->ID : ""},
@@ -2227,7 +2237,7 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 			auto spatial = parent.QueryInterface<ZSpatialEntity>();
 			if (spatial) {
 				auto trans = spatial->m_mTransform.Trans;
-				auto area = this->state.getArea(trans);
+				auto area = State::current.getArea(trans);
 				auto roomId = ZRoomManagerCreator::GetRoomID(spatial->GetWorldMatrix().Pos);
 				json.merge_patch({
 					{"CarPosition", {
@@ -2283,8 +2293,8 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 			auto moveIdx = data.As<int32>();
 			if (!moveIdx) break;
 			auto moveType = static_cast<PlayerMoveType>(*moveIdx);
-			if (this->state.playerMoveType != moveType) {
-				this->state.playerMoveType = moveType;
+			if (State::current.playerMoveType != moveType) {
+				State::current.playerMoveType = moveType;
 				SendCustomEvent("Movement"sv, ImbuedPlayerLocation());
 			}
 			break;
@@ -2304,34 +2314,34 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 		}
 		// ONLY WORK WHILE TRESPASSING :(
 		//case ZHMPin::IsCrouchWalkingSlowly:
-		//	if (this->state.playerMoveType != PlayerMoveType::WalkingSlowly)
+		//	if (State::current.playerMoveType != PlayerMoveType::WalkingSlowly)
 		//		SendCustomEvent("IsCrouchWalkingSlowly", {});
-		//	this->state.playerMoveType = PlayerMoveType::WalkingSlowly;
+		//	State::current.playerMoveType = PlayerMoveType::WalkingSlowly;
 		//	break;
 		//case ZHMPin::IsCrouchWalking:
-		//	if (this->state.playerMoveType != PlayerMoveType::CrouchWalkingSlowly)
+		//	if (State::current.playerMoveType != PlayerMoveType::CrouchWalkingSlowly)
 		//		SendCustomEvent("IsCrouchWalking", {});
-		//	this->state.playerMoveType = PlayerMoveType::CrouchWalkingSlowly;
+		//	State::current.playerMoveType = PlayerMoveType::CrouchWalkingSlowly;
 		//	break;
 		//case ZHMPin::IsCrouchRunning:
-		//	if (this->state.playerMoveType != PlayerMoveType::CrouchRunning)
+		//	if (State::current.playerMoveType != PlayerMoveType::CrouchRunning)
 		//		SendCustomEvent("IsCrouchRunning", {});
-		//	this->state.playerMoveType = PlayerMoveType::CrouchRunning;
+		//	State::current.playerMoveType = PlayerMoveType::CrouchRunning;
 		//	break;
 		//case ZHMPin::IsRunning:
-		//	if (this->state.playerMoveType != PlayerMoveType::Running)
+		//	if (State::current.playerMoveType != PlayerMoveType::Running)
 		//		SendCustomEvent("IsRunning", {});
-		//	this->state.playerMoveType = PlayerMoveType::Running;
+		//	State::current.playerMoveType = PlayerMoveType::Running;
 		//	break;
 		//case ZHMPin::IsWalking:
-		//	if (this->state.playerMoveType != PlayerMoveType::Walking)
+		//	if (State::current.playerMoveType != PlayerMoveType::Walking)
 		//		SendCustomEvent("IsWalking", {});
-		//	this->state.playerMoveType = PlayerMoveType::Walking;
+		//	State::current.playerMoveType = PlayerMoveType::Walking;
 		//	break;
 		//case ZHMPin::IsWalkingSlowly:
-		//	if (this->state.playerMoveType != PlayerMoveType::WalkingSlowly)
+		//	if (State::current.playerMoveType != PlayerMoveType::WalkingSlowly)
 		//		SendCustomEvent("IsWalkingSlowly", {});
-		//	this->state.playerMoveType = PlayerMoveType::WalkingSlowly;
+		//	State::current.playerMoveType = PlayerMoveType::WalkingSlowly;
 		//	break;
 	}
 	return HookAction::Continue();
@@ -2361,8 +2371,8 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, void, OnWinHttpCallback, void* dwContext, v
 
 					if (mission != eMission::NONE) {
 						State::OnMissionSelect(mission);
-						if (!this->state.isPlaying)
-							this->state.playerStart();
+						if (!State::current.isPlaying)
+							State::current.playerStart();
 					}
 				}
 			}

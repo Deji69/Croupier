@@ -79,7 +79,6 @@ namespace Croupier {
 		DECLARE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint32_t pinId, const ZObjectRef& data);
 
 	private:
-		State state;
 		GameplayData gameplay;
 		eMission currentMission = eMission::NONE;
 		EventSystem events;
