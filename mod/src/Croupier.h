@@ -78,43 +78,26 @@ namespace Croupier {
 		DECLARE_PLUGIN_DETOUR(CroupierPlugin, void, OnWinHttpCallback, void* dwContext, void* hInternet, void* param_3, int dwInternetStatus, void* param_5, int param_6);
 		DECLARE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint32_t pinId, const ZObjectRef& data);
 
-private:
-	std::unique_ptr<CroupierClient> client;
-	RouletteSpinGenerator generator;
-	RouletteRuleset rules;
-	RouletteSpin spin;
-	SharedRouletteSpin sharedSpin;
-	GameplayData gameplay;
-	std::stack<RouletteSpin> spinHistory;
-	eMission currentMission = eMission::NONE;
-	eRouletteRuleset ruleset = eRouletteRuleset::RRWC2023;
-	EventSystem events;
-	std::fstream file;
-	std::filesystem::path modulePath;
-	ImVec2 overlaySize = {};
-	ImVec2 debugOverlaySize = {};
-	int uiMissionSelectIndex = 0;
-	bool currentSpinSaved = true;
-	bool showUI = false;
-	bool showManualModeUI = false;
-	bool showEditMissionPoolUI = false;
-	bool showCustomRulesetUI = false;
-	bool showEditHotkeysUI = false;
-	bool spinCompleted = false;
-	bool spinLocked = false;
-	bool appTimerEnable = false;
-	bool hooksInstalled = false;
-	bool loadRemovalActive = false;
-	bool isLoadingScreenCheckHasBeenTrue = false;
-	bool loadingScreenActivated = false;
-	bool respinKeybindWasPressed = false;
-	bool shuffleKeybindWasPressed = false;
-	KeyBindAssign respinKeyBind;
-	KeyBindAssign shuffleKeyBind;
-	ZInputAction respinAction;
-	ZInputAction shuffleAction;
-	Configuration config;
-};
+	private:
+		GameplayData gameplay;
+		eMission currentMission = eMission::NONE;
+		EventSystem events;
+		std::filesystem::path modulePath;
+		int uiMissionSelectIndex = 0;
+		bool currentSpinSaved = true;
+		bool appTimerEnable = false;
+		bool hooksInstalled = false;
+		bool loadRemovalActive = false;
+		bool isLoadingScreenCheckHasBeenTrue = false;
+		bool loadingScreenActivated = false;
+		bool respinKeybindWasPressed = false;
+		bool shuffleKeybindWasPressed = false;
+		TResourcePtr<ZTemplateEntityFactory> repositoryResource;
+		ZInputAction respinAction;
+		ZInputAction shuffleAction;
+		Configuration config;
+		Croupier::UI ui;
+	};
 
 	DEFINE_ZHM_PLUGIN(CroupierPlugin)
 }

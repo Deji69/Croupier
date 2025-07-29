@@ -45,7 +45,7 @@ class ClientMessage {
 public:
 	auto toString() const -> std::string;
 
-	eClientMessage type;
+	eClientMessage type = eClientMessage::Event;
 	std::string args;
 	std::string raw;
 	bool isRaw = false;
