@@ -318,6 +318,9 @@ namespace Croupier
 				SendSpinLockToClient();
 			}
 		}
+		public string SpinLockTip => IsBingoMode
+			? (SpinLock ? "Unlock Grid (Allow auto-spin and manual tile toggling)" : "Lock Grid (Prevent auto-spin & manual tile toggling)")
+			: (SpinLock ? "Unlock Spin (Allow auto-spin)" : "Lock Spin (Prevent auto-spin)");
 		public bool HorizontalSpinDisplay { get; set; } = false;
 		public bool RightToLeft {
 			get => _rightToLeft;
@@ -2301,6 +2304,7 @@ namespace Croupier
 		}
 
 		private void BingoTile_MouseDown(object sender, RoutedEventArgs e) {
+			if (SpinLock) return;
 			var tile = (BingoTile)((Button)sender).DataContext;
 			tile.Complete = !tile.Complete;
 		}

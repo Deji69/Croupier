@@ -424,6 +424,7 @@
 						VerticalAlignment="Stretch"
 						Width="28"
 						ToolTipService.InitialShowDelay="750"
+						ToolTip="{Binding SpinLockTip, UpdateSourceTrigger=PropertyChanged}"
 						IsChecked="{Binding SpinLock, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
 						<ToggleButton.Style>
 							<Style TargetType="ToggleButton" BasedOn="{StaticResource ToggleButtonFlatStyle}">
