@@ -10,15 +10,60 @@
 
 using namespace Croupier;
 
-Configuration Configuration::main;
+Config Config::main;
 
-Configuration::Configuration() {
+static auto parseDockMode(const ZString& val) {
+	if (val == "topleft") return DockMode::TopLeft;
+	else if (val == "topright") return DockMode::TopRight;
+	else if (val == "bottomleft") return DockMode::BottomLeft;
+	else if (val == "bottomright") return DockMode::BottomRight;
+	return DockMode::None;
+}
+
+static auto dockModeToString(DockMode val) {
+	if (val == DockMode::TopLeft) return "topleft";
+	else if (val == DockMode::TopRight) return "topright";
+	else if (val == DockMode::BottomLeft) return "bottomleft";
+	else if (val == DockMode::BottomRight) return "bottomright";
+	return "none";
+}
+
+Config::Config() {
 	CHAR filename[MAX_PATH] = {};
 	if (GetModuleFileName(NULL, filename, MAX_PATH) != 0)
 		this->modulePath = std::filesystem::path(filename).parent_path();
 }
 
-auto Configuration::Load() -> void {
+auto Config::LoadConfig() -> void {
+	this->debug = SDK()->GetPluginSettingBool(plugin, "general", "debug", this->debug);
+	this->timer = SDK()->GetPluginSettingBool(plugin, "general", "timer", this->timer);
+	this->streak = SDK()->GetPluginSettingBool(plugin, "general", "streak", this->streak);
+	this->streakCurrent = SDK()->GetPluginSettingInt(plugin, "general", "streak_current", this->streakCurrent);
+	this->spinOverlay = SDK()->GetPluginSettingBool(plugin, "general", "spin_overlay", this->spinOverlay);
+	this->overlayDockMode = parseDockMode(SDK()->GetPluginSetting(plugin, "general", "spin_overlay_dock", dockModeToString(this->overlayDockMode)));
+	this->overlayKillConfirmations = SDK()->GetPluginSettingBool(plugin, "general", "spin_overlay_confirmations", this->overlayKillConfirmations);
+	this->ruleset = getRulesetByName(SDK()->GetPluginSetting(plugin, "general", "ruleset", "")).value_or(this->ruleset);
+	this->customRules.enableMedium = SDK()->GetPluginSettingBool(plugin, "general", "ruleset_medium", this->customRules.enableMedium);
+	this->customRules.enableHard = SDK()->GetPluginSettingBool(plugin, "general", "ruleset_hard", this->customRules.enableHard);
+	this->customRules.enableExtreme = SDK()->GetPluginSettingBool(plugin, "general", "ruleset_extreme", this->customRules.enableExtreme);
+	this->customRules.enableBuggy = SDK()->GetPluginSettingBool(plugin, "general", "ruleset_buggy", this->customRules.enableBuggy);
+	this->customRules.enableImpossible = SDK()->GetPluginSettingBool(plugin, "general", "ruleset_impossible", this->customRules.enableImpossible);
+	this->customRules.genericEliminations = SDK()->GetPluginSettingBool(plugin, "general", "ruleset_generic_elims", this->customRules.genericEliminations);
+	this->customRules.liveComplications = SDK()->GetPluginSettingBool(plugin, "general", "ruleset_live_complications", this->customRules.liveComplications);
+	this->customRules.liveComplicationsExcludeStandard = SDK()->GetPluginSettingBool(plugin, "general", "ruleset_live_complications_exclude_standard", this->customRules.liveComplicationsExcludeStandard);
+	this->customRules.liveComplicationChance = SDK()->GetPluginSettingInt(plugin, "general", "ruleset_live_complication_chance", this->customRules.liveComplicationChance);
+	this->customRules.meleeKillTypes = SDK()->GetPluginSettingBool(plugin, "general", "ruleset_melee_kill_types", this->customRules.meleeKillTypes);
+	this->customRules.thrownKillTypes = SDK()->GetPluginSettingBool(plugin, "general", "ruleset_thrown_kill_types", this->customRules.thrownKillTypes);
+
+	auto missionPoolStr = SDK()->GetPluginSetting(plugin, "general", "mission_pool", "");
+	const auto maps = split(missionPoolStr, ",");
+	this->missionPool.clear();
+	for (const auto& map : maps) {
+		auto mission = getMissionByCodename(std::string(trim(map)));
+		if (mission != eMission::NONE)
+			this->missionPool.push_back(mission);
+	}
+
 	if (this->file.is_open()) return;
 
 	const auto filepath = this->modulePath / "mods" / "Croupier" / "croupier.txt";
@@ -38,75 +83,7 @@ auto Configuration::Load() -> void {
 		this->file.close();
 	}
 
-	auto parseInt = [](std::string_view sv, int64 defaultVal = 0) {
-		int64 v;
-		auto res = std::from_chars(sv.data(), sv.data() + sv.size(), v);
-		if (res.ec == std::errc())
-			return v;
-		return defaultVal;
-	};
-	auto parseBool = [parseInt](std::string_view sv, bool defaultVal = false) {
-		bool v = defaultVal;
-		if (sv == "true")
-			v = true;
-		else if (sv == "false")
-			v = false;
-		else
-			v = parseInt(sv, defaultVal ? 1 : 0) ? true : false;
-		return v;
-	};
-
 	bool inHistorySection = false;
-	auto cmds = std::map<std::string, std::function<void (std::string_view val)>> {
-		{"debug", [this, parseBool](std::string_view val) { this->debug = parseBool(val, this->debug); }},
-		{"timer", [this, parseBool](std::string_view val) { this->timer = parseBool(val, this->timer); }},
-		{"streak", [this, parseBool](std::string_view val) { this->streak = parseBool(val, this->streak); }},
-		{"streak_current", [this, parseInt](std::string_view val) { this->streakCurrent = parseInt(val, this->streakCurrent); }},
-		{"spin_overlay", [this, parseBool](std::string_view val) { this->spinOverlay = parseBool(val, this->spinOverlay); }},
-		{"spin_overlay_dock", [this](std::string_view val) {
-			if (val == "topleft") this->overlayDockMode = DockMode::TopLeft;
-			else if (val == "topright") this->overlayDockMode = DockMode::TopRight;
-			else if (val == "bottomleft") this->overlayDockMode = DockMode::BottomLeft;
-			else if (val == "bottomright") this->overlayDockMode = DockMode::BottomRight;
-			else this->overlayDockMode = DockMode::None;
-		}},
-		{"spin_overlay_confirmations", [this, parseBool](std::string_view val) { this->overlayKillConfirmations = parseBool(val, this->overlayKillConfirmations); }},
-		{"ruleset", [this](std::string_view val) { this->ruleset = getRulesetByName(val).value_or(this->ruleset); }},
-		{"ruleset_medium", [this, parseBool](std::string_view val) { this->customRules.enableMedium = parseBool(val, this->customRules.enableMedium); }},
-		{"ruleset_hard", [this, parseBool](std::string_view val) { this->customRules.enableHard = parseBool(val, this->customRules.enableHard); }},
-		{"ruleset_extreme", [this, parseBool](std::string_view val) { this->customRules.enableExtreme = parseBool(val, this->customRules.enableExtreme); }},
-		{"ruleset_buggy", [this, parseBool](std::string_view val) { this->customRules.enableBuggy = parseBool(val, this->customRules.enableBuggy); }},
-		{"ruleset_impossible", [this, parseBool](std::string_view val) {
-			this->customRules.enableImpossible = parseBool(val, this->customRules.enableImpossible);
-		}},
-		{"ruleset_generic_elims", [this, parseBool](std::string_view val) {
-			this->customRules.genericEliminations = parseBool(val, this->customRules.genericEliminations);
-		}},
-		{"ruleset_live_complications", [this, parseBool](std::string_view val) {
-			this->customRules.liveComplications = parseBool(val, this->customRules.liveComplications);
-		}},
-		{"ruleset_live_complications_exclude_standard", [this, parseBool](std::string_view val) {
-			this->customRules.liveComplicationsExcludeStandard = parseBool(val, this->customRules.liveComplicationsExcludeStandard);
-		}},
-		{"ruleset_live_complication_chance", [this, parseInt](std::string_view val) {
-			this->customRules.liveComplicationChance = parseInt(val, this->customRules.liveComplicationChance);
-		}},
-		{"ruleset_melee_kill_types", [this, parseBool](std::string_view val) {
-			this->customRules.meleeKillTypes = parseBool(val, this->customRules.meleeKillTypes);
-		}},
-		{"ruleset_thrown_kill_types", [this, parseBool](std::string_view val) {
-			this->customRules.thrownKillTypes = parseBool(val, this->customRules.thrownKillTypes);
-		}},
-		{"mission_pool", [this](std::string_view val) {
-			const auto maps = split(val, ",");
-			this->missionPool.clear();
-			for (const auto& map : maps) {
-				auto mission = getMissionByCodename(std::string(trim(map)));
-				if (mission != eMission::NONE)
-					this->missionPool.push_back(mission);
-			}
-		}},
-	};
 
 	auto parseHistorySection = [this](std::string_view line) {
 		auto spin = SpinParser::parse(line);
@@ -120,58 +97,29 @@ auto Configuration::Load() -> void {
 			parseHistorySection(sv);
 		else if (trim(sv) == "[history]")
 			inHistorySection = true;
-		else {
-			auto tokens = split(sv, " ", 2);
-			if (tokens.size() < 2) continue;
-
-			auto const it = cmds.find(std::string(tokens[0]));
-			if (it != cend(cmds)) it->second(trim(tokens[1]));
-		}
 	}
 }
 
-auto Configuration::Save() -> void {
-	std::string content;
-	const auto filepath = this->modulePath / "mods" / "Croupier" / "croupier.txt";
-
-	this->file.open(filepath, std::ios::out | std::ios::trunc);
-
-	auto spinOverlayDock = "none";
-	switch (this->overlayDockMode) {
-	case DockMode::TopLeft:
-		spinOverlayDock = "topleft";
-		break;
-	case DockMode::TopRight:
-		spinOverlayDock = "topright";
-		break;
-	case DockMode::BottomLeft:
-		spinOverlayDock = "bottomleft";
-		break;
-	case DockMode::BottomRight:
-		spinOverlayDock = "bottomright";
-		break;
-	}
-
-	std::println(this->file, "debug {}", this->debug ? "true" : "false");
-	std::println(this->file, "timer {}", this->timer ? "true" : "false");
-	std::println(this->file, "streak {}", this->streak ? "true" : "false");
-	std::println(this->file, "streak_current {}", this->streakCurrent);
-	std::println(this->file, "spin_overlay {}", this->spinOverlay ? "true" : "false");
-	std::println(this->file, "spin_overlay_dock {}", spinOverlayDock);
-	std::println(this->file, "spin_overlay_confirmations {}", this->overlayKillConfirmations ? "true" : "false");
-	const auto rulesetName = getRulesetName(this->ruleset);
-	if (rulesetName) std::println(this->file, "ruleset {}", rulesetName.value());
-	std::println(this->file, "ruleset_medium {}", this->customRules.enableMedium ? "true" : "false");
-	std::println(this->file, "ruleset_hard {}", this->customRules.enableHard ? "true" : "false");
-	std::println(this->file, "ruleset_extreme {}", this->customRules.enableExtreme ? "true" : "false");
-	std::println(this->file, "ruleset_impossible {}", this->customRules.enableImpossible ? "true" : "false");
-	std::println(this->file, "ruleset_buggy {}", this->customRules.enableBuggy ? "true" : "false");
-	std::println(this->file, "ruleset_generic_elims {}", this->customRules.genericEliminations ? "true" : "false");
-	std::println(this->file, "ruleset_live_complications {}", this->customRules.liveComplications ? "true" : "false");
-	std::println(this->file, "ruleset_live_complications_exclude_standard {}", this->customRules.liveComplicationsExcludeStandard ? "true" : "false");
-	std::println(this->file, "ruleset_live_complication_chance {}", this->customRules.liveComplicationChance);
-	std::println(this->file, "ruleset_melee_kill_types {}", this->customRules.meleeKillTypes ? "true" : "false");
-	std::println(this->file, "ruleset_thrown_kill_types {}", this->customRules.thrownKillTypes ? "true" : "false");
+auto Config::SaveConfig() -> void {
+	SDK()->SetPluginSettingBool(plugin, "general", "debug", this->debug);
+	SDK()->SetPluginSettingBool(plugin, "general", "timer", this->timer);
+	SDK()->SetPluginSettingBool(plugin, "general", "streak", this->streak);
+	SDK()->SetPluginSettingInt(plugin, "general", "streak_current", this->streakCurrent);
+	SDK()->SetPluginSettingBool(plugin, "general", "spin_overlay", this->spinOverlay);
+	SDK()->SetPluginSetting(plugin, "general", "spin_overlay_dock", dockModeToString(this->overlayDockMode));
+	SDK()->SetPluginSettingBool(plugin, "general", "spin_overlay_confirmations", this->overlayKillConfirmations);
+	SDK()->SetPluginSetting(plugin, "general", "ruleset", getRulesetName(this->ruleset).value_or(""));
+	SDK()->SetPluginSettingBool(plugin, "general", "ruleset_medium", this->customRules.enableMedium);
+	SDK()->SetPluginSettingBool(plugin, "general", "ruleset_hard", this->customRules.enableHard);
+	SDK()->SetPluginSettingBool(plugin, "general", "ruleset_extreme", this->customRules.enableExtreme);
+	SDK()->SetPluginSettingBool(plugin, "general", "ruleset_buggy", this->customRules.enableBuggy);
+	SDK()->SetPluginSettingBool(plugin, "general", "ruleset_impossible", this->customRules.enableImpossible);
+	SDK()->SetPluginSettingBool(plugin, "general", "ruleset_generic_elims", this->customRules.genericEliminations);
+	SDK()->SetPluginSettingBool(plugin, "general", "ruleset_live_complications", this->customRules.liveComplications);
+	SDK()->SetPluginSettingBool(plugin, "general", "ruleset_live_complications_exclude_standard", this->customRules.liveComplicationsExcludeStandard);
+	SDK()->SetPluginSettingInt(plugin, "general", "ruleset_live_complication_chance", this->customRules.liveComplicationChance);
+	SDK()->SetPluginSettingBool(plugin, "general", "ruleset_melee_kill_types", this->customRules.meleeKillTypes);
+	SDK()->SetPluginSettingBool(plugin, "general", "ruleset_thrown_kill_types", this->customRules.thrownKillTypes);
 
 	std::string mapPoolValue;
 	for (const auto mission : this->missionPool) {
@@ -180,24 +128,38 @@ auto Configuration::Save() -> void {
 		if (mapPoolValue.size()) mapPoolValue += ", ";
 		mapPoolValue += codename.value();
 	}
-	std::println(this->file, "mission_pool {}", mapPoolValue);
 
-	std::println(this->file, "");
-	std::println(this->file, "[history]");
+	SDK()->SetPluginSetting(plugin, "general", "mission_pool", mapPoolValue);
 
-	for (const auto& spin : this->spinHistory) {
-		auto n = 0;
+	const auto filepath = this->modulePath / "mods" / "Croupier" / "croupier.txt";
 
-		for (const auto& cond : spin.conditions) {
-			if (n++) std::print(this->file, ", ");
-			std::print(this->file, "{}: {} / {}", cond.targetName, cond.killMethod, cond.disguise);
+	this->file.open(filepath, std::ios::out | std::ios::trunc);
+
+	if (this->file.is_open()) {
+		std::println(this->file, "[history]");
+
+		for (const auto& spin : this->spinHistory) {
+			auto n = 0;
+
+			for (const auto& cond : spin.conditions) {
+				if (n++) std::print(this->file, ", ");
+				std::print(this->file, "{}: {} / {}", cond.targetName, cond.killMethod, cond.disguise);
+			}
+
+			std::println(this->file, "");
 		}
 
-		std::println(this->file, "");
+		this->file.flush();
+		this->file.close();
 	}
 
-	this->file.flush();
-	this->file.close();
+	Logger::Info("Croupier: Config saved.");
+}
 
-	Logger::Info("Croupier - Config saved.");
+auto Config::Save() -> void {
+	if (main.plugin) main.SaveConfig();
+}
+
+auto Config::Load() -> void {
+	if (main.plugin) main.LoadConfig();
 }

@@ -40,21 +40,21 @@ auto UI::Draw(bool focused) -> void {
 		ImGui::PushFont(SDK()->GetImGuiRegularFont());
 
 #ifdef _DEBUG
-		if (ImGui::Checkbox("Debug", &Configuration::main.debug))
-			Configuration::main.Save();
+		if (ImGui::Checkbox("Debug", &Config::main.debug))
+			Config::Save();
 #else
-		if (Configuration::main.debug && ImGui::Checkbox("Debug", &Configuration::main.debug))
-			Configuration::main.Save();
+		if (Config::main.debug && ImGui::Checkbox("Debug", &Config::main.debug))
+			Config::Save();
 #endif
 
-		if (ImGui::Checkbox("Overlay", &Configuration::main.spinOverlay))
-			Configuration::main.Save();
+		if (ImGui::Checkbox("Overlay", &Config::main.spinOverlay))
+			Config::Save();
 
 		ImGui::SameLine(150.0);
 
 		auto selectedOverlayDockName = "Undocked";
 
-		switch (Configuration::main.overlayDockMode) {
+		switch (Config::main.overlayDockMode) {
 			case DockMode::TopLeft:
 				selectedOverlayDockName = "Top Left";
 				break;
@@ -70,48 +70,48 @@ auto UI::Draw(bool focused) -> void {
 		}
 
 		if (ImGui::BeginCombo("##OverlayDock", selectedOverlayDockName, ImGuiComboFlags_HeightLarge)) {
-			if (ImGui::Selectable("Undocked", Configuration::main.overlayDockMode == DockMode::None, 0)) {
-				Configuration::main.overlayDockMode = DockMode::None;
-				Configuration::main.Save();
+			if (ImGui::Selectable("Undocked", Config::main.overlayDockMode == DockMode::None, 0)) {
+				Config::main.overlayDockMode = DockMode::None;
+				Config::Save();
 			}
-			if (Configuration::main.overlayDockMode == DockMode::None) ImGui::SetItemDefaultFocus();
+			if (Config::main.overlayDockMode == DockMode::None) ImGui::SetItemDefaultFocus();
 
-			if (ImGui::Selectable("Top Left", Configuration::main.overlayDockMode == DockMode::TopLeft, 0)) {
-				Configuration::main.overlayDockMode = DockMode::TopLeft;
-				Configuration::main.Save();
+			if (ImGui::Selectable("Top Left", Config::main.overlayDockMode == DockMode::TopLeft, 0)) {
+				Config::main.overlayDockMode = DockMode::TopLeft;
+				Config::Save();
 			}
-			if (Configuration::main.overlayDockMode == DockMode::TopLeft) ImGui::SetItemDefaultFocus();
+			if (Config::main.overlayDockMode == DockMode::TopLeft) ImGui::SetItemDefaultFocus();
 
-			if (ImGui::Selectable("Top Right", Configuration::main.overlayDockMode == DockMode::TopRight, 0)) {
-				Configuration::main.overlayDockMode = DockMode::TopRight;
-				Configuration::main.Save();
+			if (ImGui::Selectable("Top Right", Config::main.overlayDockMode == DockMode::TopRight, 0)) {
+				Config::main.overlayDockMode = DockMode::TopRight;
+				Config::Save();
 			}
-			if (Configuration::main.overlayDockMode == DockMode::TopRight) ImGui::SetItemDefaultFocus();
+			if (Config::main.overlayDockMode == DockMode::TopRight) ImGui::SetItemDefaultFocus();
 
-			if (ImGui::Selectable("Bottom Left", Configuration::main.overlayDockMode == DockMode::BottomLeft, 0)) {
-				Configuration::main.overlayDockMode = DockMode::BottomLeft;
-				Configuration::main.Save();
+			if (ImGui::Selectable("Bottom Left", Config::main.overlayDockMode == DockMode::BottomLeft, 0)) {
+				Config::main.overlayDockMode = DockMode::BottomLeft;
+				Config::Save();
 			}
-			if (Configuration::main.overlayDockMode == DockMode::BottomLeft) ImGui::SetItemDefaultFocus();
+			if (Config::main.overlayDockMode == DockMode::BottomLeft) ImGui::SetItemDefaultFocus();
 
-			if (ImGui::Selectable("Bottom Right", Configuration::main.overlayDockMode == DockMode::BottomRight, 0)) {
-				Configuration::main.overlayDockMode = DockMode::BottomRight;
-				Configuration::main.Save();
+			if (ImGui::Selectable("Bottom Right", Config::main.overlayDockMode == DockMode::BottomRight, 0)) {
+				Config::main.overlayDockMode = DockMode::BottomRight;
+				Config::Save();
 			}
-			if (Configuration::main.overlayDockMode == DockMode::BottomRight) ImGui::SetItemDefaultFocus();
+			if (Config::main.overlayDockMode == DockMode::BottomRight) ImGui::SetItemDefaultFocus();
 
 			ImGui::EndCombo();
 		}
 
-		if (ImGui::Checkbox("Overlay Kill Confirmations", &Configuration::main.overlayKillConfirmations))
-			Configuration::main.Save();
+		if (ImGui::Checkbox("Overlay Kill Confirmations", &Config::main.overlayKillConfirmations))
+			Config::Save();
 
 		if (!connected) {
 			// Legacy timer
-			if (ImGui::Checkbox("Timer", &Configuration::main.timer))
-				Configuration::main.Save();
+			if (ImGui::Checkbox("Timer", &Config::main.timer))
+				Config::Save();
 
-			if (Configuration::main.timer) {
+			if (Config::main.timer) {
 				ImGui::SameLine();
 				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 40.0);
 				if (ImGui::Button("Reset"))
@@ -119,8 +119,8 @@ auto UI::Draw(bool focused) -> void {
 			}
 		} else {
 			// In-App Timer
-			if (ImGui::Checkbox("Timer", &Configuration::main.timer))
-				Configuration::main.Save();
+			if (ImGui::Checkbox("Timer", &Config::main.timer))
+				Config::Save();
 
 			ImGui::SameLine(150.0);
 
@@ -150,13 +150,13 @@ auto UI::Draw(bool focused) -> void {
 
 		if (connected) {
 			// Streak Tracking
-			if (ImGui::Checkbox("Streak", &Configuration::main.streak))
-				Configuration::main.Save();
+			if (ImGui::Checkbox("Streak", &Config::main.streak))
+				Config::Save();
 
 			ImGui::SameLine(150.0);
 
 			if (ImGui::Button("Reset##Streak")) {
-				Configuration::main.streakCurrent = 0;
+				Config::main.streakCurrent = 0;
 				SendResetStreak();
 			}
 		}
@@ -263,7 +263,7 @@ auto UI::Draw(bool focused) -> void {
 }
 
 auto UI::DrawBingoDebugUI(bool focused) -> void {
-	if (!Configuration::main.debug)
+	if (!Config::main.debug)
 		return;
 
 	ImGui::PushFont(SDK()->GetImGuiBlackFont());
@@ -271,7 +271,7 @@ auto UI::DrawBingoDebugUI(bool focused) -> void {
 	auto viewportSize = ImGui::GetMainViewport()->Size;
 	auto flags = static_cast<ImGuiWindowFlags>(ImGuiWindowFlags_AlwaysAutoResize);
 
-	if (Configuration::main.overlayDockMode != DockMode::None || !focused)
+	if (Config::main.overlayDockMode != DockMode::None || !focused)
 		flags |= ImGuiWindowFlags_NoTitleBar;
 
 	ImGui::SetNextWindowPos({0, viewportSize.y - this->debugOverlaySize.y});
@@ -334,17 +334,17 @@ auto UI::DrawBingoDebugUI(bool focused) -> void {
 }
 
 auto UI::DrawSpinUI(bool focused) -> void {
-	if (!Configuration::main.spinOverlay) return;
+	if (!Config::main.spinOverlay) return;
 
 	ImGui::PushFont(SDK()->GetImGuiBlackFont());
 
 	auto viewportSize = ImGui::GetMainViewport()->Size;
 	auto flags = static_cast<ImGuiWindowFlags>(ImGuiWindowFlags_AlwaysAutoResize);
 
-	if (Configuration::main.overlayDockMode != DockMode::None || !focused)
+	if (Config::main.overlayDockMode != DockMode::None || !focused)
 		flags |= ImGuiWindowFlags_NoTitleBar;
 
-	switch (Configuration::main.overlayDockMode) {
+	switch (Config::main.overlayDockMode) {
 		case DockMode::TopLeft:
 			ImGui::SetNextWindowPos({0, 0});
 			break;
@@ -359,7 +359,7 @@ auto UI::DrawSpinUI(bool focused) -> void {
 			break;
 	}
 
-	if (ImGui::Begin(ICON_MD_CASINO " CROUPIER - SPIN", &Configuration::main.spinOverlay, flags)) {
+	if (ImGui::Begin(ICON_MD_CASINO " CROUPIER - SPIN", &Config::main.spinOverlay, flags)) {
 		this->overlaySize = ImGui::GetWindowSize();
 
 		ImGui::PushFont(SDK()->GetImGuiBoldFont());
@@ -373,7 +373,7 @@ auto UI::DrawSpinUI(bool focused) -> void {
 			auto kc = State::current.getTargetKillValidation(cond.target.get().getID());
 			auto validation = " - "s;
 
-			if (Configuration::main.overlayKillConfirmations) {
+			if (Config::main.overlayKillConfirmations) {
 				if (kc.correctMethod == eKillValidationType::Unknown)
 					validation += "Unknown"s;
 				else if (kc.correctMethod == eKillValidationType::Invalid)
@@ -391,7 +391,7 @@ auto UI::DrawSpinUI(bool focused) -> void {
 
 		auto text = std::string();
 
-		if (Configuration::main.timer) {
+		if (Config::main.timer) {
 			if (!text.empty()) text += " - ";
 			auto timeFormat = std::string();
 			auto const includeHr = std::chrono::duration_cast<std::chrono::hours>(elapsed).count() >= 1;
@@ -399,9 +399,9 @@ auto UI::DrawSpinUI(bool focused) -> void {
 			text += time;
 		}
 
-		if (Configuration::main.streak) {
+		if (Config::main.streak) {
 			if (!text.empty()) text += " - ";
-			text += std::format("Streak: {}", Configuration::main.streakCurrent);
+			text += std::format("Streak: {}", Config::main.streakCurrent);
 		}
 
 		if (!text.empty()) {
@@ -679,14 +679,14 @@ auto UI::DrawEditMissionPoolUI(bool focused) -> void {
 			if (++i % 3 != 1)
 				ImGui::SameLine(320 * ((i - 1) % 3));
 
-			auto it = find(cbegin(Configuration::main.missionPool), cend(Configuration::main.missionPool), missionInfo.mission);
-			auto enabled = it != cend(Configuration::main.missionPool);
+			auto it = find(cbegin(Config::main.missionPool), cend(Config::main.missionPool), missionInfo.mission);
+			auto enabled = it != cend(Config::main.missionPool);
 			if (ImGui::Checkbox(missionInfo.name.data(), &enabled)) {
-				auto it = remove(begin(Configuration::main.missionPool), end(Configuration::main.missionPool), missionInfo.mission);
-				if (it != end(Configuration::main.missionPool)) Configuration::main.missionPool.erase(it, end(Configuration::main.missionPool));
-				if (enabled) Configuration::main.missionPool.push_back(missionInfo.mission);
+				auto it = remove(begin(Config::main.missionPool), end(Config::main.missionPool), missionInfo.mission);
+				if (it != end(Config::main.missionPool)) Config::main.missionPool.erase(it, end(Config::main.missionPool));
+				if (enabled) Config::main.missionPool.push_back(missionInfo.mission);
 				SendMissions();
-				Configuration::main.Save();
+				Config::Save();
 			}
 		}
 

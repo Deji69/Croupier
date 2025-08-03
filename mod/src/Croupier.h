@@ -41,11 +41,11 @@ namespace Croupier {
 		auto Respin(bool isAuto = true) -> void;
 		auto PreviousSpin() -> void;
 		auto SetDefaultMissionPool() -> void;
-		auto GetOutfitByRepoId(std::string_view repoId) -> const ZGlobalOutfitKit*;
-		auto GetOutfitByRepoId(ZRepositoryID repoId) -> const ZGlobalOutfitKit*;
-		auto SendCustomEvent(std::string_view name, nlohmann::json eventValue) -> void;
-		auto ImbueItemEvent(const ItemEventValue& ev, EActionType actionType) -> std::optional<nlohmann::json>;
-		auto ImbuePacifyEvent(const PacifyEventValue& ev) -> std::optional<nlohmann::json>;
+		auto GetOutfitByRepoId(std::string_view repoId) const -> const ZGlobalOutfitKit*;
+		auto GetOutfitByRepoId(ZRepositoryID repoId) const -> const ZGlobalOutfitKit*;
+		auto SendCustomEvent(std::string_view name, nlohmann::json eventValue) const -> void;
+		auto ImbueItemEvent(const ItemEventValue& ev, EActionType actionType) const -> std::optional<nlohmann::json>;
+		auto ImbuePacifyEvent(const PacifyEventValue& ev) const -> std::optional<nlohmann::json>;
 		auto ImbueDisguiseEvent(const std::string& repoId) -> nlohmann::json;
 		auto ImbuePlayerLocation(nlohmann::json& json, bool asHero = false) const -> void;
 		auto ImbueItemInfo(ZEntityRef entity, nlohmann::json& json) -> void;
@@ -71,6 +71,18 @@ namespace Croupier {
 		auto ProcessSpinDataMessage(const ClientMessage& message) -> void;
 		auto ProcessLoadRemoval() -> void;
 
+		template<typename... Args>
+		inline void LogDebug(spdlog::format_string_t<Args...> p_Format, const Args&... p_Args) const {
+#ifndef _DEBUG
+			if (!config.debug) return;
+#endif
+
+			const auto s_Loggers = GetLoggers();
+
+			for (size_t i = 0; i < s_Loggers.Count; ++i)
+				s_Loggers.Loggers[i]->debug(fmt::runtime(p_Format), p_Args...);
+		}
+
 		DECLARE_PLUGIN_DETOUR(CroupierPlugin, void*, OnZLevelManagerStateCondition, void* th, __int64 a2);
 		DECLARE_PLUGIN_DETOUR(CroupierPlugin, void*, OnLoadingScreenActivated, void* th, void* a1);
 		DECLARE_PLUGIN_DETOUR(CroupierPlugin, void, OnEventReceived, ZAchievementManagerSimple* th, const SOnlineEvent& event);
@@ -95,7 +107,7 @@ namespace Croupier {
 		TResourcePtr<ZTemplateEntityFactory> repositoryResource;
 		ZInputAction respinAction;
 		ZInputAction shuffleAction;
-		Configuration config;
+		Config config;
 		Croupier::UI ui;
 	};
 
