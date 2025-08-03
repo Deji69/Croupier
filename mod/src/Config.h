@@ -1,10 +1,13 @@
 #pragma once
 #include "Roulette.h"
 #include "RouletteRuleset.h"
+#include <IPluginInterface.h>
 #include <fstream>
 #include <filesystem>
 #include <string>
 #include <vector>
+
+class IPluginInterface;
 
 namespace Croupier {
 	// TODO: Move
@@ -26,8 +29,8 @@ namespace Croupier {
 		BottomRight,
 	};
 
-	struct Configuration {
-		static Configuration main;
+	struct Config {
+		static Config main;
 
 		bool debug = false;
 		bool timer = false;
@@ -42,9 +45,15 @@ namespace Croupier {
 		std::vector<SerializedSpin> spinHistory;
 		std::fstream file;
 		std::filesystem::path modulePath;
+		IPluginInterface* plugin = nullptr;
 
-		Configuration();
-		auto Load() -> void;
-		auto Save() -> void;
+		Config();
+
+		static auto Load() -> void;
+		static auto Save() -> void;
+
+	private:
+		auto LoadConfig() -> void;
+		auto SaveConfig() -> void;
 	};
 }

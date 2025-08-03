@@ -22,7 +22,7 @@ auto Croupier::SendRespin(eMission mission) -> void {
 auto Croupier::SendMissions() -> void {
 	std::string buffer;
 
-	for (auto const id : Configuration::main.missionPool) {
+	for (auto const id : Config::main.missionPool) {
 		auto codename = getMissionCodename(id);
 		if (!codename.has_value()) continue;
 		if (!buffer.empty()) buffer += ",";

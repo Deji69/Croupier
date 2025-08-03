@@ -59,11 +59,12 @@ CroupierPlugin::CroupierPlugin() : respinAction("Respin"), shuffleAction("Shuffl
 	Commands::Respin = std::bind(&CroupierPlugin::Respin, this, std::placeholders::_1);
 	Commands::Random = std::bind(&CroupierPlugin::Random, this);
 	Commands::PreviousSpin = std::bind(&CroupierPlugin::PreviousSpin, this);
+	Config::main.plugin = this;
 }
 
 CroupierPlugin::~CroupierPlugin() {
 	State::current.client.stop();
-	this->config.Save();
+	Config::Save();
 	this->UninstallHooks();
 }
 
@@ -75,9 +76,9 @@ auto CroupierPlugin::OnEngineInitialized() -> void {
 	State::current.client.start();
 
 	this->InstallHooks();
-	this->config.Load();
+	Config::Load();
 
-	if (this->config.missionPool.empty())
+	if (Config::main.missionPool.empty())
 		this->SetDefaultMissionPool();
 
 	this->PreviousSpin();
@@ -99,7 +100,7 @@ auto CroupierPlugin::InstallHooks() -> void {
 
 	this->hooksInstalled = true;
 
-	Logger::Info("Croupier - Hooks installed.");
+	Logger::Info("Croupier: Hooks installed.");
 }
 
 auto CroupierPlugin::UninstallHooks() -> void {
@@ -118,7 +119,7 @@ auto CroupierPlugin::UninstallHooks() -> void {
 
 	this->hooksInstalled = false;
 
-	Logger::Info("Croupier - Hooks uninstalled.");
+	Logger::Info("Croupier: Hooks uninstalled.");
 }
 
 auto CroupierPlugin::OnFrameUpdate(const SGameUpdateEvent& ev) -> void {
@@ -367,14 +368,14 @@ auto CroupierPlugin::ProcessLoadRemoval() -> void {
 
 auto CroupierPlugin::ProcessMissionsMessage(const ClientMessage& message) -> void {
 	auto tokens = split(message.args, ",");
-	Configuration::main.missionPool.clear();
+	Config::main.missionPool.clear();
 	std::string buffer;
 
 	for (auto const& token : tokens) {
 		buffer = trim(token);
 		auto mission = getMissionByCodename(buffer);
 		if (mission != eMission::NONE)
-			Configuration::main.missionPool.push_back(mission);
+			Config::main.missionPool.push_back(mission);
 	}
 }
 
@@ -418,7 +419,7 @@ auto CroupierPlugin::SaveSpinHistory() -> void {
 		this->currentSpinSaved = true;
 	}
 
-	this->config.Save();
+	Config::Save();
 }
 
 auto CroupierPlugin::OnFinishMission() -> void {
@@ -494,11 +495,11 @@ auto CroupierPlugin::Respin(bool isAuto) -> void {
 
 auto lastThrownItem = ""s;
 
-auto CroupierPlugin::GetOutfitByRepoId(std::string_view repoId) -> const ZGlobalOutfitKit* {
+auto CroupierPlugin::GetOutfitByRepoId(std::string_view repoId) const -> const ZGlobalOutfitKit* {
 	return this->GetOutfitByRepoId(ZRepositoryID{repoId});
 }
 
-auto CroupierPlugin::GetOutfitByRepoId(ZRepositoryID repoId) -> const ZGlobalOutfitKit* {
+auto CroupierPlugin::GetOutfitByRepoId(ZRepositoryID repoId) const -> const ZGlobalOutfitKit* {
 	if (!Globals::ContentKitManager) return nullptr;
 	auto& globalOutfitKitsRepo = Globals::ContentKitManager->m_repositoryGlobalOutfitKits;
 	auto it = globalOutfitKitsRepo.find(repoId);
@@ -579,7 +580,7 @@ auto CroupierPlugin::ImbueActorInfo(TEntityRef<ZActor> ref, json& j, bool asActo
 	});
 }
 
-auto CroupierPlugin::ImbuePacifyEvent(const PacifyEventValue& ev) -> std::optional<json> {
+auto CroupierPlugin::ImbuePacifyEvent(const PacifyEventValue& ev) const -> std::optional<json> {
 	const auto actorData = State::current.getActorDataByRepoId(ZRepositoryID(ev.RepositoryId));
 	if (!actorData) return std::nullopt;
 	auto const playerOutfitRepoId = ZRepositoryID(ev.OutfitRepositoryId);
@@ -670,7 +671,7 @@ static auto weaponAnimSetToString(ECCWeaponAnimSet animsSet) -> std::string {
 	return ""s;
 }
 
-auto CroupierPlugin::ImbueItemEvent(const ItemEventValue& ev, EActionType actionType) -> std::optional<json> {
+auto CroupierPlugin::ImbueItemEvent(const ItemEventValue& ev, EActionType actionType) const -> std::optional<json> {
 	for (const auto action : Globals::HM5ActionManager->m_Actions) {
 		if (!action || action->m_eActionType != actionType)
 			continue;
@@ -784,7 +785,7 @@ auto CroupierPlugin::ImbuedItemInfo(ZEntityRef entity, json&& js) -> json {
 	return js;
 }
 
-auto CroupierPlugin::SendCustomEvent(std::string_view name, json eventValue) -> void {
+auto CroupierPlugin::SendCustomEvent(std::string_view name, json eventValue) const -> void {
 #ifndef _DEBUG
 	if (!this->config.debug && !State::current.client.isConnected()) return;
 #endif
@@ -793,7 +794,7 @@ auto CroupierPlugin::SendCustomEvent(std::string_view name, json eventValue) -> 
 		{"Value", eventValue},
 	};
 	auto dump = js.dump();
-	Logger::Debug("<--- {}", dump);
+	LogDebug("<--- {}", dump);
 	State::current.client.sendRaw(dump);
 }
 
@@ -1081,23 +1082,25 @@ auto CroupierPlugin::SetupEvents() -> void {
 			kc.correctDisguise = reqDisguise.any || (reqDisguise.suit ? ev.Value.OutfitIsHitmanSuit : reqDisguise.repoId == disguiseRepoId);
 
 			if (!kc.correctDisguise && !reqDisguise.suit) {
-				Logger::Info("Invalid disguise '{}' (expected: '{}')", disguiseRepoId, reqDisguise.repoId);
+				LogDebug("Kill - Invalid disguise '{}' (expected: '{}.').", disguiseRepoId, reqDisguise.repoId);
 			}
 
 			if (cond.killComplication == eKillComplication::Live && kc.isPacified) {
 				kc.correctMethod = eKillValidationType::Invalid;
 
-				Logger::Info("Invalid kill, target was KO'd on death");
+				LogDebug("Kill - Invalid kill, target was KO'd on death.", disguiseRepoId, reqDisguise.repoId);
 			}
-			else if (cond.killMethod.method != eKillMethod::NONE) {
-				kc.correctMethod = ValidateKillMethod(target.getID(), ev, cond.killMethod.method, cond.killType);
+			else {
+				if (cond.killMethod.method != eKillMethod::NONE)
+					kc.correctMethod = ValidateKillMethod(target.getID(), ev, cond.killMethod.method, cond.killType);
+				else if (cond.specificKillMethod.method != eMapKillMethod::NONE)
+					kc.correctMethod = ValidateKillMethod(target.getID(), ev, cond.specificKillMethod.method, cond.killType);
+
 				if (kc.correctMethod != eKillValidationType::Valid) {
-					Logger::Info("Invalid kill '{}' (type: {})", cond.killMethod.name, static_cast<int>(cond.killType));
-					Logger::Info("{}", ev.json.dump());
+					LogDebug("Kill - Invalid kill '{}' (type: {})", cond.killMethod.name, static_cast<int>(cond.killType));
+					LogDebug("{}", ev.json.dump());
 				}
 			}
-			else if (cond.specificKillMethod.method != eMapKillMethod::NONE)
-				kc.correctMethod = ValidateKillMethod(target.getID(), ev, cond.specificKillMethod.method, cond.killType);
 
 			if (isApexPrey) {
 				// If we're in an unspecified target mode, replace invalidations with incompletes
@@ -1123,8 +1126,6 @@ auto CroupierPlugin::SetupEvents() -> void {
 		if (State::current.spinCompleted) return;
 
 		LevelSetupEvent data {};
-		//data.contractName = ev.Value.Contract_Name_metricvalue;
-		//data.location = ev.Value.Location_MetricValue;
 		data.event = ev.Value.Event_metricvalue;
 		data.timestamp = ev.Timestamp;
 		State::current.levelSetupEvents.push_back(std::move(data));
@@ -1178,7 +1179,7 @@ auto CroupierPlugin::SetupEvents() -> void {
 			}
 
 			if (!kc.correctDisguise && !reqDisguise.suit) {
-				Logger::Info("Invalid disguise '{}' (expected: '{}')", triggerDisguiseChange->disguiseRepoId, reqDisguise.repoId);
+				LogDebug("Kill - Invalid disguise '{}' (expected: '{}')", triggerDisguiseChange->disguiseRepoId, reqDisguise.repoId);
 			}
 
 			if (cond.specificKillMethod.method != eMapKillMethod::NONE) {
@@ -1618,13 +1619,13 @@ auto CroupierPlugin::ValidateKillMethod(eTargetID target, const ServerEvent<Even
 
 	if (!ev.Value.KillItemRepositoryId.empty()) {
 		if (type == eKillType::Thrown && ev.Value.KillMethodBroad != "throw") {
-			Logger::Info("Kill validation failed. Expected 'throw', got '{}'.", ev.Value.KillMethodBroad);
-			Logger::Info("{}", ev.json.dump());
+			LogDebug("Kill validation failed. Expected 'throw', got '{}'.", ev.Value.KillMethodBroad);
+			LogDebug("{}", ev.json.dump());
 			return eKillValidationType::Invalid;
 		}
 		if (type == eKillType::Melee && ev.Value.KillMethodBroad != "melee_lethal") {
-			Logger::Info("Kill validation failed. Expected 'melee_lethal', got '{}'.", ev.Value.KillMethodBroad);
-			Logger::Info("{}", ev.json.dump());
+			LogDebug("Kill validation failed. Expected 'melee_lethal', got '{}'.", ev.Value.KillMethodBroad);
+			LogDebug("{}", ev.json.dump());
 			return eKillValidationType::Invalid;
 		}
 
@@ -1634,10 +1635,10 @@ auto CroupierPlugin::ValidateKillMethod(eTargetID target, const ServerEvent<Even
 		}
 
 		if (it == end(specificKillMethodsByRepoId))
-			Logger::Info("Invalid kill '{}'. Repo ID unknown.", ev.Value.KillItemRepositoryId);
+			LogDebug("Invalid kill '{}'. Repo ID unknown.", ev.Value.KillItemRepositoryId);
 		else
-			Logger::Info("Invalid kill '{}'. Repo ID kill method mismatch (expected {}, got {}).", ev.Value.KillItemRepositoryId, static_cast<int>(method), static_cast<int>(it->second));
-		Logger::Info("{}", ev.json.dump());
+			LogDebug("Invalid kill '{}'. Repo ID kill method mismatch (expected {}, got {}).", ev.Value.KillItemRepositoryId, static_cast<int>(method), static_cast<int>(it->second));
+		LogDebug("{}", ev.json.dump());
 	}
 	return eKillValidationType::Invalid;
 }
@@ -2013,7 +2014,7 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, void, OnEventSent, ZAchievementManagerSimpl
 		auto const dontPrint = eventsNotToPrint.contains(eventName);
 
 		if (!dontPrint)
-			Logger::Info("Croupier: event {}", eventData);
+			LogDebug("Croupier: event {}", eventData);
 
 		this->events.handle(eventName, json);
 		if (!eventsNotToSend.contains(eventName))
@@ -2134,7 +2135,7 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 			break;
 		}
 		case ZHMPin::OnDestroyed:
-			Logger::Info("Destroyed!");
+			LogDebug("Destroyed!");
 			break;
 		case static_cast<ZHMPin>(4101414679): { //ZEntity > ZCompositeEntity > ZCompositeEntity - fired on e.g. fusebox destroyed
 			auto initialStateOn = entity.GetProperty<bool>("m_bInitialStateOn");
