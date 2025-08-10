@@ -1,5 +1,29 @@
 [
 	{
+		"Name": "Max Agility Actions {2}/{0}",
+		"Type": "Complication",
+		"Tip": "Do not perform more than {0} agility actions in total.",
+		"Group": "Action",
+		"Difficulty": "High",
+		"AgilityStart": {
+			"Count": {
+				"Random": [3, 5, 10, 15, 20]
+			}
+		}
+	},
+	{
+		"Name": "Max Shots Fired {2}/{0}",
+		"Type": "Complication",
+		"Tip": "Do not fire more than {0} shots from any kind of gun.",
+		"Group": "Action",
+		"Difficulty": "High",
+		"PlayerShot": {
+			"Count": {
+				"Random": [3, 5, 10, 15, 20]
+			}
+		}
+	},
+	{
 		"Disabled": true,
 		"Name": "No Assault Rifle Shots",
 		"Type": "Complication",
