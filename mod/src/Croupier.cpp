@@ -185,11 +185,15 @@ auto CroupierPlugin::ProcessSpinState() -> void {
 
 		auto& actor = *actorRef.m_pInterfaceRef;
 		actorData.isTarget = actor.m_bUnk16; // m_bUnk16 = is target (and still alive)
-		actorData.isPacified = actor.IsPacified() && !actor.IsDead();
-		actorData.isDead = actor.IsDead();
+		actorData.isPacified = actor.IsPacified();
+		actorData.isDead = !actor.IsPacified() && actor.IsDead();
 
 		auto spatial = actorRef.m_ref.QueryInterface<ZSpatialEntity>();
+		if (spatial) {
+			auto matrix = spatial->GetWorldMatrix();
 		actorData.transform = spatial->m_mTransform;
+			actorData.roomId = ZRoomManagerCreator::GetRoomID(matrix.Pos);
+		}
 
 		auto character = actor.m_rCharacter;
 		auto outfit = actor.m_rOutfit;
@@ -694,15 +698,10 @@ auto CroupierPlugin::ImbueItemEvent(const ItemEventValue& ev, EActionType action
 	return std::nullopt;
 }
 
-auto CroupierPlugin::ImbueItemInfo(ZEntityRef entity, json& j) -> void {
-	auto item = QueryAnyParent<ZHM5Item>(entity);
-	if (!item) return;
-	auto ccWeapon = QueryAnyParent<ZHM5ItemCCWeapon>(entity);
-	auto isFiberWire = ccWeapon && ccWeapon->m_bCountsAsFiberWire;
-	
-	if (const auto desc = item->m_pItemConfigDescriptor) {
+auto CroupierPlugin::ImbueItemRepositoryInfo(json& j, ZRepositoryID repoId) -> void {
 		std::string itemType;
 		std::string itemSize;
+	std::string commonName;
 		std::vector<std::string> perks;
 		std::vector<std::string> onlineTraits;
 
@@ -713,7 +712,7 @@ auto CroupierPlugin::ImbueItemInfo(ZEntityRef entity, json& j) -> void {
 		if (repositoryResource.GetResourceInfo().status == RESOURCE_STATUS_VALID) {
 			auto repositoryData = static_cast<THashMap<ZRepositoryID, ZDynamicObject, TDefaultHashMapPolicy<ZRepositoryID>>*>(repositoryResource.GetResourceData());
 			if (repositoryData) {
-				auto it = repositoryData->find(desc->m_RepositoryId);
+			auto it = repositoryData->find(repoId);
 				if (it != repositoryData->end()) {
 					const auto entries = it->second.As<TArray<SDynamicObjectKeyValuePair>>();
 					if (entries) {
@@ -729,23 +728,79 @@ auto CroupierPlugin::ImbueItemInfo(ZEntityRef entity, json& j) -> void {
 							else if (entry.sKey == "OnlineTraits") {
 								auto perksArr = entry.value.As<TArray<ZString>>();
 								if (!perksArr) continue;
-								perks = std::vector<std::string>{perksArr->begin(), perksArr->end()};
+							onlineTraits = std::vector<std::string>{perksArr->begin(), perksArr->end()};
 							}
+						else if (entry.sKey == "CommonName") {
+							commonName = *entry.value.As<ZString>();
+						}
 							else continue;
 						}
 					}
 				}
 			}
 		}
+	j.merge_patch({
+		{"RepositoryItemSize", itemSize},
+		{"RepositoryItemType", itemType},
+		{"RepositoryCommonName", commonName},
+		{"RepositoryPerks", perks},
+		{"RepositoryOnlineTraits", onlineTraits},
+	});
+}
+
+auto CroupierPlugin::ImbuePositionInfo(json& j, SVector3 pos, std::string prefix) -> void {
+	auto area = State::current.getArea(pos);
+	j.merge_patch({
+		{prefix + "Area", area ? area->ID : ""},
+		{prefix + "Room", ZRoomManagerCreator::GetRoomID({pos.x, pos.y, pos.z, 1.0})},
+		{prefix + "Position", {
+			{"X", pos.x},
+			{"Y", pos.y},
+			{"Z", pos.z},
+		}},
+	});
+}
+
+auto CroupierPlugin::ImbuedPositionInfo(SVector3 pos, std::string prefix, json&& j) -> json {
+	ImbuePositionInfo(j, pos, prefix);
+	return j;
+}
+
+auto CroupierPlugin::ImbueItemInfo(ZEntityRef entity, json& j) -> void {
+	auto item = QueryAnyParent<ZHM5Item>(entity);
+	auto spawner = QueryAnyParent<ZItemSpawner>(entity);
+	auto spatial = QueryAnyParent<ZSpatialEntity>(entity);
+
+	if (!item) {
+		if (!spawner || !spawner->m_rMainItemKey) return;
+		auto repoId = spawner->m_rMainItemKey.m_pInterfaceRef->m_RepositoryId;
+		ImbuePositionInfo(j, spawner->GetWorldMatrix().ToMatrix43().Trans, "Item");
+		ImbueItemRepositoryInfo(j, repoId);
+		j.merge_patch({
+			{"ItemRepositoryId", repoId.ToString()},
+		});
+		return;
+	}
+
+	if (spatial) {
+		ImbuePositionInfo(j, spatial->GetWorldMatrix().ToMatrix43().Trans, "Item");
+	}
+
+	auto ccWeapon = QueryAnyParent<ZHM5ItemCCWeapon>(entity);
+	auto isFiberWire = ccWeapon && ccWeapon->m_bCountsAsFiberWire;
+	
+	if (const auto desc = item->m_pItemConfigDescriptor) {
+		std::string itemType;
+		std::string itemSize;
+		std::vector<std::string> perks;
+		std::vector<std::string> onlineTraits;
+
+		ImbueItemRepositoryInfo(j, desc->m_RepositoryId);
 
 		j.merge_patch({
 			{"ItemName", desc->m_sTitle},
 			{"ItemInstanceId", reinterpret_cast<uintptr_t>(item)},
 			{"ItemRepositoryId", desc->m_RepositoryId.ToString()},
-			{"RepositoryItemSize", itemSize},
-			{"RepositoryItemType", itemType},
-			{"RepositoryPerks", perks},
-			{"RepositoryOnlineTraits", onlineTraits},
 		});
 	}
 
@@ -2084,6 +2139,14 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 			SendCustomEvent("OnWeaponReload"sv, ImbuedPlayerLocation(ImbuedItemInfo(entity)));
 			break;
 		}
+		case ZHMPin::AgilityStart: {
+			if (!State::current.playerStartingAgility) {
+				SendCustomEvent("AgilityStart", ImbuedPlayerLocation());
+		}
+			State::current.playerStartingAgility = true;
+			State::current.playerStartingAgilitySinceFrame = true;
+			break;
+		}
 		case ZHMPin::DoorOpen: {
 			auto singleDoor = entity.QueryInterface<ZHM5SingleDoor2>();
 			auto doubleDoor = entity.QueryInterface<ZHM5DoubleDoor2>();
@@ -2119,19 +2182,8 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 		}
 		case ZHMPin::ExplosionAtPos: {
 			auto pos = data.As<SVector3>();
-			if (pos) {
-				auto area = State::current.getArea(*pos);
-				SendCustomEvent("Explosion"sv, ImbuedPlayerLocation({
-					{"Position", {
-						{"X", pos->x},
-						{"Y", pos->y},
-						{"Z", pos->z},
-					}},
-					{"Area", area ? area->ID : ""},
-					{"Room", ZRoomManagerCreator::GetRoomID({pos->x, pos->y, pos->z, 1.0})},
-				}, true));
-			}
-			else SendCustomEvent("Explosion"sv, ImbuedPlayerLocation({}, true));
+			pos ? SendCustomEvent("Explosion"sv, ImbuedPositionInfo(*pos, "", ImbuedPlayerLocation({}, true)))
+				: SendCustomEvent("Explosion"sv, ImbuedPlayerLocation({}, true));
 			break;
 		}
 		case ZHMPin::OnDestroyed:
@@ -2144,18 +2196,9 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 			auto spatial = setpiece.QueryInterface<ZSpatialEntity>();
 			if (!spatial) break;
 			const auto& trans = spatial->GetWorldMatrix().Trans;
-			auto roomId = ZRoomManagerCreator::GetRoomID({ trans.x, trans.y, trans.z, 1.0 });
-			auto area = State::current.getArea({ trans.x, trans.y, trans.z });
-			auto obj = json {
+			auto obj = ImbuedPositionInfo({ trans.x, trans.y, trans.z }, "", {
 				{"EntityID", setpiece->GetType()->m_nEntityId},
-				{"Position", {
-					{"X", trans.x},
-					{"Y", trans.y},
-					{"Z", trans.z},
-				}},
-				{"Room", roomId},
-				{"Area", area ? area->ID : ""},
-			};
+			});
 			if (!initialStateOn.IsEmpty())
 				obj.merge_patch({ {"InitialStateOn", initialStateOn.Get()} });
 			SendCustomEvent("OnDestroy"sv, ImbuedPlayerLocation(std::move(obj), true));
@@ -2172,19 +2215,10 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 			auto spatial = setpiece.QueryInterface<ZSpatialEntity>();
 			if (!spatial) break;
 			const auto& trans = spatial->GetWorldMatrix().Trans;
-			auto roomId = ZRoomManagerCreator::GetRoomID({ trans.x, trans.y, trans.z, 1.0 });
-			auto area = State::current.getArea({ trans.x, trans.y, trans.z });
-			auto obj = json {
+			auto obj = ImbuedPositionInfo({ trans.x, trans.y, trans.z }, "", {
 				{"RepositoryId", setpieceRepoIdPtr->ToString()},
 				{"EntityID", setpiece->GetType()->m_nEntityId},
-				{"Position", {
-					{"X", trans.x},
-					{"Y", trans.y},
-					{"Z", trans.z},
-				}},
-				{"Room", roomId},
-				{"Area", area ? area->ID : ""},
-			};
+			});
 			if (!initialStateOn.IsEmpty())
 				obj.merge_patch({ {"InitialStateOn", initialStateOn.Get()} });
 			SendCustomEvent("OnTurnOn"sv, ImbuedPlayerLocation(std::move(obj), true));
@@ -2201,19 +2235,10 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 			auto spatial = setpiece.QueryInterface<ZSpatialEntity>();
 			if (!spatial) break;
 			const auto& trans = spatial->GetWorldMatrix().Trans;
-			auto roomId = ZRoomManagerCreator::GetRoomID({ trans.x, trans.y, trans.z, 1.0 });
-			auto area = State::current.getArea({ trans.x, trans.y, trans.z });
-			auto obj = json {
+			auto obj = ImbuedPositionInfo({trans.x, trans.y, trans.z}, "", {
 				{"RepositoryId", setpieceRepoIdPtr->ToString()},
 				{"EntityID", setpiece->GetType()->m_nEntityId},
-				{"Position", {
-					{"X", trans.x},
-					{"Y", trans.y},
-					{"Z", trans.z},
-				}},
-				{"Room", roomId},
-				{"Area", area ? area->ID : ""},
-			};
+			});
 			if (!initialStateOn.IsEmpty())
 				obj.merge_patch({ {"InitialStateOn", initialStateOn.Get()} });
 			SendCustomEvent("OnTurnOff"sv, ImbuedPlayerLocation(std::move(obj), true));
@@ -2226,16 +2251,9 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 			auto repoId = itemSpawner->m_rMainItemKey.m_pInterfaceRef->m_RepositoryId.ToString();
 			auto pos = itemSpawner->GetWorldMatrix().Pos;
 			auto area = State::current.getArea(itemSpawner->m_mTransform.Trans);
-			SendCustomEvent("ItemDestroyed"sv, ImbuedPlayerLocation({
+			SendCustomEvent("ItemDestroyed"sv, ImbuedPositionInfo(itemSpawner->m_mTransform.Trans, "", ImbuedPlayerLocation({
 				{"RepositoryId", repoId.c_str()},
-				{"Area", area ? area->ID : ""},
-				{"Room", ZRoomManagerCreator::GetRoomID(pos)},
-				{"Position", {
-					{"X", itemSpawner->m_mTransform.Trans.x},
-					{"Y", itemSpawner->m_mTransform.Trans.y},
-					{"Z", itemSpawner->m_mTransform.Trans.z},
-				}},
-			}, true));
+			}, true)));
 			break;
 		}
 		case static_cast<ZHMPin>(-1680993007): { // Explode
@@ -2268,7 +2286,7 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 			break;
 		}
 		case ZHMPin::OnPickup: {// ZItemSpawner pickups
-			SendCustomEvent("OnPickup"sv, ImbuedPlayerLocation(ImbuedItemInfo(entity)));
+			SendCustomEvent("OnPickup"sv, ImbuedPlayerLocation(ImbuedItemInfo(entity), true));
 			break;
 		}
 		//case ZHMPin::OnDropByHero: // ZHM5ItemWeapon

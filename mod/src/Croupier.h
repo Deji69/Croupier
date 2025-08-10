@@ -50,9 +50,12 @@ namespace Croupier {
 		auto ImbuePlayerLocation(nlohmann::json& json, bool asHero = false) const -> void;
 		auto ImbueItemInfo(ZEntityRef entity, nlohmann::json& json) -> void;
 		auto ImbueActorInfo(TEntityRef<ZActor> actor, nlohmann::json& json, bool asActor = true) const -> void;
+		auto ImbueItemRepositoryInfo(nlohmann::json& json, ZRepositoryID repoId) -> void;
+		auto ImbuePositionInfo(nlohmann::json& json, SVector3 vec, std::string prefix = "") -> void;
 		auto ImbuedPlayerLocation(nlohmann::json&& json = {}, bool asHero = false) const -> nlohmann::json;
 		auto ImbuedItemInfo(ZEntityRef entity, nlohmann::json&& json = {}) -> nlohmann::json;
 		auto ImbuedActorInfo(TEntityRef<ZActor> actor, nlohmann::json&& json = {}, bool asActor = true) const -> nlohmann::json;
+		auto ImbuedPositionInfo(SVector3 vec, std::string prefix = "", nlohmann::json&& json = {}) -> nlohmann::json;
 
 		auto InstallHooks() -> void;
 		auto UninstallHooks() -> void;
