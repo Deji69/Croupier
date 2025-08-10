@@ -133,9 +133,13 @@ auto CroupierPlugin::OnFrameUpdate_PlayMode(const SGameUpdateEvent& ev) -> void 
 }
 
 auto CroupierPlugin::ProcessPlayerState() -> void {
+	// Process player state flags for de-duping events for spammed pins
 	if (!State::current.playerInInstinctSinceFrame && State::current.playerInInstinct)
 		State::current.playerInInstinct = false;
 	State::current.playerInInstinctSinceFrame = false;
+	if (!State::current.playerStartingAgilitySinceFrame && State::current.playerStartingAgility)
+		State::current.playerStartingAgility = false;
+	State::current.playerStartingAgilitySinceFrame = false;
 
 	auto player = SDK()->GetLocalPlayer();
 	if (!player) return;
@@ -191,7 +195,7 @@ auto CroupierPlugin::ProcessSpinState() -> void {
 		auto spatial = actorRef.m_ref.QueryInterface<ZSpatialEntity>();
 		if (spatial) {
 			auto matrix = spatial->GetWorldMatrix();
-		actorData.transform = spatial->m_mTransform;
+			actorData.transform = spatial->m_mTransform;
 			actorData.roomId = ZRoomManagerCreator::GetRoomID(matrix.Pos);
 		}
 
@@ -699,46 +703,46 @@ auto CroupierPlugin::ImbueItemEvent(const ItemEventValue& ev, EActionType action
 }
 
 auto CroupierPlugin::ImbueItemRepositoryInfo(json& j, ZRepositoryID repoId) -> void {
-		std::string itemType;
-		std::string itemSize;
+	std::string itemType;
+	std::string itemSize;
 	std::string commonName;
-		std::vector<std::string> perks;
-		std::vector<std::string> onlineTraits;
+	std::vector<std::string> perks;
+	std::vector<std::string> onlineTraits;
 
-		if (repositoryResource.m_nResourceIndex == -1) {
-			const auto s_ID = ResId<"[assembly:/repository/pro.repo].pc_repo">;
-			Globals::ResourceManager->GetResourcePtr(repositoryResource, s_ID, 0);
-		}
-		if (repositoryResource.GetResourceInfo().status == RESOURCE_STATUS_VALID) {
-			auto repositoryData = static_cast<THashMap<ZRepositoryID, ZDynamicObject, TDefaultHashMapPolicy<ZRepositoryID>>*>(repositoryResource.GetResourceData());
-			if (repositoryData) {
+	if (repositoryResource.m_nResourceIndex == -1) {
+		const auto s_ID = ResId<"[assembly:/repository/pro.repo].pc_repo">;
+		Globals::ResourceManager->GetResourcePtr(repositoryResource, s_ID, 0);
+	}
+	if (repositoryResource.GetResourceInfo().status == RESOURCE_STATUS_VALID) {
+		auto repositoryData = static_cast<THashMap<ZRepositoryID, ZDynamicObject, TDefaultHashMapPolicy<ZRepositoryID>>*>(repositoryResource.GetResourceData());
+		if (repositoryData) {
 			auto it = repositoryData->find(repoId);
-				if (it != repositoryData->end()) {
-					const auto entries = it->second.As<TArray<SDynamicObjectKeyValuePair>>();
-					if (entries) {
-						for (size_t i = 0; i < entries->size(); ++i) {
-							auto const& entry = (*entries)[i];
-							if (entry.sKey == "ItemType")
-								itemType = *entry.value.As<ZString>();
-							else if (entry.sKey == "Perks") {
-								auto perksArr = entry.value.As<TArray<ZString>>();
-								if (!perksArr) continue;
-								perks = std::vector<std::string>{perksArr->begin(), perksArr->end()};
-							}
-							else if (entry.sKey == "OnlineTraits") {
-								auto perksArr = entry.value.As<TArray<ZString>>();
-								if (!perksArr) continue;
+			if (it != repositoryData->end()) {
+				const auto entries = it->second.As<TArray<SDynamicObjectKeyValuePair>>();
+				if (entries) {
+					for (size_t i = 0; i < entries->size(); ++i) {
+						auto const& entry = (*entries)[i];
+						if (entry.sKey == "ItemType")
+							itemType = *entry.value.As<ZString>();
+						else if (entry.sKey == "Perks") {
+							auto perksArr = entry.value.As<TArray<ZString>>();
+							if (!perksArr) continue;
+							perks = std::vector<std::string>{perksArr->begin(), perksArr->end()};
+						}
+						else if (entry.sKey == "OnlineTraits") {
+							auto perksArr = entry.value.As<TArray<ZString>>();
+							if (!perksArr) continue;
 							onlineTraits = std::vector<std::string>{perksArr->begin(), perksArr->end()};
-							}
+						}
 						else if (entry.sKey == "CommonName") {
 							commonName = *entry.value.As<ZString>();
 						}
-							else continue;
-						}
+						else continue;
 					}
 				}
 			}
 		}
+	}
 	j.merge_patch({
 		{"RepositoryItemSize", itemSize},
 		{"RepositoryItemType", itemType},
@@ -2126,7 +2130,7 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 		case ZHMPin::AgilityStart: {
 			if (!State::current.playerStartingAgility) {
 				SendCustomEvent("AgilityStart", ImbuedPlayerLocation());
-		}
+			}
 			State::current.playerStartingAgility = true;
 			State::current.playerStartingAgilitySinceFrame = true;
 			break;
