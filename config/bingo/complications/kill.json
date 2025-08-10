@@ -1,5 +1,15 @@
 [
 	{
+		"Name": "All Kills in Suit",
+		"Tip": "You may change disguise, but all kills must be performed in a suit.",
+		"Type": "Complication",
+		"Group": "Kill",
+		"Difficulty": "High",
+		"Kill": {
+			"OutfitIsHitmanSuit": false
+		}
+	},
+	{
 		"Name": "No Accident Kills",
 		"Tip": "Avoid killing anyone in an accident.",
 		"Type": "Complication",
