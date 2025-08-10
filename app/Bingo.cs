@@ -60,7 +60,7 @@ namespace Croupier {
 		public SVector3? To { get; set; } = null;
 
 		public static BingoArea FromJson(JsonElement json) {
-			if (!json.TryGetProperty("ID", out var idProp))
+			if (!json.TryGetProperty(nameof(ID), out var idProp))
 				throw new BingoTileConfigException($"Missing property 'ID'.");
 			if (idProp.ValueKind != JsonValueKind.String)
 				throw new BingoTileConfigException($"Invalid type of property 'ID', expected string but got {idProp.ValueKind}.");
@@ -70,7 +70,7 @@ namespace Croupier {
 					ID = idProp.GetString()!,
 				};
 
-				if (json.TryGetProperty("Missions", out var missionsProp)) {
+				if (json.TryGetProperty(nameof(Missions), out var missionsProp)) {
 					if (missionsProp.ValueKind != JsonValueKind.Array)
 						throw new BingoTileConfigException($"Invalid property 'Missions', expected array but got {missionsProp.ValueKind}.");
 					foreach (var node in missionsProp.EnumerateArray()) {
@@ -83,9 +83,9 @@ namespace Croupier {
 					}
 				}
 
-				if (json.TryGetProperty("From", out var fromProp))
+				if (json.TryGetProperty(nameof(From), out var fromProp))
 					area.From = LoadSVector3(fromProp, "From");
-				if (json.TryGetProperty("To", out var toProp))
+				if (json.TryGetProperty(nameof(To), out var toProp))
 					area.To = LoadSVector3(toProp, "To");
 				return area;
 			} catch (Exception e) {
@@ -128,6 +128,18 @@ namespace Croupier {
 		public List<BingoArea> Areas { get; } = [];
 
 		private bool loaded = false;
+
+		public List<BingoTile> GetTilesForMission(MissionID missionID, BingoTileType mode = BingoTileType.Mixed) {
+			return Tiles.FindAll(t => {
+				if (t.Disabled)
+					return false;
+				if (t.Missions.Count != 0 && !t.Missions.Contains(missionID))
+					return false;
+				if (t.ExcludeMissions.Count != 0 && t.ExcludeMissions.Contains(missionID))
+					return false;
+				return mode == BingoTileType.Mixed || t.Type == mode;
+			});
+		}
 
 		public void LoadConfiguration(bool reload = false) {
 			if (loaded && !reload) return;

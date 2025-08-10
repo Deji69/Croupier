@@ -169,6 +169,7 @@ namespace Croupier {
 			if (jsonEl is JsonElement json) {
 				return name switch {
 					"Actorsick" =>  json.Deserialize<ActorSickEventValue>(jsonGameEventSerializerOptions),
+					"AgilityStart" => AgilityStartEventValue.Load(json),
 					"BodyBagged" => json.Deserialize<BodyBaggedEventValue>(jsonGameEventSerializerOptions),
 					"BodyFound" => json.Deserialize<BodyFoundEventValue>(jsonGameEventSerializerOptions),
 					"BodyHidden" => json.Deserialize<BodyHiddenEventValue>(jsonGameEventSerializerOptions),
@@ -196,7 +197,7 @@ namespace Croupier {
 					"OnDestroy" => json.Deserialize<OnDestroyEventValue>(jsonGameEventSerializerOptions),
 					"OnEvacuationStarted" => json.Deserialize<OnEvacuationStartedEventValue>(jsonGameEventSerializerOptions),
 					"OnPickup" => OnPickupEventValue.Load(json),
-					"OnWeaponReload" => json.Deserialize<OnWeaponReloadEventValue>(jsonGameEventSerializerOptions),
+					"OnWeaponReload" => OnWeaponReloadEventValue.Load(json),
 					"OpenDoor" => json.Deserialize<OpenDoorEventValue>(jsonGameEventSerializerOptions),
 					"OpportunityEvents" => json.Deserialize<OpportunityEventValue>(jsonGameEventSerializerOptions),
 					"Pacify" => ImbuePacifyEvent(json.Deserialize<PacifyEventValue>(jsonGameEventSerializerOptions)),
