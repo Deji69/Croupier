@@ -128,6 +128,8 @@ namespace Croupier
 		PlayerMoveType playerMoveType;
 		bool playerInInstinct = false;
 		bool playerInInstinctSinceFrame = false;
+		bool playerStartingAgility = false;
+		bool playerStartingAgilitySinceFrame = false;
 		bool isTrespassing = false;
 		const Area* area = nullptr;
 		int16_t roomId = -1;
