@@ -549,7 +549,7 @@ auto CroupierPlugin::ImbueActorInfo(TEntityRef<ZActor> ref, json& j, bool asActo
 				{"ActorArea", area ? area->ID : ""},
 				{"ActorHasDisguise", actorData->hasDisguise},
 				{"ActorIsDead", actorData->isDead},
-				{"ActorIsFemale", actorData->isDead},
+				{"ActorIsFemale", actorData->isFemale},
 				{"ActorIsPacified", actorData->isPacified},
 				{"ActorIsTarget", actorData->isTarget},
 				{"ActorOutfitType", actorData->outfitType},
