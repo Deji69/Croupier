@@ -397,6 +397,7 @@ namespace Croupier {
 		public int? Count { get; set; }
 		private readonly int? randomCountMin;
 		private readonly int? randomCountMax;
+		private readonly List<int> randomCountVals = [];
 
 		protected BingoTrigger() {}
 		protected BingoTrigger(JsonElement json) {
@@ -413,7 +414,16 @@ namespace Croupier {
 						randomCountMin = minProp.GetInt32();
 						randomCountMax = maxProp.GetInt32();
 					}
-					else throw new BingoTileConfigException("Missing properties 'Min' and 'Max' for 'Count'.");
+					else if (countProp.TryGetProperty("Random", out var randomProp)) {
+						if (randomProp.ValueKind != JsonValueKind.Array)
+							throw new BingoTileConfigException($"Expected array for property 'Random', got {randomProp.ValueKind}.");
+						foreach (var ent in randomProp.EnumerateArray()) {
+							if (ent.ValueKind != JsonValueKind.Number)
+								throw new BingoTileConfigException($"Property 'Random' contained non number value {ent.ValueKind}.");
+							randomCountVals.Add(ent.GetInt32());
+						}
+					}
+					else throw new BingoTileConfigException("Missing properties 'Min' and 'Max' or 'Random' for 'Count'.");
 				}
 				else throw new BingoTileConfigException($"Expected number or object for property 'Count', got {countProp.ValueKind}.");
 			}
@@ -423,6 +433,9 @@ namespace Croupier {
 			state.Count = Count;
 			if (randomCountMax.HasValue && randomCountMin.HasValue) {
 				state.Count = Random.Shared.Next(randomCountMax.Value - randomCountMin.Value) + randomCountMin;
+			}
+			else if (randomCountVals.Count > 0) {
+				state.Count = randomCountVals[Random.Shared.Next(randomCountVals.Count)];
 			}
 		}
 
