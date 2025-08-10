@@ -21,7 +21,7 @@ namespace Croupier {
 			get {
 				var items = new ObservableCollection<EditBingoComboBoxItem>();
 				if (Bingo.Main.Tiles.Count > 0) {
-					var list = Bingo.Main.Tiles.Where(t => !t.Disabled && (t.Missions.Count == 0 || t.Missions.Contains(mission)))
+					var list = Bingo.Main.GetTilesForMission(mission)
 						.OrderBy(t => t.Name)
 						.OrderBy(t => t.GroupText)
 						.ToList();

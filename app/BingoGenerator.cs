@@ -12,7 +12,7 @@ namespace Croupier {
 				missionId = Mission.GetRandomMissionID();
 			var mission = Mission.Get(missionId);
 			BingoCard card = new(Mode, mission.ID);
-			var availableTiles = GetTiles(missionId);
+			var availableTiles = Bingo.Main.GetTilesForMission(missionId, Mode);
 
 			if (availableTiles.Count < tiles)
 				throw new BingoGeneratorException($"Insufficient {mission.Name} tiles available for {tiles}-tile board.");
@@ -24,16 +24,6 @@ namespace Croupier {
 			}
 
 			return card;
-		}
-
-		private List<BingoTile> GetTiles(MissionID missionID) {
-			return Bingo.Main.Tiles.FindAll(t => {
-				if (t.Disabled)
-					return false;
-				if (t.Missions.Count != 0 && !t.Missions.Contains(missionID))
-					return false;
-				return Mode == BingoTileType.Mixed || t.Type == Mode;
-			});
 		}
 	}
 }

@@ -328,6 +328,17 @@ namespace Croupier.GameEvents {
 		public required EActorType ActorType { get; set; }
 	}
 
+	public class AgilityStartEventValue : EventValue {
+		public required LocationImbuedEventValue Location;
+
+		public static AgilityStartEventValue? Load(JsonElement json) {
+			var location = json.Deserialize<LocationImbuedEventValue>();
+			return location != null ? new() {
+				Location = location,
+			} : null;
+		}
+	}
+
 	public class PlayerShotEventValue : EventValue {
 		public required ItemInfoImbuedEventValue Weapon;
 		public required LocationImbuedEventValue Location;
@@ -428,7 +439,18 @@ namespace Croupier.GameEvents {
 	public class OnTakeDamageEventValue : EventValue {
 	}
 
-	public class OnWeaponReloadEventValue : LocationImbuedEventValue {
+	public class OnWeaponReloadEventValue : EventValue {
+		public required LocationImbuedEventValue Location;
+		public required ItemInfoImbuedEventValue Item;
+
+		public static OnWeaponReloadEventValue? Load(JsonElement json) {
+			var item = json.Deserialize<ItemInfoImbuedEventValue>();
+			var location = json.Deserialize<LocationImbuedEventValue>();
+			return item != null && location != null ? new() {
+				Item = item,
+				Location = location,
+			} : null;
+		}
 	}
 
 	public class InstinctActiveEventValue : LocationImbuedEventValue {

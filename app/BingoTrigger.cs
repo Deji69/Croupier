@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text.Json;
-using System.Windows.Controls;
 
 namespace Croupier {
 	public abstract class BingoTriggerExpression {
@@ -396,11 +395,39 @@ namespace Croupier {
 		}
 
 		public int? Count { get; set; }
+		private readonly int? randomCountMin;
+		private readonly int? randomCountMax;
 
 		protected BingoTrigger() {}
 		protected BingoTrigger(JsonElement json) {
-			if (json.ValueKind == JsonValueKind.Object && json.TryGetProperty(nameof(Count), out var countProp))
-				Count = countProp.GetInt32();
+			if (json.ValueKind == JsonValueKind.Object && json.TryGetProperty(nameof(Count), out var countProp)) {
+				if (countProp.ValueKind == JsonValueKind.Number)
+					Count = countProp.GetInt32();
+				else if (countProp.ValueKind == JsonValueKind.Object) {
+					if (countProp.TryGetProperty("Min", out var minProp)
+						&& countProp.TryGetProperty("Max", out var maxProp)) {
+						if (minProp.ValueKind != JsonValueKind.Number)
+							throw new BingoTileConfigException($"Expected number for property 'Min', got {minProp.ValueKind}.");
+						if (maxProp.ValueKind != JsonValueKind.Number)
+							throw new BingoTileConfigException($"Expected number for property 'Max', got {maxProp.ValueKind}.");
+						randomCountMin = minProp.GetInt32();
+						randomCountMax = maxProp.GetInt32();
+					}
+					else throw new BingoTileConfigException("Missing properties 'Min' and 'Max' for 'Count'.");
+				}
+				else throw new BingoTileConfigException($"Expected number or object for property 'Count', got {countProp.ValueKind}.");
+			}
+		}
+
+		public virtual void OnCloned(BingoTileState state) {
+			state.Count = Count;
+			if (randomCountMax.HasValue && randomCountMin.HasValue) {
+				state.Count = Random.Shared.Next(randomCountMax.Value - randomCountMin.Value) + randomCountMin;
+			}
+		}
+
+		public virtual void Reset(BingoTileState state) {
+			state.Count ??= Count;
 		}
 
 		public virtual bool Test(EventValue ev, BingoTileState state) {
@@ -408,12 +435,12 @@ namespace Croupier {
 		}
 
 		public virtual void Advance(BingoTileState state) {
-			if (Count == null) state.Complete = true;
-			else state.Complete = ++state.Counter >= Count;
+			if (state.Count == null) state.Complete = true;
+			else state.Complete = ++state.Counter >= state.Count;
 		}
 
 		public virtual object[] GetFormatArgs(BingoTileState state) {
-			return [Count ?? 1, (Count ?? 1) - (state.Complete ? 0 : state.Counter), state.Counter];
+			return [state.Count ?? 1, (state.Count ?? 1) - (state.Complete ? 0 : state.Counter), state.Counter];
 		}
 
 		private static BingoTrigger? Load(JsonHolder jsonHolder, Func<JsonHolder, BingoTrigger?> create) {
@@ -459,6 +486,7 @@ namespace Croupier {
 		private static Func<JsonHolder, BingoTrigger>? FromJson_TriggerProp(string propName) {
 			return propName switch {
 				"ActorSick" => jh => new BingoTriggerActorSick(jh.json),
+				"AgilityStart" => jh => new BingoTriggerAgilityStart(jh.json),
 				"BodyBagged" => jh => new BingoTriggerBodyBagged(jh.json),
 				"BodyFound" => jh => new BingoTriggerBodyFound(jh.json),
 				"BodyHidden" => jh => new BingoTriggerBodyHidden(jh.json),
@@ -717,15 +745,28 @@ namespace Croupier {
 		}
 	}
 
-	public class BingoTriggerComplication(IBingoTrigger? trigger) : BingoTrigger {
-		public readonly IBingoTrigger? Trigger = trigger;
+	public class BingoTriggerComplication(BingoTrigger trigger) : BingoTrigger {
+		public readonly BingoTrigger Trigger = trigger;
 
 		public override bool Test(EventValue ev, BingoTileState state) {
-			return Trigger == null || Trigger.Test(ev, state);
+			return Trigger.Test(ev, state);
 		}
 
 		public override void Advance(BingoTileState state) {
-			state.Complete = false;
+			Trigger.Advance(state);
+			state.Complete = !state.Complete;
+		}
+
+		public override object[] GetFormatArgs(BingoTileState state) {
+			return Trigger.GetFormatArgs(state);
+		}
+
+		public override void Reset(BingoTileState state) {
+			Trigger.Reset(state);
+		}
+
+		public override void OnCloned(BingoTileState state) {
+			Trigger.OnCloned(state);
 		}
 	}
 
@@ -969,6 +1010,16 @@ namespace Croupier {
 				&& ItemRepositoryId.Test(v.ItemRepositoryId, state)
 				&& SetPieceRepositoryId.Test(v.SetpieceRepositoryId, state)
 				&& Unique.Test(v, state);
+		}
+	}
+
+	public class BingoTriggerAgilityStart(JsonElement json) : BingoTrigger(json) {
+		readonly BingoTriggerLocationImbued locationTrigger = new(json);
+
+		public override bool Test(EventValue ev, BingoTileState state) {
+			return ev is AgilityStartEventValue v
+				&& base.Test(v, state)
+				&& locationTrigger.Test(v.Location, state);
 		}
 	}
 
@@ -1557,10 +1608,10 @@ namespace Croupier {
 		readonly BingoTriggerItemInfoImbued itemInfoTrigger = new(json);
 
 		public override bool Test(EventValue ev, BingoTileState state) {
-			return ev is OnWeaponReloadEventValue
-				&& base.Test(ev, state)
-				&& locationTrigger.Test(ev, state)
-				&& itemInfoTrigger.Test(ev, state);
+			return ev is OnWeaponReloadEventValue v
+				&& base.Test(v, state)
+				&& locationTrigger.Test(v.Location, state)
+				&& itemInfoTrigger.Test(v.Item, state);
 		}
 	}
 
