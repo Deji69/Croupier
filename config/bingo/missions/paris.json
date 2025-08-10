@@ -280,6 +280,28 @@
 	
 		// Action Complications
 		{
+			"Name": "No Explosions Indoors",
+			"Tip": "Do not cause unnecessary explosions inside any building.",
+			"Type": "Complication",
+			"Difficulty": "High",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Explosion": {
+				"NOT": {
+					"Room": 81
+				}
+			}
+		},
+		{
+			"Name": "No Explosions Outside",
+			"Tip": "Do not cause unnecessary explosions outdoors (includes balconies).",
+			"Type": "Complication",
+			"Difficulty": "High",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Explosion": {
+				"Room": 81
+			}
+		},
+		{
 			"Name": "No Shooting Indoors",
 			"Type": "Complication",
 			"Tip": "Do not fire any shots while inside any building.",
@@ -293,17 +315,6 @@
 			}
 		},
 		{
-			"Name": "No Explosions Indoors",
-			"Tip": "Do not cause unnecessary explosions inside any building.",
-			"Type": "Complication",
-			"Difficulty": "High",
-			"Explosion": {
-				"NOT": {
-					"Room": 81
-				}
-			}
-		},
-		{
 			"Name": "No Shooting Outside",
 			"Type": "Complication",
 			"Tip": "Do not fire any shots while outdoors (balconies count as outdoors).",
@@ -312,15 +323,6 @@
 			"Missions": ["The Showstopper", "Holiday Hoarders"],
 			"PlayerShot": {
 				"Room": [81]
-			}
-		},
-		{
-			"Name": "No Explosions Outside",
-			"Tip": "Do not cause unnecessary explosions outdoors (includes balconies).",
-			"Type": "Complication",
-			"Difficulty": "High",
-			"Explosion": {
-				"Room": 81
 			}
 		},
 		
@@ -661,7 +663,7 @@
 				}
 			}
 		}*/
-		{
+		/*{
 			"Name": "No Guns: Top Floor",
 			"Type": "Complication",
 			"Tip": "Do not equip a firearm anywhere on the top floor (Level 3) of the palace.",
@@ -672,6 +674,6 @@
 				"IsFirearm": true,
 				"Area": "TopFloor"
 			}
-		}
+		}*/
 	]
 }
