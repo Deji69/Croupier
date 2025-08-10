@@ -235,7 +235,7 @@
 			"Group": "Interact",
 			"Missions": ["The Showstopper", "Holiday Hoarders"],
 			"Tags": ["Action", "Interact"],
-			"Level_Setup_Events": {
+			"LevelSetupEvent": {
 				"Event": "47_ShowInvitation"
 			}
 		},
