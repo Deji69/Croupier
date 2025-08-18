@@ -48,8 +48,13 @@ namespace Croupier {
 		public void Add(BingoTile tile) {
 			var liveTile = (BingoTile)tile.Clone();
 			liveTile.Reset();
+			liveTile.PropertyChanged += LiveTile_PropertyChanged;
 			tiles.Add(liveTile);
 			size = GetCardSize();
+		}
+
+		private void LiveTile_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
+			OnPropertyChanged(nameof(Tiles));
 		}
 
 		public void SetTile(int index, BingoTile? tile) {
@@ -235,8 +240,11 @@ namespace Croupier {
 		}
 
 		public void Reset() {
+			pausePropChangeEvents = true;
 			foreach (var tile in Tiles)
 				tile?.Reset();
+			pausePropChangeEvents = false;
+			OnPropertyChanged(nameof(Tiles));
 		}
 
 		private BingoCardSize GetCardSize() {
@@ -262,20 +270,24 @@ namespace Croupier {
 
 		public override string ToString() {
 			var missionName = Croupier.Mission.TryGet(Mission)?.Name;
-			var str = missionName != null ? $"{missionName}: " : "";
+			var str = "";
 
 			foreach (var cond in Tiles) {
 				if (str.Length > 0) str += ", ";
 				str += cond?.ToString();
 			}
 
-			return str;
+			return missionName != null ? $"{missionName}: {str}" : str;
 		}
 
 		public event PropertyChangedEventHandler? PropertyChanged;
 
+		// bit of a hacky fix
+		private bool pausePropChangeEvents = false;
+
 		protected virtual void OnPropertyChanged(string propertyName) {
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+			if (!pausePropChangeEvents)
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 	}
 }

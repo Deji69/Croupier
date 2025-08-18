@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -203,9 +204,9 @@ namespace Croupier
 		private bool _timerMultiSpin = false;
 		private bool _timerFractions = true;
 
-		public bool IsBingoMode => GameController.Main.Mode == GameMode.Bingo || GameController.Main.Mode == GameMode.RouletteBingo;
-		public bool IsRouletteMode => GameController.Main.Mode == GameMode.Roulette || GameController.Main.Mode == GameMode.RouletteBingo;
-		public bool IsHybridMode => GameController.Main.Mode == GameMode.RouletteBingo;
+		public bool IsBingoMode => GameController.Main.Mode == GameMode.Bingo || GameController.Main.Mode == GameMode.Hybrid;
+		public bool IsRouletteMode => GameController.Main.Mode == GameMode.Roulette || GameController.Main.Mode == GameMode.Hybrid;
+		public bool IsHybridMode => GameController.Main.Mode == GameMode.Hybrid;
 
 		public bool BingoSize3x3 => GameController.Main.Bingo.CardSize == 3 * 3;
 		public bool BingoSize4x4 => GameController.Main.Bingo.CardSize == 4 * 4;
@@ -554,7 +555,7 @@ namespace Croupier
 		public ObservableCollection<GameModeEntry> GameModeEntries = [
 			new(GameMode.Roulette, "Roulette"),
 			new(GameMode.Bingo, "Bingo"),
-			new(GameMode.RouletteBingo, "Hybrid"),
+			new(GameMode.Hybrid, "Hybrid"),
 		];
 		public ObservableCollection<ContextSubmenuEntry> HistoryEntries = [];
 		public ObservableCollection<ContextSubmenuEntry> BookmarkEntries = [
@@ -743,6 +744,7 @@ namespace Croupier
 				SetupGameMode();
 				GameController.Main.AssureRoundIsStarted();
 				PostConditionUpdate();
+				SendGameModeToClient();
 			};
 			GameController.Main.StreakUpdated += (sender, mode) => {
 				UpdateStreakStatus();
@@ -757,6 +759,7 @@ namespace Croupier
 				SendMissionsToClient();
 				SendSpinToClient();
 				SendSpinLockToClient();
+				SendGameModeToClient();
 				SendStreakToClient();
 				SendTimerToClient();
 			};
@@ -1432,6 +1435,11 @@ namespace Croupier
 			SendTimerToClient();
 		}
 
+		public void SendGameModeToClient() {
+			if (disableClientUpdate) return;
+			CroupierSocketServer.Send($"GameMode:{(int)GameController.Main.Mode}");
+		}
+
 		public void SendSpinLockToClient() {
 			if (disableClientUpdate) return;
 			CroupierSocketServer.Send("SpinLock:" + (SpinLock ? "1" : "0"));
@@ -1445,12 +1453,17 @@ namespace Croupier
 
 		public void SendSpinToClient() {
 			if (disableClientUpdate) return;
-			var spinData = "";
-			GameController.Main.Roulette.Spin?.Conditions.ForEach(condition => {
-				if (spinData.Length > 0) spinData += ", ";
-				spinData += $"{condition.ToString(TargetNameFormat.Initials)}";
-			});
-			CroupierSocketServer.Send("SpinData:" + spinData);
+			if (GameController.Main.Roulette.Spin != null && GameController.Main.Roulette.Spin.Conditions.Count > 0) {
+				var spinData = "";
+				GameController.Main.Roulette.Spin.Conditions.ForEach(condition => {
+					if (spinData.Length > 0) spinData += ", ";
+					spinData += $"{condition.ToString(TargetNameFormat.Initials)}";
+				});
+				CroupierSocketServer.Send("SpinData:" + spinData);
+			}
+			if (GameController.Main.Bingo.Card != null && GameController.Main.Bingo.Card.Tiles.Count > 0) {
+				GameController.Main.Bingo.SendBingoDataToClient();
+			}
 		}
 
 		public void SendMissionsToClient() {

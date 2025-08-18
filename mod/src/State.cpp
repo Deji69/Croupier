@@ -21,7 +21,7 @@ auto State::OnRulesetSelect(eRouletteRuleset ruleset) -> void {
 
 auto State::OnMissionSelect(eMission mission, bool isAuto) -> void {
 	State::current.playerSelectMission();
-	auto currentMission = State::current.spin.getMission();
+	auto currentMission = State::current.generator.getMission();
 	if (currentMission && mission == currentMission->getMission() && !State::current.spinCompleted) return;
 	State::current.spinCompleted = false;
 

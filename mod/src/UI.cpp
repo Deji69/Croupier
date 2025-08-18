@@ -6,10 +6,100 @@
 #include <IconsMaterialDesign.h>
 #include <IPluginInterface.h>
 #include <format>
+#include <imgui.h>
 
 using namespace Croupier;
 using namespace std::string_literals;
 using namespace std::string_view_literals;
+
+constexpr int ypadding = 3; // vertical spacing of text in pixels
+
+static auto DrawCenteredText(ImVec2 position, float width, std::string_view text) -> void {
+	ImVec2 renderPos;
+	ImVec2 linesize = ImGui::CalcTextSize(text.data());
+	auto spaceSize = ImGui::CalcTextSize(" ");
+	position.x = position.x + ((width / 2) - ((linesize.x + spaceSize.x) / 2));
+	//ImGui::GetIO().FontDefault->RenderText(dl, 0, renderPos, ImGui::GetColorU32(ImGuiCol_Text), {-1000, -1000, 1000, 1000}, text.data(), text.data() + text.size());
+	ImGui::SetCursorPos(position);
+	ImGui::SetNextItemWidth(width);
+	ImGui::TextUnformatted(text.data(), text.data() + text.size());
+}
+
+static auto TextCenteredCalcLines(const std::vector<std::string_view>& words, ImVec2 position, ImVec2 bound) -> int {
+	auto spaceSize = ImGui::CalcTextSize(" ");
+	auto charSize = ImGui::CalcTextSize("x");
+
+	int linecnt = 0; // 0 is first line
+	float linex = 0; // space already used on line
+	std::string lineText = "";
+
+	for (size_t i = 0; i < words.size(); ++i) {
+		auto& word = words[i];
+		auto width = ImGui::CalcTextSize(word.data(), word.data() + word.size()).x;
+		auto pos = ImVec2{position.x, position.y + (spaceSize.y + ypadding) * linecnt};
+
+		if ((linex + width) > bound.x) {
+			lineText.clear();
+			linex = 0;
+			linecnt++;
+			--i;
+			continue;
+		}
+
+		if (i == words.size() - 1) {
+			lineText += word.data();
+			linex += width;
+			break;
+		}
+
+		auto needSpace = !lineText.empty();
+		if (needSpace) lineText += " "s;
+		lineText += word;
+		linex += width + (needSpace ? spaceSize.x : 0);
+	}
+	return linecnt;
+}
+
+static auto TextCentered(std::string_view text, ImVec2 position, ImVec2 bound) -> void {
+	auto words = split(text, " ");
+
+	auto spaceSize = ImGui::CalcTextSize(" ");
+	auto charSize = ImGui::CalcTextSize("x");
+	auto lines = TextCenteredCalcLines(words, position, bound);
+
+	position.y += (bound.y / 2) - ((spaceSize.y + ypadding) * (lines + 1)) * 0.5;
+
+	int linecnt = 0; // 0 is first line
+	float linex = 0; // space already used on line
+	std::string lineText = "";
+
+	for (size_t i = 0; i < words.size(); ++i) {
+		auto& word = words[i];
+		auto width = ImGui::CalcTextSize(word.data(), word.data() + word.size()).x;
+		auto pos = ImVec2{position.x, position.y + (spaceSize.y + ypadding) * linecnt};
+
+		if ((linex + width) > bound.x) {
+			DrawCenteredText(pos, bound.x, lineText);
+			lineText.clear();
+			linex = 0;
+			linecnt++;
+			--i;
+			continue;
+		}
+
+		if (i == words.size() - 1) {
+			if (!lineText.empty()) lineText += " ";
+			lineText += word.data();
+			DrawCenteredText(pos, bound.x, lineText);
+			break;
+		}
+
+		auto needSpace = !lineText.empty();
+		if (needSpace) lineText += " "s;
+		lineText += word;
+		linex += width + (needSpace ? spaceSize.x : 0);
+	}
+}
 
 auto UI::DrawMenu() -> void {
 	if (ImGui::Button(ICON_MD_CASINO " CROUPIER"))
@@ -17,8 +107,11 @@ auto UI::DrawMenu() -> void {
 }
 
 auto UI::Draw(bool focused) -> void {
+	statusDrawn = false;
+	this->state.Update(State::current);
+
 	this->DrawBingoDebugUI(focused);
-	this->DrawSpinUI(focused);
+	this->DrawOverlayUI(focused);
 
 	if (!focused) return;
 
@@ -32,9 +125,8 @@ auto UI::Draw(bool focused) -> void {
 	ImGui::SetNextWindowContentSize(ImVec2(400, 0));
 
 	if (ImGui::Begin(ICON_MD_SETTINGS " CROUPIER", &this->showUI, ImGuiWindowFlags_AlwaysAutoResize)) {
-		auto connected = State::current.client.isConnected();
-		ImGui::PushStyleColor(ImGuiCol_Text, connected ? IM_COL32(0, 255, 0, 255) : IM_COL32(255, 0, 0, 255));
-		ImGui::TextUnformatted(connected ? "Connected" : "Disconnected");
+		ImGui::PushStyleColor(ImGuiCol_Text, state.isClientConnected ? IM_COL32(0, 255, 0, 255) : IM_COL32(255, 0, 0, 255));
+		ImGui::TextUnformatted(state.isClientConnected ? "Connected" : "Disconnected");
 		ImGui::PopStyleColor();
 
 		ImGui::PushFont(SDK()->GetImGuiRegularFont());
@@ -106,7 +198,7 @@ auto UI::Draw(bool focused) -> void {
 		if (ImGui::Checkbox("Overlay Kill Confirmations", &Config::main.overlayKillConfirmations))
 			Config::Save();
 
-		if (!connected) {
+		if (!state.isClientConnected) {
 			// Legacy timer
 			if (ImGui::Checkbox("Timer", &Config::main.timer))
 				Config::Save();
@@ -148,7 +240,7 @@ auto UI::Draw(bool focused) -> void {
 			}
 		}
 
-		if (connected) {
+		if (state.isClientConnected) {
 			// Streak Tracking
 			if (ImGui::Checkbox("Streak", &Config::main.streak))
 				Config::Save();
@@ -161,12 +253,12 @@ auto UI::Draw(bool focused) -> void {
 			}
 		}
 
-		if (!connected) {
+		if (!state.isClientConnected) {
 			// Ruleset select
-			auto const rulesetName = getRulesetName(State::current.ruleset);
+			auto const rulesetName = getRulesetName(state.ruleset);
 			if (ImGui::BeginCombo("##Ruleset", rulesetName.value_or("").data(), ImGuiComboFlags_HeightLarge)) {
 				for (auto& info : rulesets) {
-					auto const selected = State::current.ruleset == info.ruleset;
+					auto const selected = state.ruleset == info.ruleset;
 					auto flags = info.ruleset == eRouletteRuleset::Custom ? ImGuiSelectableFlags_Disabled : 0;
 
 					if (ImGui::Selectable(info.name.data(), selected, flags) && info.ruleset != eRouletteRuleset::Custom)
@@ -183,11 +275,10 @@ auto UI::Draw(bool focused) -> void {
 			if (ImGui::Button("Customise"))
 				this->showCustomRulesetUI = !this->showCustomRulesetUI;
 		}
-
-		auto mission = State::current.spin.getMission();
-
+		
+		auto mission = state.mission;
 		auto missionInfoIt = !mission ? missionInfos.end() : std::find_if(missionInfos.begin(), missionInfos.end(), [this](const MissionInfo& info) {
-			return info.mission == State::current.spin.getMission()->getMission();
+			return info.mission == state.mission->getMission();
 		});
 		auto const currentIdx = missionInfoIt != missionInfos.end() ? std::distance(missionInfos.begin(), missionInfoIt) : 0;
 		auto const& currentMissionInfo = missionInfos[currentIdx];
@@ -211,7 +302,7 @@ auto UI::Draw(bool focused) -> void {
 		ImGui::SetWindowFontScale(1.5);
 		ImGui::PushFont(SDK()->GetImGuiBlackFont());
 
-		if (connected) {
+		if (state.isClientConnected) {
 			if (ImGui::Button(ICON_MD_ARROW_BACK))
 				SendPrev();
 			if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) ImGui::SetTooltip("Previous Spin");
@@ -222,9 +313,9 @@ auto UI::Draw(bool focused) -> void {
 			ImGui::SameLine();
 		}
 
-		if (connected || State::current.spin.getMission()) {
-			if (ImGui::Button(State::current.spinLocked ? ICON_MD_LOCK : ICON_MD_LOCK_OPEN)) {
-				State::current.spinLocked = !State::current.spinLocked;
+		if (state.isClientConnected || state.spin.getMission()) {
+			if (ImGui::Button(state.spinLocked ? ICON_MD_LOCK : ICON_MD_LOCK_OPEN)) {
+				State::current.spinLocked = !state.spinLocked;
 				SendToggleSpinLock();
 			}
 			if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) ImGui::SetTooltip("Toggle Spin Lock");
@@ -247,7 +338,7 @@ auto UI::Draw(bool focused) -> void {
 
 		ImGui::PopFont();
 
-		if (!connected && !State::current.spinHistory.empty()) {
+		if (!state.isClientConnected && state.haveSpinHistory) {
 			ImGui::SameLine();
 
 			if (ImGui::Button(ICON_MD_ARROW_LEFT))
@@ -260,6 +351,184 @@ auto UI::Draw(bool focused) -> void {
 
 	ImGui::End();
 	ImGui::PopFont();
+}
+
+auto UI::DrawOverlayUI(bool focused) -> void {
+	if (!Config::main.spinOverlay)
+		return;
+	
+	ImGui::PushFont(SDK()->GetImGuiBlackFont());
+
+	auto viewportSize = ImGui::GetMainViewport()->Size;
+	auto flags = static_cast<ImGuiWindowFlags>(ImGuiWindowFlags_AlwaysAutoResize);
+	auto dims = GetBingoDimensions(state.card.tiles.size());
+
+	if (Config::main.overlayDockMode != DockMode::None || !focused)
+		flags |= ImGuiWindowFlags_NoTitleBar;
+
+	switch (Config::main.overlayDockMode) {
+		case DockMode::TopLeft:
+			ImGui::SetNextWindowPos({0, 0});
+			break;
+		case DockMode::TopRight:
+			ImGui::SetNextWindowPos({viewportSize.x - this->overlaySize.x, 0});
+			break;
+		case DockMode::BottomLeft:
+			ImGui::SetNextWindowPos({0, viewportSize.y - this->overlaySize.y});
+			break;
+		case DockMode::BottomRight:
+			ImGui::SetNextWindowPos({viewportSize.x - this->overlaySize.x, viewportSize.y - this->overlaySize.y});
+			break;
+	}
+
+	auto const haveRoulette = (state.gameMode == GameMode::Roulette || state.gameMode == GameMode::Hybrid) && !state.spin.getConditions().empty();
+	auto const haveBingo = (state.gameMode == GameMode::Bingo || state.gameMode == GameMode::Hybrid) && !state.card.tiles.empty();
+	auto const title = haveRoulette && haveBingo
+		? ICON_MD_CASINO " CROUPIER - BINGO & SPIN"
+		: (haveRoulette ? ICON_MD_CASINO " CROUPIER - SPIN" : ICON_MD_CASINO " CROUPIER - BINGO");
+
+	if (haveBingo) {
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {0, 0});
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, {1, 1});
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImColor{0, 0, 0}.Value);
+	}
+
+	if (ImGui::Begin(title, &Config::main.spinOverlay, flags)) {
+		this->overlaySize = ImGui::GetWindowSize();
+		if (haveRoulette) {
+			if (haveBingo) {
+				ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {4, 4});
+				ImGui::PushStyleColor(ImGuiCol_ChildBg, ImColor{23, 28, 32}.Value);
+				ImGui::BeginChild("roulette", {0, 0}, ImGuiChildFlags_AlwaysUseWindowPadding | ImGuiChildFlags_AutoResizeY, ImGuiWindowFlags_NoScrollbar);
+			}
+			this->DrawSpinUI(focused);
+			if (haveBingo) {
+				ImGui::EndChild();
+				ImGui::PopStyleVar();
+				ImGui::PopStyleColor();
+			}
+		}
+		else {
+			if (haveBingo) {
+				ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {4, 4});
+				ImGui::PushStyleColor(ImGuiCol_ChildBg, ImColor{23, 28, 32}.Value);
+				ImGui::BeginChild("roulette", {0, 0}, ImGuiChildFlags_AlwaysUseWindowPadding | ImGuiChildFlags_AutoResizeY, ImGuiWindowFlags_NoScrollbar);
+			}
+			this->DrawOverlayUIGameStatus();
+			if (haveBingo) {
+				ImGui::EndChild();
+				ImGui::PopStyleVar();
+				ImGui::PopStyleColor();
+			}
+		}
+		if (haveBingo)
+			this->DrawBingoUI(focused);
+	}
+
+	ImGui::End();
+
+	if (haveBingo) {
+		ImGui::PopStyleVar();
+		ImGui::PopStyleVar();
+		ImGui::PopStyleColor();
+	}
+
+	ImGui::PopFont();
+}
+
+auto UI::DrawBingoUI(bool focused) -> void {
+	ImGui::PushFont(SDK()->GetImGuiMediumFont());
+
+	auto dims = GetBingoDimensions(state.card.tiles.size());
+
+	std::string str;
+	str.reserve(8);
+
+	for (size_t y = 0; y < dims.rows; ++y) {
+		for (size_t x = 0; x < dims.columns; ++x) {
+			auto const idx = y * dims.rows + x;
+			if (idx < 0 || idx >= state.card.tiles.size()) break;
+			auto const& tile = state.card.tiles[idx];
+			if (x != 0) ImGui::SameLine();
+			str.clear();
+			std::format_to(std::back_inserter(str), "grid{}x{}", x, y);
+			if (tile.achieved)
+				ImGui::PushStyleColor(ImGuiCol_ChildBg, ImColor{17, 39, 18}.Value);
+			else if (tile.failed)
+				ImGui::PushStyleColor(ImGuiCol_ChildBg, ImColor{57, 19, 19}.Value);
+			else
+				ImGui::PushStyleColor(ImGuiCol_ChildBg, ImColor{23, 28, 32}.Value);
+			ImGui::BeginChild(str.c_str(), {120, 90}, ImGuiChildFlags_Border, ImGuiWindowFlags_NoScrollbar);
+			if (!tile.group.empty()) {
+				ImGui::PushStyleColor(ImGuiCol_Text, tile.groupColour);
+				TextCentered(trim(tile.group), { 7, 2 }, { 110, 18 });
+				ImGui::PopStyleColor();
+			}
+			TextCentered(trim(tile.text), { 7, tile.group.empty() ? 2.0f : 20.0f }, { 110, tile.group.empty() ? 90.0f : 70.0f });
+			ImGui::EndChild();
+			ImGui::PopStyleColor();
+		}
+	}
+
+	ImGui::PopFont();
+}
+
+auto UI::DrawSpinUI(bool focused) -> void {
+	ImGui::PushFont(SDK()->GetImGuiBoldFont());
+
+	auto& conds = state.spin.getConditions();
+
+	for (auto& cond : conds) {
+		auto kc = State::current.getTargetKillValidation(cond.target.get().getID());
+		auto validation = " - "s;
+
+		if (Config::main.overlayKillConfirmations) {
+			if (kc.correctMethod == eKillValidationType::Unknown)
+				validation += "Unknown"s;
+			else if (kc.correctMethod == eKillValidationType::Invalid)
+				validation += kc.correctDisguise ? "Wrong method" : "Wrong";
+			else if (kc.correctMethod == eKillValidationType::Valid)
+				validation += kc.correctDisguise ? "Done" : "Wrong disguise";
+			else if (kc.correctMethod == eKillValidationType::Incomplete)
+				validation = "";
+		}
+		else validation = "";
+
+		auto str = std::format("{}: {} / {}{}", cond.target.get().getName(), cond.methodName, cond.disguise.get().name, validation);
+		ImGui::Text(str.c_str());
+	}
+
+	DrawOverlayUIGameStatus();
+
+	ImGui::PopFont();
+}
+
+auto UI::DrawOverlayUIGameStatus() -> void {
+	if (statusDrawn) return;
+	statusDrawn = true;
+
+	auto text = std::string();
+
+	if (Config::main.timer) {
+		if (!text.empty()) text += " - ";
+		auto timeFormat = std::string();
+		auto const includeHr = std::chrono::duration_cast<std::chrono::hours>(state.timeElapsed).count() >= 1;
+		auto const time = includeHr ? std::format("{:%H:%M:%S}", state.timeElapsed) : std::format("{:%M:%S}", state.timeElapsed);
+		text += time;
+	}
+
+	if (Config::main.streak) {
+		if (!text.empty()) text += " - ";
+		text += std::format("Streak: {}", Config::main.streakCurrent);
+	}
+
+	if (!text.empty()) {
+		auto windowWidth = ImGui::GetWindowSize().x;
+		auto textWidth = ImGui::CalcTextSize(text.c_str()).x;
+
+		ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
+		ImGui::Text(text.c_str());
+	}
 }
 
 auto UI::DrawBingoDebugUI(bool focused) -> void {
@@ -280,8 +549,6 @@ auto UI::DrawBingoDebugUI(bool focused) -> void {
 		this->debugOverlaySize = ImGui::GetWindowSize();
 
 		ImGui::PushFont(SDK()->GetImGuiBoldFont());
-
-		auto const& pos = State::current.playerMatrix.Trans;
 
 		/*if (checkInRoom(pos, SVector3(-193.116, 13.079, -1.966), SVector3(-217.883, 16.94, 2.422)))
 			this->state.room = "Catwalk";
@@ -316,100 +583,14 @@ auto UI::DrawBingoDebugUI(bool focused) -> void {
 
 		//ImGui::Text(this->state.room.c_str());
 		static std::string roomText;
-		roomText = std::format("Room: {}", State::current.roomId);
+		roomText = std::format("Room: {}", state.playerRoomId);
 		ImGui::Text(roomText.c_str());
 
-		auto str = std::format("{}, {}, {}", pos.x, pos.y, pos.z);
+		auto str = std::format("{}, {}, {}", state.playerPos.x, state.playerPos.y, state.playerPos.z);
 		ImGui::Text(str.c_str());
 
 		if (ImGui::Button("Print")) {
-			Logger::Info("{}, {}, {}", pos.x, pos.y, pos.z);
-		}
-
-		ImGui::PopFont();
-	}
-
-	ImGui::End();
-	ImGui::PopFont();
-}
-
-auto UI::DrawSpinUI(bool focused) -> void {
-	if (!Config::main.spinOverlay) return;
-
-	ImGui::PushFont(SDK()->GetImGuiBlackFont());
-
-	auto viewportSize = ImGui::GetMainViewport()->Size;
-	auto flags = static_cast<ImGuiWindowFlags>(ImGuiWindowFlags_AlwaysAutoResize);
-
-	if (Config::main.overlayDockMode != DockMode::None || !focused)
-		flags |= ImGuiWindowFlags_NoTitleBar;
-
-	switch (Config::main.overlayDockMode) {
-		case DockMode::TopLeft:
-			ImGui::SetNextWindowPos({0, 0});
-			break;
-		case DockMode::TopRight:
-			ImGui::SetNextWindowPos({viewportSize.x - this->overlaySize.x, 0});
-			break;
-		case DockMode::BottomLeft:
-			ImGui::SetNextWindowPos({0, viewportSize.y - this->overlaySize.y});
-			break;
-		case DockMode::BottomRight:
-			ImGui::SetNextWindowPos({viewportSize.x - this->overlaySize.x, viewportSize.y - this->overlaySize.y});
-			break;
-	}
-
-	if (ImGui::Begin(ICON_MD_CASINO " CROUPIER - SPIN", &Config::main.spinOverlay, flags)) {
-		this->overlaySize = ImGui::GetWindowSize();
-
-		ImGui::PushFont(SDK()->GetImGuiBoldFont());
-
-		auto elapsed = std::chrono::seconds::zero();
-		auto& conds = State::current.spin.getConditions();
-
-		elapsed = State::current.getTimeElapsed();
-		for (auto i = 0; i < conds.size(); ++i) {
-			auto& cond = conds[i];
-			auto kc = State::current.getTargetKillValidation(cond.target.get().getID());
-			auto validation = " - "s;
-
-			if (Config::main.overlayKillConfirmations) {
-				if (kc.correctMethod == eKillValidationType::Unknown)
-					validation += "Unknown"s;
-				else if (kc.correctMethod == eKillValidationType::Invalid)
-					validation += kc.correctDisguise ? "Wrong method" : "Wrong";
-				else if (kc.correctMethod == eKillValidationType::Valid)
-					validation += kc.correctDisguise ? "Done" : "Wrong disguise";
-				else if (kc.correctMethod == eKillValidationType::Incomplete)
-					validation = "";
-			}
-			else validation = "";
-
-			auto str = std::format("{}: {} / {}{}", cond.target.get().getName(), cond.methodName, cond.disguise.get().name, validation);
-			ImGui::Text(str.c_str());
-		}
-
-		auto text = std::string();
-
-		if (Config::main.timer) {
-			if (!text.empty()) text += " - ";
-			auto timeFormat = std::string();
-			auto const includeHr = std::chrono::duration_cast<std::chrono::hours>(elapsed).count() >= 1;
-			auto const time = includeHr ? std::format("{:%H:%M:%S}", elapsed) : std::format("{:%M:%S}", elapsed);
-			text += time;
-		}
-
-		if (Config::main.streak) {
-			if (!text.empty()) text += " - ";
-			text += std::format("Streak: {}", Config::main.streakCurrent);
-		}
-
-		if (!text.empty()) {
-			auto windowWidth = ImGui::GetWindowSize().x;
-			auto textWidth = ImGui::CalcTextSize(text.c_str()).x;
-
-			ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
-			ImGui::Text(text.c_str());
+			Logger::Info("{}, {}, {}", state.playerPos.x, state.playerPos.y, state.playerPos.z);
 		}
 
 		ImGui::PopFont();
@@ -421,7 +602,7 @@ auto UI::DrawSpinUI(bool focused) -> void {
 
 auto UI::DrawEditSpinUI(bool focused) -> void {
 	if (!this->showManualModeUI) return;
-	if (!State::current.generator.getMission()) {
+	if (!state.mission) {
 		this->showManualModeUI = false;
 		return;
 	}
@@ -431,7 +612,7 @@ auto UI::DrawEditSpinUI(bool focused) -> void {
 	if (ImGui::Begin(ICON_MD_EDIT " CROUPIER - EDIT SPIN", &this->showManualModeUI, ImGuiWindowFlags_AlwaysAutoResize)) {
 		ImGui::PushFont(SDK()->GetImGuiRegularFont());
 
-		auto& mission = *State::current.generator.getMission();
+		auto& mission = *state.mission;
 		auto& targets = mission.getTargets();
 		auto& disguises = mission.getDisguises();
 
@@ -445,7 +626,7 @@ auto UI::DrawEditSpinUI(bool focused) -> void {
 			RouletteSpinCondition* currentCondition = nullptr;
 			const RouletteDisguise* currentDisguise = nullptr;
 
-			for (auto& cond : State::current.spin.getConditions()) {
+			for (auto& cond : state.spin.getConditions()) {
 				if (cond.target.get().getName() != target.getName()) continue;
 				currentMethod = cond.killMethod.method;
 				currentMapMethod = cond.specificKillMethod.method;

@@ -16,6 +16,8 @@ enum class eClientMessage {
 	Respin,
 	AutoSpin,
 	SpinData,
+	BingoData,
+	GameMode,
 	Next,
 	Prev,
 	Random,
@@ -67,7 +69,7 @@ public:
 protected:
 	auto reconnect() -> bool;
 	auto writeMessage(const ClientMessage&) -> bool;
-	auto processMessage(const std::string&) -> void;
+	auto processMessage(std::string_view) -> void;
 
 private:
 	std::thread clientThread;

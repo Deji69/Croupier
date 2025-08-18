@@ -286,6 +286,12 @@ namespace Croupier.GameEvents {
 		public string? CarArea { get; set; }
 	}
 
+	// It was really important that this be its own unique event
+	public class CrocodileEventValue : EventValue {
+		// We even get a repository ID for the exact crocodile, so cool!
+		public string? RepositoryId { get; set; }
+	}
+
 	public abstract class ItemEventValue : LocationImbuedEventValue {
 		public string? RepositoryId { get; set; }
 		public string? InstanceId { get; set; }
@@ -393,13 +399,11 @@ namespace Croupier.GameEvents {
 	public class OnTurnOnEventValue : LocationImbuedEventValue {
 		public UInt64? EntityID { get; set; }
 		public string? RepositoryId { get; set; }
-		public bool? InitialStateOn { get; set; }
 	}
 
 	public class OnTurnOffEventValue : LocationImbuedEventValue {
 		public UInt64? EntityID { get; set; }
 		public string? RepositoryId { get; set; }
-		public bool? InitialStateOn { get; set; }
 	}
 
 	public class OnDestroyEventValue : LocationImbuedEventValue {
@@ -430,6 +434,10 @@ namespace Croupier.GameEvents {
 				Location = location,
 			} : null;
 		}
+	}
+
+	public class OnInitialFractureEventValue : EventValue {
+		public UInt64? EntityID { get; set; }
 	}
 
 	public class OpenDoorEventValue : LocationImbuedEventValue {

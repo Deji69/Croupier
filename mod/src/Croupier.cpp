@@ -25,6 +25,7 @@
 #include <Glacier/ZHM5BaseCharacter.h>
 #include <Glacier/Pins.h>
 #include "App.h"
+#include "Bingo.h"
 #include "Debug.h"
 #include "Events.h"
 #include "KillConfirmation.h"
@@ -64,7 +65,7 @@ CroupierPlugin::CroupierPlugin() : respinAction("Respin"), shuffleAction("Shuffl
 
 CroupierPlugin::~CroupierPlugin() {
 	State::current.client.stop();
-	Config::Save();
+	//Config::Save();
 	this->UninstallHooks();
 }
 
@@ -140,6 +141,9 @@ auto CroupierPlugin::ProcessPlayerState() -> void {
 	if (!State::current.playerStartingAgilitySinceFrame && State::current.playerStartingAgility)
 		State::current.playerStartingAgility = false;
 	State::current.playerStartingAgilitySinceFrame = false;
+	if (!State::current.playerShootingSinceFrame && State::current.playerShooting)
+		State::current.playerShooting = false;
+	State::current.playerShootingSinceFrame = false;
 
 	auto player = SDK()->GetLocalPlayer();
 	if (!player) return;
@@ -294,8 +298,12 @@ auto CroupierPlugin::ProcessClientMessages() -> void {
 			}
 			case eClientMessage::SpinData:
 				return ProcessSpinDataMessage(message);
+			case eClientMessage::BingoData:
+				return ProcessBingoDataMessage(message);
 			case eClientMessage::Missions:
 				return ProcessMissionsMessage(message);
+			case eClientMessage::GameMode:
+				return ProcessGameModeMessage(message);
 			case eClientMessage::SpinLock:
 				if (message.args.size() < 1) break;
 				State::current.spinLocked = message.args[0] == '1';
@@ -398,6 +406,50 @@ auto CroupierPlugin::ProcessSpinDataMessage(const ClientMessage& message) -> voi
 	State::current.spinCompleted = false;
 }
 
+auto CroupierPlugin::ProcessBingoDataMessage(const ClientMessage& message) -> void {
+	auto js = json::parse(message.args);
+	if (!js.is_object()) return;
+
+	auto mission = static_cast<eMission>(js.value("Mission", 0));
+	auto it = js.find("Tiles");
+	if (it == js.end()) return;
+	if (!it->is_array()) return;
+
+	auto card = BingoCard{};
+	for (auto const& tilejs : *it) {
+		if (!tilejs.is_object()) return;
+		BingoTile tile;
+		tile.text = tilejs.value("Text", "");
+		tile.group = tilejs.value("Group", "");
+		tile.achieved = tilejs.value("Achieved", false);
+		tile.failed = tilejs.value("Failed", false);
+		tile.groupColour = tilejs.value("GroupColour", 0xFFFFFFFF);
+		card.tiles.emplace_back(std::move(tile));
+	}
+
+	std::unique_lock lock(State::current.stateMutex);
+
+	State::current.card = std::move(card);
+	State::current.isPlaying = false;
+	State::current.generator.setMission(Missions::get(mission));
+	this->currentSpinSaved = true;
+	State::current.spinCompleted = false;
+}
+
+auto CroupierPlugin::ProcessGameModeMessage(const ClientMessage& message) -> void {
+	if (message.args.size() < 1) return;
+	uint8 val;
+	auto res = std::from_chars(message.args.c_str(), message.args.c_str() + message.args.size(), val);
+	if (res.ec != std::errc()) return;
+	switch (val) {
+		case (uint8)GameMode::Bingo:
+		case (uint8)GameMode::Hybrid:
+		case (uint8)GameMode::Roulette:
+			State::current.gameMode = static_cast<GameMode>(val);
+			break;
+	}
+}
+
 auto CroupierPlugin::OnDrawMenu() -> void {
 	this->ui.DrawMenu();
 }
@@ -489,6 +541,8 @@ auto CroupierPlugin::Respin(bool isAuto) -> void {
 		if (!State::current.spin.getConditions().empty()) {
 			State::current.spinHistory.emplace(std::move(State::current.spin));
 		}
+
+		std::unique_lock lock(State::current.stateMutex);
 
 		State::current.spin = State::current.generator.spin(&State::current.spin);
 		State::current.timeStarted = std::chrono::steady_clock::now();
@@ -768,6 +822,44 @@ auto CroupierPlugin::ImbuePositionInfo(json& j, SVector3 pos, std::string prefix
 auto CroupierPlugin::ImbuedPositionInfo(SVector3 pos, std::string prefix, json&& j) -> json {
 	ImbuePositionInfo(j, pos, prefix);
 	return j;
+}
+
+auto CroupierPlugin::ImbuedSetpieceActivatorInfo(ZEntityRef entity, json&& j) -> json {
+	ImbueSetpieceActivatorInfo(entity, j);
+	return j;
+}
+
+auto CroupierPlugin::ImbueSetpieceActivatorInfo(ZEntityRef entity, json& j) -> bool {
+	if (!entity || !entity->GetType()) return false;
+
+	auto const spatial = QueryAnyParent<ZSpatialEntity>(entity);
+	if (!spatial) return false;
+
+	auto const& trans = spatial->GetWorldMatrix().Trans;
+	auto const parentity = entity.GetLogicalParent();
+	auto entityId = entity->GetType()->m_nEntityId;
+	auto const isGenericActivator = entityId == 4310537510098024720;
+
+	auto setpieceEntity = ZEntityRef{};
+	if (isGenericActivator) {
+		setpieceEntity = GetClosestEntityWithProperty<ZRepositoryID>(parentity, "m_sId");
+		if (setpieceEntity && setpieceEntity->GetType())
+			entityId = setpieceEntity->GetType()->m_nEntityId;
+	}
+	if (!setpieceEntity) setpieceEntity = entity;
+	auto setpieceRepoIdPtr = GetValuePropertyFromTree<ZRepositoryID>(setpieceEntity, "m_sId");
+	if (!setpieceRepoIdPtr) return false;
+	auto initialStateOn = GetValuePropertyFromTree<bool>(entity, "m_bInitialStateOn");
+	if (!setpieceRepoIdPtr) return false;
+
+	auto obj = ImbuedPositionInfo({ trans.x, trans.y, trans.z }, "", {
+		{"RepositoryId", setpieceRepoIdPtr->ToString()},
+		{"EntityID", setpieceEntity->GetType()->m_nEntityId},
+	});
+	j.merge_patch(obj);
+	if (initialStateOn)
+		j.merge_patch({{"InitialStateOn", *initialStateOn}});
+	return true;
 }
 
 auto CroupierPlugin::ImbueItemInfo(ZEntityRef entity, json& j) -> void {
@@ -2115,10 +2207,14 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 		//case ZHMPin::ShotBegin:
 		//case ZHMPin::Discharge_ShotSilenced:
 		case ZHMPin::PlayerAllShots: {
-			auto weap = entity.QueryInterface<ZHM5ItemWeapon>();
-			if (!weap) break;
-			auto descriptor = weap->m_pItemConfigDescriptor;
-			SendCustomEvent("PlayerShot"sv, ImbuedPlayerLocation(ImbuedItemInfo(entity)));
+			if (!State::current.playerShooting) {
+				auto weap = entity.QueryInterface<ZHM5ItemWeapon>();
+				if (!weap) break;
+				auto descriptor = weap->m_pItemConfigDescriptor;
+				SendCustomEvent("PlayerShot"sv, ImbuedPlayerLocation(ImbuedItemInfo(entity)));
+			}
+			State::current.playerShooting = true;
+			State::current.playerShootingSinceFrame = true;
 			break;
 		}
 		//case ZHMPin::SpawnPhysicsClip:
@@ -2174,9 +2270,29 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 				: SendCustomEvent("Explosion"sv, ImbuedPlayerLocation({}, true));
 			break;
 		}
-		case ZHMPin::OnDestroyed:
-			LogDebug("Destroyed!");
+		case ZHMPin::OnDestroyed: {
+			auto type = entity->GetType();
+			if (!type) break;
+			LogDebug("Destroyed! {}", entity->GetType()->m_nEntityId);
+			auto spatial = entity.QueryInterface<ZSpatialEntity>();
+			if (!spatial) break;
+			const auto& trans = spatial->GetWorldMatrix().Trans;
+			SendCustomEvent("OnDestroyed", ImbuedPositionInfo({trans.x, trans.y, trans.z}, "", {
+				{"EntityID", entity->GetType()->m_nEntityId}
+			}));
 			break;
+		}
+		case ZHMPin::OnInitialFracture: {
+			auto type = entity->GetType();
+			if (!type) break;
+			auto spatial = entity.QueryInterface<ZSpatialEntity>();
+			if (!spatial) break;
+			const auto& trans = spatial->GetWorldMatrix().Trans;
+			SendCustomEvent("OnInitialFracture", ImbuedPositionInfo({trans.x, trans.y, trans.z}, "", {
+				{"EntityID", type->m_nEntityId}
+			}));
+			break;
+		}
 		case static_cast<ZHMPin>(4101414679): { //ZEntity > ZCompositeEntity > ZCompositeEntity - fired on e.g. fusebox destroyed
 			auto initialStateOn = entity.GetProperty<bool>("m_bInitialStateOn");
 			auto setpiece = entity.GetLogicalParent();
@@ -2193,42 +2309,16 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 			break;
 		}
 		case ZHMPin::OnTurnOn: {// ZEntity > ZCompositeEntity > ZCompositeEntity > ZCompositeEntity
-			auto setpieceRepoIdPtr = GetValueProperty<ZRepositoryID>(entity, "m_sId");
-			if (!setpieceRepoIdPtr) break;
-			auto setpieceHelpersDistractionTargetedResetable = entity.GetLogicalParent();
-			if (!setpieceHelpersDistractionTargetedResetable) break;
-			auto initialStateOn = setpieceHelpersDistractionTargetedResetable.GetProperty<bool>("m_bInitialStateOn");
-			auto setpiece = setpieceHelpersDistractionTargetedResetable.GetLogicalParent();
-			if (!setpiece) break;
-			auto spatial = setpiece.QueryInterface<ZSpatialEntity>();
-			if (!spatial) break;
-			const auto& trans = spatial->GetWorldMatrix().Trans;
-			auto obj = ImbuedPositionInfo({ trans.x, trans.y, trans.z }, "", {
-				{"RepositoryId", setpieceRepoIdPtr->ToString()},
-				{"EntityID", setpiece->GetType()->m_nEntityId},
-			});
-			if (!initialStateOn.IsEmpty())
-				obj.merge_patch({ {"InitialStateOn", initialStateOn.Get()} });
+			json obj;
+			if (!ImbueSetpieceActivatorInfo(entity, obj))
+				break;
 			SendCustomEvent("OnTurnOn"sv, ImbuedPlayerLocation(std::move(obj), true));
 			break;
 		}
 		case ZHMPin::OnTurnOff: {// ZEntity > ZCompositeEntity > ZCompositeEntity > ZCompositeEntity
-			auto setpieceRepoIdPtr = GetValueProperty<ZRepositoryID>(entity, "m_sId");
-			if (!setpieceRepoIdPtr) break;
-			auto setpieceHelpersDistractionTargetedResetable = entity.GetLogicalParent();
-			if (!setpieceHelpersDistractionTargetedResetable) break;
-			auto initialStateOn = setpieceHelpersDistractionTargetedResetable.GetProperty<bool>("m_bInitialStateOn");
-			auto setpiece = setpieceHelpersDistractionTargetedResetable.GetLogicalParent();
-			if (!setpiece) break;
-			auto spatial = setpiece.QueryInterface<ZSpatialEntity>();
-			if (!spatial) break;
-			const auto& trans = spatial->GetWorldMatrix().Trans;
-			auto obj = ImbuedPositionInfo({trans.x, trans.y, trans.z}, "", {
-				{"RepositoryId", setpieceRepoIdPtr->ToString()},
-				{"EntityID", setpiece->GetType()->m_nEntityId},
-			});
-			if (!initialStateOn.IsEmpty())
-				obj.merge_patch({ {"InitialStateOn", initialStateOn.Get()} });
+			json obj;
+			if (!ImbueSetpieceActivatorInfo(entity, obj))
+				break;
 			SendCustomEvent("OnTurnOff"sv, ImbuedPlayerLocation(std::move(obj), true));
 			break;
 		}
@@ -2331,6 +2421,14 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 			// ZActorOutfitListener
 			gameplay.disguiseChange.havePinData = true;
 			gameplay.disguiseChange.wasFree = false;
+			break;
+		}
+		case ZHMPin::ChangedDisguise: {
+			// ZActorOutfitListener
+			if (!gameplay.disguiseChange.havePinData) {
+				gameplay.disguiseChange.havePinData = true;
+				gameplay.disguiseChange.wasFree = true;
+			}
 			break;
 		}
 		// ONLY WORK WHILE TRESPASSING :(

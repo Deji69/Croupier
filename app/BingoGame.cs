@@ -10,6 +10,19 @@ using System.Text.Json;
 using System.Windows;
 
 namespace Croupier {
+	public class BingoEvent {
+		public required MissionID Mission { get; set; }
+		public List<BingoTileEventValue> Tiles { get; set; } = [];
+	}
+
+	public class BingoTileEventValue {
+		public required string Text { get; set; }
+		public string Group { get; set; } = "";
+		public UInt32? GroupColour { get; set; } = null;
+		public bool Achieved { get; set; } = false;
+		public bool Failed { get; set; } = false;
+	}
+
 	public class BingoGame : ViewModel {
 		private readonly GameController controller;
 		public event EventHandler<BingoCard?>? CardUpdated;
@@ -127,6 +140,30 @@ namespace Croupier {
 			CroupierSocketServer.Send(obj);
 		}
 
+		public void SendBingoDataToClient() {
+			if (Card == null) return;
+			var tiles = new List<BingoTileEventValue>();
+			foreach (var tile in Card.Tiles) {
+				if (tile == null) continue;
+				uint r = (uint)(tile.GroupTextColor.Color.R);
+				uint g = (uint)(tile.GroupTextColor.Color.G);
+				uint b = (uint)(tile.GroupTextColor.Color.B);
+				uint a = (uint)(tile.GroupTextColor.Color.A);
+				tiles.Add(new() {
+					Text = tile.Text,
+					Group = tile.GroupTextVisibilityBool ? tile.GroupText : "",
+					GroupColour = (a << 24) | (b << 16) | (g << 8) | r,
+					Achieved = tile.Achieved,
+					Failed = tile.Failed,
+				});
+			}
+
+			CroupierSocketServer.Send("BingoData:" + JsonSerializer.Serialize(new BingoEvent() {
+				Mission = GameController.Main.MissionID,
+				Tiles = tiles,
+			}));
+		}
+
 		private void OnEvent(object? sender, string evData) {
 			try {
 				if (card == null) return;
@@ -134,7 +171,10 @@ namespace Croupier {
 				var ev = json.Deserialize<Event>(jsonGameEventSerializerOptions);
 				if (ev != null) {
 					var val = DeserializeEventValue(ev.Name, ev.Value is JsonElement value ? value : null);
-					if (val != null) card.TryAdvance(val);
+					if (val != null) {
+						if (card.TryAdvance(val))
+							SendBingoDataToClient();
+					}
 				}
 			}
 			catch (JsonException e) {
@@ -174,6 +214,7 @@ namespace Croupier {
 					"BodyFound" => json.Deserialize<BodyFoundEventValue>(jsonGameEventSerializerOptions),
 					"BodyHidden" => json.Deserialize<BodyHiddenEventValue>(jsonGameEventSerializerOptions),
 					"CarExploded" => json.Deserialize<CarExplodedEventValue>(jsonGameEventSerializerOptions),
+					"Crocodile" => json.Deserialize<CrocodileEventValue>(jsonGameEventSerializerOptions),
 					"DartHit" => json.Deserialize<DartHitEventValue>(jsonGameEventSerializerOptions),
 					"Disguise" => ImbueDisguiseEvent(json.Deserialize<DisguiseEventValue>(jsonGameEventSerializerOptions)),
 					"DoorBroken" => json.Deserialize<DoorBrokenEventValue>(jsonGameEventSerializerOptions),
@@ -196,7 +237,10 @@ namespace Croupier {
 					"Movement" => json.Deserialize<MovementEventValue>(jsonGameEventSerializerOptions),
 					"OnDestroy" => json.Deserialize<OnDestroyEventValue>(jsonGameEventSerializerOptions),
 					"OnEvacuationStarted" => json.Deserialize<OnEvacuationStartedEventValue>(jsonGameEventSerializerOptions),
+					"OnInitialFracture" => json.Deserialize<OnInitialFractureEventValue>(jsonGameEventSerializerOptions),
 					"OnPickup" => OnPickupEventValue.Load(json),
+					"OnTurnOn" => json.Deserialize<OnTurnOnEventValue>(jsonGameEventSerializerOptions),
+					"OnTurnOff" => json.Deserialize<OnTurnOffEventValue>(jsonGameEventSerializerOptions),
 					"OnWeaponReload" => OnWeaponReloadEventValue.Load(json),
 					"OpenDoor" => json.Deserialize<OpenDoorEventValue>(jsonGameEventSerializerOptions),
 					"OpportunityEvents" => json.Deserialize<OpportunityEventValue>(jsonGameEventSerializerOptions),
