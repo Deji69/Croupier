@@ -111,6 +111,10 @@
 		"Name": "No Crowd Blending",
 		"Type": "Complication",
 		"Tip": "Avoid becoming concealed in crowded areas.",
+		"Missions": [
+			"The Showstopper", "Holiday Hoarders",
+			"A Gilded Cage", "A House Built On Sand"
+		],
 		"Group": "Action",
 		"Difficulty": "Medium",
 		"OnIsFullyInCrowd": {}

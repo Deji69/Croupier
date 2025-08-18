@@ -134,6 +134,20 @@
 			}
 		},
 		{
+			"Name": "Drop {1} Chandeliers",
+			"NameSingular": "Drop {1} Chandelier",
+			"Tip": "Cause {0} chandeliers to fall.",
+			"Group": "Interact",
+			"Missions": [
+				"The Showstopper", "Holiday Hoarders"
+			],
+			"Tags": ["Action", "Interact"],
+			"Setpiece": {
+				"RepositoryId": "2d7a91b9-1b3a-4db3-a8bf-6249db70c339",
+				"Count": 3
+			}
+		},
+		{
 			"Name": "Examine Cocktail Recipe",
 			"Tip": "Read the cocktail recipe intel.",
 			"Group": "Interact",

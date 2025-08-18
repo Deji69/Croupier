@@ -1,0 +1,657 @@
+{
+	"Areas": [
+	],
+	"Tiles": [
+		// Collect Objectives
+		{
+			"Name": "{1}x Bust",
+			"Group": "Collect",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Items": ["97d74fa2-4832-4186-a447-c4b2e37d537a"]
+			}
+		},
+		{
+			"Name": "{1}x Cannonball",
+			"Group": "Collect",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Count": 3,
+				"Items": ["b86b9ece-c929-44f6-8903-8f2c817e2a19"]
+			}
+		},
+		{
+			"Name": "{1}x Expired Spaghetti Sauce",
+			"NameSingular": "{1}x Expired Spaghetti Sauce",
+			"Group": "Collect",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Count": 3,
+				"Items": ["ac77e98d-4ffa-4755-80fc-cd6e7adc63fb"]
+			}
+		},
+		{
+			"Name": "{1}x Flower Boquet",
+			"Group": "Collect",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Count": 2,
+				"Items": ["927ed0d3-830b-48fc-8754-8a8fc3fccb2b"]
+			}
+		},
+		{
+			"Name": "{1}x Folding Knife",
+			"Group": "Collect",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Items": ["a2c56798-026f-4d0b-9480-de0d2525a119"]
+			}
+		},
+		{
+			"Name": "Apartment Key",
+			"Group": "Collect",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Items": ["6d2bfbdb-9d5d-41b1-9074-270086ba917c"]
+			}
+		},
+		{
+			"Name": "Church Key",
+			"Group": "Collect",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Items": ["e7a4c4e1-6d42-4e0a-8047-af221c6fc0b3"]
+			}
+		},
+		{
+			"Name": "Medical Journal",
+			"Group": "Collect",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Items": ["5d8c4c25-8aed-4ea8-9d13-5fdea4373e7c"]
+			}
+		},
+		{
+			"Name": "Mansion Master Key",
+			"Group": "Collect",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Items": ["e5aba0db-3683-41a5-9f02-f8e7e92ce606"]
+			}
+		},
+		{
+			"Name": "Sewer Key",
+			"Group": "Collect",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Items": ["a52943f8-c602-418c-91bd-b5049329cfd8"]
+			}
+		},
+		{
+			"Name": "Virus Prototype",
+			"Group": "Collect",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Items": ["22f8ffdb-073d-48a1-abb9-13075800008e"]
+			}
+		},
+		
+		// Disguise Objectives
+	
+		// Pacify Objectives
+		{
+			"Name": "Torres Piombo",
+			"Tip": "Pacify Torres Piombo AKA the Bohemian.",
+			"Group": "Pacify",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Pacify"],
+			"Pacify": {
+				"RepositoryId": "729aa28f-5856-449a-9e41-3e4fedc5c38f"
+			}
+		},
+		{
+			"Name": "Torres Piombo",
+			"Tip": "Pacify Torres Piombo AKA the Bohemian.",
+			"Group": "Pacify",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Pacify"],
+			"Pacify": {
+				"RepositoryId": "729aa28f-5856-449a-9e41-3e4fedc5c38f"
+			}
+		},
+		{
+			"Name": "Street Performer",
+			"Tip": "Pacify Umberto Megazzini AKA the Street Performer.",
+			"Group": "Pacify",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Pacify"],
+			"Pacify": {
+				"RepositoryId": "bb15423f-bc60-4c49-ae0b-ee0a8843cbcc"
+			}
+		},
+		{
+			"Name": "With Baseball Bat",
+			"Tip": "Pacify any NPC using a baseball bat.",
+			"Group": "Pacify",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Pacify"],
+			"Pacify": {
+				"RepositoryId": "c21f558b-2935-41e5-88ff-642eb1761ccc"
+			}
+		},
+		{
+			"Name": "With Golf Club",
+			"Tip": "Pacify any NPC using a golf club.",
+			"Group": "Pacify",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Pacify"],
+			"Pacify": {
+				"RepositoryId": "17615866-32e7-4e1e-951d-7ef2ada796e9"
+			}
+		},
+		{
+			"Name": "With Shovel",
+			"Tip": "Pacify any NPC using a shovel.",
+			"Group": "Pacify",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Pacify"],
+			"Pacify": {
+				"RepositoryId": "1066917f-2e04-4c54-b8cb-55cb1dcc2f26"
+			}
+		},
+		
+		// Interact Objectives
+		{
+			"Name": "Activate Virus Ventilation",
+			"Tip": "Cause the ventilation system in the virus chamber to turn on for safe entry without a hazmat suit.",
+			"Group": "Interact",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Interact"],
+			"OnTurnOn": {
+				"RepositoryId": [
+					"76b191ca-1867-4f9e-a12d-c132a17bcb4b",
+					"b013e2a4-6116-4c65-a946-ecd1abbba6d3"
+				]
+			}
+		},
+		{
+			"Name": "Buy a Soda",
+			"Tip": "Purchase a can of soda from a vending machine.",
+			"Group": "Interact",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Interact"],
+			"Setpiece": {
+				"RepositoryId": "a01c8763-b596-4639-9836-90eb8a0969e5"
+			}
+		},
+		{
+			"Name": "Cook the Sauce",
+			"Tip": "Stir the pot as a kitchen assistant.",
+			"Group": "Interact",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Interact"],
+			"Setpiece": {
+				"RepositoryId": "d2543a0d-1005-4ae3-be36-951999291742"
+			}
+		},
+		{
+			"Name": "Lie on Funeral Bed",
+			"Tip": "Play dead.",
+			"Group": "Interact",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Interact"],
+			"Setpiece": {
+				"RepositoryId": "eed1ac87-f776-496c-819e-316ab6823d17"
+			}
+		},
+		{
+			"Name": "Open Telescope",
+			"Tip": "Open Caruso's observatory telescope.",
+			"Group": "Interact",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Interact"],
+			"LevelSetupEvent": {
+				"Event": "Telescope_Open"
+			}
+		},
+		{
+			"Name": "Open the Safe",
+			"Tip": "Open Silvio's safe in the attic.",
+			"Group": "Interact",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Interact"],
+			"Setpiece": {
+				"RepositoryId": "6fa7cbed-8a2c-4757-a2fe-b6e8eaf60e75"
+			}
+		},
+		{
+			"Name": "Place Flowers on Grave",
+			"Tip": "Place a flower boquet on Mother Caruso's grave.",
+			"Group": "Interact",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Interact"],
+			"Setpiece": {
+				"RepositoryId": "dc8b174f-ae1e-4563-a86e-3ce6aa26e3c3"
+			}
+		},
+		{
+			"Name": "Play the VHS Tape",
+			"Tip": "Play the VHS Tape on the projector in the observatory.",
+			"Group": "Interact",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Interact"],
+			"Setpiece": {
+				"RepositoryId": "f61ee415-9ee8-409f-9d76-ceaf5576683b"
+			}
+		},
+		{
+			"Name": "Ring Dinner Bell",
+			"Tip": "Ring the dinner bell.",
+			"Group": "Interact",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Interact"],
+			"Setpiece": {
+				"RepositoryId": "82dc4aa7-c286-4bb9-ae9c-c0142726cc45"
+			}
+		},
+		{
+			"Name": "Ring Service Bell",
+			"Tip": "Ring Mother Caruso's service bell.",
+			"Group": "Interact",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Interact"],
+			"Setpiece": {
+				"RepositoryId": "ccfa6985-05c9-4d5e-a8a7-508e5aec8b98"
+			}
+		},
+		{
+			"Name": "Talk to Butler",
+			"Tip": "Talk to the villa's butler in a suitable disguise.",
+			"Group": "Interact",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Interact"],
+			"Setpiece": {
+				"RepositoryId": "a3ac4703-1a46-4a76-9985-d973c7b750d3"
+			}
+		},
+		{
+			"Name": "Throw {1} Coins into the Fountain",
+			"NameSingular": "Throw {1} Coin into the Fountain",
+			"Tip": "Throw {0} coins into the fountain in the main square.",
+			"Group": "Interact",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Interact"],
+			"LevelSetupEvent": {
+				"Count": 3,
+				"Event": "Fountain_Coin"
+			}
+		},
+		{
+			"Name": "Turn On Stair Lift",
+			"Tip": "Activate the stair lift in the villa entrance hall.",
+			"Group": "Interact",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Interact"],
+			"Setpiece": {
+				"RepositoryId": "a3ac4703-1a46-4a76-9985-d973c7b750d3"
+			}
+		},
+		{
+			"Name": "Turn On Transistor Radio",
+			"Tip": "Turn on a transistor radio.",
+			"Group": "Interact",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Interact"],
+			"OnTurnOn": {
+				"EntityID": 5662769136074243596
+			}
+		},
+		{
+			"Name": "Turn Off a Stove",
+			"Tip": "Turn off a cooker stove.",
+			"Group": "Interact",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Interact"],
+			"OnTurnOff": {
+				"RepositoryId": "b73a4e67-2b66-4759-8fc9-823228744921"
+			}
+		},
+		{
+			"Name": "Wake the Detective",
+			"Tip": "Activate the stair lift in the villa entrance hall.",
+			"Group": "Interact",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Interact"],
+			"LevelSetupEvent": {
+				"Event": "DetectiveAwake"
+			}
+		},
+		
+		// Sabotage Objectives
+		{
+			"Name": "Break Biolab Wall",
+			"Tip": "Break the brick wall leading into the biolab.",
+			"Group": "Sabotage",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Sabotage"],
+			"OnInitialFracture": {
+				"EntityID": 6215629642024071771
+			}
+		},
+		{
+			"Name": "Drop {1} Chandeliers",
+			"NameSingular": "Drop {1} Chandelier",
+			"Tip": "Cause {0} chandeliers to fall.",
+			"Group": "Interact",
+			"Missions": [
+				"World of Tomorrow"
+			],
+			"Tags": ["Action", "Interact"],
+			"Setpiece": {
+				"RepositoryId": "2d7a91b9-1b3a-4db3-a8bf-6249db70c339",
+				"Count": 3
+			}
+		},
+		{
+			"Name": "Drop Church Bell",
+			"Tip": "Make the church bell fall.",
+			"Group": "Sabotage",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Sabotage"],
+			"Setpiece": {
+				"RepositoryId": "b39a50f2-a2d0-4a9c-a613-ac5325d1f895"
+			}
+		},
+		{
+			"Name": "Drop a Stalactite",
+			"Tip": "Make a stalactite fall.",
+			"Group": "Sabotage",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Sabotage"],
+			"Setpiece": {
+				"RepositoryId": "2d7a91b9-1b3a-4db3-a8bf-6249db70c339",
+				"Position": [
+					"-66.425079,-51.730785,12.908968",
+					"-58.746250,-66.010773,9.141367",
+					"-53.591988,-45.679333,10.459385",
+					"-41.284256,-51.792858,9.784661",
+					"-20.056231,-73.364502,6.301002",
+					"-18.357969,-62.794628,12.386945"
+				]
+			}
+		},
+		{
+			"Name": "Pop {1} Crocodiles",
+			"NameSingular": "Pop {1} Crocodile",
+			"Tip": "Cause {0} inflatable crocodiles to burst.",
+			"Group": "Sabotage",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Sabotage"],
+			"Crocodile": {
+				"Count": 3
+			}
+		},
+	
+		// Action Complications
+		{
+			"Name": "No Explosions Indoors",
+			"Tip": "Do not cause unnecessary explosions inside any building.",
+			"Type": "Complication",
+			"Difficulty": "High",
+			"Explosion": {
+				"NOT": {
+					"Room": 182
+				}
+			}
+		},
+		{
+			"Name": "No Explosions Outside",
+			"Tip": "Do not cause unnecessary explosions outdoors (includes balconies).",
+			"Type": "Complication",
+			"Difficulty": "High",
+			"Missions": ["World of Tomorrow"],
+			"Explosion": {
+				"Room": 182
+			}
+		},
+		{
+			"Name": "No Keycards",
+			"Type": "Complication",
+			"Tip": "Do not take any keycards from the map.",
+			"Group": "Action",
+			"Difficulty": "Medium",
+			"Missions": ["World of Tomorrow"],
+			"OnPickup": {
+				"RepositoryItemType": "eOther_Keycard_A"
+			}
+		},
+		{
+			"Name": "No Shooting Indoors",
+			"Type": "Complication",
+			"Tip": "Do not fire any shots while inside any building.",
+			"Group": "Action",
+			"Difficulty": "Medium",
+			"Missions": ["World of Tomorrow"],
+			"PlayerShot": {
+				"NOT": {
+					"Room": [182]
+				}
+			}
+		},
+		{
+			"Name": "No Shooting Outside",
+			"Type": "Complication",
+			"Tip": "Do not fire any shots while outdoors (balconies count as outdoors).",
+			"Group": "Action",
+			"Difficulty": "Medium",
+			"Missions": ["World of Tomorrow"],
+			"PlayerShot": {
+				"Room": [182]
+			}
+		},
+		
+		// Disguise Complications
+		{
+			"Disabled": true,
+			"Name": "Bad Disguise: Mansion Security",
+			"Tip": "Do not take a Mansion Security disguise.",
+			"Type": "Complication",
+			"Group": "Disguise",
+			"Missions": ["World of Tomorrow"],
+			"Difficulty": "Medium",
+			"Disguise": {
+				"RepositoryId": "fd56a934-f402-4b52-bdca-8bbc737400ff"
+			}
+		},
+		
+		// Opportunity Complications
+		{
+			"Name": "Don't Open Telescope",
+			"Type": "Complication",
+			"Tip": "Do not activate the observatory telescope.",
+			"Group": "Opportunity",
+			"Missions": ["World of Tomorrow"],
+			"Difficulty": "Medium",
+			"LevelSetupEvent": {
+				"Event": "Telescope_Open"
+			}
+		},
+		
+		// Target Complications
+		{
+			"Name": "Francesca: No Emetic",
+			"Type": "Complication",
+			"Tip": "Do not make Francesca De Santis sick.",
+			"Group": "Target",
+			"Missions": ["World of Tomorrow"],
+			"Difficulty": "Medium",
+			"ActorSick": {
+				"ActorName": "Francesca De Santis"
+			}
+		},
+		{
+			"Name": "Francesca: No Lockdown",
+			"Type": "Complication",
+			"Tip": "Do not cause Francesca De Santis to enter Target Lockdown.",
+			"Group": "Target",
+			"Missions": ["World of Tomorrow"],
+			"Difficulty": "High",
+			"OnEvacuationStarted": {
+				"ActorName": "Francesca De Santis"
+			}
+		},
+		{
+			"Name": "Silvio: No Emetic",
+			"Type": "Complication",
+			"Tip": "Do not make Silvio Caruso sick.",
+			"Group": "Target",
+			"Missions": ["World of Tomorrow"],
+			"Difficulty": "Medium",
+			"ActorSick": {
+				"ActorName": "Silvio Caruso"
+			}
+		},
+		{
+			"Name": "Silvio: No Lockdown",
+			"Type": "Complication",
+			"Tip": "Do not cause Silvio Caruso to enter Target Lockdown.",
+			"Group": "Target",
+			"Missions": ["World of Tomorrow"],
+			"Difficulty": "High",
+			"OnEvacuationStarted": {
+				"ActorName": "Silvio Caruso"
+			}
+		},
+		
+		// Location Complications
+		{
+			"Name": "No Entry: Francesca's Office",
+			"Type": "Complication",
+			"Tip": "Avoid entering Francesca De Santis' office.",
+			"Group": "Location",
+			"Missions": ["World of Tomorrow"],
+			"Difficulty": "Medium",
+			"EnterRoom": {
+				"Room": [162]
+			}
+		},
+		{
+			"Name": "No Entry: Observatory",
+			"Type": "Complication",
+			"Tip": "Avoid entering the Caruso observatory.",
+			"Group": "Location",
+			"Missions": ["World of Tomorrow"],
+			"Difficulty": "Medium",
+			"EnterRoom": {
+				"Room": [22, 144]
+			}
+		},
+		{
+			"Name": "No Entry: Bathrooms",
+			"Type": "Complication",
+			"Tip": "Do not enter any bathroom, toilet room or restroom.",
+			"Group": "Location",
+			"Missions": ["World of Tomorrow"],
+			"Difficulty": "High",
+			"EnterRoom": {
+				"Room": [0, 16, 21, 23, 34, 37, 40, 54, 57, 60, 67, 75, 76, 109, 129, 135, 149, 172, 174]
+			}
+		},
+		{
+			"Disabled": true,
+			"Name": "No Reload: Villa & Biolab",
+			"Type": "Complication",
+			"Tip": "Avoid leaving clips at the scene - do not reload anywhere inside the villa or biolab (excludes outdoor areas).",
+			"Group": "Action",
+			"Difficulty": "Medium",
+			"Missions": ["World of Tomorrow"],
+			"OnWeaponReload": {
+				"Room": [
+					3, 5, 22, 23, 26, 28, 32, 38, 39, 40, 46, 47, 50, 54, 55, 56, 58,
+					62, 64, 66, 67, 71, 72, 75, 76, 79, 83, 89, 90, 94, 99, 101, 103,
+					114, 117, 120, 123, 125, 126, 130, 133, 139, 142, 143, 144, 145,
+					146, 148, 149, 150, 151, 152, 153, 156, 157, 158, 159, 160, 161,
+					162, 163, 164, 165, 166, 168, 169,
+					
+					7, 15, 33, 35, 41, 102, 111, 154, 173, 177, 178, 179, 180, 181
+				]
+			}
+		},
+		{
+			"Name": "No Shots: Biolab",
+			"Type": "Complication",
+			"Tip": "Do not fire any shots while within the biolab cave.",
+			"Group": "Action",
+			"Difficulty": "Medium",
+			"Missions": ["World of Tomorrow"],
+			"PlayerShot": {
+				"Room": [7, 15, 33, 35, 41, 102, 111, 154, 173, 177, 178, 179, 180, 181]
+			}
+		},
+		{
+			"Name": "No Trespass: Villa Top Floors",
+			"Type": "Complication",
+			"Tip": "Do not trespass anywhere on the top floor or attic (Level 5+) of the villa.",
+			"Group": "Location",
+			"Missions": ["World of Tomorrow"],
+			"Difficulty": "High",
+			"Trespassing": {
+				"IsTrespassing": true,
+				"Position": {
+					"X": {
+						"From": -94.0,
+						"To": 0.0
+					},
+					"Y": {
+						"From": -82.0,
+						"To": 0.0
+					},
+					"Z": {
+						"From": 26.0,
+						"To": 29.5
+					}
+				}
+			}
+		},
+		/*{
+			"Name": "No Firearms: Ground Floor",
+			"Type": "Complication",
+			"Tip": "Do not equip a firearm anywhere on the ground floor (Level 1).",
+			"Group": "Location",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Difficulty": "High",
+			"OnAttachToHitman": {
+				"IsFirearm": true,
+				"Position": {
+					"Z": {
+						"From": -3.0,
+						"To": 2.5
+					}
+				}
+			}
+		}*/
+		/*{
+			"Name": "No Guns: Top Floor",
+			"Type": "Complication",
+			"Tip": "Do not equip a firearm anywhere on the top floor (Level 3) of the palace.",
+			"Group": "Location",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Difficulty": "High",
+			"OnAttachToHitman": {
+				"IsFirearm": true,
+				"Area": "TopFloor"
+			}
+		}*/
+	]
+}
