@@ -60,9 +60,12 @@
 	},
 	{
 		"Name": "With Piano",
-		"Tip": "Pacify any NPC by pushing the pin on the piano.",
+		"Tip": "Pacify any NPC by pushing the pin on a piano.",
 		"Group": "Pacify",
-		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Missions": [
+			"The Showstopper", "Holiday Hoarders",
+			"World of Tomorrow"
+		],
 		"Tags": ["Action", "Pacify"],
 		"Pacify": {
 			"SetPieceId": "db6a820c-22ea-496e-a0f2-6823b32a911d"
