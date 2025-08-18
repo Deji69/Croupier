@@ -1,4 +1,5 @@
 #pragma once
+#include "Bingo.h"
 #include "CroupierClient.h"
 #include "Events.h"
 #include "KillConfirmation.h"
@@ -13,6 +14,7 @@
 #include <map>
 #include <optional>
 #include <set>
+#include <shared_mutex>
 #include <stack>
 #include <string>
 #include <string_view>
@@ -21,6 +23,12 @@
 
 namespace Croupier
 {
+	enum class GameMode {
+		Roulette,
+		Bingo,
+		Hybrid,
+	};
+
 	enum class PlayerStance {
 		Unknown,
 		Crouching,
@@ -92,7 +100,10 @@ namespace Croupier
 	struct State {
 		static State current;
 
+		mutable std::shared_mutex stateMutex;
+
 		RouletteSpin spin;
+		BingoCard card;
 		RouletteSpinGenerator generator;
 		CroupierClient client;
 		RouletteRuleset rules;
@@ -114,6 +125,7 @@ namespace Croupier
 		std::chrono::steady_clock::time_point timeStarted;
 		std::chrono::seconds timeElapsed = std::chrono::seconds(0);
 		eRouletteRuleset ruleset = eRouletteRuleset::RRWC2023;
+		GameMode gameMode = GameMode::Roulette;
 		double startIGT = 0;
 		double exitIGT = 0;
 		bool isSA = true;
@@ -130,6 +142,8 @@ namespace Croupier
 		bool playerInInstinctSinceFrame = false;
 		bool playerStartingAgility = false;
 		bool playerStartingAgilitySinceFrame = false;
+		bool playerShooting = false;
+		bool playerShootingSinceFrame = false;
 		bool isTrespassing = false;
 		const Area* area = nullptr;
 		int16_t roomId = -1;
@@ -155,6 +169,7 @@ namespace Croupier
 			playerMoveType = PlayerMoveType::Idle;
 			isTrespassing = false;
 			playerInInstinct = false;
+			playerShooting = false;
 			area = nullptr;
 
 			for (auto& actorData : this->actorData)

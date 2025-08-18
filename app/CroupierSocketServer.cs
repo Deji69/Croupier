@@ -94,7 +94,7 @@ namespace Croupier
 
 		private static async Task HandleClientReceiveAsync(TcpClient client, CancellationToken ct) {
 			using var stream = client.GetStream();
-			var buffer = new byte[4096];
+			var buffer = new byte[8192];
 
 			try {
 				while (!ct.IsCancellationRequested && client.Connected) {
@@ -102,7 +102,7 @@ namespace Croupier
 
 					if (bytesRead <= 0) break;
 					var data = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-					foreach (var msg in data.Split("\n", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)) {
+					foreach (var msg in data.Split("\0", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)) {
 						ProcessReceivedMessage(msg);
 					}
 					Console.WriteLine("Received from client: " + data);
@@ -123,7 +123,7 @@ namespace Croupier
 					}
 
 					while (clientMessages.TryTake(out var message)) {
-						var buffer = Encoding.UTF8.GetBytes(message.Data + "\n");
+						var buffer = Encoding.UTF8.GetBytes(message.Data + "\0");
 						await stream.WriteAsync(buffer.AsMemory(0, buffer.Length), ct);
 					}
 				}

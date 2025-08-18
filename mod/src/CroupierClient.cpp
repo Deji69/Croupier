@@ -3,6 +3,7 @@
 #include <format>
 #include <map>
 #include <shared_mutex>
+#include <span>
 #include <WS2tcpip.h>
 #include <Logging.h>
 #include "CroupierClient.h"
@@ -17,6 +18,8 @@ std::map<eClientMessage, std::string> clientMessageTypeMap = {
 	{eClientMessage::AutoSpin, "AutoSpin"},
 	{eClientMessage::Spin, "Spin"},
 	{eClientMessage::SpinData, "SpinData"},
+	{eClientMessage::BingoData, "BingoData"},
+	{eClientMessage::GameMode, "GameMode"},
 	{eClientMessage::Prev, "Prev"},
 	{eClientMessage::Next, "Next"},
 	{eClientMessage::Random, "Random"},
@@ -46,6 +49,8 @@ std::map<std::string, eClientMessage> clientMessageTypeMapRev = {
 	{"AutoSpin", eClientMessage::AutoSpin},
 	{"Spin", eClientMessage::Spin},
 	{"SpinData", eClientMessage::SpinData},
+	{"BingoData", eClientMessage::BingoData},
+	{"GameMode", eClientMessage::GameMode},
 	{"Prev", eClientMessage::Prev},
 	{"Next", eClientMessage::Next},
 	{"Random", eClientMessage::Random},
@@ -188,6 +193,18 @@ auto CroupierClient::start() -> bool {
 	});
 	readThread = std::thread([this] {
 		char buffer[8192] = {0};
+		auto received = size_t{};
+		auto recv_msg = [&received](int sock, char* buffer, size_t size) -> int {
+			while (received < size) {
+				auto read = recv(sock, buffer + received, size - received, 0);
+				if (read == SOCKET_ERROR) return SOCKET_ERROR;
+				if (read == 0) break;
+				received += read;
+				if (std::find(buffer, buffer + read, '\0') != buffer + received)
+					break;
+			}
+			return received;
+		};
 
 		while (this->keepOpen) {
 			if (!this->reconnect()) {
@@ -196,16 +213,35 @@ auto CroupierClient::start() -> bool {
 			}
 
 			// Read message from socket
-			auto read = recv(this->sock, buffer, sizeof(buffer), 0);
+			auto read = recv_msg(this->sock, buffer, sizeof(buffer));
 			if (read == SOCKET_ERROR) {
 				if (WSAGetLastError() != WSAETIMEDOUT)
 					this->connected = false;
 				continue;
 			}
 
-			// Process message and add to queue
-			auto msg = std::string(buffer, read);
-			this->processMessage(msg);
+			// Process message(s)
+			auto buff = std::span<char>{buffer, static_cast<size_t>(read)};
+			auto lastIsPartial = buff.back() != '\0';
+			auto cur = buff.begin();
+
+			while (true) {
+				auto it = std::find(cur, buff.end(), '\0');
+				if (it == buff.end()) break;
+				auto size = it - cur;
+				auto msg = std::string_view{&*cur, static_cast<size_t>(size)};
+				cur = it + 1;
+				if (trim(msg).empty()) continue;
+				this->processMessage(msg);
+			}
+
+			if (lastIsPartial) {
+				received = buff.end() - cur;
+				std::copy(cur, buff.end(), buffer);
+			}
+			else {
+				received = 0;
+			}
 		}
 	});
 	return true;
@@ -248,9 +284,17 @@ auto CroupierClient::abort() -> void {
 }
 
 auto CroupierClient::writeMessage(const ClientMessage& msg) -> bool {
-	auto data = msg.toString() + "\n";
+	auto data = msg.toString() + '\0';
 	DWORD written = 0;
-	int bytes_sent = ::send(this->sock, data.c_str(), data.size(), 0);
+	int bytes_sent = 0;
+	while (bytes_sent < data.size()) {
+		auto sent = ::send(this->sock, data.c_str(), data.size(), 0);
+		if (sent == SOCKET_ERROR) {
+			bytes_sent = SOCKET_ERROR;
+			break;
+		}
+		bytes_sent += sent;
+	}
 	if (bytes_sent == SOCKET_ERROR) {
 		if (WSAGetLastError() != WSAETIMEDOUT)
 			this->connected = false;
@@ -259,17 +303,7 @@ auto CroupierClient::writeMessage(const ClientMessage& msg) -> bool {
 	return true;
 }
 
-auto CroupierClient::processMessage(const std::string& msg) -> void {
-	// Check for multiple messages
-	auto msgs = split(msg, "\n");
-	if (msgs.size() > 1) {
-		for (auto& msg : msgs) {
-			if (trim(msg).empty()) continue;
-			this->processMessage(std::string(msg));
-		}
-		return;
-	}
-
+auto CroupierClient::processMessage(std::string_view msg) -> void {
 	// Try to parse message
 	auto toks = split(msg, ":", 2);
 	if (toks.size() < 2) return;

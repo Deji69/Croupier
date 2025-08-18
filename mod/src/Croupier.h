@@ -52,10 +52,12 @@ namespace Croupier {
 		auto ImbueActorInfo(TEntityRef<ZActor> actor, nlohmann::json& json, bool asActor = true) const -> void;
 		auto ImbueItemRepositoryInfo(nlohmann::json& json, ZRepositoryID repoId) -> void;
 		auto ImbuePositionInfo(nlohmann::json& json, SVector3 vec, std::string prefix = "") -> void;
+		auto ImbueSetpieceActivatorInfo(ZEntityRef entity, nlohmann::json& j) -> bool;
 		auto ImbuedPlayerLocation(nlohmann::json&& json = {}, bool asHero = false) const -> nlohmann::json;
 		auto ImbuedItemInfo(ZEntityRef entity, nlohmann::json&& json = {}) -> nlohmann::json;
 		auto ImbuedActorInfo(TEntityRef<ZActor> actor, nlohmann::json&& json = {}, bool asActor = true) const -> nlohmann::json;
 		auto ImbuedPositionInfo(SVector3 vec, std::string prefix = "", nlohmann::json&& json = {}) -> nlohmann::json;
+		auto ImbuedSetpieceActivatorInfo(ZEntityRef entity, nlohmann::json&& j) -> nlohmann::json;
 
 		auto InstallHooks() -> void;
 		auto UninstallHooks() -> void;
@@ -72,6 +74,8 @@ namespace Croupier {
 		auto SetupEvents() -> void;
 		auto ProcessMissionsMessage(const ClientMessage& message) -> void;
 		auto ProcessSpinDataMessage(const ClientMessage& message) -> void;
+		auto ProcessBingoDataMessage(const ClientMessage& message) -> void;
+		auto ProcessGameModeMessage(const ClientMessage& message) -> void;
 		auto ProcessLoadRemoval() -> void;
 
 		template<typename... Args>

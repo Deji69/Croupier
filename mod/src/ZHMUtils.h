@@ -19,76 +19,125 @@
 #include "ProcessUtils.h"
 
 inline auto GetPropertyIDs(ZEntityRef s_Entity) -> std::vector<std::pair<uint32, std::string_view>> {
-    if (!s_Entity || !*Globals::MemoryManager)
+	if (!s_Entity || !*Globals::MemoryManager)
 		return {};
 
-    const auto s_Type = s_Entity->GetType();
+	const auto s_Type = s_Entity->GetType();
 
-    if (!s_Type) return {};
+	if (!s_Type) return {};
 
 	std::vector<std::pair<uint32, std::string_view>> vec;
 
-    for (uint32_t i = 0; i < s_Type->m_pProperties01->size(); ++i) {
-        const ZEntityProperty* s_Property = &s_Type->m_pProperties01->operator[](i);
+	for (uint32_t i = 0; i < s_Type->m_pProperties01->size(); ++i) {
+		const ZEntityProperty* s_Property = &s_Type->m_pProperties01->operator[](i);
 		const auto* s_PropertyInfo = s_Property->m_pType->getPropertyInfo();
 		const std::string_view s_TypeName = s_PropertyInfo->m_pType->typeInfo()->m_pTypeName;
 		vec.emplace_back(s_Property->m_nPropertyId, s_TypeName);
-    }
+	}
 
-    return vec;
+	return vec;
 }
 
 // Workaround for ZHM method not handling non default constructible types
 template<typename T>
 inline auto GetValueProperty(ZEntityRef s_Entity, const uint32_t nPropertyID) -> std::unique_ptr<T, std::function<void(T*)>> {
-    if (!s_Entity || !*Globals::MemoryManager)
-        return nullptr;
+	if (!s_Entity || !*Globals::MemoryManager)
+		return nullptr;
 
-    const auto s_Type = s_Entity->GetType();
+	const auto s_Type = s_Entity->GetType();
 
-    if (!s_Type)
-        return nullptr;
+	if (!s_Type || !s_Type->m_pProperties01)
+		return nullptr;
 
-    for (uint32_t i = 0; i < s_Type->m_pProperties01->size(); ++i) {
-        const ZEntityProperty* s_Property = &s_Type->m_pProperties01->operator[](i);
+	for (uint32_t i = 0; i < s_Type->m_pProperties01->size(); ++i) {
+		const ZEntityProperty* s_Property = &s_Type->m_pProperties01->operator[](i);
 
-        if (s_Property->m_nPropertyId != nPropertyID)
-            continue;
+		if (s_Property->m_nPropertyId != nPropertyID)
+			continue;
 
-        const auto* s_PropertyInfo = s_Property->m_pType->getPropertyInfo();
+		const auto* s_PropertyInfo = s_Property->m_pType->getPropertyInfo();
 
 		if (!s_PropertyInfo || !s_PropertyInfo->m_pType)
 			continue;
 
-        const auto s_PropertyAddress = reinterpret_cast<uintptr_t>(s_Entity.m_pEntity) + s_Property->m_nOffset;
+		const auto s_PropertyAddress = reinterpret_cast<uintptr_t>(s_Entity.m_pEntity) + s_Property->m_nOffset;
 
-        const uint16_t s_TypeSize = s_PropertyInfo->m_pType->typeInfo()->m_nTypeSize;
-        const uint16_t s_TypeAlignment = s_PropertyInfo->m_pType->typeInfo()->m_nTypeAlignment;
+		const uint16_t s_TypeSize = s_PropertyInfo->m_pType->typeInfo()->m_nTypeSize;
+		const uint16_t s_TypeAlignment = s_PropertyInfo->m_pType->typeInfo()->m_nTypeAlignment;
 		const std::string_view s_TypeName = s_PropertyInfo->m_pType->typeInfo()->m_pTypeName;
 
-        auto* s_Data = (*Globals::MemoryManager)->m_pNormalAllocator->AllocateAligned(s_TypeSize, s_TypeAlignment);
+		auto* s_Data = (*Globals::MemoryManager)->m_pNormalAllocator->AllocateAligned(s_TypeSize, s_TypeAlignment);
 		if (!s_Data) break;
 
-        if (s_PropertyInfo->m_nFlags & EPropertyInfoFlags::E_HAS_GETTER_SETTER) {
-            s_PropertyInfo->get(reinterpret_cast<void*>(s_PropertyAddress), s_Data, s_PropertyInfo->m_nOffset);
-        }
-        else {
-            s_PropertyInfo->m_pType->typeInfo()->m_pTypeFunctions->copyConstruct(
-                s_Data, reinterpret_cast<void*>(s_PropertyAddress)
-            );
-        }
+		if (s_PropertyInfo->m_nFlags & EPropertyInfoFlags::E_HAS_GETTER_SETTER) {
+			s_PropertyInfo->get(reinterpret_cast<void*>(s_PropertyAddress), s_Data, s_PropertyInfo->m_nOffset);
+		}
+		else {
+			s_PropertyInfo->m_pType->typeInfo()->m_pTypeFunctions->copyConstruct(
+				s_Data, reinterpret_cast<void*>(s_PropertyAddress)
+			);
+		}
 
 		return std::unique_ptr<T, std::function<void(T*)>>(reinterpret_cast<T*>(s_Data), [s_Data](T*) {
 			(*Globals::MemoryManager)->m_pNormalAllocator->Free(s_Data);
 		});
-    }
+	}
 
-    return nullptr;
+	return nullptr;
+}
+
+template<typename T>
+inline auto GetClosestEntityWithProperty(ZEntityRef s_Entity, const uint32_t nPropertyID) -> ZEntityRef {
+	if (!s_Entity)
+		return nullptr;
+
+	for (auto entity = s_Entity; entity; entity = entity.GetLogicalParent()) {
+		const auto s_Type = entity->GetType();
+
+		if (!s_Type) continue;
+		if (!s_Type->m_pProperties01) continue;
+
+		for (uint32_t i = 0; i < s_Type->m_pProperties01->size(); ++i) {
+			const ZEntityProperty* s_Property = &s_Type->m_pProperties01->operator[](i);
+
+			if (s_Property->m_nPropertyId != nPropertyID)
+				continue;
+
+			const auto* s_PropertyInfo = s_Property->m_pType->getPropertyInfo();
+
+			if (!s_PropertyInfo || !s_PropertyInfo->m_pType)
+				continue;
+
+			return entity;
+		}
+	}
+
+	return nullptr;
 }
 
 template<typename T>
 inline auto GetValueProperty(ZEntityRef s_Entity, const ZString& p_PropertyName) -> std::unique_ptr<T, std::function<void(T*)>> {
-    return GetValueProperty<T>(s_Entity, Hash::Crc32(p_PropertyName.c_str(), p_PropertyName.size()));
+	return GetValueProperty<T>(s_Entity, Hash::Crc32(p_PropertyName.c_str(), p_PropertyName.size()));
+}
+
+template<typename T>
+inline auto GetClosestEntityWithProperty(ZEntityRef s_Entity, const ZString& p_PropertyName) -> ZEntityRef {
+	return GetClosestEntityWithProperty<T>(s_Entity, Hash::Crc32(p_PropertyName.c_str(), p_PropertyName.size()));
+}
+
+template<typename T>
+inline auto GetValuePropertyFromTree(ZEntityRef s_Entity, const uint32_t nPropertyID) -> std::unique_ptr<T, std::function<void(T*)>> {
+	if (!s_Entity) return nullptr;
+	auto ent = GetClosestEntityWithProperty<T>(s_Entity, nPropertyID);
+	if (!ent) return nullptr;
+	auto res = GetValueProperty<T>(ent, nPropertyID);
+	if (res) return res;
+	return nullptr;
+}
+
+template<typename T>
+inline auto GetValuePropertyFromTree(ZEntityRef s_Entity, const ZString& p_PropertyName) -> std::unique_ptr<T, std::function<void(T*)>> {
+	return GetValuePropertyFromTree<T>(s_Entity, Hash::Crc32(p_PropertyName.c_str(), p_PropertyName.size()));
 }
 
 template<typename T>
@@ -244,8 +293,8 @@ class ZRoomManager {
 public:
 	int16 GetRoomID(const float4 vPointWS);
 
-    PAD(0x6D0);
-    TArray<SRoomInfoHeader> m_RoomHeaders;
+	PAD(0x6D0);
+	TArray<SRoomInfoHeader> m_RoomHeaders;
 };
 
 class ZRoomManagerCreator : public IComponentInterface {
@@ -272,40 +321,40 @@ class PatternEngineFunction;
 template<typename ReturnType, typename ...Args>
 class PatternEngineFunction<ReturnType(Args...)> final : public EngineFunction<ReturnType(Args...)> {
 public:
-    PatternEngineFunction(const char* p_FunctionName, const char* p_Pattern, const char* p_Mask) :
-        EngineFunction<ReturnType(Args...)>(GetTarget(p_Pattern, p_Mask))
-    {
-    }
+	PatternEngineFunction(const char* p_FunctionName, const char* p_Pattern, const char* p_Mask) :
+		EngineFunction<ReturnType(Args...)>(GetTarget(p_Pattern, p_Mask))
+	{
+	}
 
 	auto IsFound() const {
 		return this->m_Address != nullptr;
 	}
 
 private:
-    void* GetTarget(const char* p_Pattern, const char* p_Mask) const {
-        const auto* s_Pattern = reinterpret_cast<const uint8_t*>(p_Pattern);
-        return reinterpret_cast<void*>(Util::ProcessUtils::SearchPattern(ZHMExtension::ModuleBase, ZHMExtension::SizeOfCode, s_Pattern, p_Mask));
-    }
+	void* GetTarget(const char* p_Pattern, const char* p_Mask) const {
+		const auto* s_Pattern = reinterpret_cast<const uint8_t*>(p_Pattern);
+		return reinterpret_cast<void*>(Util::ProcessUtils::SearchPattern(ZHMExtension::ModuleBase, ZHMExtension::SizeOfCode, s_Pattern, p_Mask));
+	}
 };
 
 template <class T>
 T PatternGlobalRelative(const char* p_GlobalName, const char* p_Pattern, const char* p_Mask, ptrdiff_t p_Offset) {
-    static_assert(std::is_pointer<T>::value, "Global type is not a pointer type.");
+	static_assert(std::is_pointer<T>::value, "Global type is not a pointer type.");
 
-    const auto* s_Pattern = reinterpret_cast<const uint8_t*>(p_Pattern);
-    auto s_Target = Util::ProcessUtils::SearchPattern(ZHMExtension::ModuleBase, ZHMExtension::SizeOfCode, s_Pattern, p_Mask);
+	const auto* s_Pattern = reinterpret_cast<const uint8_t*>(p_Pattern);
+	auto s_Target = Util::ProcessUtils::SearchPattern(ZHMExtension::ModuleBase, ZHMExtension::SizeOfCode, s_Pattern, p_Mask);
 
-    if (s_Target == 0) {
-        Logger::Error("Could not find address for global '{}'. This probably means that the game was updated and the SDK requires changes.", p_GlobalName);
-        return nullptr;
-    }
+	if (s_Target == 0) {
+		Logger::Error("Could not find address for global '{}'. This probably means that the game was updated and the SDK requires changes.", p_GlobalName);
+		return nullptr;
+	}
 
-    uintptr_t s_RelAddrPtr = s_Target + p_Offset;
-    int32_t s_RelAddr = *reinterpret_cast<int32_t*>(s_RelAddrPtr);
-    uintptr_t s_FinalAddr = s_RelAddrPtr + s_RelAddr + sizeof(int32_t);
+	uintptr_t s_RelAddrPtr = s_Target + p_Offset;
+	int32_t s_RelAddr = *reinterpret_cast<int32_t*>(s_RelAddrPtr);
+	uintptr_t s_FinalAddr = s_RelAddrPtr + s_RelAddr + sizeof(int32_t);
 
-    Logger::Debug("Successfully located global '{}' at address {}.", p_GlobalName, fmt::ptr(reinterpret_cast<void*>(s_FinalAddr)));
+	Logger::Debug("Successfully located global '{}' at address {}.", p_GlobalName, fmt::ptr(reinterpret_cast<void*>(s_FinalAddr)));
 
-    return reinterpret_cast<T>(s_FinalAddr);
+	return reinterpret_cast<T>(s_FinalAddr);
 }
 

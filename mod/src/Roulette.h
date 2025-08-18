@@ -288,6 +288,7 @@ struct RouletteSpinCondition
 	}
 
 	RouletteSpinCondition(RouletteSpinCondition&&) noexcept = default;
+	RouletteSpinCondition(const RouletteSpinCondition&) noexcept = default;
 
 	auto operator=(RouletteSpinCondition&&) noexcept -> RouletteSpinCondition& = default;
 };
@@ -386,7 +387,7 @@ public:
 public:
 	RouletteSpinGenerator() noexcept = default;
 
-	auto getMission() { return this->mission; }
+	auto getMission() const { return this->mission; }
 
 	auto setMission(const RouletteMission* mission) {
 		this->mission = mission;

@@ -12,7 +12,7 @@ namespace Croupier {
 	public enum GameMode {
 		Roulette,
 		Bingo,
-		RouletteBingo,
+		Hybrid,
 	}
 
 	public class GameController : ViewModel {
@@ -43,7 +43,7 @@ namespace Croupier {
 		public BingoGame Bingo => bingo;
 		public bool HasRestarted => hasRestartedThisRound;
 		public TimeSpan RoundTimeElapsed => DateTime.Now - roundTimerStart;
-		public bool IsPlayingHybrid => Mode == GameMode.RouletteBingo;
+		public bool IsPlayingHybrid => Mode == GameMode.Hybrid;
 		public bool IsPlayingRoulette => Mode == GameMode.Roulette || IsPlayingHybrid;
 		public bool IsPlayingBingo => Mode == GameMode.Bingo || IsPlayingHybrid;
 

@@ -37,6 +37,7 @@ namespace Croupier {
 		bool streak = false;
 		int streakCurrent = 0;
 		bool spinOverlay = false;
+		bool bingoOverlay = false;
 		bool overlayKillConfirmations = true;
 		DockMode overlayDockMode = DockMode::None;
 		RouletteRuleset customRules;

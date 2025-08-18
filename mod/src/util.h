@@ -5,6 +5,7 @@
 #include <locale>
 #include <string>
 #include <string_view>
+#include <span>
 #include <vector>
 
 // helper type for the visitor #4

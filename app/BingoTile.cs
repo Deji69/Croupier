@@ -53,7 +53,8 @@ namespace Croupier {
 			}
 		}
 		public string GroupText => Group != null ? $"{Group.Name}" : "";
-		public Visibility GroupTextVisibility => Group != null && !Group.Hidden ? Visibility.Visible : Visibility.Collapsed;
+		public bool GroupTextVisibilityBool => Group != null && !Group.Hidden;
+		public Visibility GroupTextVisibility => GroupTextVisibilityBool ? Visibility.Visible : Visibility.Collapsed;
 		public SolidColorBrush GroupTextColor => Config.Default.EnableGroupTileColors ? groupTextBrush : defaultBrush;
 		public BingoTile? Source { get; private set; }
 
