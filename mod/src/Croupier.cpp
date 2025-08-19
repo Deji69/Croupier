@@ -838,10 +838,12 @@ auto CroupierPlugin::ImbueSetpieceActivatorInfo(ZEntityRef entity, json& j) -> b
 	auto const& trans = spatial->GetWorldMatrix().Trans;
 	auto const parentity = entity.GetLogicalParent();
 	auto entityId = entity->GetType()->m_nEntityId;
-	auto const isGenericActivator = entityId == 4310537510098024720;
+	auto const isGenericActivator = entityId == 0x3BD21B06F863B910;
 
 	auto setpieceEntity = ZEntityRef{};
 	if (isGenericActivator) {
+		if (parentity && parentity->GetType())
+			entityId = parentity->GetType()->m_nEntityId;
 		setpieceEntity = GetClosestEntityWithProperty<ZRepositoryID>(parentity, "m_sId");
 		if (setpieceEntity && setpieceEntity->GetType())
 			entityId = setpieceEntity->GetType()->m_nEntityId;
@@ -849,12 +851,12 @@ auto CroupierPlugin::ImbueSetpieceActivatorInfo(ZEntityRef entity, json& j) -> b
 	if (!setpieceEntity) setpieceEntity = entity;
 	auto setpieceRepoIdPtr = GetValuePropertyFromTree<ZRepositoryID>(setpieceEntity, "m_sId");
 	if (!setpieceRepoIdPtr) return false;
-	auto initialStateOn = GetValuePropertyFromTree<bool>(entity, "m_bInitialStateOn");
+	auto initialStateOn = GetValuePropertyFromTree<bool>(setpieceEntity, "m_bInitialStateOn");
 	if (!setpieceRepoIdPtr) return false;
 
 	auto obj = ImbuedPositionInfo({ trans.x, trans.y, trans.z }, "", {
 		{"RepositoryId", setpieceRepoIdPtr->ToString()},
-		{"EntityID", setpieceEntity->GetType()->m_nEntityId},
+		{"EntityID", entityId},
 	});
 	j.merge_patch(obj);
 	if (initialStateOn)
