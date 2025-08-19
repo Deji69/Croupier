@@ -69,27 +69,23 @@ namespace Croupier {
 		}
 
 		public bool TryAdvance(GameEvents.EventValue ev) {
-			return TestObjectives(ev) || TestComplications(ev);
+			var advancedObjective = TestObjectives(ev);
+			var advancedComplication = TestComplications(ev);
+			return advancedObjective || advancedComplication;
 		}
 		 
 		private bool TestObjectives(GameEvents.EventValue ev) {
-			var advanced = false;
-			foreach (var tile in Tiles) {
-				if (tile == null) continue;
-				if (tile.Type != BingoTileType.Objective) continue;
-				if (tile.Complete) continue;
-				if (!tile.Test(ev)) continue;
-				tile.Advance();
-				advanced = true;
-			}
-			return advanced;
+			return TestTiles(ev, Tiles.Where(t => t?.Type == BingoTileType.Objective));
 		}
 
 		private bool TestComplications(GameEvents.EventValue ev) {
+			return TestTiles(ev, Tiles.Where(t => t?.Type == BingoTileType.Complication));
+		}
+
+		private static bool TestTiles(GameEvents.EventValue ev, IEnumerable<BingoTile?> tiles) {
 			var advanced = false;
-			foreach (var tile in Tiles) {
+			foreach (var tile in tiles) {
 				if (tile == null) continue;
-				if (tile.Type != BingoTileType.Complication) continue;
 				if (tile.Failed) continue;
 				if (!tile.Test(ev)) continue;
 				tile.Advance();
