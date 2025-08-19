@@ -174,7 +174,7 @@
 		// Interact Objectives
 		{
 			"Name": "Activate Virus Ventilation",
-			"Tip": "Cause the ventilation system in the virus chamber to turn on for safe entry without a hazmat suit.",
+			"Tip": "Cause the air purification system in the virus chamber to turn on for safe entry without a hazmat suit.",
 			"Group": "Interact",
 			"Missions": ["World of Tomorrow"],
 			"Tags": ["Action", "Interact"],
@@ -308,13 +308,49 @@
 			}
 		},
 		{
-			"Name": "Turn On Transistor Radio",
-			"Tip": "Turn on a transistor radio.",
+			"Name": "Toggle Transistor Radio",
+			"Tip": "Turn a transistor radio on or off.",
 			"Group": "Interact",
 			"Missions": ["World of Tomorrow"],
 			"Tags": ["Action", "Interact"],
-			"OnTurnOn": {
-				"EntityID": 5662769136074243596
+			"AND": {
+				"Unique": "Position",
+				"OR": {
+					"OnTurnOn": {
+						"EntityID": 5662769136074243596
+					},
+					"OnTurnOff": {
+						"EntityID": 5662769136074243596
+					}
+				}
+			}
+		},
+		{
+			"Name": "Toggle TV",
+			"Tip": "Turn a TV on or off.",
+			"Group": "Interact",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Interact"],
+			"AND": {
+				"Unique": "Position",
+				"OR": {
+					"OnTurnOn": {
+						"EntityID": 11933069740663559438
+					},
+					"OnTurnOff": {
+						"EntityID": 11933069740663559438
+					}
+				}
+			}
+		},
+		{
+			"Name": "Turn On a Vacuum",
+			"Tip": "Turn on a vacuum cleaner.",
+			"Group": "Interact",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Interact"],
+			"OnTurnOff": {
+				"EntityID": 15011639366053764836
 			}
 		},
 		{
