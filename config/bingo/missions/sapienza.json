@@ -111,23 +111,13 @@
 	
 		// Pacify Objectives
 		{
-			"Name": "Torres Piombo",
-			"Tip": "Pacify Torres Piombo AKA the Bohemian.",
+			"Name": "Priest",
+			"Tip": "Pacify the Priest.",
 			"Group": "Pacify",
 			"Missions": ["World of Tomorrow"],
 			"Tags": ["Action", "Pacify"],
 			"Pacify": {
-				"RepositoryId": "729aa28f-5856-449a-9e41-3e4fedc5c38f"
-			}
-		},
-		{
-			"Name": "Torres Piombo",
-			"Tip": "Pacify Torres Piombo AKA the Bohemian.",
-			"Group": "Pacify",
-			"Missions": ["World of Tomorrow"],
-			"Tags": ["Action", "Pacify"],
-			"Pacify": {
-				"RepositoryId": "729aa28f-5856-449a-9e41-3e4fedc5c38f"
+				"RepositoryId": "c823beec-3d73-47b6-87d9-076c384c4662"
 			}
 		},
 		{
@@ -138,6 +128,16 @@
 			"Tags": ["Action", "Pacify"],
 			"Pacify": {
 				"RepositoryId": "bb15423f-bc60-4c49-ae0b-ee0a8843cbcc"
+			}
+		},
+		{
+			"Name": "Torres Piombo",
+			"Tip": "Pacify Torres Piombo AKA the Bohemian.",
+			"Group": "Pacify",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Pacify"],
+			"Pacify": {
+				"RepositoryId": "729aa28f-5856-449a-9e41-3e4fedc5c38f"
 			}
 		},
 		{
@@ -158,6 +158,16 @@
 			"Tags": ["Action", "Pacify"],
 			"Pacify": {
 				"RepositoryId": "17615866-32e7-4e1e-951d-7ef2ada796e9"
+			}
+		},
+		{
+			"Name": "With Police Baton",
+			"Tip": "Pacify any NPC using a police baton.",
+			"Group": "Pacify",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Pacify"],
+			"Pacify": {
+				"RepositoryId": "510c62c2-1f40-4a4d-9e42-da677bd116e7"
 			}
 		},
 		{
@@ -253,6 +263,18 @@
 			"Tags": ["Action", "Interact"],
 			"Setpiece": {
 				"RepositoryId": "f61ee415-9ee8-409f-9d76-ceaf5576683b"
+			}
+		},
+		{
+			"Name": "Poison Dr. Lafayette's Coffee",
+			"Tip": "Poison Dr. Oscar Lafayette's coffee glass.",
+			"Group": "Interact",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Interact"],
+			"Setpiece": {
+				"Helper": "PosionSource_Logic",
+				"RepositoryId": "9d316f01-7701-41b8-a9bb-153908768168",
+				"Position": "71.302895,-39.896698,17.350290"
 			}
 		},
 		{
@@ -354,6 +376,18 @@
 			}
 		},
 		{
+			"Name": "Turn On 2 Outdoor Faucets",
+			"Tip": "Turn on 2 outdoor hose water faucets.",
+			"Group": "Interact",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Interact"],
+			"OnTurnOn": {
+				"Count": 2,
+				"Unique": "Position",
+				"EntityID": 172567886276553540
+			}
+		},
+		{
 			"Name": "Turn Off a Stove",
 			"Tip": "Turn off a cooker stove.",
 			"Group": "Interact",
@@ -425,6 +459,16 @@
 					"-20.056231,-73.364502,6.301002",
 					"-18.357969,-62.794628,12.386945"
 				]
+			}
+		},
+		{
+			"Name": "Explode a Lawnmower",
+			"Tip": "Cause a lawnmower to explode.",
+			"Group": "Sabotage",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Sabotage"],
+			"CarExploded": {
+				"EntityID": [17475912778242664808, 17362025422781175951]
 			}
 		},
 		{
