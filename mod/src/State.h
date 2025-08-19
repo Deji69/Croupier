@@ -199,6 +199,10 @@ namespace Croupier
 			return nullptr;
 		}
 
+		auto getArea(float4 pos) const -> const Area* {
+			return getArea(SVector3{pos.x, pos.y, pos.z});
+		}
+
 		auto getActorDataByRepoId(const ZRepositoryID& repoId) -> ActorData* {
 			auto it = this->actorDataRepoIdMap.find(repoId);
 			if (it != this->actorDataRepoIdMap.end())
