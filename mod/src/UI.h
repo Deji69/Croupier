@@ -16,8 +16,15 @@ namespace Croupier
 		SVector3 playerPos;
 		int16_t playerRoomId = 0;
 		bool isClientConnected = false;
+		bool debugUI = false;
 		bool spinLocked = false;
 		bool haveSpinHistory = false;
+		bool shouldDrawStatus = false;
+		bool shouldDrawTimer = false;
+		bool shouldDrawStreak = false;
+		bool overlayEnabled = false;
+		bool killConfirmationsEnabled = false;
+		int currentStreak = 0;
 		eRouletteRuleset ruleset = eRouletteRuleset::Default;
 		std::chrono::steady_clock::time_point timeStarted;
 		std::chrono::seconds timeElapsed;
@@ -37,6 +44,13 @@ namespace Croupier
 			ruleset = state.ruleset;
 			timeStarted = state.timeStarted;
 			timeElapsed = state.getTimeElapsed();
+			debugUI = Config::main.debug;
+			shouldDrawTimer = Config::main.timer;
+			shouldDrawStreak = Config::main.streak;
+			shouldDrawStatus = Config::main.timer || Config::main.streak;
+			overlayEnabled = Config::main.spinOverlay;
+			killConfirmationsEnabled = Config::main.overlayKillConfirmations;
+			currentStreak = Config::main.streakCurrent;
 		}
 	};
 
@@ -54,10 +68,12 @@ namespace Croupier
 		auto DrawOverlayUIGameStatus() -> void;
 
 	private:
+		auto ShouldDrawStatus() -> bool;
+
+	private:
 		ImVec2 overlaySize = {};
 		ImVec2 debugOverlaySize = {};
 		UIState state;
-		bool statusDrawn = false;
 		bool showUI = false;
 		bool showManualModeUI = false;
 		bool showEditMissionPoolUI = false;
