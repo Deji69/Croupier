@@ -2346,7 +2346,7 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 			if (!itemSpawner->m_rMainItemKey) break;
 			auto repoId = itemSpawner->m_rMainItemKey.m_pInterfaceRef->m_RepositoryId.ToString();
 			auto pos = itemSpawner->GetWorldMatrix().Pos;
-			auto area = State::current.getArea(itemSpawner->m_mTransform.Trans);
+			auto area = State::current.getArea(pos);
 			SendCustomEvent("ItemDestroyed"sv, ImbuedPositionInfo(itemSpawner->m_mTransform.Trans, "", ImbuedPlayerLocation({
 				{"RepositoryId", repoId.c_str()},
 			}, true)));
@@ -2357,17 +2357,22 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 			if (!entity.m_pEntity) break;
 			auto parent = entity.GetLogicalParent();
 			if (!parent || !parent.GetEntity()) break;
+			auto owner = entity.GetLogicalParent();
+			if (!owner || !owner.GetEntity() || !owner->GetType()) break;
 
 			// Vehicle_Core should have a Car_Size_Int prop
-			auto res = parent.GetProperty<int32>("Car_Size_Int");
+			auto res = parent.GetProperty<int32>("Car_Size_Int");	
 			if (res.IsEmpty()) break;
 
-			auto json = json::object({ {"CarSize", res.Get()} });
+			auto json = json::object({
+				{"CarSize", res.Get()},
+				{"EntityID", owner->GetType()->m_nEntityId},
+			});
 			auto spatial = parent.QueryInterface<ZSpatialEntity>();
 			if (spatial) {
-				auto trans = spatial->m_mTransform.Trans;
+				auto trans = spatial->GetWorldMatrix().Pos;
 				auto area = State::current.getArea(trans);
-				auto roomId = ZRoomManagerCreator::GetRoomID(spatial->GetWorldMatrix().Pos);
+				auto roomId = ZRoomManagerCreator::GetRoomID(trans);
 				json.merge_patch({
 					{"CarPosition", {
 						{"X", trans.x},
