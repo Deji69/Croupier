@@ -20,13 +20,6 @@ namespace Croupier {
 		public bool HasRemainder = remainder;
 	}
 
-	public class BingoWinResult(BingoCard card, BingoWinType type, List<int> tiles) {
-		public BingoCard Card { get; set; } = card;
-		public BingoWinType Type { get; set; } = type;
-		public List<int> TileIndexes { get; set; } = tiles;
-		public List<BingoTile> Tiles => [..Card.Tiles.Where((t, i) => TileIndexes.Contains(i))];
-	}
-
 	public class BingoCard : INotifyPropertyChanged {
 		public BingoTileType Mode = BingoTileType.Objective;
 		public MissionID Mission = MissionID.NONE;
