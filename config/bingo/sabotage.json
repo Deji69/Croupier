@@ -71,7 +71,10 @@
 		"Name": "Explode Fire Extinguisher",
 		"Tip": "Cause a fire extinguisher to explode. Remember to cover your ears.",
 		"Group": "Sabotage",
-		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Missions": [
+			"The Showstopper", "Holiday Hoarders",
+			"World of Tomorrow"
+		],
 		"Tags": ["Action", "Sabotage"],
 		"ItemDestroyed": {
 			"RepositoryId": "d64eb5f2-1e9b-402d-855b-c714cfde50db"
