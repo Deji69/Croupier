@@ -107,7 +107,6 @@ auto UI::DrawMenu() -> void {
 }
 
 auto UI::Draw(bool focused) -> void {
-	statusDrawn = false;
 	this->state.Update(State::current);
 
 	this->DrawBingoDebugUI(focused);
@@ -354,7 +353,7 @@ auto UI::Draw(bool focused) -> void {
 }
 
 auto UI::DrawOverlayUI(bool focused) -> void {
-	if (!Config::main.spinOverlay)
+	if (!state.overlayEnabled)
 		return;
 	
 	ImGui::PushFont(SDK()->GetImGuiBlackFont());
@@ -408,7 +407,7 @@ auto UI::DrawOverlayUI(bool focused) -> void {
 				ImGui::PopStyleColor();
 			}
 		}
-		else {
+		else if (state.shouldDrawStatus) {
 			if (haveBingo) {
 				ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {4, 4});
 				ImGui::PushStyleColor(ImGuiCol_ChildBg, ImColor{23, 28, 32}.Value);
@@ -482,7 +481,7 @@ auto UI::DrawSpinUI(bool focused) -> void {
 		auto kc = State::current.getTargetKillValidation(cond.target.get().getID());
 		auto validation = " - "s;
 
-		if (Config::main.overlayKillConfirmations) {
+		if (state.killConfirmationsEnabled) {
 			if (kc.correctMethod == eKillValidationType::Unknown)
 				validation += "Unknown"s;
 			else if (kc.correctMethod == eKillValidationType::Invalid)
@@ -504,12 +503,11 @@ auto UI::DrawSpinUI(bool focused) -> void {
 }
 
 auto UI::DrawOverlayUIGameStatus() -> void {
-	if (statusDrawn) return;
-	statusDrawn = true;
+	if (!state.shouldDrawStatus) return;
 
 	auto text = std::string();
 
-	if (Config::main.timer) {
+	if (state.shouldDrawTimer) {
 		if (!text.empty()) text += " - ";
 		auto timeFormat = std::string();
 		auto const includeHr = std::chrono::duration_cast<std::chrono::hours>(state.timeElapsed).count() >= 1;
@@ -517,9 +515,9 @@ auto UI::DrawOverlayUIGameStatus() -> void {
 		text += time;
 	}
 
-	if (Config::main.streak) {
+	if (state.shouldDrawStreak) {
 		if (!text.empty()) text += " - ";
-		text += std::format("Streak: {}", Config::main.streakCurrent);
+		text += std::format("Streak: {}", state.currentStreak);
 	}
 
 	if (!text.empty()) {
@@ -532,7 +530,7 @@ auto UI::DrawOverlayUIGameStatus() -> void {
 }
 
 auto UI::DrawBingoDebugUI(bool focused) -> void {
-	if (!Config::main.debug)
+	if (!state.debugUI)
 		return;
 
 	ImGui::PushFont(SDK()->GetImGuiBlackFont());
@@ -550,48 +548,17 @@ auto UI::DrawBingoDebugUI(bool focused) -> void {
 
 		ImGui::PushFont(SDK()->GetImGuiBoldFont());
 
-		/*if (checkInRoom(pos, SVector3(-193.116, 13.079, -1.966), SVector3(-217.883, 16.94, 2.422)))
-			this->state.room = "Catwalk";
-		else if (checkInRoom(pos, SVector3(-127.372, -13.625, 13.328), SVector3(-220.491, 52.328, 19.64)))
-			this->state.room = "Attic";
-		else if (checkInRoom(pos, SVector3(-231.592, 5.265, 13.348), SVector3(-256.671, 24.302, 19.812)))
-			this->state.room = "Auction";
-		else if (checkInRoom(pos, SVector3(-182.083, 0.243, 5.3), SVector3(-229.967, 29.639, 10.153)))
-			this->state.room = "A/V Center";
-		else if (checkInRoom(pos, SVector3(-185.791, 29.832, -0.611), SVector3(-218.352, 51.745, 2.305)))
-			this->state.room = "Bar";
-		else if (checkInRoom(pos, SVector3(-185.942, -21.0, -1.933), SVector3(-225.432, -0.409, 5.0)))
-			this->state.room = "Dressing Room";
-		else if (checkInRoom(pos, SVector3(-146.75, 4.742, -3.594), SVector3(-181.564, 29.943, 12.532)))
-			this->state.room = "Entrance Hall";
-		else if (checkInRoom(pos, SVector3(-279.825, -2.929, -4.935), SVector3(-328.375, 32.669, 0.215)))
-			this->state.room = "Helipad";
-		else if (checkInRoom(pos, SVector3(-225.788, 30.123, -3.0), SVector3(-237.235, 47.972, 3.474)))
-			this->state.room = "Kitchen";
-		else if (checkInRoom(pos, SVector3(-242.748, -1.236, 7.0), SVector3(-256.497, 31.882, 12.485)))
-			this->state.room = "Library";
-		else if (checkInRoom(pos, SVector3(-180.98, 6.378, -5.539), SVector3(-190.999, 29.67, -4.28)))
-			this->state.room = "Locker Room";
-		else if (checkInRoom(pos, SVector3(-222.572, 5.101, 14.417), SVector3(-231.112, 24.53, 18.962)))
-			this->state.room = "Voltaire Suite";
-		else if (checkInRoom(pos, SVector3(-77.039, -62.16, -3.932), SVector3(-360.996, 90.328, 2.034)))
-			this->state.room = "Ground Floor";
-		else if (checkInRoom(pos, SVector3(-127.372, -13.625, 13.328), SVector3(-261.536, 52.669, 20.305)))
-			this->state.room = "Top Floor";
-		else if (checkInRoom(pos, SVector3(-174.261, -14.547, -7.168), SVector3(-247.184, 48.18, -4.099)))
-			this->state.room = "Basement";*/
-
-		//ImGui::Text(this->state.room.c_str());
-		static std::string roomText;
-		roomText = std::format("Room: {}", state.playerRoomId);
+		static std::string roomText, coordText;
+		roomText.clear();
+		std::format_to(std::back_inserter(roomText), "Room: {}", state.playerRoomId);
 		ImGui::Text(roomText.c_str());
 
-		auto str = std::format("{}, {}, {}", state.playerPos.x, state.playerPos.y, state.playerPos.z);
-		ImGui::Text(str.c_str());
+		coordText.clear();
+		std::format_to(std::back_inserter(coordText), "{}, {}, {}", state.playerPos.x, state.playerPos.y, state.playerPos.z);
+		ImGui::Text(coordText.c_str());
 
-		if (ImGui::Button("Print")) {
+		if (ImGui::Button("Print"))
 			Logger::Info("{}, {}, {}", state.playerPos.x, state.playerPos.y, state.playerPos.z);
-		}
 
 		ImGui::PopFont();
 	}
