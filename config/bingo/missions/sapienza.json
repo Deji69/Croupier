@@ -335,17 +335,20 @@
 			"Group": "Interact",
 			"Missions": ["World of Tomorrow"],
 			"Tags": ["Action", "Interact"],
-			"AND": {
-				"Unique": "Position",
-				"OR": {
+			"OR": [
+				{
 					"OnTurnOn": {
+						"Unique": "Position",
 						"EntityID": 5662769136074243596
-					},
+					}
+				},
+				{
 					"OnTurnOff": {
+						"Unique": "Position",
 						"EntityID": 5662769136074243596
 					}
 				}
-			}
+			]
 		},
 		{
 			"Name": "Toggle TV",
@@ -353,17 +356,20 @@
 			"Group": "Interact",
 			"Missions": ["World of Tomorrow"],
 			"Tags": ["Action", "Interact"],
-			"AND": {
-				"Unique": "Position",
-				"OR": {
+			"OR": [
+				{
 					"OnTurnOn": {
+						"Unique": "Position",
 						"EntityID": 11933069740663559438
-					},
+					}
+				},
+				{
 					"OnTurnOff": {
+						"Unique": "Position",
 						"EntityID": 11933069740663559438
 					}
 				}
-			}
+			]
 		},
 		{
 			"Name": "Turn On a Vacuum",
