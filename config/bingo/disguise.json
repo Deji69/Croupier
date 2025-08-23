@@ -205,7 +205,7 @@
 	{
 		"Name": "Stage Crew",
 		"Group": "Disguise",
-		"Missions": ["World of Tomorrow"],
+		"Missions": ["Landslide"],
 		"Tags": ["Disguise", "Civilian"],
 		"Disguise": ["6f9f7786-2044-4394-98b4-f79da0341e7f"]
 	},
