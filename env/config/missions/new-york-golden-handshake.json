@@ -1,0 +1,84 @@
+{
+	"Name": "Golden Handshake",
+	"Location": "New York",
+	"Image": "new-york-golden-handshake.jpg",
+	"Group": "Season 2",
+	"Codename": "RACCOON",
+	"IsMajor": true,
+	"Keywords": ["goldenhandshake", "golden", "handshake", "newyork", "ny"],
+	"Targets": [
+		{
+			"Name": "Athena Savalas",
+			"Initials": "AS",
+			"ShortName": "Athena",
+			"Image": "racoon_athena_savalas.jpg",
+			"Keywords": ["athenasavalas", "athena", "savalas", "ath", "athen", "as"]
+		}
+	],
+	"KillMethods": [
+		"Antique Curved Knife", "Burial Knife", "Fire Axe", "Folding Knife", "Hobby Knife", "Kitchen Knife", "Letter Opener",
+		"Scissors", "Screwdriver", "Tanto"
+	],
+	"Disguises": [
+		{
+			"Name": "Suit",
+			"RepoId": "84f2e067-70c3-4d79-aa90-53b46b727505",
+			"Image": "outfit_84f2e067-70c3-4d79-aa90-53b46b727505_0.jpg",
+			"Suit": true
+		},
+		{
+			"Name": "Bank Robber",
+			"RepoId": "6b22a1db-861c-42fd-ae2d-a4a7bcda72ab",
+			"Image": "outfit_6b22a1db-861c-42fd-ae2d-a4a7bcda72ab_0.jpg",
+			"Keywords": ["bankrobber", "robber", "burglar"]
+		},
+		{
+			"Name": "Bank Teller",
+			"RepoId": "d3c1c97f-84d8-4e68-8d72-e2ce7564aaba",
+			"Image": "outfit_d3c1c97f-84d8-4e68-8d72-e2ce7564aaba_0.jpg",
+			"Keywords": ["bankteller", "teller"]
+		},
+		{
+			"Name": "Fired Banker",
+			"RepoId": "c105fd1e-a017-42e5-8a0c-2996363352eb",
+			"Image": "outfit_c105fd1e-a017-42e5-8a0c-2996363352eb_0.jpg",
+			"Keywords": ["firedbanker", "fired"]
+		},
+		{
+			"Name": "High Security Guard",
+			"RepoId": "513c0da0-1cb0-4029-85c9-ad9e9522818d",
+			"Image": "outfit_513c0da0-1cb0-4029-85c9-ad9e9522818d_0.jpg",
+			"Keywords": ["highsecurityguard", "highsecurity", "highguard", "bodyguard", "vipguard"]
+		},
+		{
+			"Name": "Investment Banker",
+			"RepoId": "e2f6fbfb-0237-477d-b93f-2374b02f0354",
+			"Image": "outfit_e2f6fbfb-0237-477d-b93f-2374b02f0354_0.jpg",
+			"Keywords": ["investmentbanker", "investment", "invest"]
+		},
+		{
+			"Name": "IT Worker",
+			"RepoId": "88156045-87c6-4aff-9f99-f2fd40e0ab19",
+			"Image": "outfit_88156045-87c6-4aff-9f99-f2fd40e0ab19_0.jpg",
+			"Keywords": ["itworker", "it", "programmer"]
+		},
+		{
+			"Name": "Janitor",
+			"RepoId": "f4e27f1a-3e30-42fe-aa80-dc368590886b",
+			"Image": "outfit_f4e27f1a-3e30-42fe-aa80-dc368590886b_0.jpg",
+			"Keywords": ["janitor"]
+		},
+		{
+			"Name": "Job Applicant",
+			"RepoId": "d7939c60-087c-461e-9798-c0069cfec299",
+			"Image": "outfit_d7939c60-087c-461e-9798-c0069cfec299_0.jpg",
+			"Keywords": ["jobapplicant", "applicant", "job"]
+		},
+		{
+			"Name": "Security Guard",
+			"RepoId": "ee38c686-f447-4a0d-bc5f-3822550db095",
+			"Image": "outfit_ee38c686-f447-4a0d-bc5f-3822550db095_0.jpg",
+			"Keywords": ["securityguard", "security", "cop", "guard"]
+		}
+	]
+}

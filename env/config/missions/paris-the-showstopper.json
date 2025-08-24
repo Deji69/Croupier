@@ -1,0 +1,99 @@
+{
+	"Name": "The Showstopper",
+	"Location": "Paris",
+	"Image": "paris-the-showstopper.jpg",
+	"Group": "Season 1",
+	"Codename": "PEACOCK",
+	"IsMajor": true,
+	"Keywords": ["paris", "showstopper", "theshowstopper", "peacock"],
+	"Targets": [
+		{
+			"Name": "Viktor Novikov",
+			"Initials": "VN",
+			"ShortName": "Viktor",
+			"Image": "showstopper_viktor_novikov.jpg",
+			"Keywords": ["viktornovikov", "vik", "vic", "viktor", "victor", "vn", "novikov"]
+		},
+		{
+			"Name": "Dalia Margolis",
+			"Initials": "DM",
+			"ShortName": "Dalia",
+			"Image": "showstopper_dahlia_margolis.jpg",
+			"Keywords": ["daliamargolis", "dalia", "dahlia", "dm", "margolis"]
+		}
+	],
+	"KillMethods": [
+		"Battle Axe", "Cleaver", "Fire Axe", "Hatchet", "Kitchen Knife", "Letter Opener", "Saber", "Scissors", "Screwdriver"
+	],
+	"Disguises": [
+		{
+			"Name": "Suit",
+			"RepoId": "4ea5c203-b7c4-489d-85a1-bf91272d6190",
+			"Image": "outfit_4ea5c203-b7c4-489d-85a1-bf91272d6190_0.jpg",
+			"Suit": true
+		},
+		{
+			"Name": "Auction Staff",
+			"RepoId": "b5664bed-462a-417c-bc07-6d9d3f666e2d",
+			"Image": "outfit_b5664bed-462a-417c-bc07-6d9d3f666e2d_0.jpg",
+			"Keywords": ["auctionstaff", "auction", "auctioneer"]
+		},
+		{
+			"Name": "Chef",
+			"RepoId": "26ae3261-2a1d-49b2-8cab-d626d0887836",
+			"Image": "outfit_26ae3261-2a1d-49b2-8cab-d626d0887836_0.jpg",
+			"Keywords": ["chef", "cook"]
+		},
+		{
+			"Name": "CICADA Bodyguard",
+			"RepoId": "d2c76544-3a12-43a8-abc3-c7ce51830c1e",
+			"Image": "outfit_d2c76544-3a12-43a8-abc3-c7ce51830c1e_0.jpg",
+			"Keywords": ["cicadabodyguard", "cicada", "bodyguard"]
+		},
+		{
+			"Name": "Helmut Kruger",
+			"RepoId": "642c20f9-bf41-41b4-b0bb-2491b5be938a",
+			"Image": "outfit_642c20f9-bf41-41b4-b0bb-2491b5be938a_0.jpg",
+			"Unique": true,
+			"Keywords": ["helmutkruger", "helmut", "kruger"]
+		},
+		{
+			"Name": "Palace Staff",
+			"RepoId": "2018db77-aa8a-4bf9-9afb-56bdaa161156",
+			"Image": "outfit_2018db77-aa8a-4bf9-9afb-56bdaa161156_0.jpg",
+			"Keywords": ["palacestaff", "palace", "staff", "waiter"]
+		},
+		{
+			"Name": "Security Guard",
+			"RepoId": "992cc7b6-4ccf-4ae8-a467-e9b2aabaeeb5",
+			"Image": "outfit_992cc7b6-4ccf-4ae8-a467-e9b2aabaeeb5_0.jpg",
+			"Keywords": ["securityguard", "security", "guard", "sec", "secguard"]
+		},
+		{
+			"Name": "Sheikh Salman Al-Ghazali",
+			"RepoId": "a8ecd823-6e08-4cfe-a04d-816d387fcf0c",
+			"Image": "outfit_a8ecd823-6e08-4cfe-a04d-816d387fcf0c_0.jpg",
+			"Unique": true,
+			"Keywords": ["sheikhsalmanalghazali", "sheikh", "salman", "alghazali", "ghazali", "sheikhsalman", "sheikhsalmanal"]
+		},
+		{
+			"Name": "Stylist",
+			"RepoId": "96e32a7a-129a-4dd6-9b5b-3000a58f2a0f",
+			"Image": "outfit_96e32a7a-129a-4dd6-9b5b-3000a58f2a0f_0.jpg",
+			"Keywords": ["stylist"]
+		},
+		{
+			"Name": "Tech Crew",
+			"RepoId": "69aac6db-461e-43af-89bc-2c27e50d430f",
+			"Image": "outfit_69aac6db-461e-43af-89bc-2c27e50d430f_0.jpg",
+			"Keywords": ["techcrew", "tech", "stagecrew", "crew"]
+		},
+		{
+			"Name": "Vampire Magician",
+			"RepoId": "1fdc259e-b96a-47f2-bbd8-e86e78d6df70",
+			"Image": "outfit_1fdc259e-b96a-47f2-bbd8-e86e78d6df70_0.jpg",
+			"Unique": true,
+			"Keywords": ["vampiremagician", "vampire", "vamp"]
+		}
+	]
+}

@@ -1,0 +1,51 @@
+{
+	"Name": "The Final Test",
+	"Location": "ICA Facility",
+	"Image": "ica-facility-the-final-test.jpg",
+	"Group": "Prologue",
+	"Codename": "GRADUATION",
+	"IsMajor": false,
+	"Keywords": ["thefinaltest", "finaltest"],
+	"Targets": [
+		{
+			"Name": "Jasper Knight",
+			"Initials": "JK",
+			"ShortName": "Jasper",
+			"Image": "polarbear5.jpg",
+			"Keywords": ["jasperknight", "jk", "jasper", "knight"]
+		}
+	],
+	"KillMethods": [],
+	"Disguises": [
+		{
+			"Name": "Suit",
+			"RepoId": "22725852-7989-463a-822a-5848b1b2c6cf",
+			"Image": "outfit_22725852-7989-463a-822a-5848b1b2c6cf_0.jpg",
+			"Suit": true
+		},
+		{
+			"Name": "Airfield Security",
+			"RepoId": "f7acaf86-205c-4ac4-98c7-2c418007299c",
+			"Image": "outfit_f7acaf86-205c-4ac4-98c7-2c418007299c_0.jpg",
+			"Keywords": ["airfieldsecurity", "security"]
+		},
+		{
+			"Name": "Airplane Mechanic",
+			"RepoId": "8f6ea4f1-32a8-4e57-a39d-90a2c2ff2bb0",
+			"Image": "outfit_8f6ea4f1-32a8-4e57-a39d-90a2c2ff2bb0_0.jpg",
+			"Keywords": ["airplanemechanic", "mechanic", "mech"]
+		},
+		{
+			"Name": "KGB Officer",
+			"RepoId": "abb1e004-7fdf-462b-96b3-074e3390c171",
+			"Image": "outfit_abb1e004-7fdf-462b-96b3-074e3390c171_0.jpg",
+			"Keywords": ["kgbofficer", "kgb", "officer"]
+		},
+		{
+			"Name": "Soviet Soldier",
+			"RepoId": "5c419edc-203d-4736-8cd9-bed24e34171c",
+			"Image": "outfit_5c419edc-203d-4736-8cd9-bed24e34171c_0.jpg",
+			"Keywords": ["sovietsoldier", "soviet", "soldier"]
+		}
+	]
+}

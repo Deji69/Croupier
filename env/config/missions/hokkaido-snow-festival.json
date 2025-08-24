@@ -1,0 +1,139 @@
+{
+	"Name": "Hokkaido Snow Festival",
+	"Location": "Hokkaido",
+	"Image": "hokkaido-snow-festival.jpg",
+	"Group": "Season 1 Bonus",
+	"Codename": "MAMUSHI",
+	"IsMajor": false,
+	"Keywords": ["snowfestival", "hokkaidofestival", "hokkaidosnowfestival"],
+	"Targets": [
+		{
+			"Name": "Dmitri Fedorov",
+			"Initials": "DF",
+			"ShortName": "Dmitri",
+			"Image": "mamushi_dimitri-fedorov.jpg",
+			"Keywords": ["dmitrifedorov", "dmitri", "fedorov", "df"]
+		}
+	],
+	"KillMethods": [
+		"Cleaver", "Fire Axe", "Icicle", "Katana", "Kitchen Knife", "Scalpel", "Scissors", "Screwdriver"
+	],
+	"Disguises": [
+		{
+			"Name": "Suit",
+			"RepoId": "1c3964e1-75c6-4adb-8cbb-ebd0a830b839",
+			"Image": "outfit_1c3964e1-75c6-4adb-8cbb-ebd0a830b839_0.jpg",
+			"Suit": true
+		},
+		{
+			"Name": "Baseball Player",
+			"Image": "outfit_5946924c-958d-48f4-ada3-86beb58aa778_0.jpg ",
+			"Keywords": ["baseballplayer", "baseball", "baseballer", "baseboi"],
+			"Hostile": true
+		},
+		{
+			"Name": "Bodyguard",
+			"RepoId": "5270225d-797a-43f8-8435-078ae0d92249",
+			"Image": "outfit_5270225d-797a-43f8-8435-078ae0d92249_0.jpg",
+			"Keywords": ["bodyguard"]
+		},
+		{
+			"Name": "Chef",
+			"RepoId": "d6bbbe57-8cc8-45ed-b1cb-d1f9477c4b61",
+			"Image": "outfit_d6bbbe57-8cc8-45ed-b1cb-d1f9477c4b61_0.jpg",
+			"Keywords": ["chef", "sushichef", "cook"]
+		},
+		{
+			"Name": "Chief Surgeon",
+			"RepoId": "b8deb948-a0a9-4dcb-9df4-1c2ecd29765f",
+			"Image": "outfit_b8deb948-a0a9-4dcb-9df4-1c2ecd29765f_0.jpg",
+			"Keywords": ["chiefsurgeon", "chief", "chiefy", "laurant"]
+		},
+		{
+			"Name": "Doctor",
+			"RepoId": "a8191fb6-9a6d-4145-8baf-d786e6f392b7",
+			"Image": "outfit_a8191fb6-9a6d-4145-8baf-d786e6f392b7_0.jpg",
+			"Keywords": ["doctor", "dr", "doc"]
+		},
+		{
+			"Name": "Handyman",
+			"RepoId": "d9e0fbe7-ff74-4030-bed6-5a33a01acead",
+			"Image": "outfit_d9e0fbe7-ff74-4030-bed6-5a33a01acead_0.jpg",
+			"Keywords": ["handyman", "gardener", "repairman"]
+		},
+		{
+			"Name": "Helicopter Pilot",
+			"RepoId": "b8dbb7b6-fef9-4782-923f-ddebc573625e",
+			"Image": "outfit_b8dbb7b6-fef9-4782-923f-ddebc573625e_0.jpg",
+			"Keywords": ["helicopterpilot", "pilot", "helicopter", "helipilot", "heli", "nails"]
+		},
+		{
+			"Name": "Hospital Director",
+			"RepoId": "f6f53c39-17f9-48cf-9594-7a696b036d61",
+			"Image": "outfit_f6f53c39-17f9-48cf-9594-7a696b036d61_0.jpg",
+			"Keywords": ["hospitaldirector", "director", "nakamura"]
+		},
+		{
+			"Name": "Morgue Doctor",
+			"RepoId": "3d4424a3-23f9-4cfe-b225-2e06c17d780b",
+			"Image": "outfit_3d4424a3-23f9-4cfe-b225-2e06c17d780b_0.jpg",
+			"Keywords": ["morguedoctor", "morgue", "morguedr", "mortician"]
+		},
+		{
+			"Name": "Motorcyclist",
+			"RepoId": "8e01f48f-ef06-448c-9d22-5d58c4414968",
+			"Image": "outfit_8e01f48f-ef06-448c-9d22-5d58c4414968_0.jpg",
+			"Keywords": ["motorcyclist", "motorcycle"],
+			"Hostile": true
+		},
+		{
+			"Name": "Ninja",
+			"RepoId": "06456d4d-da36-4008-bea5-c0b985a565f5",
+			"Image": "outfit_06456d4d-da36-4008-bea5-c0b985a565f5_0.jpg",
+			"Keywords": ["ninja"],
+			"Hostile": true
+		},
+		{
+			"Name": "Patient",
+			"RepoId": "c98a6467-5dd9-4041-8bff-119445750d4d",
+			"Image": "outfit_c98a6467-5dd9-4041-8bff-119445750d4d_0.jpg",
+			"Keywords": ["patient"]
+		},
+		{
+			"Name": "Resort Security",
+			"RepoId": "25406dac-d206-48c7-a6df-dffb887c9227",
+			"Image": "outfit_25406dac-d206-48c7-a6df-dffb887c9227_0.jpg",
+			"Keywords": ["resortsecurity", "security", "resortguard", "guard"]
+		},
+		{
+			"Name": "Resort Staff",
+			"RepoId": "52992428-8884-48db-9764-e486d17d4804",
+			"Image": "outfit_52992428-8884-48db-9764-e486d17d4804_0.jpg",
+			"Keywords": ["resortstaff", "staff"]
+		},
+		{
+			"Name": "Surgeon",
+			"RepoId": "6a25f81d-cf2e-4e47-9b15-0f712a3f71d9",
+			"Image": "outfit_6a25f81d-cf2e-4e47-9b15-0f712a3f71d9_0.jpg",
+			"Keywords": ["surgeon"]
+		},
+		{
+			"Name": "VIP Patient (Amos Dexter)",
+			"RepoId": "427bac46-50b4-4470-9b0e-478efcd37793",
+			"Image": "outfit_427bac46-50b4-4470-9b0e-478efcd37793_0.jpg",
+			"Keywords": ["vippatientamosdexter", "vippatientamos", "vippatientdexter", "amosdexter", "amos", "dexter"]
+		},
+		{
+			"Name": "VIP Patient (Jason Portman)",
+			"RepoId": "b00380d9-3f84-4484-8bd6-39c0872da414",
+			"Image": "outfit_b00380d9-3f84-4484-8bd6-39c0872da414_0.jpg",
+			"Keywords": ["vippatientjasonportman", "vippatientjason", "vippatientportman", "jasonportman", "jason", "portman"]
+		},
+		{
+			"Name": "Yoga Instructor",
+			"RepoId": "f4ea7065-d32b-4a97-baf9-98072a9c8128",
+			"Image": "outfit_f4ea7065-d32b-4a97-baf9-98072a9c8128_0.jpg",
+			"Keywords": ["yogainstructor", "yoga", "instructor", "yogaman", "gyminstructor"]
+		}
+	]
+}

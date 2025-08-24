@@ -2,7 +2,7 @@
   "profiles": {
     "Croupier": {
       "commandName": "Project",
-      "workingDirectory": "U:\\Dev\\project\\hitman\\croupier\\bin\\App - Install Anywhere"
+      "workingDirectory": "C:\\Users\\Deji\\Dev\\Croupier\\env"
     }
   }
 }

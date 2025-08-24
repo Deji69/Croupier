@@ -1,0 +1,140 @@
+{
+	"Name": "The Last Resort",
+	"Location": "Haven Island",
+	"Image": "haven-the-last-resort.jpg",
+	"Group": "Season 2",
+	"Codename": "STINGRAY",
+	"IsMajor": true,
+	"Keywords": ["thelastresort", "last", "resort", "lastresort", "havenisland", "haven", "maldives"],
+	"Targets": [
+		{
+			"Name": "Tyson Williams",
+			"Initials": "TW",
+			"ShortName": "Tyson",
+			"Image": "stingray_tyson_williams.jpg",
+			"Keywords": ["tysonwilliams", "tyson", "williams", "tw"]
+		},
+		{
+			"Name": "Steven Bradley",
+			"Initials": "SB",
+			"ShortName": "Steven",
+			"Image": "stingray_steven_bradley.jpg",
+			"Keywords": ["stevenbradley", "steven", "bradley", "steve", "brad", "sb"]
+		},
+		{
+			"Name": "Ljudmila Vetrova",
+			"Initials": "LV",
+			"ShortName": "Ljudmila",
+			"Image": "stingray_ljudmila_vetrova.jpg",
+			"Keywords": ["ljudmilavetrova", "ljudmila", "vetrova", "ljud", "lud", "lv"]
+		}
+	],
+	"KillMethods": [
+		"Barber Razor", "Cleaver", "Fire Axe", "Folding Knife", "Hatchet", "Jarl's Pirate Saber",
+		"Kitchen Knife", "Letter Opener", "Machete", "Scalpel", "Scissors", "Screwdriver",
+		"Seashell", "Starfish"
+	],
+	"Disguises": [
+		{
+			"Name": "Suit",
+			"RepoId": "ea4230f3-03f7-46f1-a3f4-be2ff383b417",
+			"Image": "outfit_ea4230f3-03f7-46f1-a3f4-be2ff383b417_0.jpg",
+			"Suit": true
+		},
+		{
+			"Name": "Boat Captain",
+			"RepoId": "2817afb5-6dff-4496-bf56-4cd59b9abc9b",
+			"Image": "outfit_2817afb5-6dff-4496-bf56-4cd59b9abc9b_0.jpg",
+			"Keywords": ["boatcaptain", "boat", "captain"]
+		},
+		{
+			"Name": "Bodyguard",
+			"RepoId": "95f2f02f-205b-422f-a315-875568f911da",
+			"Image": "outfit_95f2f02f-205b-422f-a315-875568f911da_0.jpg",
+			"Keywords": ["bodyguard"]
+		},
+		{
+			"Name": "Butler",
+			"Image": "haven-butler.jpg",
+			"Keywords": ["butler"]
+		},
+		{
+			"Name": "Chef",
+			"RepoId": "cfc19dda-bff1-4bd1-9b0c-b1a799ee011f",
+			"Image": "outfit_cfc19dda-bff1-4bd1-9b0c-b1a799ee011f_0.jpg",
+			"Keywords": ["chef"]
+		},
+		{
+			"Name": "Doctor",
+			"RepoId": "f108122d-5b31-487a-857b-d5f1badf2220",
+			"Image": "outfit_f108122d-5b31-487a-857b-d5f1badf2220_0.jpg",
+			"Keywords": ["doctor", "dr"]
+		},
+		{
+			"Name": "Gas Suit",
+			"RepoId": "cbcfe485-f706-46a1-a14a-316f6dedf398",
+			"Image": "outfit_cbcfe485-f706-46a1-a14a-316f6dedf398_0.jpg",
+			"Keywords": ["gassuit", "gas", "boilersuit", "boiler", "hazmatsuit", "hazmat"]
+		},
+		{
+			"Name": "Life Guard",
+			"RepoId": "53415cf7-8d62-45b9-943f-d1a50c7c6024",
+			"Image": "outfit_53415cf7-8d62-45b9-943f-d1a50c7c6024_0.jpg",
+			"Keywords": ["lifeguard", "life"]
+		},
+		{
+			"Name": "Masseur",
+			"RepoId": "dec42c4a-3ff0-451f-80b0-a01e68310286",
+			"Image": "outfit_dec42c4a-3ff0-451f-80b0-a01e68310286_0.jpg",
+			"Keywords": ["masseur", "masseuse", "massage"]
+		},
+		{
+			"Name": "Personal Trainer",
+			"RepoId": "49e70108-2c8d-4418-8e42-8f63d6ed43af",
+			"Image": "outfit_49e70108-2c8d-4418-8e42-8f63d6ed43af_0.jpg",
+			"Keywords": ["personaltrainer", "trainer", "pt", "gymtrainer", "gym"]
+		},
+		{
+			"Name": "Resort Guard",
+			"RepoId": "d4c9507a-b297-46ce-8e9c-4ec479da22a4",
+			"Image": "outfit_d4c9507a-b297-46ce-8e9c-4ec479da22a4_0.jpg",
+			"Keywords": ["resortguard"]
+		},
+		{
+			"Name": "Resort Staff",
+			"RepoId": "e9fa4892-fa2a-40a1-a51c-78d8561034f3",
+			"Image": "outfit_e9fa4892-fa2a-40a1-a51c-78d8561034f3_0.jpg",
+			"Keywords": ["resortstaff"]
+		},
+		{
+			"Name": "Snorkel Instructor",
+			"RepoId": "30164cfe-a26b-4a72-8bc2-5bc99c0283c1",
+			"Image": "outfit_30164cfe-a26b-4a72-8bc2-5bc99c0283c1_0.jpg",
+			"Keywords": ["snorkelinstructor", "snorkleinstructor", "snorkel", "instructor", "snorkle", "cj", "scuba"]
+		},
+		{
+			"Name": "Tech Crew",
+			"RepoId": "f6e37038-98c1-4e58-bd85-c895f5c19d56",
+			"Image": "outfit_f6e37038-98c1-4e58-bd85-c895f5c19d56_0.jpg",
+			"Keywords": ["techcrew", "tech", "crew"]
+		},
+		{
+			"Name": "Villa Guard",
+			"RepoId": "33e3a400-0bbc-4edd-b07f-056135329802",
+			"Image": "outfit_33e3a400-0bbc-4edd-b07f-056135329802_0.jpg",
+			"Keywords": ["villaguard", "villasecurity"]
+		},
+		{
+			"Name": "Villa Staff",
+			"RepoId": "cda86b1b-63a4-4e3a-975e-d716685335a7",
+			"Image": "outfit_cda86b1b-63a4-4e3a-975e-d716685335a7_0.jpg",
+			"Keywords": ["villastaff"]
+		},
+		{
+			"Name": "Waiter",
+			"RepoId": "a260d9d6-a33c-499e-a6c5-698cfcc3de8f",
+			"Image": "outfit_a260d9d6-a33c-499e-a6c5-698cfcc3de8f_0.jpg",
+			"Keywords": ["waiter"]
+		}
+	]
+}
