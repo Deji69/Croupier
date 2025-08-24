@@ -1,0 +1,78 @@
+{
+	"Name": "Death in the Family",
+	"Location": "Dartmoor",
+	"Image": "dartmoor-death-in-the-family.jpg",
+	"Group": "Season 3",
+	"Codename": "BULLDOG",
+	"IsMajor": true,
+	"Keywords": ["deathinthefamily", "death", "family", "dartmoor", "england"],
+	"Targets": [
+		{
+			"Name": "Alexa Carlisle",
+			"Initials": "AC",
+			"ShortName": "Alexa",
+			"Image": "ancestral_alexa_carlisle.jpg",
+			"Keywords": ["alexacarlisle", "alexa", "carlisle", "ac"]
+		}
+	],
+	"KillMethods": [
+		"Barber Razor", "Cleaver", "Folding Knife", "Garden Fork", "Hatchet", "Kitchen Knife", "Letter Opener",
+		"Saber", "Scissors", "Screwdriver", "Shears", "Unicorn Horn"
+	],
+	"Disguises": [
+		{
+			"Name": "Suit",
+			"RepoId": "a9de864e-ce00-4970-978a-4a9f8db73974",
+			"Image": "outfit_a9de864e-ce00-4970-978a-4a9f8db73974_0.jpg",
+			"Suit": true
+		},
+		{
+			"Name": "Bodyguard",
+			"RepoId": "29389af2-4fe4-4f72-917a-d9747adc0f3d",
+			"Image": "outfit_29389af2-4fe4-4f72-917a-d9747adc0f3d_0.jpg",
+			"Keywords": ["bodyguard", "highguard", "cicada"]
+		},
+		{
+			"Name": "Gardener",
+			"RepoId": "88246749-2118-2101-5575-991052571240",
+			"Image": "outfit_88246749-2118-2101-5575-991052571240_0.jpg",
+			"Keywords": ["gardener"]
+		},
+		{
+			"Name": "Lawyer",
+			"RepoId": "ffb2e3a8-728b-4a54-95cb-55eaf616b422",
+			"Image": "outfit_ffb2e3a8-728b-4a54-95cb-55eaf616b422_0.jpg",
+			"Keywords": ["lawyer", "lawer", "law"]
+		},
+		{
+			"Name": "Mansion Guard",
+			"RepoId": "c3349736-91d1-48e3-bc62-fc16a7d8d6f1",
+			"Image": "outfit_c3349736-91d1-48e3-bc62-fc16a7d8d6f1_0.jpg",
+			"Keywords": ["mansionguard", "manguard", "guard"]
+		},
+		{
+			"Name": "Mansion Staff",
+			"RepoId": "4115e440-fdf8-44d2-a3ba-a1bb2285e542",
+			"Image": "outfit_4115e440-fdf8-44d2-a3ba-a1bb2285e542_0.jpg",
+			"Keywords": ["mansionstaff", "manstaff", "staff"]
+		},
+		{
+			"Name": "Photographer",
+			"RepoId": "7062bd6b-4926-4ab3-932c-de7d63c095b7",
+			"Image": "outfit_7062bd6b-4926-4ab3-932c-de7d63c095b7_0.jpg",
+			"Keywords": ["photographer", "photo", "cameraman", "camera"]
+		},
+		{
+			"Name": "Private Investigator",
+			"RepoId": "12f5bdb5-7e71-4f48-9740-13d0211f48c6",
+			"Image": "outfit_12f5bdb5-7e71-4f48-9740-13d0211f48c6_0.jpg",
+			"Keywords": ["privateinvestigator", "pi", "private", "investigator", "detective", "privatedetective", "pd", "phinas"]
+		},
+		{
+			"Name": "Undertaker",
+			"RepoId": "dc3c386d-52c2-4e17-855d-6c15e080ccf3",
+			"Image": "outfit_dc3c386d-52c2-4e17-855d-6c15e080ccf3_0.jpg",
+			"Keywords": ["undertaker", "undertake", "funeral"]
+		}
+	]
+}

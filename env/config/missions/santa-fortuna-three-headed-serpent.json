@@ -1,0 +1,156 @@
+{
+	"Name": "Three-Headed Serpent",
+	"Location": "Santa Fortuna",
+	"Image": "santa-fortuna-three-headed-serpent.jpg",
+	"Group": "Season 2",
+	"Codename": "HIPPO",
+	"IsMajor": true,
+	"Keywords": ["threeheadedserpent", "santafortuna", "colombia"],
+	"Targets": [
+		{
+			"Name": "Rico Delgado",
+			"Initials": "RD",
+			"ShortName": "Rico",
+			"Image": "hippo_rico_delgado.jpg",
+			"Keywords": ["ricodelgado", "rico", "delgado", "rd"]
+		},
+		{
+			"Name": "Jorge Franco",
+			"Initials": "JF",
+			"ShortName": "Jorge",
+			"Image": "hippo_jorge_franco.jpg",
+			"Keywords": ["jorgefranco", "jorge", "franco", "jf", "george"]
+		},
+		{
+			"Name": "Andrea Martínez",
+			"Initials": "AM",
+			"ShortName": "Andrea",
+			"Image": "hippo_andrea_martinez.jpg",
+			"Keywords": ["andreamartinez", "andrea", "martinez", "am"]
+		}
+	],
+	"KillMethods": [
+		"Barber Razor", "Cleaver", "Folding Knife", "Kitchen Knife", "Letter Opener", "Machete",
+		{
+			"Name": "Sacrificial Knife",
+			"Tags": ["EasterEgg"]
+		},
+		"Scissors", "Screwdriver"
+	],
+	"Disguises": [
+		{
+			"Name": "Suit",
+			"RepoId": "ac71f90e-a67d-4898-b2f0-43b605332dc8",
+			"Image": "outfit_ac71f90e-a67d-4898-b2f0-43b605332dc8_0.jpg",
+			"Suit": true
+		},
+		{
+			"Name": "Band Member",
+			"RepoId": "fc0491ac-8592-486d-9dc2-b39af13cf6e3",
+			"Image": "outfit_fc0491ac-8592-486d-9dc2-b39af13cf6e3_0.jpg",
+			"Keywords": ["bandmember", "band"]
+		},
+		{
+			"Name": "Barman",
+			"RepoId": "cfacf46a-eb59-4a16-a221-a690defd05a3",
+			"Image": "outfit_cfacf46a-eb59-4a16-a221-a690defd05a3_0.jpg",
+			"Keywords": ["barman"]
+		},
+		{
+			"Name": "Chef",
+			"RepoId": "d0fe70cb-c30b-41a3-8d1c-5503e898f686",
+			"Image": "outfit_d0fe70cb-c30b-41a3-8d1c-5503e898f686_0.jpg",
+			"Keywords": ["chef"]
+		},
+		{
+			"Name": "Coca Field Guard",
+			"RepoId": "56a589d8-bf28-489f-a30c-2ecea87177f5",
+			"Image": "outfit_56a589d8-bf28-489f-a30c-2ecea87177f5_0.jpg",
+			"Keywords": ["cocafieldguard", "cocaguard", "fieldguard", "jorgeguard"]
+		},
+		{
+			"Name": "Coca Field Worker",
+			"RepoId": "11f2849d-87c5-4806-a25e-1a9dad85981d",
+			"Image": "outfit_11f2849d-87c5-4806-a25e-1a9dad85981d_0.jpg",
+			"Keywords": ["cocafieldworker", "cocaworker", "fieldworker"]
+		},
+		{
+			"Name": "Construction Worker",
+			"RepoId": "57342129-03a9-47a4-a509-cc0656e0a76a",
+			"Image": "outfit_57342129-03a9-47a4-a509-cc0656e0a76a_0.jpg",
+			"Keywords": ["constructionworker", "construction", "builder"]
+		},
+		{
+			"Name": "Drug Lab Worker",
+			"RepoId": "a741cd97-135e-465e-89c3-4fa52a2bbf9d",
+			"Image": "outfit_a741cd97-135e-465e-89c3-4fa52a2bbf9d_0.jpg",
+			"Keywords": ["druglabworker", "drugworker", "labworker", "lab"]
+		},
+		{
+			"Name": "Elite Guard",
+			"RepoId": "3e3be8e1-1fe4-4b3a-959c-9e52f595b0c4",
+			"Image": "outfit_3e3be8e1-1fe4-4b3a-959c-9e52f595b0c4_0.jpg",
+			"Keywords": ["eliteguard", "elite"]
+		},
+		{
+			"Name": "Gardener",
+			"RepoId": "886c3b26-b81f-4731-8080-524f2d6da5dd",
+			"Image": "outfit_886c3b26-b81f-4731-8080-524f2d6da5dd_0.jpg",
+			"Keywords": ["gardener", "garden"]
+		},
+		{
+			"Name": "Hippie",
+			"RepoId": "177410f1-4fd7-4ef2-8ed7-2119bcba3661",
+			"Image": "outfit_177410f1-4fd7-4ef2-8ed7-2119bcba3661_0.jpg",
+			"Keywords": ["hippie", "hippy", "bohemian", "torrespiombo", "torres", "piombo"]
+		},
+		{
+			"Name": "Hippo Whisperer",
+			"RepoId": "4a145036-e4cc-4798-a795-42bcee511524",
+			"Image": "outfit_4a145036-e4cc-4798-a795-42bcee511524_0.jpg",
+			"Keywords": ["hippowhisperer", "hippo", "whisperer"]
+		},
+		{
+			"Name": "Mansion Guard",
+			"RepoId": "f0d1dfab-ac73-4fe9-bbac-a5587fbc0f91",
+			"Image": "outfit_f0d1dfab-ac73-4fe9-bbac-a5587fbc0f91_0.jpg",
+			"Keywords": ["mansionguard", "mansionsecurity", "manguard"]
+		},
+		{
+			"Name": "Mansion Staff",
+			"RepoId": "2dec1e42-0093-462a-83aa-c0f4d82ac224",
+			"Image": "outfit_2dec1e42-0093-462a-83aa-c0f4d82ac224_0.jpg",
+			"Keywords": ["mansionstaff", "manstaff", "staff"]
+		},
+		{
+			"Name": "Shaman",
+			"RepoId": "30005896-2b39-49c0-bb04-3475d4a12ae6",
+			"Image": "outfit_30005896-2b39-49c0-bb04-3475d4a12ae6_0.jpg",
+			"Keywords": ["shaman"]
+		},
+		{
+			"Name": "Street Soldier",
+			"RepoId": "ab5a46a2-6e53-4b15-a48e-c336df1ef5ff",
+			"Image": "outfit_ab5a46a2-6e53-4b15-a48e-c336df1ef5ff_0.jpg",
+			"Keywords": ["streetsoldier", "soldier"]
+		},
+		{
+			"Name": "Submarine Crew",
+			"RepoId": "f86848e7-ca8c-48e0-94d1-2d925e96a3e7",
+			"Image": "outfit_f86848e7-ca8c-48e0-94d1-2d925e96a3e7_0.jpg",
+			"Keywords": ["submarinecrew", "subcrew", "submarine", "crew"]
+		},
+		{
+			"Name": "Submarine Engineer",
+			"RepoId": "dfaa8260-20af-4112-b1ca-88a98481127b",
+			"Image": "outfit_dfaa8260-20af-4112-b1ca-88a98481127b_0.jpg",
+			"Keywords": ["submarineengineer", "submarineeng", "subeng", "subengineer"]
+		},
+		{
+			"Name": "Tattoo Artist (P-Power)",
+			"RepoId": "bbc1dd7c-a0ef-41eb-9bef-a4c38fded3fa",
+			"Image": "outfit_bbc1dd7c-a0ef-41eb-9bef-a4c38fded3fa_0.jpg",
+			"Keywords": ["tattooartistppower", "ppower", "tattoo", "tattooartist", "power", "powers"]
+		}
+	]
+}

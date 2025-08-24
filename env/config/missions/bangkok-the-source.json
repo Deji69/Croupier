@@ -1,0 +1,101 @@
+{
+	"Name": "The Source",
+	"Location": "Bangkok",
+	"Image": "whitespider-zika.jpg",
+	"Group": "Season 1 Bonus",
+	"Codename": "TAMAGOZAKE",
+	"IsMajor": false,
+	"Keywords": ["thesource", "source"],
+	"Targets": [
+		{
+			"Name": "Oybek Nabazov",
+			"Initials": "ON",
+			"ShortName": "Oybek",
+			"Image": "ws_zika_oybek_nabazov.jpg",
+			"Keywords": ["oybeknabazov", "oybek", "nabazov", "on"]
+		},
+		{
+			"Name": "Sister Yulduz",
+			"Initials": "SY",
+			"ShortName": "Yulduz",
+			"Image": "ws_zika_sister_yulduz.jpg",
+			"Keywords": ["sisteryulduz", "sister", "yulduz", "sy"]
+		}
+	],
+	"KillMethods": [
+		"Amputation Knife", "Circumcision Knife", "Cleaver", "Fire Axe", "Hatchet", "Katana", "Kitchen Knife", "Letter Opener", "Sapper's Axe", "Screwdriver"
+	],
+	"Disguises": [
+		{
+			"Name": "Suit",
+			"RepoId": "c85c6e9c-0aee-43b8-b6e3-d70e76f1890e",
+			"Image": "outfit_c85c6e9c-0aee-43b8-b6e3-d70e76f1890e_0.jpg",
+			"Suit": true
+		},
+		{
+			"Name": "Cult Bodyguard",
+			"Image": "outfit_78fcc1c0-5612-4284-924f-c20d9e322c96_0.jpg ",
+			"Keywords": ["cultbodyguard", "cultguard", "bodyguard"]
+		},
+		{
+			"Name": "Cult Initiate",
+			"RepoId": "54c5dce7-cfe4-43f9-8cee-8204e38c608d",
+			"Image": "outfit_54c5dce7-cfe4-43f9-8cee-8204e38c608d_0.jpg",
+			"Keywords": ["cultinitiate", "initiate", "cultmember"]
+		},
+		{
+			"Name": "Exterminator",
+			"RepoId": "bf0bcc10-a335-4714-9dd2-69e7e96704b2",
+			"Image": "outfit_bf0bcc10-a335-4714-9dd2-69e7e96704b2_0.jpg",
+			"Keywords": ["exterminator", "bugman"]
+		},
+		{
+			"Name": "Groundskeeper",
+			"RepoId": "7f6da010-1a96-4783-83e0-48c55a3e7103",
+			"Image": "outfit_7f6da010-1a96-4783-83e0-48c55a3e7103_0.jpg",
+			"Keywords": ["groundskeeper", "gardener", "groundkeeper"]
+		},
+		{
+			"Name": "Hotel Security",
+			"RepoId": "07f3479a-29fc-45e0-bb80-e49a41c0c410",
+			"Image": "outfit_07f3479a-29fc-45e0-bb80-e49a41c0c410_0.jpg",
+			"Keywords": ["hotelsecurity", "security"]
+		},
+		{
+			"Name": "Hotel Staff",
+			"RepoId": "c96f9796-0194-47c6-836c-102473cc6c3c",
+			"Image": "outfit_c96f9796-0194-47c6-836c-102473cc6c3c_0.jpg",
+			"Keywords": ["hotelstaff", "staff"]
+		},
+		{
+			"Name": "Jordan Cross' Bodyguard",
+			"RepoId": "d01c8adc-735c-44f0-9105-b28d85062def",
+			"Image": "outfit_d01c8adc-735c-44f0-9105-b28d85062def_0.jpg",
+			"Keywords": ["jordancrossbodyguard", "jordanbodyguard", "jcbodyguard", "jordanguard", "jcguard", "crossbodyguard", "crossguard"]
+		},
+		{
+			"Name": "Kitchen Staff",
+			"RepoId": "85971c2e-34ae-423f-9653-bc32c5f3e4f7",
+			"Image": "outfit_85971c2e-34ae-423f-9653-bc32c5f3e4f7_0.jpg",
+			"Keywords": ["kitchenstaff", "kitchen"]
+		},
+		{
+			"Name": "Militia Soldier",
+			"RepoId": "3dd1467a-72d2-4590-93d8-10807c9f1645",
+			"Image": "outfit_3dd1467a-72d2-4590-93d8-10807c9f1645_0.jpg",
+			"Keywords": ["militiasoldier", "soldier"]
+		},
+		{
+			"Name": "Recording Crew",
+			"RepoId": "ef704a8e-88b7-430a-a217-09bbeea7074f",
+			"Image": "outfit_ef704a8e-88b7-430a-a217-09bbeea7074f_0.jpg",
+			"Keywords": ["recordingcrew", "bandmember", "band", "recording", "crew"]
+		},
+		{
+			"Name": "Waiter",
+			"RepoId": "57669117-fbf3-4630-80e3-53e5420a8f30",
+			"Image": "outfit_57669117-fbf3-4630-80e3-53e5420a8f30_0.jpg",
+			"Keywords": ["waiter"]
+		}
+	]
+}

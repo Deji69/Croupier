@@ -1,0 +1,471 @@
+{
+	/**
+	 * Name of ruleset to appear in Croupier.
+	 */
+	"Name": "RR17",
+	"Rules": {
+		/**
+		 * Enable 'Elimination', 'Silenced Elimination' and 'Loud Elimination'
+		 * Default: false
+		 */
+		"GenericEliminations": false,
+		
+		/**
+		 * The chance of a kill type being applied to an applicable kill method.
+		 * Default: 50
+		 */
+		"KillTypeChance": 50,
+
+		/**
+		 * Allow 'Melee' to be a kill type for melee weapons.
+		 * Default: false
+		 */
+		"MeleeKillTypes": false,
+
+		/**
+		 * Allow 'Thrown' to be a kill type for melee weapons.
+		 * Default: false
+		 */
+		"ThrownKillTypes": false,
+
+		/**
+		 * Allow vanilla 'Explosive' (with no kill type).
+		 * Default: true
+		 */
+		"AnyExplosives": false,
+
+		/**
+		 * Allow 'Impact' to be a kill type for 'Explosive'.
+		 * Default: true
+		 */
+		"ImpactExplosives": true,
+
+		/**
+		 * Allow 'Remote' to be a kill type for 'Explosive'.
+		 * Default: true
+		 */
+		"RemoteExplosives": true,
+
+		/**
+		 * Allow 'Loud Remote' to be a kill type for 'Explosive'.
+		 * Default: false
+		 */
+		"LoudRemoteExplosives": false,
+
+		/**
+		 * Enable the 'Live' (No Target KO) complication.
+		 * Default: true
+		 */
+		"LiveComplications": true,
+
+		/**
+		 * Prevent 'Standard' kills from having live complications.
+		 * Default: true
+		 */
+		"LiveComplicationsExcludeStandard": true,
+
+		/**
+		 * Percentage chance of spinning a 'Live' complication.
+		 * Default: 25
+		 */
+		"LiveComplicationChance": 25,
+
+		/**
+		 * If true, Loud SMG cannot be spun in a spin that already has a large firearm.
+		 * Default: true
+		 * NOTE: This is unused. The IsLarge tags on methods/variants are now defined in kill-methods.json.
+		 */
+		"LoudSMGIsLargeFirearm": false,
+		
+		/**
+		 * The maximum number of 'Weapon' methods (excluding explosives) with the IsLarge tag that are allowed in a spin.
+		 * Default: 1
+		 */
+		"MaxLargeFirearms": 1,
+
+		/**
+		 * If true, spins can be generated where two or more targets require the same disguise.
+		 * Default: false
+		 */
+		"AllowDuplicateDisguise": false,
+
+		/**
+		 * If true, spins can be generated where two or more targets require the same kill method.
+		 * Default: false
+		 */
+		"AllowDuplicateMethod": false,
+
+		/**
+		 * If true, 'Suit' will always be chosen as the disguise for a kill.
+		 * Default: false
+		 */
+		"SuitOnly": false,
+
+		/**
+		 * If true, spins can be generated with 'Any Disguise' in the disguise condition.
+		 * Croupier will validate only the kill method and ignore the disguise in this case.
+		 * Default: false
+		 */
+		"AnyDisguise": false,
+
+		/**
+		 * The per-target tags that Croupier should avoid generating in spins.
+		 */
+		"Banned": ["Banned", "Slow", "Extreme", "Impossible", "Buggy", "EasterEgg"]
+	},
+	"Tags": {
+		/**
+		 * "<Target>": { "<Tag>": ["<Method>", "<Disguise>", ...] }
+		 * <Target> is usually the initials of the target's name, or "NCR" in the case of Noel Crest.
+		 * Use this to tag conditions individually for each target, based on method names, disguise names, complications or method tags (see kill-methods.json)
+		 * Special values:
+		 *   "Live" - Tag the condition if it has a 'Live' complication.
+		 *   "LoudLive" - Tag the condition if the method is a loud firearm kill and the 'Live' complication is set.
+		 *   "IsLoud" - Tag the condition if the method is tagged with IsLoud.
+		 *   "IsSilenced" - Tag the condition if the method is tagged with IsSilenced.
+		 *   "HostileNonRemote" - Tag the condition if the method is not tagged with IsRemote or is tagged with IsLoud or IsImpact, when the disguise is also hostile.
+		 *   "IsExplosive" - Tag the condition if the method is tagged with IsExplosive.
+		 */
+		/** Kalvin Ritter **/
+		"KR": {
+			"Impossible": ["Electrocution", "Fire", "Injected Poison", "SMG", "Sniper", "ImpactExplosive", "Silenced Assault Rifle", "Silenced Shotgun"]
+		},
+		/** Jasper Knight **/
+		"JK": {
+			"Impossible": ["Electrocution", "Fire", "Injected Poison", "SMG", "Sniper", "IsExplosive", "Silenced Assault Rifle", "Silenced Shotgun"]
+		},
+		/** Viktor Novikov **/
+		"VN": {
+			"Banned": ["Fire"],
+			"Extreme": ["Fire"],
+			"DuplicateOnlySameDisguise": ["Fire"]
+		},
+		/** Dalia Margolis **/
+		"DM": {
+			"Banned": ["Fire"],
+			"Extreme": ["Fire"],
+			"DuplicateOnlySameDisguise": ["Fire"]
+		},
+		/** Harry "Smokey" Bagnato **/
+		"HSB": {
+			"Banned": ["Fire"],
+			"Extreme": ["Fire"],
+			"DuplicateOnlySameDisguise": ["Fire"]
+		},
+		/** Marv "Slick" Gonif **/
+		"MSG": {
+			"Banned": ["Fire"],
+			"Extreme": ["Fire"],
+			"DuplicateOnlySameDisguise": ["Fire"]
+		},
+		/** Silvio Caruso **/
+		"SC": {
+			"Banned": ["Consumed Poison", "Fire"],
+			"Buggy": ["Consumed Poison"],
+			"Impossible": ["Fire"]
+		},
+		/** Francesca De Santis **/
+		"FDS": {
+			"Banned": ["Fire"],
+			"Impossible": ["Fire"]
+		},
+		/** Dino Bosco **/
+		"DB": {},
+		/** Marco Abiatti **/
+		"MA": {
+			"Banned": ["Fire"],
+			"Impossible": ["Fire"]
+		},
+		/** Craig Black **/
+		"CB": {
+			"Banned": ["Fire"],
+			"Impossible": ["Fire"]
+		},
+		/** Brother Akram **/
+		"BA": {
+			"Banned": ["Fire"],
+			"Impossible": ["Fire"]
+		},
+		/** Reza Zaydan **/
+		"RZ": {
+			"Banned": ["Drowning", "Electrocution"],
+			"Extreme": ["Drowning", "Electrocution"]
+		},
+		/** Claus Hugo Strandberg **/
+		"CHS": {
+			"Banned": ["HostileNonRemote", "Falling Object"],
+			"Hard": ["Falling Object", "HostileNonRemote"]
+		},
+		/** Kong Tuo Kwang **/
+		"KTK": {},
+		/** Matthieu Mendola **/
+		"MM": {},
+		/** Jordan Cross **/
+		"JC": {
+			"Banned": ["Fire", "HostileNonRemote", "Smother in Cake"],
+			"Hard": ["HostileNonRemote"],
+			"Extreme": ["Fire"]
+		},
+		/** Ken Morgan **/
+		"KM": {
+			"Banned": ["Fire", "HostileNonRemote"],
+			"Hard": ["HostileNonRemote"],
+			"Extreme": ["Fire"]
+		},
+		/** Oybek Nabazov **/
+		"ON": {
+			"Banned": ["Falling Object"],
+			"Extreme": ["Falling Object"]
+		},
+		/** Sister Yulduz **/
+		"SY": {
+			"Banned": ["Falling Object"],
+			"Extreme": ["Falling Object"]
+		},
+		/** Sean Rose **/
+		"SR": {
+			"Banned": ["Consumed Poison", "Drowning"],
+			"Hard": ["LoudLive"],
+			"Extreme": ["Drowning"],
+			"Impossible": ["Consumed Poison"]
+		},
+		/** Penelope Graves **/
+		"PG": {
+			"Banned": ["Drowning", "Fire", "LoudLive"],
+			"Hard": ["Fire", "LoudLive"],
+			"Extreme": ["Drowning"]
+		},
+		/** Ezra Berg **/
+		"EB": {
+			"Banned": ["Consumed Poison", "Drowning", "Electrocution"],
+			"Extreme": ["Drowning", "Electrocution"],
+			"Impossible": ["Consumed Poison"]
+		},
+		/** Maya Parvati **/
+		"MP": {
+			"Banned": ["Drowning"],
+			"Extreme": ["Drowning"]
+		},
+		/** Erich Soders **/
+		"ES": {
+			"Banned": ["IsExplosive"]
+		},
+		/** Yuki Yamazaki **/
+		"YY": {
+			"Banned": ["Sabotage Cable Car"]
+		},
+		/** Owen Cage **/
+		"OC": {
+			"Banned": ["Drowning"],
+			"Extreme": ["Drowning"]
+		},
+		/** Klaus Liebleid **/
+		"KL": {},
+		/** Dmitri Fedorov **/
+		"DF": {},
+		/** Alma Reynard **/
+		"AR": {
+			"Banned": ["Falling Object", "Fire"],
+			"Impossible": ["Falling Object", "Fire"]
+		},
+		/** Sierra Knox **/
+		"SK": {
+			"Banned": [
+				{
+					"Method": "Shoot the Car",
+					"Disguises": ["Moses Lee"]
+				},
+				"Bomb the Car"
+			]
+		},
+		/** Robert Knox **/
+		"RK": {
+			"Banned": ["Fire"],
+			"Extreme": ["Fire"]
+		},
+		/** Ajit "AJ" Krish **/
+		"AJ": {},
+		/** Rico Delgado **/
+		"RD": {
+			"Banned": ["Consumed Poison"],
+			"Extreme": ["Consumed Poison"]
+		},
+		/** Jorge Franco **/
+		"JF": {
+			"Banned": ["Falling Object"],
+			"Extreme": ["Falling Object"]
+		},
+		/** Andrea Martinez **/
+		"AM": {
+			"Banned": ["Fire"],
+			"Hard": ["Fire"]
+		},
+		/** Blair Reddington **/
+		"BR": {},
+		/** Wazir Kale **/
+		"WK": {
+			"Banned": ["Drowning", "Fire"],
+			"Hard": ["LoudLive"],
+			"Extreme": ["Drowning", "Fire"]
+		},
+		/** Vanya Shah **/
+		"VS": {
+			"Banned": [
+				"Consumed Poison",
+				"Impact Explosive",
+				{
+					"Method": "Drowning",
+					"Disguises": ["Tailor"]
+				}
+			],
+			"Hard": ["LoudLive"],
+			"Extreme": ["Consumed Poison"]
+		},
+		/** Dawood Rangan **/
+		"DR": {
+			"Banned": ["Consumed Poison", "Drowning", "Fire", "LoudLive", "Impact Explosive"],
+			"Extreme": ["Consumed Poison", "Fire", "LoudLive"]
+		},
+		/** Basil Carnaby **/
+		"BC": {},
+		/** Janus **/
+		"J": {
+			"Banned": [
+				"Falling Object",
+				"Fire",
+				"Battle Axe",
+				"Beak Staff",
+				"Impale on Sculpture"
+			],
+			"Impossible": ["Falling Object", "Fire"],
+			"Slow": ["Battle Axe", "Beak Staff"]
+		},
+		/** Nolan Cassidy **/
+		"NC": {
+			"Banned": ["Battle Axe", "Beak Staff", "Fire"],
+			"Impossible": ["Fire"],
+			"Slow": ["Battle Axe", "Beak Staff"]
+		},
+		/** Galen Vholes **/
+		"GV": {},
+		/** Zoe Washington **/
+		"ZW": {
+			"Banned": [
+				"Consumed Poison",
+				"HostileNonRemote",
+				"Aztec Necklace"
+			],
+			"Extreme": ["HostileNonRemote"],
+			"Impossible": ["Consumed Poison"]
+		},
+		/** Sophia Washington **/
+		"SW": {
+			"Banned": [
+				"Consumed Poison",
+				"Drowning",
+				"Fire",
+				"HostileNonRemote",
+				"Aztec Necklace"
+			],
+			"Hard": ["Drowning", "Fire"],
+			"Extreme": ["Consumed Poison", "HostileNonRemote"]
+		},
+		/** Athena Savalas **/
+		"AS": {
+			"Banned": ["Fire"],
+			"Impossible": ["Fire"]
+		},
+		/** Tyson Williams **/
+		"TW": {
+			"Banned": ["Consumed Poison", "Fire"],
+			"Extreme": ["Consumed Poison"],
+			"Impossible": ["Fire"]
+		},
+		/** Steven Bradley **/
+		"SB": {
+			"Banned": ["Consumed Poison", "Fire"],
+			"Extreme": ["Consumed Poison"],
+			"Impossible": ["Fire"]
+		},
+		/** Ljudmila Vetrova **/
+		"LV": {
+			"Banned": ["Falling Object", "Fire"],
+			"Hard": ["Falling Object"],
+			"Impossible": ["Fire"]
+		},
+		/** Carl Ingram **/
+		"CI": {
+			"Banned": ["Consumed Poison", "Fire"],
+			"Buggy": ["Consumed Poison"],
+			"Extreme": ["Fire"]
+		},
+		/** Marcus Stuyvesant **/
+		"MS": {
+			"Banned": [
+				"Consumed Poison",
+				"Fire",
+				{
+					"Method": "Drowning",
+					"Disguises": ["Skydiving Suit"]
+				},
+				{
+					"Method": "LoudLive",
+					"Disguises": ["Skydiving Suit"]
+				}
+			],
+			"Buggy": ["Consumed Poison"],
+			"Extreme": ["Fire"]
+		},
+		/** Alexa Carlisle **/
+		"AC": {
+			"Banned": ["Fire"],
+			"Impossible": ["Fire"]
+		},
+		/** Hush **/
+		"H": {
+			"Banned": ["Consumed Poison", "Fire", "Impact Explosive", "LoudLive"],
+			"Slow": ["Consumed Poison"],
+			"Hard": ["LoudLive"],
+			"Impossible": ["Fire"]
+		},
+		/** Imogen Royce **/
+		"IR": {
+			"Banned": ["Consumed Poison", "Falling Object", "Fire"],
+			"Hard": ["Consumed Poison", "Fire"],
+			"Extreme": ["Falling Object"]
+		},
+		/** Don Archibald Yates **/
+		"DY": {
+			"Banned": ["Consumed Poison", "Fire"],
+			"Hard": ["Consumed Poison"],
+			"Extreme": ["Fire"]
+		},
+		/** Tamara Vidal **/
+		"TV": {
+			"Banned": ["Consumed Poison", "Falling Object", "Fire"],
+			"Hard": ["Consumed Poison", "Falling Object"],
+			"Extreme": ["Fire"]
+		},
+		/** Arthur Edwards **/
+		"AE": {
+			"Impossible": [
+				"Drowning",
+				"Consumed Poison",
+				"Electrocution",
+				"Explosion",
+				"Falling Object",
+				"Fire",
+				"Sniper",
+				"Loud SMG",
+				"Loud Shotgun",
+				"Loud Assault Rifle",
+				"RemoteExplosive",
+				"ImpactExplosive"
+			]
+		},
+		/** Noel Crest **/
+		"NCR": {},
+		/** Sinhi "Akka" Venthan **/
+		"SV": {}
+	}
+}

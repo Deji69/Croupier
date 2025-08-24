@@ -1,0 +1,126 @@
+{
+	"Name": "The Author",
+	"Location": "Sapienza",
+	"Image": "whitespider-ebola.jpg",
+	"Group": "Season 1 Bonus",
+	"Codename": "LASTWORD",
+	"IsMajor": false,
+	"Keywords": ["theauthor", "author"],
+	"Targets": [
+		{
+			"Name": "Craig Black",
+			"Initials": "CB",
+			"ShortName": "Craig",
+			"Image": "ws_ebola_craig_black.jpg",
+			"Keywords": ["craigblack", "craig", "black", "cb"]
+		},
+		{
+			"Name": "Brother Akram",
+			"Initials": "BA",
+			"ShortName": "Akram",
+			"Image": "ws_ebola_brother_akram.jpg",
+			"Keywords": ["brotherakram", "brother", "akram", "ba"]
+		}
+	],
+	"KillMethods": [
+		"Fire Axe", "Kitchen Knife", "Scissors", "Screwdriver"
+	],
+	"Disguises": [
+		{
+			"Name": "Suit",
+			"RepoId": "75759271-e236-4b33-8dd5-7e502c958d05",
+			"Image": "outfit_75759271-e236-4b33-8dd5-7e502c958d05_0.jpg",
+			"Suit": true
+		},
+		{
+			"Name": "Bodyguard",
+			"RepoId": "bf9629e0-f25c-4e71-9561-4a99a93a43e8",
+			"Image": "outfit_bf9629e0-f25c-4e71-9561-4a99a93a43e8_0.jpg",
+			"Keywords": ["bodyguard", "cicada"]
+		},
+		{
+			"Name": "Bohemian",
+			"RepoId": "61b8f96e-4986-4f0a-ab95-dcdc69f51580",
+			"Image": "outfit_61b8f96e-4986-4f0a-ab95-dcdc69f51580_0.jpg",
+			"Keywords": ["bohemian", "hippie", "torres", "piombo", "torrespiombo"]
+		},
+		{
+			"Name": "Brother Akram",
+			"RepoId": "a6034d86-0fa4-46ce-8deb-90acf2d1e485",
+			"Image": "outfit_a6034d86-0fa4-46ce-8deb-90acf2d1e485_0.jpg",
+			"Keywords": ["brotherakram", "akram"]
+		},
+		{
+			"Name": "Chef",
+			"RepoId": "4c6816d8-4ae7-4161-a971-970055e64b34",
+			"Image": "outfit_4c6816d8-4ae7-4161-a971-970055e64b34_0.jpg",
+			"Keywords": ["chef"]
+		},
+		{
+			"Name": "Church Staff",
+			"RepoId": "5440b347-026f-402c-9cd4-3b4e142804ce",
+			"Image": "outfit_5440b347-026f-402c-9cd4-3b4e142804ce_0.jpg",
+			"Keywords": ["churchstaff", "church"]
+		},
+		{
+			"Name": "Craig Black",
+			"RepoId": "e710b6a4-b6f1-40a3-9389-cf297fff8d86",
+			"Image": "outfit_e710b6a4-b6f1-40a3-9389-cf297fff8d86_0.jpg",
+			"Keywords": ["craigblack"]
+		},
+		{
+			"Name": "Gardener",
+			"RepoId": "d788ff58-8a7a-4a85-acdd-c0e5693525f0",
+			"Image": "outfit_d788ff58-8a7a-4a85-acdd-c0e5693525f0_0.jpg",
+			"Keywords": ["gardener"]
+		},
+		{
+			"Name": "Green Plumber",
+			"RepoId": "844680e8-ae40-4fec-92b7-69c7619feb82",
+			"Image": "outfit_844680e8-ae40-4fec-92b7-69c7619feb82_0.jpg",
+			"Keywords": ["greenplumber", "gplumber", "grnplumber", "luigi", "luigimario", "greenplumb", "greenplum", "gplum", "grnplum"]
+		},
+		{
+			"Name": "Housekeeper",
+			"RepoId": "a6c81663-684d-4506-abc0-65b35c4d8b63",
+			"Image": "outfit_a6c81663-684d-4506-abc0-65b35c4d8b63_0.jpg",
+			"Keywords": ["housekeeper", "housekeeping", "housekeep"]
+		},
+		{
+			"Name": "Kitchen Assistant",
+			"RepoId": "10601c6b-1f65-44ed-92a1-bf843f023d3f",
+			"Image": "outfit_10601c6b-1f65-44ed-92a1-bf843f023d3f_0.jpg",
+			"Keywords": ["kitchenassistant", "kitchenstaff", "kitchenass", "kitchensass", "kitchensassistant", "rocco"]
+		},
+		{
+			"Name": "Red Plumber",
+			"RepoId": "37352a6b-eb58-4458-a5d6-522dd0508baa",
+			"Image": "outfit_37352a6b-eb58-4458-a5d6-522dd0508baa_0.jpg",
+			"Keywords": ["redplumber", "rplumber", "mariomario", "mario", "rdplumber"]
+		},
+		{
+			"Name": "Salvatore Bravuomo",
+			"RepoId": "7766b295-35f3-45a8-b73d-10b222ed18ef",
+			"Image": "outfit_7766b295-35f3-45a8-b73d-10b222ed18ef_0.jpg",
+			"Keywords": ["salvatorebravuomo", "salvatore", "bravuomo", "sal", "bravomo", "bravumo"]
+		},
+		{
+			"Name": "SFX Crew",
+			"RepoId": "2fd2437d-a5eb-4bfd-bd2d-a4f240a8f0ce",
+			"Image": "outfit_2fd2437d-a5eb-4bfd-bd2d-a4f240a8f0ce_0.jpg",
+			"Keywords": ["sfxcrew", "crew"]
+		},
+		{
+			"Name": "Super Fan",
+			"RepoId": "95c7f899-e20c-4182-a228-28bd3d8a4ff4",
+			"Image": "outfit_95c7f899-e20c-4182-a228-28bd3d8a4ff4_0.jpg",
+			"Keywords": ["superfan", "super", "fan"]
+		},
+		{
+			"Name": "Waiter",
+			"RepoId": "430e8743-df1a-4e88-955f-793bff2e3a6a",
+			"Image": "outfit_430e8743-df1a-4e88-955f-793bff2e3a6a_0.jpg",
+			"Keywords": ["waiter"]
+		}
+	]
+}

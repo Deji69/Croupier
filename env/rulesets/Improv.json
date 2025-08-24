@@ -1,0 +1,1023 @@
+{
+	"Name": "Improv Roulette",
+	"Rules": {
+		"GenericEliminations": false,
+		"MeleeKillTypes": false,
+		"ThrownKillTypes": false,
+		"AnyExplosives": false,
+		"ImpactExplosives": false,
+		"RemoteExplosives": false,
+		"LoudRemoteExplosives": false,
+		"LiveComplications": true,
+		"LiveComplicationsExcludeStandard": true,
+		"LiveComplicationChance": 25,
+		"LoudSMGIsLargeFirearm": false,
+		"AllowDuplicateDisguise": false,
+		"AllowDuplicateMethod": false,
+		"SuitOnly": false,
+		"AnyDisguise": false,
+		"Banned": [
+			"Banned",
+			"Slow",
+			"Hard",
+			"Extreme",
+			"Impossible",
+			"Buggy",
+			"EasterEgg"
+		]
+	},
+	"Tags": {
+		"KR": {
+			"Impossible": [
+				"Electrocution",
+				"Fire",
+				"InjectedPoison",
+				"SMG",
+				"Sniper",
+				"ImpactExplosive"
+			],
+			"OnlyLoud": [
+				"AssaultRifle",
+				"Shotgun"
+			]
+		},
+		"JK": {
+			"Impossible": [
+				"Electrocution",
+				"Fire",
+				"InjectedPoison",
+				"SMG",
+				"Sniper",
+				"Explosive"
+			],
+			"OnlyLoud": [
+				"AssaultRifle",
+				"Shotgun"
+			]
+		},
+		"VN": {
+			"Banned": [
+				"Fire",
+				"FiberWire",
+				"Electrocution",
+				"InjectedPoison",
+				"ImpactExplosive",
+				"Sniper"
+			],
+			"OnlyLoud": [
+				"Pistol",
+				"AssaultRifle",
+				"Shotgun",
+				"SMG"
+			],
+			"Extreme": [
+				"Fire"
+			],
+			"DuplicateOnlySameDisguise": [
+				"Fire"
+			]
+		},
+		"DM": {
+			"Banned": [
+				"Fire",
+				"FiberWire",
+				"Electrocution",
+				"InjectedPoison",
+				"ImpactExplosive",
+				"Sniper",
+				"ConsumedPoison"
+			],
+			"OnlyLoud": [
+				"Pistol",
+				"AssaultRifle",
+				"Shotgun",
+				"SMG"
+			],
+			"Extreme": [
+				"Fire"
+			],
+			"DuplicateOnlySameDisguise": [
+				"Fire"
+			]
+		},
+		"HSB": {
+			"Banned": [
+				"Fire"
+			],
+			"Extreme": [
+				"Fire"
+			],
+			"DuplicateOnlySameDisguise": [
+				"Fire"
+			]
+		},
+		"MSG": {
+			"Banned": [
+				"Fire"
+			],
+			"Extreme": [
+				"Fire"
+			],
+			"DuplicateOnlySameDisguise": [
+				"Fire"
+			]
+		},
+		"SC": {
+			"Banned": [
+				"ConsumedPoison",
+				"Fire",
+				"Drowning",
+				"Electrocution",
+				"FiberWire",
+				"CombatKnife",
+				"AssaultRifle",
+				"InjectedPoison",
+				"Sniper"
+			],
+			"OnlyLoud": [
+				"Pistol",
+				"Shotgun",
+				"SMG"
+			],
+			"Buggy": [
+				"ConsumedPoison"
+			],
+			"Impossible": [
+				"Fire"
+			]
+		},
+		"FDS": {
+			"Banned": [
+				"Fire",
+				"Drowning",
+				"Electrocution",
+				"FiberWire",
+				"CombatKnife",
+				"AssaultRifle",
+				"InjectedPoison",
+				"Sniper"
+			],
+			"OnlyLoud": [
+				"Pistol",
+				"Shotgun",
+				"SMG"
+			],
+			"Impossible": [
+				"Fire"
+			]
+		},
+		"DB": {},
+		"MA": {
+			"Banned": [
+				"Fire"
+			],
+			"Impossible": [
+				"Fire"
+			]
+		},
+		"CB": {
+			"Banned": [
+				"Fire"
+			],
+			"Impossible": [
+				"Fire"
+			]
+		},
+		"BA": {
+			"Banned": [
+				"Fire"
+			],
+			"Impossible": [
+				"Fire"
+			]
+		},
+		"RZ": {
+			"Banned": [
+				"Drowning",
+				"ConsumedPoison",
+				"Electrocution",
+				"InjectedPoison",
+				"ImpactExplosive",
+				"Sniper"
+			],
+			"OnlyLoud": [
+				"Pistol",
+				"AssaultRifle",
+				"Shotgun",
+				"SMG"
+			],
+			"Extreme": [
+				"Drowning",
+				"Electrocution"
+			]
+		},
+		"CHS": {
+			"Banned": [
+				{
+					"Method": "ConsumedPoison",
+					"Disguises": [
+						"Prisoner"
+					]
+				},
+				{
+					"Method": "Electrocution",
+					"Disguises": [
+						"Prisoner"
+					]
+				},
+				{
+					"Method": "Fire",
+					"Disguises": [
+						"Prisoner"
+					]
+				},
+				{
+					"Method": "ExplosionAccident",
+					"Disguises": [
+						"Prisoner"
+					]
+				},
+				"HostileNonRemote",
+				"FallingObject",
+				"Drowning",
+				"InjectedPoison",
+				"ImpactExplosive",
+				"Sniper"
+			],
+			"OnlyLoud": [
+				"Pistol",
+				"AssaultRifle",
+				"Shotgun",
+				"SMG"
+			],
+			"Hard": [
+				"FallingObject",
+				"HostileNonRemote"
+			]
+		},
+		"KTK": {},
+		"MM": {},
+		"JC": {
+			"Banned": [
+				"Drowning",
+				"Fire",
+				"SMG",
+				"FiberWire",
+				"ImpactExplosive",
+				"Explosive",
+				"Electrocution",
+				"ConsumedPoison",
+				"InjectedPoison",
+				"Sniper"
+			],
+			"OnlyLoud": [
+				"Pistol",
+				"AssaultRifle",
+				"Shotgun"
+			],
+			"Extreme": [
+				"Fire"
+			]
+		},
+		"KM": {
+			"Banned": [
+				"Drowning",
+				"Fire",
+				"SMG",
+				"FiberWire",
+				"ImpactExplosive",
+				"Explosive",
+				"Electrocution",
+				"ConsumedPoison",
+				"InjectedPoison",
+				"Sniper"
+			],
+			"OnlyLoud": [
+				"Pistol",
+				"AssaultRifle",
+				"Shotgun"
+			],
+			"Extreme": [
+				"Fire"
+			]
+		},
+		"ON": {
+			"Banned": [
+				"FallingObject"
+			],
+			"Extreme": [
+				"FallingObject"
+			]
+		},
+		"SY": {
+			"Banned": [
+				"FallingObject"
+			],
+			"Extreme": [
+				"FallingObject"
+			]
+		},
+		"SR": {
+			"Banned": [
+				"Drowning",
+				"Fire",
+				"Electrocution",
+				"FiberWire",
+				"Sniper",
+				"ConsumedPoison"
+			],
+			"OnlyLoud": [
+				"Pistol",
+				"AssaultRifle",
+				"Shotgun",
+				"SMG"
+			],
+			"Extreme": [
+				"Drowning"
+			],
+			"Impossible": [
+				"ConsumedPoison"
+			]
+		},
+		"PG": {
+			"Banned": [
+				"Drowning",
+				"Fire",
+				"Electrocution",
+				"FiberWire",
+				"Sniper"
+			],
+			"OnlyLoud": [
+				"Pistol",
+				"AssaultRifle",
+				"Shotgun",
+				"SMG"
+			],
+			"Hard": [
+				"Fire"
+			],
+			"Extreme": [
+				"Drowning"
+			]
+		},
+		"EB": {
+			"Banned": [
+				"ConsumedPoison",
+				"Drowning",
+				"Fire",
+				"Electrocution",
+				"FiberWire",
+				"Sniper"
+			],
+			"OnlyLoud": [
+				"Pistol",
+				"AssaultRifle",
+				"Shotgun",
+				"SMG"
+			],
+			"Extreme": [
+				"Drowning",
+				"Electrocution"
+			],
+			"Impossible": [
+				"ConsumedPoison"
+			]
+		},
+		"MP": {
+			"Banned": [
+				{
+					"Method": "ConsumedPoison",
+					"Disguises": [
+						"Suit",
+						"Scarecrow"
+					]
+				},
+				{
+					"Method": "Explosive",
+					"Disguises": [
+						"Suit",
+						"Scarecrow"
+					]
+				},
+				{
+					"Method": "ExplosionAccident",
+					"Disguises": [
+						"Suit",
+						"Scarecrow"
+					]
+				},
+				"Loud SMG",
+				"HostileNonRemote",
+				"Drowning",
+				"Fire",
+				"Electrocution",
+				"FiberWire",
+				"Sniper"
+			],
+			"OnlyLoud": [
+				"Pistol",
+				"AssaultRifle",
+				"Shotgun",
+				"SMG"
+			],
+			"Extreme": [
+				"Drowning"
+			]
+		},
+		"ES": {
+			"Banned": [
+				"Electrocution",
+				"Robot Arms",
+				"Explosion",
+				"Sniper",
+				"AssaultRifle"
+			],
+			"OnlyLoud": [
+				"Pistol",
+				"Shotgun",
+				"SMG"
+			]
+		},
+		"YY": {
+			"Banned": [
+				"Fire",
+				"Electrocution",
+				"Explosive",
+				"Drowning",
+				"FiberWire",
+				"InjectedPoison",
+				"ImpactExplosive",
+				"Sniper",
+				"AssaultRifle"
+			],
+			"OnlyLoud": [
+				"Pistol",
+				"Shotgun",
+				"SMG"
+			]
+		},
+		"OC": {
+			"Banned": [
+				"Drowning"
+			],
+			"Extreme": [
+				"Drowning"
+			]
+		},
+		"KL": {},
+		"DF": {},
+		"AR": {
+			"Banned": [
+				"FallingObject",
+				"Fire"
+			],
+			"Impossible": [
+				"FallingObject",
+				"Fire"
+			]
+		},
+		"SK": {
+			"Banned": [
+				{
+					"Method": "Shoot the Car",
+					"Disguises": [
+						"Moses Lee"
+					]
+				},
+				{
+					"Method": "Bomb the Car",
+					"Disguises": [
+						"Moses Lee"
+					]
+				},
+				"FiberWire",
+				"Sniper",
+				"AssaultRifle"
+			],
+			"OnlyLoud": [
+				"Pistol",
+				"Shotgun",
+				"SMG"
+			]
+		},
+		"RK": {
+			"Banned": [
+				"Fire",
+				"FiberWire",
+				"Sniper",
+				"AssaultRifle"
+			],
+			"OnlyLoud": [
+				"Pistol",
+				"Shotgun",
+				"SMG"
+			],
+			"Extreme": [
+				"Fire"
+			]
+		},
+		"AJ": {},
+		"RD": {
+			"Banned": [
+				"ConsumedPoison",
+				"Drowning",
+				"Electrocution",
+				"Fire",
+				"FiberWire",
+				"InjectedPoison",
+				"ImpactExplosive",
+				"Sniper",
+				"SacrificialKnife"
+			],
+			"OnlyLoud": [
+				"AssaultRifle",
+				"Shotgun",
+				"SMG"
+			],
+			"Extreme": [
+				"ConsumedPoison"
+			]
+		},
+		"JF": {
+			"Banned": [
+				"FallingObject",
+				"Drowning",
+				"Electrocution",
+				"FiberWire",
+				"InjectedPoison",
+				"ImpactExplosive",
+				"Sniper",
+				"SacrificialKnife"
+			],
+			"OnlyLoud": [
+				"AssaultRifle",
+				"Shotgun",
+				"SMG"
+			],
+			"Extreme": [
+				"FallingObject"
+			]
+		},
+		"AM": {
+			"Banned": [
+				"Fire",
+				"FiberWire",
+				"InjectedPoison",
+				"ImpactExplosive",
+				"Sniper",
+				"SacrificialKnife"
+			],
+			"OnlyLoud": [
+				"AssaultRifle",
+				"Shotgun",
+				"SMG"
+			],
+			"Hard": [
+				"Fire"
+			]
+		},
+		"BR": {},
+		"WK": {
+			"Banned": [
+				"Drowning",
+				"Fire",
+				"InjectedPoison",
+				"ImpactExplosive",
+				"Explosive",
+				"LoudSniper"
+			],
+			"OnlyLoud": [
+				"AssaultRifle",
+				"Shotgun",
+				"SMG",
+				"Pistol"
+			],
+			"Extreme": [
+				"Drowning",
+				"Fire"
+			]
+		},
+		"VS": {
+			"Banned": [
+				"ConsumedPoison",
+				"InjectedPoison",
+				"ImpactExplosive",
+				"Explosive",
+				"LoudSniper"
+			],
+			"OnlyLoud": [
+				"AssaultRifle",
+				"Shotgun",
+				"SMG",
+				"Pistol"
+			],
+			"Extreme": [
+				"ConsumedPoison"
+			]
+		},
+		"DR": {
+			"Banned": [
+				"ConsumedPoison",
+				"Fire",
+				"Drowning",
+				"InjectedPoison",
+				"ImpactExplosive",
+				"Explosive",
+				"LoudSniper"
+			],
+			"OnlyLoud": [
+				"AssaultRifle",
+				"Shotgun",
+				"SMG",
+				"Pistol"
+			],
+			"Extreme": [
+				"ConsumedPoison",
+				"Fire",
+				"Drowning"
+			]
+		},
+		"BC": {},
+		"J": {
+			"Banned": [
+				"FallingObject",
+				"Fire",
+				"FiberWire",
+				"InjectedPoison",
+				"ImpactExplosive",
+				"Sniper",
+				"BattleAxe",
+				"BeakStaff"
+			],
+			"OnlyLoud": [
+				"Shotgun"
+			],
+			"Impossible": [
+				"FallingObject",
+				"Fire"
+			],
+			"Slow": [
+				"BattleAxe",
+				"BeakStaff"
+			]
+		},
+		"NC": {
+			"Banned": [
+				"Fire",
+				"FiberWire",
+				"InjectedPoison",
+				"ImpactExplosive",
+				"Sniper",
+				"BattleAxe",
+				"BeakStaff"
+			],
+			"OnlyLoud": [
+				"Shotgun"
+			],
+			"Impossible": [
+				"Fire"
+			],
+			"Slow": [
+				"BattleAxe",
+				"BeakStaff"
+			]
+		},
+		"GV": {},
+		"ZW": {
+			"Banned": [
+				"ConsumedPoison",
+				"Drowning",
+				"FiberWire",
+				"InjectedPoison",
+				"Sniper",
+				"HostileNonRemote"
+			],
+			"OnlyLoud": [
+				"Shotgun",
+				"Pistol",
+				"AssaultRifle"
+			],
+			"Extreme": [
+				"HostileNonRemote"
+			],
+			"Impossible": [
+				"ConsumedPoison"
+			]
+		},
+		"SW": {
+			"Banned": [
+				"ConsumedPoison",
+				"Drowning",
+				"FiberWire",
+				"InjectedPoison",
+				"Sniper",
+				"HostileNonRemote",
+				"Fire"
+			],
+			"OnlyLoud": [
+				"Shotgun",
+				"Pistol",
+				"AssaultRifle"
+			],
+			"Hard": [
+				"Drowning",
+				"Fire"
+			],
+			"Extreme": [
+				"ConsumedPoison",
+				"HostileNonRemote"
+			]
+		},
+		"AS": {
+			"Banned": [
+				"Fire",
+				"Fall",
+				"InjectedPoison",
+				"KitchenKnife",
+				"ImpactExplosive",
+				"Sniper",
+				"AssaultRifle"
+			],
+			"OnlyLoud": [
+				"Shotgun",
+				"Pistol",
+				"SMG"
+			],
+			"Impossible": [
+				"Fire"
+			]
+		},
+		"TW": {
+			"Banned": [
+				"ConsumedPoison",
+				"Fire",
+				"Electrocution",
+				"InjectedPoison",
+				"ImpactExplosive",
+				"Sniper"
+			],
+			"OnlyLoud": [
+				"Shotgun",
+				"AssaultRifle",
+				"SMG"
+			],
+			"Extreme": [
+				"ConsumedPoison"
+			],
+			"Impossible": [
+				"Fire"
+			]
+		},
+		"SB": {
+			"Banned": [
+				"ConsumedPoison",
+				"Fire",
+				"Electrocution",
+				"InjectedPoison",
+				"ImpactExplosive",
+				"Sniper"
+			],
+			"OnlyLoud": [
+				"Shotgun",
+				"AssaultRifle",
+				"SMG"
+			],
+			"Extreme": [
+				"ConsumedPoison"
+			],
+			"Impossible": [
+				"Fire"
+			]
+		},
+		"LV": {
+			"Banned": [
+				"Fire",
+				"Electrocution",
+				"InjectedPoison",
+				"ImpactExplosive",
+				"Sniper"
+			],
+			"OnlyLoud": [
+				"Shotgun",
+				"AssaultRifle",
+				"SMG"
+			],
+			"Impossible": [
+				"Fire"
+			]
+		},
+		"CI": {
+			"Banned": [
+				"Fire",
+				"FiberWire",
+				"Sniper",
+				"InjectedPoison",
+				"Shotgun"
+			],
+			"Extreme": [
+				"Fire"
+			]
+		},
+		"MS": {
+			"Banned": [
+				"Fire",
+				"Drowning",
+				"FiberWire",
+				"Sniper",
+				"InjectedPoison",
+				"Shotgun"
+			],
+			"Extreme": [
+				"Fire"
+			]
+		},
+		"AC": {
+			"Banned": [
+				"Fire",
+				"FiberWire",
+				"AssaultRifle",
+				"ImpactExplosive",
+				"Explosive",
+				"Sniper",
+				"InjectedPoison"
+			],
+			"OnlyLoud": [
+				"Shotgun",
+				"SMG"
+			],
+			"Impossible": [
+				"Fire"
+			]
+		},
+		"1": {
+			"Banned": [
+				"FiberWire",
+				"ImpactExplosive",
+				"LoudSMG"
+			],
+			"OnlyLoud": [
+				"Shotgun",
+				"Sniper",
+				"AssaultRifle"
+			]
+		},
+		"2": {
+			"Banned": [
+				"FiberWire",
+				"ImpactExplosive",
+				"LoudSMG"
+			],
+			"OnlyLoud": [
+				"Shotgun",
+				"Sniper",
+				"AssaultRifle"
+			]
+		},
+		"3": {
+			"Banned": [
+				"FiberWire",
+				"ImpactExplosive",
+				"LoudSMG"
+			],
+			"OnlyLoud": [
+				"Shotgun",
+				"Sniper",
+				"AssaultRifle"
+			]
+		},
+		"4": {
+			"Banned": [
+				"FiberWire",
+				"ImpactExplosive",
+				"LoudSMG"
+			],
+			"OnlyLoud": [
+				"Shotgun",
+				"Sniper",
+				"AssaultRifle"
+			]
+		},
+		"5": {
+			"Banned": [
+				"FiberWire",
+				"ImpactExplosive",
+				"LoudSMG"
+			],
+			"OnlyLoud": [
+				"Shotgun",
+				"Sniper",
+				"AssaultRifle"
+			]
+		},
+		"H": {
+			"Banned": [
+				"ConsumedPoison",
+				"Fire",
+				"Drowning",
+				"InjectedPoison",
+				"ImpactExplosive",
+				"LoudSniper"
+			],
+			"OnlyLoud": [
+				"Shotgun",
+				"AssaultRifle"
+			],
+			"Slow": [
+				"ConsumedPoison"
+			],
+			"Hard": [
+				"Drowning"
+			],
+			"Impossible": [
+				"Fire"
+			]
+		},
+		"IR": {
+			"Banned": [
+				"InjectedPoison",
+				"ImpactExplosive",
+				"LoudSniper"
+			],
+			"OnlyLoud": [
+				"Shotgun",
+				"AssaultRifle"
+			]
+		},
+		"DY": {
+			"Banned": [
+				"Fire",
+				"InjectedPoison",
+				"ImpactExplosive",
+				"LoudSMG"
+			],
+			"OnlyLoud": [
+				"Shotgun",
+				"AssaultRifle"
+			],
+			"Extreme": [
+				"Fire"
+			]
+		},
+		"TV": {
+			"Banned": [
+				"Fire",
+				"InjectedPoison",
+				"ImpactExplosive",
+				"LoudSMG"
+			],
+			"OnlyLoud": [
+				"Shotgun",
+				"AssaultRifle"
+			],
+			"Extreme": [
+				"Fire"
+			]
+		},
+		"AE": {
+			"Banned": [
+				"Drowning",
+				"ConsumedPoison",
+				"Electrocution",
+				"Explosion",
+				"FallingObject",
+				"Fire",
+				"Sniper",
+				"RemoteExplosive",
+				"ImpactExplosive"
+			],
+			"Impossible": [
+				"Drowning",
+				"ConsumedPoison",
+				"Electrocution",
+				"Explosion",
+				"FallingObject",
+				"Fire",
+				"Sniper",
+				"RemoteExplosive",
+				"ImpactExplosive"
+			]
+		},
+		"NCR": {
+			"Banned": [
+				"Sniper",
+				"InjectedPoison",
+				"ImpactExplosive"
+			],
+			"OnlyLoud": [
+				"Shotgun",
+				"AssaultRifle"
+			]
+		},
+		"SV": {
+			"Banned": [
+				"Sniper",
+				"InjectedPoison",
+				"ImpactExplosive"
+			],
+			"OnlyLoud": [
+				"Shotgun",
+				"AssaultRifle"
+			]
+		}
+	}
+}
