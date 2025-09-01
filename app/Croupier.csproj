@@ -26,8 +26,10 @@
 	<PropertyGroup>
 		<ApplicationIcon>Resources\CroupierLogoIconsFlatLg.ico</ApplicationIcon>
 		<AssemblyName>Croupier</AssemblyName>
-		<Copyright>BluntsNBeatz 2024</Copyright>
+		<Copyright>BluntsNBeatz 2025</Copyright>
 		<PackageIcon>CroupierLogoIconsFlatLg.png</PackageIcon>
+		<Title>Croupier</Title>
+		<PackageProjectUrl>https://croupier.nbeatz.net</PackageProjectUrl>
 	</PropertyGroup>
 	<ItemGroup>
 		<Content Include="Resources\CroupierLogoIconsFlatLg.ico" />
