@@ -48,12 +48,14 @@ namespace Croupier {
 		auto ImbuePacifyEvent(const PacifyEventValue& ev) const -> std::optional<nlohmann::json>;
 		auto ImbueDisguiseEvent(const std::string& repoId) -> nlohmann::json;
 		auto ImbuePlayerLocation(nlohmann::json& json, bool asHero = false) const -> void;
+		auto ImbuePlayerInfo(nlohmann::json& json, bool asHero = false) const -> void;
 		auto ImbueItemInfo(ZEntityRef entity, nlohmann::json& json) -> void;
 		auto ImbueActorInfo(TEntityRef<ZActor> actor, nlohmann::json& json, bool asActor = true) const -> void;
 		auto ImbueItemRepositoryInfo(nlohmann::json& json, ZRepositoryID repoId) -> void;
 		auto ImbuePositionInfo(nlohmann::json& json, SVector3 vec, std::string prefix = "") -> void;
 		auto ImbueSetpieceActivatorInfo(ZEntityRef entity, nlohmann::json& j) -> bool;
 		auto ImbuedPlayerLocation(nlohmann::json&& json = {}, bool asHero = false) const -> nlohmann::json;
+		auto ImbuedPlayerInfo(nlohmann::json&& json = {}, bool asHero = false) const -> nlohmann::json;
 		auto ImbuedItemInfo(ZEntityRef entity, nlohmann::json&& json = {}) -> nlohmann::json;
 		auto ImbuedActorInfo(TEntityRef<ZActor> actor, nlohmann::json&& json = {}, bool asActor = true) const -> nlohmann::json;
 		auto ImbuedPositionInfo(SVector3 vec, std::string prefix = "", nlohmann::json&& json = {}) -> nlohmann::json;

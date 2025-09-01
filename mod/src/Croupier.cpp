@@ -154,7 +154,7 @@ auto CroupierPlugin::ProcessPlayerState() -> void {
 	// Process area entry for bingo
 	auto area = State::current.getArea(State::current.playerMatrix.Trans);
 	if (area && area != State::current.area) {
-		this->SendCustomEvent("EnterArea"sv, ImbuedPlayerLocation({
+		this->SendCustomEvent("EnterArea"sv, ImbuedPlayerInfo({
 			{"Area", area->ID},
 		}));
 	}
@@ -165,7 +165,7 @@ auto CroupierPlugin::ProcessPlayerState() -> void {
 	auto roomId = ZRoomManagerCreator::GetRoomID(spatial->GetWorldMatrix().Pos);
 	if (roomId != State::current.roomId && roomId != -1) {
 		State::current.roomId = roomId;
-		this->SendCustomEvent("EnterRoom"sv, ImbuedPlayerLocation({
+		this->SendCustomEvent("EnterRoom"sv, ImbuedPlayerInfo({
 			{"Room", roomId},
 		}));
 	}
@@ -218,7 +218,7 @@ auto CroupierPlugin::ProcessSpinState() -> void {
 		}
 
 		if (actor.m_bIsBeingDragged && gameplay.playerIsDragging && !gameplay.sentPlayerDraggingEvent) {
-			SendCustomEvent("DragBodyMove"sv, ImbuedActorInfo(actorRef, ImbuedPlayerLocation()));
+			SendCustomEvent("DragBodyMove"sv, ImbuedActorInfo(actorRef, ImbuedPlayerInfo()));
 			gameplay.sentPlayerDraggingEvent = true;
 		}
 
@@ -647,7 +647,7 @@ auto CroupierPlugin::ImbuePacifyEvent(const PacifyEventValue& ev) const -> std::
 	if (!actorData) return std::nullopt;
 	auto const playerOutfitRepoId = ZRepositoryID(ev.OutfitRepositoryId);
 	auto const actorOutfit = actorData->disguiseRepoId ? this->GetOutfitByRepoId(*actorData->disguiseRepoId) : nullptr;
-	return ImbuedPlayerLocation({
+	return ImbuedPlayerInfo({
 		{"RepositoryId", ev.RepositoryId},
 		{"Accident", ev.Accident},
 		{"ActorName", ev.ActorName},
@@ -703,6 +703,16 @@ auto CroupierPlugin::ImbuePlayerLocation(json& json, bool asHero) const -> void 
 	});
 }
 
+auto CroupierPlugin::ImbuePlayerInfo(json& json, bool asHero) const -> void {
+	const auto& trans = State::current.playerMatrix.Trans;
+	ImbuePlayerLocation(json, asHero);
+	auto disguiseChange = State::current.getLastDisguiseChange();
+	json.merge_patch({
+		{asHero ? "HeroOutfit" : "Outfit", disguiseChange ? disguiseChange->disguiseRepoId : ""},
+		{asHero ? "HeroOutfitIsHitmanSuit" : "OutfitIsHitmanSuit", !disguiseChange},
+	});
+}
+
 static auto weaponAnimSetToString(ECCWeaponAnimSet animsSet) -> std::string {
 	switch (animsSet) {
 		case ECCWeaponAnimSet::AS_AXE:
@@ -746,7 +756,7 @@ auto CroupierPlugin::ImbueItemEvent(const ItemEventValue& ev, EActionType action
 		if (State::current.collectedItemInstances.contains(instanceId))
 			continue;
 		State::current.collectedItemInstances.insert(instanceId);
-		return ImbuedPlayerLocation({
+		return ImbuedPlayerInfo({
 			{"RepositoryId", ev.RepositoryId},
 			{"InstanceId", std::format("{}", instanceId)},
 			{"ItemType", ev.ItemType},
@@ -928,6 +938,11 @@ auto CroupierPlugin::ImbuedPlayerLocation(json&& j, bool asHero) const -> json {
 	return j;
 }
 
+auto CroupierPlugin::ImbuedPlayerInfo(json&& j, bool asHero) const -> json {
+	ImbuePlayerInfo(j, asHero);
+	return j;
+}
+
 auto CroupierPlugin::ImbuedActorInfo(TEntityRef<ZActor> entity, json&& js, bool asActor) const -> json {
 	ImbueActorInfo(entity, js, asActor);
 	return js;
@@ -1038,10 +1053,10 @@ auto CroupierPlugin::SetupEvents() -> void {
 		State::current.disguiseChanges.emplace_back(ev.Value.value, ev.Timestamp);
 	});
 	events.listen<Events::FriskedSuccess>([this](const ServerEvent<Events::FriskedSuccess>& ev) {
-		this->SendCustomEvent("FriskedSuccess"sv, ImbuedPlayerLocation());
+		this->SendCustomEvent("FriskedSuccess"sv, ImbuedPlayerInfo());
 	});
 	events.listen<Events::Dart_Hit>([this](const ServerEvent<Events::Dart_Hit>& ev) {
-		this->SendCustomEvent("DartHit"sv, ImbuedPlayerLocation({
+		this->SendCustomEvent("DartHit"sv, ImbuedPlayerInfo({
 			{"RepositoryId", ev.Value.RepositoryId},
 			{"ActorType", ev.Value.ActorType},
 			{"Blind", ev.Value.Blind},
@@ -1054,7 +1069,7 @@ auto CroupierPlugin::SetupEvents() -> void {
 		//auto imbued = this->ImbueItemEvent(ev.Value, EActionType::AT_ITEM_INTERACTION);
 		//if (imbued) this->SendImbuedEvent(ev, *imbued);
 		lastThrownItem = ev.Value.RepositoryId;
-		this->SendCustomEvent("ItemThrown"sv, ImbuedPlayerLocation({
+		this->SendCustomEvent("ItemThrown"sv, ImbuedPlayerInfo({
 			{"RepositoryId", ev.Value.RepositoryId},
 			{"InstanceId", ev.Value.InstanceId},
 			{"ItemType", ev.Value.ItemType},
@@ -1067,7 +1082,7 @@ auto CroupierPlugin::SetupEvents() -> void {
 	});
 	events.listen<Events::Trespassing>([this](const ServerEvent<Events::Trespassing>& ev) {
 		State::current.isTrespassing = ev.Value.IsTrespassing;
-		this->SendCustomEvent("Trespassing"sv, ImbuedPlayerLocation());
+		this->SendCustomEvent("Trespassing"sv, ImbuedPlayerInfo());
 	});
 	events.listen<Events::BodyFound>([this](const ServerEvent<Events::BodyFound>& ev) {
 		this->SendCustomEvent("BodyFound"sv, json{
@@ -1078,7 +1093,7 @@ auto CroupierPlugin::SetupEvents() -> void {
 		});
 	});
 	events.listen<Events::Door_Unlocked>([this](const ServerEvent<Events::Door_Unlocked>& ev) {
-		this->SendCustomEvent("DoorUnlocked"sv, ImbuedPlayerLocation());
+		this->SendCustomEvent("DoorUnlocked"sv, ImbuedPlayerInfo());
 	});
 	events.listen<Events::Pacify>([this](const ServerEvent<Events::Pacify>& ev) {
 		auto data = this->ImbuePacifyEvent(ev.Value);
@@ -1394,7 +1409,7 @@ auto CroupierPlugin::SetupEvents() -> void {
 		}
 	});
 	events.listen<Events::DrainPipe_climbed>([this](const ServerEvent<Events::DrainPipe_climbed>& ev) {
-		this->SendCustomEvent("DrainPipeClimbed"sv, ImbuedPlayerLocation());
+		this->SendCustomEvent("DrainPipeClimbed"sv, ImbuedPlayerInfo());
 	});
 	events.listen<Events::SecuritySystemRecorder>([this](const ServerEvent<Events::SecuritySystemRecorder>& ev) {
 		switch (ev.Value.event) {
@@ -2191,7 +2206,7 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 		case ZHMPin::OnEvacuationStarted: {
 			auto vip = entity.QueryInterface<ZVIPControllerEntity>();
 			if (!vip || !vip->m_rVIP) break;
-			SendCustomEvent("OnEvacuationStarted"sv, ImbuedPlayerLocation(ImbuedActorInfo(vip->m_rVIP, {}, true), true));
+			SendCustomEvent("OnEvacuationStarted"sv, ImbuedPlayerInfo(ImbuedActorInfo(vip->m_rVIP, {}, true), true));
 			break;
 		}
 		case ZHMPin::DraggingStartMoving: {
@@ -2213,7 +2228,7 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 				auto weap = entity.QueryInterface<ZHM5ItemWeapon>();
 				if (!weap) break;
 				auto descriptor = weap->m_pItemConfigDescriptor;
-				SendCustomEvent("PlayerShot"sv, ImbuedPlayerLocation(ImbuedItemInfo(entity)));
+				SendCustomEvent("PlayerShot"sv, ImbuedPlayerInfo(ImbuedItemInfo(entity)));
 			}
 			State::current.playerShooting = true;
 			State::current.playerShootingSinceFrame = true;
@@ -2222,12 +2237,12 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 		//case ZHMPin::SpawnPhysicsClip:
 		case ZHMPin::WeaponStartReload: {
 			auto weap = entity.QueryInterface<ZHM5ItemWeapon>();
-			SendCustomEvent("OnWeaponReload"sv, ImbuedPlayerLocation(ImbuedItemInfo(entity)));
+			SendCustomEvent("OnWeaponReload"sv, ImbuedPlayerInfo(ImbuedItemInfo(entity)));
 			break;
 		}
 		case ZHMPin::AgilityStart: {
 			if (!State::current.playerStartingAgility) {
-				SendCustomEvent("AgilityStart", ImbuedPlayerLocation());
+				SendCustomEvent("AgilityStart", ImbuedPlayerInfo());
 			}
 			State::current.playerStartingAgility = true;
 			State::current.playerStartingAgilitySinceFrame = true;
@@ -2237,7 +2252,7 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 			auto singleDoor = entity.QueryInterface<ZHM5SingleDoor2>();
 			auto doubleDoor = entity.QueryInterface<ZHM5DoubleDoor2>();
 			if (!singleDoor && !doubleDoor) break;
-			SendCustomEvent("OpenDoor"sv, ImbuedPlayerLocation({
+			SendCustomEvent("OpenDoor"sv, ImbuedPlayerInfo({
 				{"Type", doubleDoor ? "Double" : "Single"}
 			}));
 			break;
@@ -2249,11 +2264,11 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 		//	Logger::Debug("PIN: WeaponEquipSuspicious {}", typeName);
 		//	break;
 		case static_cast<ZHMPin>(3896618861): // OnEquip
-			SendCustomEvent("OnEquip"sv, ImbuedPlayerLocation(ImbuedItemInfo(entity)));
+			SendCustomEvent("OnEquip"sv, ImbuedPlayerInfo(ImbuedItemInfo(entity)));
 			break;
 		case ZHMPin::InstinctActive:
 			if (!State::current.playerInInstinct)
-				SendCustomEvent("InstinctActive"sv, ImbuedPlayerLocation());
+				SendCustomEvent("InstinctActive"sv, ImbuedPlayerInfo());
 			State::current.playerInInstinct = true;
 			State::current.playerInInstinctSinceFrame = true;
 			break;
@@ -2261,15 +2276,15 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 			const auto& trans = State::current.playerMatrix.Trans;
 			auto pos = float4{trans.x, trans.y, trans.z, 1.0};
 			if (this->gameplay.playerBodyShotPos != pos) {
-				SendCustomEvent("ProjectileBodyShot"sv, ImbuedPlayerLocation());
+				SendCustomEvent("ProjectileBodyShot"sv, ImbuedPlayerInfo());
 				this->gameplay.playerBodyShotPos = pos;
 			}
 			break;
 		}
 		case ZHMPin::ExplosionAtPos: {
 			auto pos = data.As<SVector3>();
-			pos ? SendCustomEvent("Explosion"sv, ImbuedPositionInfo(*pos, "", ImbuedPlayerLocation({}, true)))
-				: SendCustomEvent("Explosion"sv, ImbuedPlayerLocation({}, true));
+			pos ? SendCustomEvent("Explosion"sv, ImbuedPositionInfo(*pos, "", ImbuedPlayerInfo({}, true)))
+				: SendCustomEvent("Explosion"sv, ImbuedPlayerInfo({}, true));
 			break;
 		}
 		case ZHMPin::OnDestroyed: {
@@ -2307,21 +2322,21 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 			});
 			if (!initialStateOn.IsEmpty())
 				obj.merge_patch({ {"InitialStateOn", initialStateOn.Get()} });
-			SendCustomEvent("OnDestroy"sv, ImbuedPlayerLocation(std::move(obj), true));
+			SendCustomEvent("OnDestroy"sv, ImbuedPlayerInfo(std::move(obj), true));
 			break;
 		}
 		case ZHMPin::OnTurnOn: {// ZEntity > ZCompositeEntity > ZCompositeEntity > ZCompositeEntity
 			json obj;
 			if (!ImbueSetpieceActivatorInfo(entity, obj))
 				break;
-			SendCustomEvent("OnTurnOn"sv, ImbuedPlayerLocation(std::move(obj), true));
+			SendCustomEvent("OnTurnOn"sv, ImbuedPlayerInfo(std::move(obj), true));
 			break;
 		}
 		case ZHMPin::OnTurnOff: {// ZEntity > ZCompositeEntity > ZCompositeEntity > ZCompositeEntity
 			json obj;
 			if (!ImbueSetpieceActivatorInfo(entity, obj))
 				break;
-			SendCustomEvent("OnTurnOff"sv, ImbuedPlayerLocation(std::move(obj), true));
+			SendCustomEvent("OnTurnOff"sv, ImbuedPlayerInfo(std::move(obj), true));
 			break;
 		}
 		case ZHMPin::OnItemDestroyed: {
@@ -2331,7 +2346,7 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 			auto repoId = itemSpawner->m_rMainItemKey.m_pInterfaceRef->m_RepositoryId.ToString();
 			auto pos = itemSpawner->GetWorldMatrix().Pos;
 			auto area = State::current.getArea(pos);
-			SendCustomEvent("ItemDestroyed"sv, ImbuedPositionInfo(itemSpawner->m_mTransform.Trans, "", ImbuedPlayerLocation({
+			SendCustomEvent("ItemDestroyed"sv, ImbuedPositionInfo(itemSpawner->m_mTransform.Trans, "", ImbuedPlayerInfo({
 				{"RepositoryId", repoId.c_str()},
 			}, true)));
 			break;
@@ -2367,11 +2382,11 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 					{"CarRoom", roomId},
 				});
 			}
-			SendCustomEvent("CarExploded"sv, ImbuedPlayerLocation(std::move(json)));
+			SendCustomEvent("CarExploded"sv, ImbuedPlayerInfo(std::move(json)));
 			break;
 		}
 		case ZHMPin::OnPickup: {// ZItemSpawner pickups
-			SendCustomEvent("OnPickup"sv, ImbuedPlayerLocation(ImbuedItemInfo(entity), true));
+			SendCustomEvent("OnPickup"sv, ImbuedPlayerInfo(ImbuedItemInfo(entity), true));
 			break;
 		}
 		//case ZHMPin::OnDropByHero: // ZHM5ItemWeapon
@@ -2391,21 +2406,21 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 		//case ZHMPin::OnThrown: // ZHM5Item, ZEntity
 		//	break;
 		case ZHMPin::OnAttachToHitman: { // ZHM5Item, ZHM5ItemCCWeapon, ZEntity // accomodates coins etc.
-			SendCustomEvent("OnAttachToHitman"sv, ImbuedPlayerLocation(ImbuedItemInfo(entity)));
+			SendCustomEvent("OnAttachToHitman"sv, ImbuedPlayerInfo(ImbuedItemInfo(entity)));
 			break;
 		}
 		case ZHMPin::DoorBroken:
-			SendCustomEvent("DoorBroken"sv, ImbuedPlayerLocation());
+			SendCustomEvent("DoorBroken"sv, ImbuedPlayerInfo());
 			break;
 		case ZHMPin::OnIsFullyInCrowd:
-			SendCustomEvent("OnIsFullyInCrowd"sv, ImbuedPlayerLocation());
+			SendCustomEvent("OnIsFullyInCrowd"sv, ImbuedPlayerInfo());
 			break;
 		case ZHMPin::OnIsFullyInVegetation:
-			SendCustomEvent("OnIsFullyInVegetation"sv, ImbuedPlayerLocation());
+			SendCustomEvent("OnIsFullyInVegetation"sv, ImbuedPlayerInfo());
 			break;
 		case ZHMPin::OnTakeDamage:
 		case ZHMPin::TakeDamage:
-			SendCustomEvent("OnTakeDamage"sv, ImbuedPlayerLocation());
+			SendCustomEvent("OnTakeDamage"sv, ImbuedPlayerInfo());
 			break;
 		case ZHMPin::HMMovementIndex: {
 			auto moveIdx = data.As<int32>();
@@ -2413,7 +2428,7 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 			auto moveType = static_cast<PlayerMoveType>(*moveIdx);
 			if (State::current.playerMoveType != moveType) {
 				State::current.playerMoveType = moveType;
-				SendCustomEvent("Movement"sv, ImbuedPlayerLocation());
+				SendCustomEvent("Movement"sv, ImbuedPlayerInfo());
 			}
 			break;
 		}
