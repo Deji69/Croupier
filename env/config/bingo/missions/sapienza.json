@@ -519,7 +519,10 @@
 			"Difficulty": "Medium",
 			"Missions": ["World of Tomorrow"],
 			"OnPickup": {
-				"RepositoryItemType": "eOther_Keycard_A"
+				"RepositoryItem": [
+					"c8a504a7-c018-4ea6-8625-09d2124ea47c",
+					"e3640fa0-96cf-4b96-8a6d-6cfdd06b2781"
+				]
 			}
 		},
 		{

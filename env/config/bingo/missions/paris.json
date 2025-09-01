@@ -5,8 +5,8 @@
 		{
 			"ID": "Helipad",
 			"Missions": ["The Showstopper", "Holiday Hoarders"],
-			"From": [-279.825, -2.929, -4.935],
-			"To": [-328.375, 32.669, 0.215]
+			"From": [-328.375, -2.929, -4.935],
+			"To": [-279.825, 32.669, 0.215]
 		},
 		{
 			"ID": "TopFloor",
@@ -174,7 +174,7 @@
 			"Tags": ["Action", "Interact"],
 			"Setpiece": {
 				// Spaces are intentional - ask IOI
-				"Name": "Paris_Firework_Schedule     "
+				"Name": "Paris_Firework_Schedule      "
 			}
 		},
 		{

@@ -24,6 +24,26 @@
 		}
 	},
 	{
+		"Name": "No Agility In Disguise",
+		"Type": "Complication",
+		"Tip": "Do not perform any agility action while wearing a disguise.",
+		"Group": "Action",
+		"Difficulty": "High",
+		"AgilityStart": {
+			"OutfitIsHitmanSuit": false
+		}
+	},
+	{
+		"Name": "No Agility In Suit",
+		"Type": "Complication",
+		"Tip": "Do not perform any agility action while wearing your suit.",
+		"Group": "Action",
+		"Difficulty": "Medium",
+		"AgilityStart": {
+			"OutfitIsHitmanSuit": true
+		}
+	},
+	{
 		"Disabled": true,
 		"Name": "No Assault Rifle Shots",
 		"Type": "Complication",
