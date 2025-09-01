@@ -21,33 +21,14 @@
 		}
 	},
 	{
-		"Name": "No Target KOs",
+		"Name": "No Civilian KOs",
 		"Type": "Complication",
-		"Tip": "Do not pacify any of the targets.",
+		"Tip": "Do not pacify any civilian NPCs.",
 		"Group": "Pacify",
-		"Difficulty": "VeryHigh",
+		"Difficulty": "Medium",
 		"Pacify": {
-			"IsTarget": true
-		}
-	},
-	{
-		"Name": "No Non-Target KOs",
-		"Type": "Complication",
-		"Tip": "Do not pacify any non-target NPCs.",
-		"Group": "Pacify",
-		"Difficulty": "VeryHigh",
-		"Pacify": {
+			"ActorType": "Civilian",
 			"IsTarget": false
-		}
-	},
-	{
-		"Name": "No Male KOs",
-		"Type": "Complication",
-		"Tip": "Do not pacify any male NPCs.",
-		"Group": "Pacify",
-		"Difficulty": "VeryHigh",
-		"Pacify": {
-			"IsFemale": false
 		}
 	},
 	{
@@ -71,34 +52,34 @@
 		}
 	},
 	{
-		"Name": "No Civilian KOs",
+		"Disabled": true,
+		"Name": "No KO In Disguise",
 		"Type": "Complication",
-		"Tip": "Do not pacify any civilian NPCs.",
+		"Tip": "Do not pacify anyone while you are wearing a disguise.",
 		"Group": "Pacify",
-		"Difficulty": "Medium",
+		"Difficulty": "High",
 		"Pacify": {
-			"ActorType": "Civilian",
+			"HeroOutfitIsHitmanSuit": false
+		}
+	},
+	{
+		"Name": "No Non-Target KOs",
+		"Type": "Complication",
+		"Tip": "Do not pacify any non-target NPCs.",
+		"Group": "Pacify",
+		"Difficulty": "VeryHigh",
+		"Pacify": {
 			"IsTarget": false
 		}
 	},
 	{
-		"Name": "No Same Disguise KOs",
+		"Name": "No Male KOs",
 		"Type": "Complication",
-		"Tip": "Do not pacify any NPC wearing the same disguise as you.",
+		"Tip": "Do not pacify any male NPCs.",
 		"Group": "Pacify",
-		"Difficulty": "Medium",
+		"Difficulty": "VeryHigh",
 		"Pacify": {
-			"ActorHasSameOutfit": true
-		}
-	},
-	{
-		"Name": "No Unique Disguise KOs",
-		"Type": "Complication",
-		"Tip": "Do not pacify any NPC wearing a unique disguise.",
-		"Group": "Pacify",
-		"Difficulty": "Medium",
-		"Pacify": {
-			"ActorOutfitIsUnique": true
+			"IsFemale": false
 		}
 	},
 	{
@@ -112,13 +93,23 @@
 		}
 	},
 	{
-		"Name": "No Throw KOs",
+		"Name": "No Target KOs",
 		"Type": "Complication",
-		"Tip": "Do not use thrown objects to pacify anyone.",
+		"Tip": "Do not pacify any of the targets.",
+		"Group": "Pacify",
+		"Difficulty": "VeryHigh",
+		"Pacify": {
+			"IsTarget": true
+		}
+	},
+	{
+		"Name": "No Same Disguise KOs",
+		"Type": "Complication",
+		"Tip": "Do not pacify any NPC wearing the same disguise as you.",
 		"Group": "Pacify",
 		"Difficulty": "Medium",
 		"Pacify": {
-			"KillMethodBroad": "throw"
+			"ActorHasSameOutfit": true
 		}
 	},
 	{
@@ -129,6 +120,26 @@
 		"Difficulty": "Medium",
 		"Pacify": {
 			"DamageEvents": "Sedated"
+		}
+	},
+	{
+		"Name": "No Throw KOs",
+		"Type": "Complication",
+		"Tip": "Do not use thrown objects to pacify anyone.",
+		"Group": "Pacify",
+		"Difficulty": "Medium",
+		"Pacify": {
+			"KillMethodBroad": "throw"
+		}
+	},
+	{
+		"Name": "No Unique Disguise KOs",
+		"Type": "Complication",
+		"Tip": "Do not pacify any NPC wearing a unique disguise.",
+		"Group": "Pacify",
+		"Difficulty": "Medium",
+		"Pacify": {
+			"ActorOutfitIsUnique": true
 		}
 	},
 	{
