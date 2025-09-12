@@ -573,7 +573,7 @@ auto CroupierPlugin::GetOutfitByRepoId(ZRepositoryID repoId) const -> const ZGlo
 auto CroupierPlugin::ImbueDisguiseEvent(const std::string& repoId) -> json {
 	auto outfit = this->GetOutfitByRepoId(repoId);
 	auto json = json::object({ {"RepositoryId", repoId} });
-	ImbuePlayerLocation(json);
+	ImbuePlayerInfo(json);
 	if (outfit) {
 		json.merge_patch({
 			{"Title", outfit->m_sTitle},
@@ -594,35 +594,18 @@ auto CroupierPlugin::ImbueDisguiseEvent(const std::string& repoId) -> json {
 	return json;
 }
 
-auto CroupierPlugin::ImbueActorInfo(TEntityRef<ZActor> ref, json& j, bool asActor) const -> void {
+auto CroupierPlugin::ImbueActorInfoWithReference(TEntityRef<ZActor> ref, json& j, bool asActor, bool referenceDataOnly) const -> void {
 	if (!ref) return;
 
 	const auto actor = ref.m_pInterfaceRef;
 	const auto repoEntity = ref.m_ref.QueryInterface<ZRepositoryItemEntity>();
 
 	if (repoEntity) {
+		const auto& repoId = repoEntity->m_sId;
 		j.merge_patch({
-			{"ActorRepositoryId", repoEntity->m_sId.ToString()},
+			{"ActorRepositoryId", repoId.ToString()},
 		});
-
-		if (const auto actorData = State::current.getActorDataByRepoId(repoEntity->m_sId)) {
-			auto area = State::current.getArea(actorData->transform.Trans);
-			j.merge_patch({
-				{"ActorArea", area ? area->ID : ""},
-				{"ActorHasDisguise", actorData->hasDisguise},
-				{"ActorIsDead", actorData->isDead},
-				{"ActorIsFemale", actorData->isFemale},
-				{"ActorIsPacified", actorData->isPacified},
-				{"ActorIsTarget", actorData->isTarget},
-				{"ActorOutfitType", actorData->outfitType},
-				{"ActorRoom", actorData->roomId},
-				{"ActorPosition", {
-					{"X", actorData->transform.Trans.x},
-					{"Y", actorData->transform.Trans.y},
-					{"Z", actorData->transform.Trans.z},
-				}},
-			});
-		}
+		if (!referenceDataOnly) ImbueActorInfoWithRepoID(repoId, j, asActor, true);
 	}
 
 	if (actor->m_rOutfit) {
@@ -640,6 +623,41 @@ auto CroupierPlugin::ImbueActorInfo(TEntityRef<ZActor> ref, json& j, bool asActo
 		{"ActorWeaponIndex", actor->m_nWeaponIndex},
 		{"ActorWeaponUnholstered", actor->m_bWeaponUnholstered},
 	});
+}
+
+auto CroupierPlugin::ImbueActorInfoWithRepoID(ZRepositoryID repoId, json& j, bool asActor, bool repoDataOnly) const -> void {
+	j.merge_patch({
+		{"ActorRepositoryId", repoId.ToString()},
+	});
+
+	if (const auto actorData = State::current.getActorDataByRepoId(repoId)) {
+		auto area = State::current.getArea(actorData->transform.Trans);
+		j.merge_patch({
+			{"ActorArea", area ? area->ID : ""},
+			{"ActorHasDisguise", actorData->hasDisguise},
+			{"ActorIsDead", actorData->isDead},
+			{"ActorIsFemale", actorData->isFemale},
+			{"ActorIsPacified", actorData->isPacified},
+			{"ActorIsTarget", actorData->isTarget},
+			{"ActorOutfitType", actorData->outfitType},
+			{"ActorRoom", actorData->roomId},
+			{"ActorPosition", {
+				{"X", actorData->transform.Trans.x},
+				{"Y", actorData->transform.Trans.y},
+				{"Z", actorData->transform.Trans.z},
+			}},
+		});
+		if (actorData->actor && !repoDataOnly)
+			ImbueActorInfoWithReference(*actorData->actor, j, asActor, true);
+	}
+}
+
+auto CroupierPlugin::ImbueActorInfo(TEntityRef<ZActor> ref, json& j, bool asActor) const -> void {
+	ImbueActorInfoWithReference(ref, j, asActor);
+}
+
+auto CroupierPlugin::ImbueActorInfo(ZRepositoryID repoId, json& j, bool asActor) const -> void {
+	ImbueActorInfoWithRepoID(repoId, j, asActor);
 }
 
 auto CroupierPlugin::ImbuePacifyEvent(const PacifyEventValue& ev) const -> std::optional<json> {
@@ -789,14 +807,24 @@ auto CroupierPlugin::ImbueItemRepositoryInfo(json& j, ZRepositoryID repoId) -> v
 						if (entry.sKey == "ItemType")
 							itemType = *entry.value.As<ZString>();
 						else if (entry.sKey == "Perks") {
-							auto perksArr = entry.value.As<TArray<ZString>>();
-							if (!perksArr) continue;
-							perks = std::vector<std::string>{perksArr->begin(), perksArr->end()};
+							auto arr = entry.value.As<TArray<ZDynamicObject>>();
+							if (!arr) continue;
+							perks.reserve(arr->size());
+							for (auto& obj : *arr) {
+								auto str = obj.As<ZString>();
+								if (!str) continue;
+								perks.emplace_back(*str);
+							}
 						}
 						else if (entry.sKey == "OnlineTraits") {
-							auto perksArr = entry.value.As<TArray<ZString>>();
-							if (!perksArr) continue;
-							onlineTraits = std::vector<std::string>{perksArr->begin(), perksArr->end()};
+							auto arr = entry.value.As<TArray<ZDynamicObject>>();
+							if (!arr) continue;
+							onlineTraits.reserve(arr->size());
+							for (auto& obj : *arr) {
+								auto str = obj.As<ZString>();
+								if (!str) continue;
+								onlineTraits.emplace_back(*str);
+							}
 						}
 						else if (entry.sKey == "CommonName") {
 							commonName = *entry.value.As<ZString>();
@@ -948,6 +976,11 @@ auto CroupierPlugin::ImbuedActorInfo(TEntityRef<ZActor> entity, json&& js, bool 
 	return js;
 }
 
+auto CroupierPlugin::ImbuedActorInfo(ZRepositoryID repoId, json&& js, bool asActor) const -> json {
+	ImbueActorInfo(repoId, js, asActor);
+	return js;
+}
+
 auto CroupierPlugin::ImbuedItemInfo(ZEntityRef entity, json&& js) -> json {
 	ImbueItemInfo(entity, js);
 	return js;
@@ -1054,6 +1087,15 @@ auto CroupierPlugin::SetupEvents() -> void {
 	});
 	events.listen<Events::FriskedSuccess>([this](const ServerEvent<Events::FriskedSuccess>& ev) {
 		this->SendCustomEvent("FriskedSuccess"sv, ImbuedPlayerInfo());
+	});
+	events.listen<Events::Actorsick>([this](const ServerEvent<Events::Actorsick>& ev) {
+		this->SendCustomEvent("Actorsick"sv, ImbuedActorInfo(ZRepositoryID(ev.Value.actor_R_ID), ImbuedPlayerInfo({
+			{"ActorID", ev.Value.ActorId},
+			//{"actor_R_ID", ev.Value.actor_R_ID},
+			{"IsTarget", ev.Value.IsTarget},
+			{"ItemRepositoryId", ev.Value.item_R_ID},
+			{"SetpieceRepositoryId", ev.Value.setpiece_R_ID},
+		})));
 	});
 	events.listen<Events::Dart_Hit>([this](const ServerEvent<Events::Dart_Hit>& ev) {
 		this->SendCustomEvent("DartHit"sv, ImbuedPlayerInfo({
@@ -2140,6 +2182,7 @@ static std::set<std::string> eventsNotToSend = {
 	"FirstNonHeadshot",
 	"HeroSpawn_Location",
 	"HoldingIllegalWeapon", // ?
+	"ItemPickedUp",
 	//"ItemRemovedFromInventory",
 	"MurderedBodySeen",
 	"Noticed_Pacified",
@@ -2160,6 +2203,7 @@ static std::set<std::string> eventsNotToSend = {
 	"ShotsFired",
 
 	// Imbued
+	"Actorsick",
 	"BodyFound",
 	"Dart_Hit",
 	"Disguise",
@@ -2185,8 +2229,8 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, void, OnEventSent, ZAchievementManagerSimpl
 			LogDebug("Croupier: event {}", eventData);
 
 		this->events.handle(eventName, json);
-		if (!eventsNotToSend.contains(eventName))
-			State::current.client.sendRaw(eventData.c_str());
+		//if (!eventsNotToSend.contains(eventName))
+			//State::current.client.sendRaw(eventData.c_str());
 	}
 	catch (const json::exception& ex) {
 		Logger::Info("Error handling event: {}", eventData);
@@ -2219,6 +2263,10 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 		//case ZHMPin::OnRemovedFromContainer: // ZHM5ItemWeapon (data: void)
 		//case ZHMPin::ThrowActivated: // ZThrowSoundController
 		//case ZHMPin::ThrowImpact:
+		case ZHMPin::OnPutInContainer: {
+			SendCustomEvent("OnPutInContainer"sv, ImbuedPlayerInfo(ImbuedItemInfo(entity), true));
+			break;
+		}
 		case ZHMPin::OnEvacuationStarted: {
 			auto vip = entity.QueryInterface<ZVIPControllerEntity>();
 			if (!vip || !vip->m_rVIP) break;
@@ -2362,7 +2410,7 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 			auto repoId = itemSpawner->m_rMainItemKey.m_pInterfaceRef->m_RepositoryId.ToString();
 			auto pos = itemSpawner->GetWorldMatrix().Pos;
 			auto area = State::current.getArea(pos);
-			SendCustomEvent("ItemDestroyed"sv, ImbuedPositionInfo(itemSpawner->m_mTransform.Trans, "", ImbuedPlayerInfo({
+			SendCustomEvent("ItemDestroyed"sv, ImbuedPositionInfo(itemSpawner->m_mTransform.Trans, "Item", ImbuedPlayerInfo({
 				{"RepositoryId", repoId.c_str()},
 			}, true)));
 			break;
