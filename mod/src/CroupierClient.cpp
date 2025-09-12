@@ -219,6 +219,8 @@ auto CroupierClient::start() -> bool {
 					this->connected = false;
 				continue;
 			}
+			if (read == 0)
+				continue;
 
 			// Process message(s)
 			auto buff = std::span<char>{buffer, static_cast<size_t>(read)};
@@ -239,9 +241,7 @@ auto CroupierClient::start() -> bool {
 				received = buff.end() - cur;
 				std::copy(cur, buff.end(), buffer);
 			}
-			else {
-				received = 0;
-			}
+			else received = 0;
 		}
 	});
 	return true;
