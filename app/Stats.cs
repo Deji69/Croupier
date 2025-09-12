@@ -36,6 +36,15 @@ namespace Croupier {
 		public string Comment = "";
 	}
 
+	public class BingoCompletionStats {
+		public MissionID Mission = MissionID.NONE;
+		public double IGT = 0;
+		public double RTA = 0;
+		public string StartLocation = "";
+		public List<string> Loadout = [];
+		public string Comment = "";
+	}
+
 	public class SpinStats(MissionID mission, string spin) {
 		public MissionID Mission = mission;
 		public string Spin { get; set; } = spin;
@@ -63,9 +72,20 @@ namespace Croupier {
 		}
 	}
 
+	public class BingoStats(MissionID mission, string spin) {
+		public MissionID Mission = mission;
+		public string Spin { get; set; } = spin;
+		public int Attempts { get; set; } = 0;
+		public bool IsCustom { get; set; } = false;
+		public List<BingoCompletionStats> Completions { get; set; } = [];
+	}
+
 	public class Stats {
 		public Dictionary<MissionID, MissionStats> MissionStats { get; set; } = [];
 		public Dictionary<string, SpinStats> SpinStats { get; set; } = [];
+		public Dictionary<string, BingoStats> BingoStats { get; set; } = [];
+		public int NumRandomBingos { get; set; } = 0;
+		public int NumCustomBingos { get; set; } = 0;
 		public int NumRandomSpins { get; set; } = 0;
 		public int NumDailySpins { get; set; } = 0;
 		public int NumCustomSpins { get; set; } = 0;
@@ -206,6 +226,15 @@ namespace Croupier {
 				return spinStats;
 			var res = new SpinStats(spin.Mission, spinStr);
 			SpinStats.Add(spinStr, res);
+			return res;
+		}
+
+		public BingoStats GetBingoStats(BingoCard card) {
+			var cardStr = card.ToString();
+			if (BingoStats.TryGetValue(cardStr, out var bingoStats))
+				return bingoStats;
+			var res = new BingoStats(card.Mission, cardStr);
+			BingoStats.Add(cardStr, res);
 			return res;
 		}
 

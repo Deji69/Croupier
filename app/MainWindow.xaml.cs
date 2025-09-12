@@ -5,7 +5,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -1208,6 +1207,22 @@ namespace Croupier
 			loadout = [];
 			usedEntrance = null;
 			trackedValidKills = [];
+
+			Config.Save();
+		}
+
+		private void TrackNewBingo() {
+			var card = GameController.Main.Bingo.Card;
+			if (card == null) return;
+
+			var stats = Config.Default.Stats;
+			var bingoStats = stats.GetBingoStats(card);
+			bingoStats.IsCustom = Config.Default.SpinIsRandom;
+
+			if (Config.Default.SpinIsRandom)
+				++stats.NumRandomBingos;
+			else
+				++stats.NumCustomBingos;
 
 			Config.Save();
 		}
