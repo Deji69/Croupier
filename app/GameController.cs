@@ -152,8 +152,11 @@ namespace Croupier {
 		}
 
 		public void AssureRoundIsStarted() {
-			if (playState != PlayState.Start) return;
-			StartNewRound();
+			if ((IsPlayingBingo && (bingo.Card == null || bingo.Card.Tiles.Count == 0))
+				|| (IsPlayingRoulette && (roulette.Spin == null || roulette.Spin.Conditions.Count == 0)))
+				playState = PlayState.Start;
+			if (playState == PlayState.Start)
+				StartNewRound();
 		}
 
 		public void RemoveMissionFromPool(MissionID id) {
