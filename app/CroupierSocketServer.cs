@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Croupier.GameEvents;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,25 +50,31 @@ namespace Croupier
 		public static void Start() {
 			try {
 				var ipAddress = IPAddress.Parse("127.0.0.1");
-				var serverSocket = new TcpListener(ipAddress, PORT);
-				serverSocket.Start();
-				System.Diagnostics.Debug.WriteLine("[SOCKET] Waiting for connection...");
+				using var serverSocket = new TcpListener(ipAddress, PORT);
+
+				System.Diagnostics.Debug.WriteLine("[SOCKET] Server started.");
 
 				App.Current.Exit += OnExit;
 
 				Task.Run(async () => {
+					serverSocket.Start();
 					while (!CancelConnection.IsCancellationRequested) {
-						var client = await serverSocket.AcceptTcpClientAsync();
+						try {
+							System.Diagnostics.Debug.WriteLine("[SOCKET] Waiting for connection...");
+							using var client = await serverSocket.AcceptTcpClientAsync();
+							System.Diagnostics.Debug.WriteLine("[SOCKET] Client connected.");
 
-						System.Diagnostics.Debug.WriteLine("[SOCKET] Client connected.");
+							App.Current.Dispatcher.Invoke(new Action(() => Connected?.Invoke(null, 0)));
 
-						App.Current.Dispatcher.Invoke(new Action(() => Connected?.Invoke(null, 0)));
-
-						var receive = HandleClientReceiveAsync(client, CancelConnection.Token);
-						var send = HandleClientSendAsync(client, CancelConnection.Token);
-
-						await receive.WaitAsync(CancelConnection.Token);
-						await send.WaitAsync(CancelConnection.Token);
+							var recv = HandleClientReceiveAsync(client, CancelConnection.Token);
+							var send = HandleClientSendAsync(client, CancelConnection.Token);
+							recv.Wait();
+							send.Wait();
+						} catch (SocketException e) {
+							System.Diagnostics.Debug.WriteLine($"[SOCKET] Exception: {e.Message}.");
+						} catch (Exception e) {
+							System.Diagnostics.Debug.WriteLine($"[SOCKET] Handler exception: {e.Message}.");
+						}
 					}
 				});
 			}
@@ -93,23 +100,27 @@ namespace Croupier
 		}
 
 		private static async Task HandleClientReceiveAsync(TcpClient client, CancellationToken ct) {
-			using var stream = client.GetStream();
+			var stream = client.GetStream();
 			var buffer = new byte[8192];
 
 			try {
 				while (!ct.IsCancellationRequested && client.Connected) {
 					var bytesRead = await stream.ReadAsync(buffer.AsMemory(0, buffer.Length), ct);
 
-					if (bytesRead <= 0) break;
+					if (bytesRead <= 0)
+						break;
+
 					var data = Encoding.UTF8.GetString(buffer, 0, bytesRead);
 					foreach (var msg in data.Split("\0", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)) {
+						System.Diagnostics.Debug.WriteLine("Received from client: " + msg);
 						ProcessReceivedMessage(msg);
 					}
-					Console.WriteLine("Received from client: " + data);
 				}
-			} catch (System.IO.IOException) { }
+			}
+			catch (System.IO.IOException) {
+			}
 
-			Console.WriteLine("[SOCKET] Client disconnected.");
+			System.Diagnostics.Debug.WriteLine("[SOCKET] Client disconnected.");
 		}
 
 		private static async Task HandleClientSendAsync(TcpClient client, CancellationToken ct) {
@@ -118,7 +129,7 @@ namespace Croupier
 			try {
 				while (!ct.IsCancellationRequested && client.Connected) {
 					if (clientMessages.Count <= 0) {
-						Thread.Sleep(100);
+						Thread.Sleep(50);
 						continue;
 					}
 
@@ -129,7 +140,7 @@ namespace Croupier
 				}
 			} catch (System.IO.IOException) { }
 
-			Console.WriteLine("[SOCKET] Client disconnected.");
+			System.Diagnostics.Debug.WriteLine("[SOCKET] Client disconnected.");
 		}
 
 		public static void SpoofMessage(string msg) {
@@ -225,7 +236,14 @@ namespace Croupier
 					return;
 			}
 
+			var json = JsonDocument.Parse(msg);
+			var ev = json.Deserialize<Event>(jsonGameEventSerializerOptions);
 			App.Current.Dispatcher.Invoke(new Action(() => Event?.Invoke(null, msg)));
 		}
+
+		private static readonly JsonSerializerOptions jsonGameEventSerializerOptions = new() {
+			AllowTrailingCommas = true,
+			ReadCommentHandling = JsonCommentHandling.Skip,
+		};
 	}
 }
