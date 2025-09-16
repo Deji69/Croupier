@@ -133,10 +133,12 @@ namespace Croupier {
 			return Tiles.FindAll(t => {
 				if (t.Disabled)
 					return false;
-				if (t.Missions.Count != 0 && !t.Missions.Contains(missionID))
-					return false;
-				if (t.ExcludeMissions.Count != 0 && t.ExcludeMissions.Contains(missionID))
-					return false;
+				if (missionID != MissionID.NONE) {
+					if (t.Missions.Count != 0 && !t.Missions.Contains(missionID))
+						return false;
+					if (t.ExcludeMissions.Count != 0 && t.ExcludeMissions.Contains(missionID))
+						return false;
+				}
 				return mode == BingoTileType.Mixed || t.Type == mode;
 			});
 		}
@@ -153,11 +155,13 @@ namespace Croupier {
 
 			foreach (var file in Directory.GetFiles("config/bingo", "*.json", SearchOption.AllDirectories)) {
 				try {
+					var text = File.ReadAllText(file);
+					if (text.Length == 0) continue;
 					var options = new JsonDocumentOptions {
 						CommentHandling = JsonCommentHandling.Skip,
 						AllowTrailingCommas = true,
 					};
-					var json = JsonDocument.Parse(File.ReadAllText(file), options) ?? throw new BingoConfigException("Failed to parse JSON.");
+					var json = JsonDocument.Parse(text, options) ?? throw new BingoConfigException("Failed to parse JSON.");
 					jsonDocuments.Add(json);
 					if (json.RootElement.ValueKind == JsonValueKind.Array)
 						sections.tiles.Add(new(){ Filename = file, Element = json.RootElement });

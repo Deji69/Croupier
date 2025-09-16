@@ -1,6 +1,5 @@
 ﻿using Croupier.Exceptions;
 using System;
-using System.Collections.Generic;
 
 namespace Croupier {
 	public class BingoGenerator(BingoTileType mode = BingoTileType.Objective) {
@@ -11,8 +10,8 @@ namespace Croupier {
 			if (missionId == MissionID.NONE)
 				missionId = Mission.GetRandomMissionID();
 			var mission = Mission.Get(missionId);
-			BingoCard card = new(Mode, mission.ID);
-			var availableTiles = Bingo.Main.GetTilesForMission(missionId, Mode);
+			BingoCard card = new(mission.ID);
+			var availableTiles = Bingo.Main.GetTilesForMission(mission.ID, Mode);
 
 			if (availableTiles.Count < tiles)
 				throw new BingoGeneratorException($"Insufficient {mission.Name} tiles available for {tiles}-tile board.");

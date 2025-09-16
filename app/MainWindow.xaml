@@ -679,7 +679,13 @@
 					</MenuItem.ItemContainerStyle>
 				</MenuItem>
 				<Separator Name="ContextMenuTopSeparator" />
-				<MenuItem
+                <MenuItem
+					Name="ContextMenuCopyCard"
+					Header="_Copy Bingo"
+					Command="{x:Static local:MainWindow.CopySpinCommand}"
+					StaysOpenOnClick="True"
+				/>
+                <MenuItem
 					Name="ContextMenuCopySpin"
 					Header="_Copy Spin"
 					Command="{x:Static local:MainWindow.CopySpinCommand}"
@@ -691,9 +697,14 @@
 						</Style>
 					</MenuItem.ItemContainerStyle>
 					<MenuItem Header="Copy Text" Command="{x:Static local:MainWindow.CopySpinCommand}" />
-					<MenuItem Header="Copy Link" Command="{x:Static local:MainWindow.CopySpinLinkCommand}" />
-				</MenuItem>
-				<MenuItem
+                    <MenuItem Name="ContextMenuCopySpinLink" Header="Copy Link" Command="{x:Static local:MainWindow.CopySpinLinkCommand}" />
+                </MenuItem>
+                <MenuItem
+					Name="ContextMenuPasteCard"
+					Header="_Paste Bingo"
+					Command="{x:Static local:MainWindow.PasteSpinCommand}"
+				/>
+                <MenuItem
 					Name="ContextMenuPasteSpin"
 					Header="_Paste Spin"
 					Command="{x:Static local:MainWindow.PasteSpinCommand}"

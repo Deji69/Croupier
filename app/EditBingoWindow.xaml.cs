@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -40,6 +39,19 @@ namespace Croupier {
 
 		public EditBingoComboBoxItem Selected => AvailableTiles[selectedIndex];
 
+		public bool HasCount => Selected.Tile?.HasCount ?? false;
+		public string? Count {
+			get => Selected.Tile?.Count.ToString();
+			set {
+				if (Selected.Tile == null) return;
+				if (int.TryParse(value, out var val))
+					Selected.Tile.Count = val;
+				else
+					Selected.Tile.Count = null;
+				OnPropertyChanged(nameof(Count));
+			}
+		}
+
 		public int SelectedIndex {
 			get => selectedIndex;
 			set {
@@ -78,7 +90,7 @@ namespace Croupier {
 			for (var i = 0; i < tiles.Count; ++i) {
 				var tile = tiles[i];
 				var editTile = new EditTile(game.Mission);
-				if (tile != null) editTile.SelectedIndex = editTile.AvailableTiles.ToList().FindIndex(t => t.Tile == tile?.Source);
+				if (tile != null) editTile.SelectedIndex = editTile.AvailableTiles.ToList().FindIndex(t => t.Tile != null && t.Tile.Key == tile.Key);
 				viewModel.Tiles.Add(editTile);
 				var idx = i;
 				editTile.PropertyChanged += (sender, e) => {

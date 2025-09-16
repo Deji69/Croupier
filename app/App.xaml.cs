@@ -17,6 +17,7 @@ namespace Croupier
 		public App() : base() {
 			Config.Load();
 			CroupierSocketServer.Start();
+			//CroupierPipeServer.Start();
 			if (Config.Default.LiveSplitEnabled)
 				_ = LiveSplitClient.StartAsync();
 		} 

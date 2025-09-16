@@ -11,14 +11,19 @@ using System.Windows.Media;
 namespace Croupier {
 	public class BingoTileState {
 		public bool Complete { get; set; } = false;
-		public int? Count { get; set; } = 0;
+		public int? Count { get; set; } = null;
 		public int Counter { get; set; } = 0;
 		public object? History { get; set; } = null;
+		public List<string> CollectedItems { get; set; } = [];
 	}
 
-	public partial class BingoTile : INotifyPropertyChanged, ICloneable {
+	public partial class BingoTile : INotifyPropertyChanged {
 		public required string Name { get; set; }
 		public string? NameSingular { get; set; } = null;
+		public string? Key {
+			get => key ?? (GroupName ?? "") + Strings.TokenCharacterRegex.Replace(Name, "");
+			set => key = value;
+		}
 		public BingoTileType Type { get; set; } = BingoTileType.Objective;
 		public bool Disabled { get; set; } = false;
 		public BingoGroup? Group {
@@ -37,7 +42,14 @@ namespace Croupier {
 		public required List<MissionID> ExcludeMissions { get; set; }
 		public required StringCollection Tags { get; set; }
 		public required BingoTrigger Trigger { get; set; }
-		public string Text => ToString();
+		public string Text {
+			get {
+				var args = Trigger.GetFormatArgs(state);
+				var useSingular = (Trigger.Count ?? 1) - (state.Complete ? 0 : state.Counter) == 1;
+				var res = string.Format(useSingular ? NameSingular ?? Name : Name, args);
+				return res;
+			}
+		}
 		public string? Tip {
 			get {
 				var fmt = tip ?? Group?.Tip;
@@ -51,6 +63,14 @@ namespace Croupier {
 				OnPropertyChanged(nameof(Tip));
 			}
 		}
+		public int? Count {
+			get => state.Count ?? Trigger.Count;
+			set {
+				state.Count = value;
+				OnPropertyChanged(nameof(Count));
+			}
+		}
+		public bool HasCount => state.Count != null || Trigger.HasCount();
 		public string GroupText => Group != null ? $"{Group.Name}" : "";
 		public bool GroupTextVisibilityBool => Group != null && !Group.Hidden;
 		public Visibility GroupTextVisibility => GroupTextVisibilityBool ? Visibility.Visible : Visibility.Collapsed;
@@ -63,6 +83,7 @@ namespace Croupier {
 		private readonly SolidColorBrush defaultBrush = new(new() { R = 200, G = 200, B = 200, A = 255 });
 		private bool isScored = false;
 		private string? tip = null;
+		private string? key = null;
 
 		public bool Complete {
 			get => state.Complete;
@@ -82,8 +103,12 @@ namespace Croupier {
 			state.History = null;
 			state.Counter = 0;
 			isScored = false;
+			var count = state.Count;
 			Trigger.Reset(state);
+			if (count != null)
+				state.Count = count;
 			OnPropertyChanged(nameof(Tip));
+			OnPropertyChanged(nameof(Count));
 			OnPropertyChanged(nameof(Text));
 			OnPropertyChanged(nameof(Complete));
 			OnPropertyChanged(nameof(Achieved));
@@ -113,10 +138,7 @@ namespace Croupier {
 		}
 
 		public override string ToString() {
-			var args = Trigger.GetFormatArgs(state);
-			var useSingular = (Trigger.Count ?? 1) - (state.Complete ? 0 : state.Counter) == 1;
-			var res = string.Format(useSingular ? NameSingular ?? Name : Name, args);
-			return res;
+			return state.Count != null ? $"{Key!}:{state.Count}" : Key!;
 		}
 
 		public event PropertyChangedEventHandler? PropertyChanged;
@@ -125,16 +147,17 @@ namespace Croupier {
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
-		public object Clone() {
+		public object Clone(int? count = null) {
 			var obj = (BingoTile)MemberwiseClone();
-			obj.Source = this;
-			obj.OnCloned();
+			obj.Source = Source ?? this;
+			obj.OnCloned(count);
 			return obj;
 		}
 
-		private void OnCloned() {
+		private void OnCloned(int? count = null) {
 			state = new();
 			Trigger.OnCloned(state);
+			if (count != null) state.Count = count;
 			OnPropertyChanged(nameof(Text));
 			OnPropertyChanged(nameof(Name));
 			OnPropertyChanged(nameof(NameSingular));
@@ -148,8 +171,11 @@ namespace Croupier {
 				throw new BingoTileConfigException($"Invalid property 'Name' for bingo tile, expected string but got {nameProp.ValueKind}.");
 
 			var name = nameProp.GetString()!;
+			string? key = null;
 
 			try {
+				key = json.TryGetProperty(nameof(Key), out var keyProp) ? keyProp.GetString() : null;
+
 				var nameSingular = json.TryGetProperty("Name", out var nameSingularProp) ? nameSingularProp.GetString() : null;
 				var disabled = json.TryGetProperty("Disabled", out var disabledProp) ? disabledProp.GetBoolean() : false;
 				var tip = json.TryGetProperty("Tip", out var tipProp) ? tipProp.GetString() : null;
@@ -174,14 +200,15 @@ namespace Croupier {
 				}
 
 				return new() {
+					Key = key,
 					Name = name,
 					NameSingular = nameSingular,
 					Disabled = disabled,
 					Type = type,
 					Tip = tip,
 					Group = group,
-					Missions = LoadMissionsArray(json, "Missions"),
-					ExcludeMissions = LoadMissionsArray(json, "ExcludeMissions"),
+					Missions = LoadMissionsArray(json, nameof(Missions)),
+					ExcludeMissions = LoadMissionsArray(json, nameof(ExcludeMissions)),
 					Tags = tags,
 					Trigger = BingoTrigger.FromJson(type, json) ?? throw new BingoTileConfigException($"No trigger logic found in tile."),
 				};

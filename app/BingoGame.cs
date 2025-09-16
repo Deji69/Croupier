@@ -109,6 +109,19 @@ namespace Croupier {
 			CardUpdated?.Invoke(this, card);
 		}
 
+		public void SetCard(BingoCard? card) {
+			this.card = card;
+			if (card != null)
+				controller.MissionID = card.Mission;
+
+			Config.Default.SpinIsRandom = false;
+			controller.ResetProgress();
+			if (!controller.IsPlayingBingo)
+				controller.Mode = GameMode.Bingo;
+			CardUpdated?.Invoke(this, Card);
+			Config.Save();
+		}
+
 		private void Card_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			CardUpdated?.Invoke(this, card);
 		}
@@ -169,15 +182,13 @@ namespace Croupier {
 				if (card == null) return;
 				var json = JsonDocument.Parse(evData);
 				var ev = json.Deserialize<Event>(jsonGameEventSerializerOptions);
-				if (ev != null) {
-					var val = DeserializeEventValue(ev.Name, ev.Value is JsonElement value ? value : null);
-					if (val != null) {
-						if (card.TryAdvance(val))
-							SendBingoDataToClient();
-					}
-				}
+				if (ev == null) return;
+				var val = DeserializeEventValue(ev.Name, ev.Value is JsonElement value ? value : null);
+				if (val == null) return;
+				if (card.TryAdvance(val))
+					SendBingoDataToClient();
 			}
-			catch (JsonException e) {
+			catch (Exception e) {
 				Debug.WriteLine(e);
 			}
 		}
@@ -199,68 +210,70 @@ namespace Croupier {
 		private DisguiseEventValue? ImbueDisguiseEvent(DisguiseEventValue? value) {
 			if (value == null) return value;
 			var repoId = value.RepositoryId;
-			var disguise = Roulette.Main.GetDisguiseByRepoId(repoId, Mission != MissionID.NONE ? Mission : null);
-			value.IsUnique = disguise?.Unique;
+			if (repoId != null) {
+				var disguise = Roulette.Main.GetDisguiseByRepoId(repoId, Mission != MissionID.NONE ? Mission : null);
+				value.IsUnique = disguise?.Unique;
+			}
 			return value;
 		}
 
-		// TODO: Something better
 		private EventValue? DeserializeEventValue(string name, JsonElement? jsonEl = null) {
 			if (jsonEl is JsonElement json) {
 				return name switch {
-					"Actorsick" =>  json.Deserialize<ActorSickEventValue>(jsonGameEventSerializerOptions),
+					"Actorsick" =>  ActorSickEventValue.Load(json),
 					"AgilityStart" => AgilityStartEventValue.Load(json),
-					"BodyBagged" => json.Deserialize<BodyBaggedEventValue>(jsonGameEventSerializerOptions),
+					"BodyBagged" => EventValue.Load<BodyBaggedEventValue>(json),
 					"BodyFound" => json.Deserialize<BodyFoundEventValue>(jsonGameEventSerializerOptions),
 					"BodyHidden" => json.Deserialize<BodyHiddenEventValue>(jsonGameEventSerializerOptions),
-					"CarExploded" => json.Deserialize<CarExplodedEventValue>(jsonGameEventSerializerOptions),
+					"CarExploded" => CarExplodedEventValue.Load(json),
 					"Crocodile" => json.Deserialize<CrocodileEventValue>(jsonGameEventSerializerOptions),
-					"DartHit" => json.Deserialize<DartHitEventValue>(jsonGameEventSerializerOptions),
-					"Disguise" => ImbueDisguiseEvent(json.Deserialize<DisguiseEventValue>(jsonGameEventSerializerOptions)),
-					"DoorBroken" => json.Deserialize<DoorBrokenEventValue>(jsonGameEventSerializerOptions),
-					"DoorUnlocked" => json.Deserialize<DoorUnlockedEventValue>(jsonGameEventSerializerOptions),
+					"DartHit" => DartHitEventValue.Load(json),
+					"Disguise" => ImbueDisguiseEvent(DisguiseEventValue.Load(json)),
+					"DoorBroken" => DoorBrokenEventValue.Load(json),
+					"DoorUnlocked" => DoorUnlockedEventValue.Load(json),
 					"DragBodyMove" => DragBodyMoveEventValue.Load(json),
-					"DrainPipeClimbed" => json.Deserialize<DrainPipeClimbedEventValue>(jsonGameEventSerializerOptions),
-					"EnterArea" => json.Deserialize<EnterAreaEventValue>(jsonGameEventSerializerOptions),
-					"EnterRoom" => json.Deserialize<EnterRoomEventValue>(jsonGameEventSerializerOptions),
-					"Explosion" => json.Deserialize<ExplosionEventValue>(jsonGameEventSerializerOptions),
-					"FriskedSuccess" => json.Deserialize<FriskedSuccessEventValue>(jsonGameEventSerializerOptions),
-					"InstinctActive" => json.Deserialize<InstinctActiveEventValue>(jsonGameEventSerializerOptions),
+					"DrainPipeClimbed" => DrainPipeClimbedEventValue.Load(json),
+					"EnterArea" => EnterAreaEventValue.Load(json),
+					"EnterRoom" => EnterRoomEventValue.Load(json),
+					"Explosion" => ExplosionEventValue.Load(json),
+					"FriskedSuccess" => FriskedSuccessEventValue.Load(json),
+					"InstinctActive" => InstinctActiveEventValue.Load(json),
 					"Investigate_Curious" => json.Deserialize<InvestigateCuriousEventValue>(jsonGameEventSerializerOptions),
-					"ItemDestroyed" => json.Deserialize<ItemDestroyedEventValue>(jsonGameEventSerializerOptions),
-					"ItemDropped" => json.Deserialize<ItemDroppedEventValue>(jsonGameEventSerializerOptions),
-					"ItemPickedUp" => json.Deserialize<ItemPickedUpEventValue>(jsonGameEventSerializerOptions),
-					"ItemRemovedFromInventory" => json.Deserialize<ItemRemovedFromInventoryEventValue>(jsonGameEventSerializerOptions),
-					"ItemThrown" => json.Deserialize<ItemThrownEventValue>(jsonGameEventSerializerOptions),
+					"ItemDestroyed" => ItemDestroyedEventValue.Load(json),
+					"ItemDropped" => ItemDroppedEventValue.Load(json),
+					"ItemPickedUp" => ItemPickedUpEventValue.Load(json),
+					"ItemRemovedFromInventory" => ItemRemovedFromInventoryEventValue.Load(json),
+					"ItemThrown" => ItemThrownEventValue.Load(json),
 					"Kill" => ImbuePacifyEvent(json.Deserialize<KillEventValue>(jsonGameEventSerializerOptions)),
 					"Level_Setup_Events" => json.Deserialize<LevelSetupEventValue>(jsonGameEventSerializerOptions),
-					"Movement" => json.Deserialize<MovementEventValue>(jsonGameEventSerializerOptions),
-					"OnDestroy" => json.Deserialize<OnDestroyEventValue>(jsonGameEventSerializerOptions),
-					"OnEvacuationStarted" => json.Deserialize<OnEvacuationStartedEventValue>(jsonGameEventSerializerOptions),
-					"OnInitialFracture" => json.Deserialize<OnInitialFractureEventValue>(jsonGameEventSerializerOptions),
+					"Movement" => MovementEventValue.Load(json),
+					"OnBroken" => OnBrokenEventValue.Load(json),
+					"OnDestroy" => OnDestroyEventValue.Load(json),
+					"OnDestroyed" => OnDestroyedEventValue.Load(json),
+					"OnEvacuationStarted" => OnEvacuationStartedEventValue.Load(json),
+					"OnInitialFracture" => OnInitialFractureEventValue.Load(json),
+					"OnIsFullyInCrowd" => OnIsFullyInCrowdEventValue.Load(json),
+					"OnIsFullyInVegetation" => OnIsFullyInVegetationEventValue.Load(json),
 					"OnPickup" => OnPickupEventValue.Load(json),
-					"OnTurnOn" => json.Deserialize<OnTurnOnEventValue>(jsonGameEventSerializerOptions),
-					"OnTurnOff" => json.Deserialize<OnTurnOffEventValue>(jsonGameEventSerializerOptions),
+					"OnTakeDamage" => OnTakeDamageEventValue.Load(json),
+					"OnTurnOn" => OnTurnOnEventValue.Load(json),
+					"OnTurnOff" => OnTurnOffEventValue.Load(json),
 					"OnWeaponReload" => OnWeaponReloadEventValue.Load(json),
-					"OpenDoor" => json.Deserialize<OpenDoorEventValue>(jsonGameEventSerializerOptions),
+					"OpenDoor" => OpenDoorEventValue.Load(json),
 					"OpportunityEvents" => json.Deserialize<OpportunityEventValue>(jsonGameEventSerializerOptions),
 					"Pacify" => ImbuePacifyEvent(json.Deserialize<PacifyEventValue>(jsonGameEventSerializerOptions)),
 					"PlayerShot" => PlayerShotEventValue.Load(json),
-					"ProjectileBodyShot" => json.Deserialize<ProjectileBodyShotEventValue>(jsonGameEventSerializerOptions),
+					"ProjectileBodyShot" => ProjectileBodyShotEventValue.Load(json),
 					"setpieces" => json.Deserialize<SetpiecesEventValue>(jsonGameEventSerializerOptions),
-					"SecuritySystemRecorder" => json.Deserialize<SecuritySystemRecorderEventValue>(jsonGameEventSerializerOptions),
-					"StartingSuit" => ImbueDisguiseEvent(json.Deserialize<StartingSuitEventValue>(jsonGameEventSerializerOptions)),
-					"Trespassing" => json.Deserialize<TrespassingEventValue>(jsonGameEventSerializerOptions),
+					"SecuritySystemRecorder" => SecuritySystemRecorderEventValue.Load(json),
+					"StartingSuit" => ImbueDisguiseEvent(EventValue.Load<StartingSuitEventValue>(json)),
+					"Trespassing" => TrespassingEventValue.Load(json),
 					null => null,
 					_ => DeserializeEventValue(name),
 				};
 			}
 			return name switch {
 				"ItemStashed" => new ItemStashedEventValue(),
-				"OnIsFullyInCrowd" => new OnIsFullyInCrowdEventValue(),
-				"OnIsFullyInVegetation" => new OnIsFullyInVegetationEventValue(),
-				"OnTakeDamage" => new OnTakeDamageEventValue(),
-				"ProjectileBodyShot" => new ProjectileBodyShotEventValue(),
 				_ => null,
 			};
 		}
