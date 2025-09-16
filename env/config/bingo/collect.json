@@ -1,5 +1,6 @@
 [
 	{
+		"Key": "CollectBust",
 		"Name": "{1}x Bust",
 		"Group": "Collect",
 		"Missions": ["The Showstopper", "Holiday Hoarders"],
@@ -11,6 +12,7 @@
 		}
 	},
 	{
+		"Key": "CollectBrick",
 		"Name": "{1}x Brick",
 		"Group": "Collect",
 		"Missions": ["The Showstopper", "Holiday Hoarders"],
@@ -22,6 +24,7 @@
 		}
 	},
 	{
+		"Key": "CollectCameraLens",
 		"Name": "Camera Lens",
 		"Group": "Collect",
 		"Missions": ["The Showstopper"],
@@ -31,6 +34,7 @@
 		}
 	},
 	{
+		"Key": "CollectCleaver",
 		"Name": "Cleaver",
 		"Group": "Collect",
 		"Missions": ["The Showstopper"],
@@ -40,9 +44,10 @@
 		}
 	},
 	{
+		"Key": "CollectCrowbar",
 		"Name": "{1}x Crowbar",
 		"Group": "Collect",
-		"Missions": ["The Showstopper"],
+		"Missions": ["The Showstopper", "Holiday Hoarders"],
 		"Tags": ["Collect"],
 		"Collect": {
 			"Count": 2,
@@ -51,17 +56,7 @@
 		}
 	},
 	{
-		"Name": "{1}x Crowbar",
-		"Group": "Collect",
-		"Missions": ["Holiday Hoarders"],
-		"Tags": ["Collect"],
-		"Collect": {
-			"Count": 2,
-			"Max": 9,
-			"Items": ["01ed6d15-e26e-4362-b1a6-363684a7d0fd"]
-		}
-	},
-	{
+		"Key": "CollectFireworksRemote",
 		"Name": "Fireworks Remote",
 		"Group": "Collect",
 		"Missions": ["The Showstopper", "Holiday Hoarders"],
@@ -70,6 +65,7 @@
 		}
 	},
 	{
+		"Key": "CollectHolidayCrowbar",
 		"Name": "Holiday Crowbar",
 		"Group": "Collect",
 		"Missions": ["Holiday Hoarders"],
@@ -79,6 +75,7 @@
 		}
 	},
 	{
+		"Key": "CollectHammer",
 		"Name": "{1}x Hammer",
 		"Group": "Collect",
 		"Missions": ["The Showstopper"],
@@ -90,6 +87,7 @@
 		}
 	},
 	{
+		"Key": "CollectKitchenKnife",
 		"Name": "{1}x Kitchen Knife",
 		"Group": "Collect",
 		"Missions": ["The Showstopper"],
@@ -101,6 +99,7 @@
 		}
 	},
 	{
+		"Key": "CollectLaptopDongle",
 		"Name": "Laptop Dongle",
 		"Group": "Collect",
 		"Missions": ["The Showstopper"],
@@ -110,6 +109,7 @@
 		}
 	},
 	{
+		"Key": "CollectLeadPipe",
 		"Name": "{1}x Lead Pipe",
 		"Group": "Collect",
 		"Missions": ["The Showstopper"],
@@ -121,6 +121,7 @@
 		}
 	},
 	{
+		"Key": "CollectLetterOpener",
 		"Name": "{1}x Letter Opener",
 		"Group": "Collect",
 		"Missions": ["The Showstopper"],
@@ -132,6 +133,7 @@
 		}
 	},
 	{
+		"Key": "CollectMasterKey",
 		"Name": "Palace Master Key",
 		"Group": "Collect",
 		"Missions": ["The Showstopper"],
@@ -141,6 +143,7 @@
 		}
 	},
 	{
+		"Key": "CollectPoliceBaton",
 		"Name": "Police Baton",
 		"Group": "Collect",
 		"Missions": ["The Showstopper"],
@@ -150,6 +153,7 @@
 		}
 	},
 	{
+		"Key": "CollectRatPoison",
 		"Name": "{1}x Rat Poison",
 		"Group": "Collect",
 		"Missions": ["The Showstopper"],
@@ -161,6 +165,7 @@
 		}
 	},
 	{
+		"Key": "CollectRemoteExplosive",
 		"Name": "Remote Explosive",
 		"Group": "Collect",
 		"Missions": ["The Showstopper"],
@@ -170,6 +175,7 @@
 		}
 	},
 	{
+		"Key": "CollectScissors",
 		"Name": "{1}x Scissors",
 		"Group": "Collect",
 		"Missions": ["The Showstopper"],
@@ -181,6 +187,7 @@
 		}
 	},
 	{
+		"Key": "CollectScrewdriver",
 		"Name": "{1}x Screwdriver",
 		"Group": "Collect",
 		"Missions": ["The Showstopper"],
@@ -192,6 +199,7 @@
 		}
 	},
 	{
+		"Key": "CollectSpeedboatKey",
 		"Name": "Speedboat Key",
 		"Group": "Collect",
 		"Missions": ["The Showstopper"],
@@ -201,6 +209,7 @@
 		}
 	},
 	{
+		"Key": "CollectWrench",
 		"Name": "{1}x Wrench",
 		"Group": "Collect",
 		"Missions": ["The Showstopper"],

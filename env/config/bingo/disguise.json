@@ -1843,91 +1843,91 @@
 	{
 		"Name": "Asado Chef",
 		"Group": "Disguise",
-		"Missions": ["On Top of the World"],
+		"Missions": ["The Farewell"],
 		"Disguise": ["8d105591-dfbe-46aa-8520-f00f986b57e2"],
 		"Tags": ["Disguise", "Civilian"]
 	},
 	{
 		"Name": "Bodyguard",
 		"Group": "Disguise",
-		"Missions": ["On Top of the World"],
+		"Missions": ["The Farewell"],
 		"Disguise": ["aa7dc754-702a-401b-8f84-e806e958869c"],
 		"Tags": ["Disguise", "Guard"]
 	},
 	{
 		"Name": "Chief Winemaker",
 		"Group": "Disguise",
-		"Missions": ["On Top of the World"],
+		"Missions": ["The Farewell"],
 		"Disguise": ["af56d687-ba1b-44c8-8061-fd4a4a1222a3"],
 		"Tags": ["Disguise", "Civilian", "Unique"]
 	},
 	{
 		"Name": "Corvo Black",
 		"Group": "Disguise",
-		"Missions": ["On Top of the World"],
+		"Missions": ["The Farewell"],
 		"Disguise": ["214b2143-3277-44cd-b20f-344747fc23d9"],
 		"Tags": ["Disguise", "Civilian", "Unique"]
 	},
 	{
 		"Name": "Gaucho",
 		"Group": "Disguise",
-		"Missions": ["On Top of the World"],
+		"Missions": ["The Farewell"],
 		"Disguise": ["e887e53a-6b02-455d-88be-284af6d88e94"],
 		"Tags": ["Disguise", "Guard"]
 	},
 	{
 		"Name": "Head of Security",
 		"Group": "Disguise",
-		"Missions": ["On Top of the World"],
+		"Missions": ["The Farewell"],
 		"Disguise": ["16df6808-97ac-4c3a-8d4b-7ddacfc8a7ea"],
 		"Tags": ["Disguise", "Guard", "Unique"]
 	},
 	{
 		"Name": "Lawyer",
 		"Group": "Disguise",
-		"Missions": ["On Top of the World"],
+		"Missions": ["The Farewell"],
 		"Disguise": ["521ed265-2115-4977-8db0-45404b067102"],
 		"Tags": ["Disguise", "Civilian", "Unique"]
 	},
 	{
 		"Name": "Mercenary",
 		"Group": "Disguise",
-		"Missions": ["On Top of the World"],
+		"Missions": ["The Farewell"],
 		"Disguise": ["69d4d32b-0fc9-4fde-8817-fafd98c13365"],
 		"Tags": ["Disguise", "Guard"]
 	},
 	{
 		"Name": "Providence Herald",
 		"Group": "Disguise",
-		"Missions": ["On Top of the World"],
+		"Missions": ["The Farewell"],
 		"Disguise": ["f5b24132-7a6b-4a3f-868d-193b8692a52b"],
 		"Tags": ["Disguise", "Civilian"]
 	},
 	{
 		"Name": "Sommelier",
 		"Group": "Disguise",
-		"Missions": ["On Top of the World"],
+		"Missions": ["The Farewell"],
 		"Disguise": ["7fed7c24-08b2-468b-8e49-22b5ad59b56b"],
 		"Tags": ["Disguise", "Civilian"]
 	},
 	{
 		"Name": "Tango Musician",
 		"Group": "Disguise",
-		"Missions": ["On Top of the World"],
+		"Missions": ["The Farewell"],
 		"Disguise": ["6ab03e04-9e88-4237-a596-96e3135420ab"],
 		"Tags": ["Disguise", "Civilian"]
 	},
 	{
 		"Name": "Waiter",
 		"Group": "Disguise",
-		"Missions": ["On Top of the World"],
+		"Missions": ["The Farewell"],
 		"Disguise": ["cac0081e-9eb0-4fbf-ba23-70c2815f0874"],
 		"Tags": ["Disguise", "Civilian"]
 	},
 	{
 		"Name": "Winery Worker",
 		"Group": "Disguise",
-		"Missions": ["On Top of the World"],
+		"Missions": ["The Farewell"],
 		"Disguise": ["bbdfca80-abef-4b43-953e-9a46c3eee2eb"],
 		"Tags": ["Disguise", "Civilian"]
 	}

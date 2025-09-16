@@ -90,6 +90,7 @@
 	
 		// Pacify Objectives
 		{
+			"Key": "PacifyMaxDecker",
 			"Name": "Max Decker",
 			"Tip": "Pacify Max Decker by any means.",
 			"Group": "Pacify",
@@ -102,6 +103,7 @@
 		
 		// Interact Objectives
 		{
+			"Key": "ActivateDiorama",
 			"Name": "Activate Diorama",
 			"Tip": "Activate the diorama.",
 			"Group": "Interact",
@@ -112,6 +114,7 @@
 			}
 		},
 		{
+			"Key": "CallInCode17",
 			"Name": "Call in Code 17",
 			"Tip": "Use the Bodyguard's Phone to call in a code 17.",
 			"Group": "Interact",
@@ -122,6 +125,7 @@
 			}
 		},
 		{
+			"Key": "DestroyAFusebox",
 			"Name": "Destroy a Fusebox",
 			"Tip": "Damage a fusebox enough to destroy it permanently.",
 			"Group": "Interact",
@@ -134,6 +138,7 @@
 			}
 		},
 		{
+			"Key": "DropChandeliers",
 			"Name": "Drop {1} Chandeliers",
 			"NameSingular": "Drop {1} Chandelier",
 			"Tip": "Cause {0} chandeliers to fall.",
@@ -148,6 +153,7 @@
 			}
 		},
 		{
+			"Key": "ExamineCocktailRecipe",
 			"Name": "Examine Cocktail Recipe",
 			"Tip": "Read the cocktail recipe intel.",
 			"Group": "Interact",
@@ -158,6 +164,7 @@
 			}
 		},
 		{
+			"Key": "ExamineEvacuationPlan",
 			"Name": "Examine Evacuation Plan",
 			"Tip": "Read the evacuation plan intel in the basement security room.",
 			"Group": "Interact",
@@ -167,6 +174,7 @@
 			}
 		},
 		{
+			"Key": "ExamineFireworksSchedule",
 			"Name": "Examine Fireworks Schedule",
 			"Tip": "Read the fireworks schedule intel.",
 			"Group": "Interact",
@@ -178,6 +186,7 @@
 			}
 		},
 		{
+			"Key": "PoisonASushiPlate",
 			"Name": "Poison a Sushi Plate",
 			"Tip": "Poison any of the sushi trays.",
 			"Group": "Interact",
@@ -194,6 +203,7 @@
 			}
 		},
 		{
+			"Key": "PoisonSatosDrink",
 			"Name": "Poison Sato's Drink",
 			"Tip": "Poison Sebastian Sato's champagne glass.",
 			"Group": "Interact",
@@ -205,6 +215,7 @@
 			}
 		},
 		{
+			"Key": "ReleaseWinchesByHand",
 			"Name": "Release {1} Winches By Hand",
 			"NameSingular": "Release {1} Winch Manually",
 			"Tip": "Interact with {0} winches to release them by hand.",
@@ -244,6 +255,7 @@
 			}
 		},
 		{
+			"Key": "ShowAnInvite",
 			"Name": "Show an Invite",
 			"Tip": "Show an invite at an entrance checkpoint.",
 			"Group": "Interact",
@@ -254,6 +266,7 @@
 			}
 		},
 		{
+			"Key": "SabotageAuction",
 			"Name": "Sabotage Auction",
 			"Tip": "Use the laptop dongle to sabotage the auction.",
 			"Group": "Interact",
@@ -264,6 +277,7 @@
 			}
 		},
 		{
+			"Key": "TurnOffGenerators",
 			"Name": "Turn Off {1} Generators",
 			"NameSingular": "Turn Off {1} Generator",
 			"Tip": "Turn off {0} different generators controlling flood lights.",
@@ -280,6 +294,7 @@
 			}
 		},
 		{
+			"Key": "TurnOffAFusebox",
 			"Name": "Turn Off a Fusebox",
 			"Tip": "Turn off a fusebox.",
 			"Group": "Interact",
@@ -294,6 +309,7 @@
 	
 		// Action Complications
 		{
+			"Key": "NoExplosionsIndoors",
 			"Name": "No Explosions Indoors",
 			"Tip": "Do not cause unnecessary explosions inside any building.",
 			"Type": "Complication",
@@ -306,6 +322,7 @@
 			}
 		},
 		{
+			"Key": "NoExplosionsOutside",
 			"Name": "No Explosions Outside",
 			"Tip": "Do not cause unnecessary explosions outdoors (includes balconies).",
 			"Type": "Complication",
@@ -316,6 +333,7 @@
 			}
 		},
 		{
+			"Key": "NoShootingIndoors",
 			"Name": "No Shooting Indoors",
 			"Type": "Complication",
 			"Tip": "Do not fire any shots while inside any building.",
@@ -329,6 +347,7 @@
 			}
 		},
 		{
+			"Key": "NoShootingOutside",
 			"Name": "No Shooting Outside",
 			"Type": "Complication",
 			"Tip": "Do not fire any shots while outdoors (balconies count as outdoors).",
@@ -380,6 +399,7 @@
 		
 		// Opportunity Complications
 		{
+			"Key": "NoFireworks",
 			"Name": "No Fireworks",
 			"Type": "Complication",
 			"Tip": "Do not trigger the fireworks.",
@@ -393,6 +413,7 @@
 		
 		// Target Complications
 		{
+			"Key": "DaliaNoEmetic",
 			"Name": "Dalia: No Emetic",
 			"Type": "Complication",
 			"Tip": "Do not make Dalia Margolis sick.",
@@ -404,6 +425,7 @@
 			}
 		},
 		{
+			"Key": "DaliaNoLockdown",
 			"Name": "Dalia: No Lockdown",
 			"Type": "Complication",
 			"Tip": "Do not cause Dalia Margolis to enter Target Lockdown.",
@@ -415,6 +437,7 @@
 			}
 		},
 		{
+			"Key": "ViktorNoEmetic",
 			"Name": "Viktor: No Emetic",
 			"Type": "Complication",
 			"Tip": "Do not make Viktor Novikov sick.",
@@ -426,6 +449,7 @@
 			}
 		},
 		{
+			"Key": "ViktorNoLockdown",
 			"Name": "Viktor: No Lockdown",
 			"Type": "Complication",
 			"Tip": "Do not cause Viktor Novikov to enter Target Lockdown.",
@@ -439,6 +463,7 @@
 		
 		// Location Complications
 		{
+			"Key": "NoEntryAuctionRoom",
 			"Name": "No Entry: Auction Room",
 			"Type": "Complication",
 			"Tip": "Avoid entering the room where the auction is taking place.",
@@ -450,6 +475,7 @@
 			}
 		},
 		{
+			"Key": "NoEntryAttic",
 			"Name": "No Entry: Attic",
 			"Type": "Complication",
 			"Tip": "Do not step foot in the attic.",
@@ -461,6 +487,7 @@
 			}
 		},
 		{
+			"Key": "NoEntryBar",
 			"Name": "No Entry: Bar",
 			"Type": "Complication",
 			"Tip": "Avoid the Bar room.",
@@ -472,6 +499,7 @@
 			}
 		},
 		{
+			"Key": "NoEntryBasement",
 			"Name": "No Entry: Basement",
 			"Type": "Complication",
 			"Tip": "Avoid stepping foot inside the entire basement floor.",
@@ -483,6 +511,7 @@
 			}
 		},
 		{
+			"Key": "NoEntryDressingRoom",
 			"Name": "No Entry: Dressing Room",
 			"Type": "Complication",
 			"Tip": "Do not enter the Dressing Room.",
@@ -494,6 +523,7 @@
 			}
 		},
 		{
+			"Key": "NoEntryEntranceHall",
 			"Name": "No Entry: Entrance Hall",
 			"Type": "Complication",
 			"Tip": "Do not enter the Entrance Hall (the large 2-floor room where Viktor makes his entrance).",
@@ -505,6 +535,7 @@
 			}
 		},
 		{
+			"Key": "NoEntryGrandHall",
 			"Name": "No Entry: Grand Hall",
 			"Type": "Complication",
 			"Tip": "Do not enter the Grand Hall (the large room with doors leading outside to the helipad).",
@@ -516,6 +547,7 @@
 			}
 		},
 		{
+			"Key": "NoEntryHelipad",
 			"Name": "No Entry: Helipad",
 			"Type": "Complication",
 			"Tip": "Do not step foot on the helipad.",
@@ -525,6 +557,7 @@
 			"EnterArea": "Helipad"
 		},
 		{
+			"Key": "NoEntryKitchens",
 			"Name": "No Entry: Kitchens",
 			"Type": "Complication",
 			"Tip": "Avoid both the main kitchen and the basement kitchen.",
@@ -536,6 +569,7 @@
 			}
 		},
 		{
+			"Key": "NoEntryLibrary",
 			"Name": "No Entry: Library",
 			"Type": "Complication",
 			"Tip": "Avoid entering the 'Library' (Level 2 - check map).",
@@ -547,6 +581,7 @@
 			}
 		},
 		{
+			"Key": "NoEntryLockerRoom",
 			"Name": "No Entry: Locker Room",
 			"Type": "Complication",
 			"Tip": "Avoid entering the Locker Room in the basement.",
@@ -558,6 +593,7 @@
 			}
 		},
 		{
+			"Key": "NoEntryRestrooms",
 			"Name": "No Entry: Restrooms",
 			"Type": "Complication",
 			"Tip": "Avoid entering any restrooms or bathrooms.",
@@ -569,6 +605,7 @@
 			}
 		},
 		{
+			"Key": "NoEntrySecurityRoom",
 			"Name": "No Entry: Security Room",
 			"Type": "Complication",
 			"Tip": "Avoid entering the security room in the basement.",
@@ -580,6 +617,7 @@
 			}
 		},
 		{
+			"Key": "NoEntrySheds",
 			"Name": "No Entry: Sheds",
 			"Type": "Complication",
 			"Tip": "Avoid entering any of the outdoor sheds.",
@@ -591,6 +629,7 @@
 			}
 		},
 		{
+			"Key": "NoEntrySheikhsRoom",
 			"Name": "No Entry: Sheikh's Room",
 			"Type": "Complication",
 			"Tip": "Avoid entering the Sheikh's suite.",
@@ -602,6 +641,7 @@
 			}
 		},
 		{
+			"Key": "NoEntryVoltaireSuite",
 			"Name": "No Entry: Voltaire Suite",
 			"Type": "Complication",
 			"Tip": "Avoid entering the Voltaire Suite (Dalia's room).",
@@ -613,6 +653,7 @@
 			}
 		},
 		{
+			"Key": "NoEntryTopFloor",
 			"Name": "No Trespass: Top Floor",
 			"Type": "Complication",
 			"Tip": "Do not trespass anywhere on the top floor (Level 3).",
@@ -632,6 +673,7 @@
 			}
 		},
 		{
+			"Key": "NoEntryBasement",
 			"Name": "No Trespass: Basement",
 			"Type": "Complication",
 			"Tip": "You may only enter the basement (Level 0) while wearing a non-trespassing disguise.",
@@ -644,6 +686,7 @@
 			}
 		},
 		{
+			"Key": "NoEntryGroundFloor",
 			"Name": "No Trespass: Ground Floor",
 			"Type": "Complication",
 			"Tip": "Do not trespass anywhere while on the ground floor (Level 1).",
@@ -661,6 +704,7 @@
 			}
 		},
 		/*{
+			"Key": "NoFirearmsGroundFloor",
 			"Name": "No Firearms: Ground Floor",
 			"Type": "Complication",
 			"Tip": "Do not equip a firearm anywhere on the ground floor (Level 1).",
@@ -678,6 +722,7 @@
 			}
 		}*/
 		/*{
+			"Key": "NoGunsTopFloor",
 			"Name": "No Guns: Top Floor",
 			"Type": "Complication",
 			"Tip": "Do not equip a firearm anywhere on the top floor (Level 3) of the palace.",

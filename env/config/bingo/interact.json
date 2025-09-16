@@ -1,5 +1,6 @@
 [
 	{
+		"Key": "ActivateFireAlarm",
 		"Name": "Activate Fire Alarm",
 		"Tip": "Pull a fire alarm. You know you want to.",
 		"Group": "Interact",
@@ -9,6 +10,7 @@
 		}
 	},
 	{
+		"Key": "BlendIn",
 		"Name": "Blend In",
 		"Tip": "Enter {0} hidden-in-plain-sight blending spot(s).",
 		"Group": "Interact",
@@ -20,6 +22,7 @@
 		}
 	},
 	{
+		"Key": "EnterContainers",
 		"Name": "Enter {1} Containers",
 		"NameSingular": "Enter {1} Container",
 		"Tip": "Hide in {0} different crates/closets/containers.",
@@ -32,6 +35,7 @@
 		}
 	},
 	{
+		"Key": "FloodSinks",
 		"Name": "Flood {1} Sinks",
 		"NameSingular": "Flood {1} Sink",
 		"Tip": "Turn on {0} sinks.",
@@ -45,6 +49,7 @@
 		}
 	},
 	{
+		"Key": "HideBodies",
 		"Name": "Hide {1} Bodies",
 		"NameSingular": "Hide {1} Body",
 		"Tip": "Hide {0} bodies.",
@@ -55,6 +60,7 @@
 		}
 	},
 	{
+		"Key": "PassAFrisk",
 		"Name": "Pass a Frisk",
 		"Tip": "Pass a frisk entrance checkpoint.",
 		"Group": "Interact",

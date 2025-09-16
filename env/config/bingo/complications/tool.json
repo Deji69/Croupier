@@ -1,5 +1,6 @@
 [
 	{
+		"Key": "NoDarts",
 		"Name": "No Darts",
 		"Type": "Complication",
 		"Tip": "Do not hit any NPC with any kind of dart.",
@@ -8,6 +9,7 @@
 		"DartHit": {}
 	},
 	{
+		"Key": "NoDartsOnTargets",
 		"Name": "No Darts on Targets",
 		"Type": "Complication",
 		"Tip": "Do not hit your targets with any kind of dart.",
@@ -18,6 +20,7 @@
 		}
 	},
 	{
+		"Key": "NoDartsOnNonTargets",
 		"Name": "No Darts on Non Targets",
 		"Type": "Complication",
 		"Tip": "Do not hit any non-target NPCs with any kind of dart.",
@@ -28,6 +31,7 @@
 		}
 	},
 	{
+		"Key": "NoEmeticDarts",
 		"Name": "No Emetic Darts",
 		"Type": "Complication",
 		"Tip": "Do not hit any NPCs with emetic darts.",
@@ -38,6 +42,7 @@
 		}
 	},
 	{
+		"Key": "NoEmetics",
 		"Name": "No Emetics",
 		"Type": "Complication",
 		"Tip": "Do not make any NPC sick using an emetic.",
@@ -51,6 +56,7 @@
 		}
 	},
 	{
+		"Key": "NoTranqDarts",
 		"Name": "No Tranq Darts",
 		"Type": "Complication",
 		"Tip": "Do not hit any NPC with a sedative/tranquilizer dart.",
