@@ -1429,6 +1429,15 @@ auto CroupierPlugin::SetupEvents() -> void {
 		if (validationUpdated) SendKillValidationUpdate();
 	});
 	events.listen<Events::setpieces>([this](const ServerEvent<Events::setpieces>& ev) {
+		this->SendCustomEvent("setpieces"sv, ImbuedPlayerInfo({
+			{"RepositoryId", ev.Value.RepositoryId},
+			{"Name", ev.Value.name_metricvalue},
+			{"Helper", ev.Value.setpieceHelper_metricvalue},
+			{"Type", ev.Value.setpieceType_metricvalue},
+			{"ToolUsed", ev.Value.toolUsed_metricvalue},
+			{"ItemTriggered", ev.Value.Item_triggered_metricvalue},
+		}, true));
+
 		if (State::current.spinCompleted) return;
 
 		KillSetpieceEvent data{};
@@ -1454,6 +1463,11 @@ auto CroupierPlugin::SetupEvents() -> void {
 		this->SendCustomEvent("DrainPipeClimbed"sv, ImbuedPlayerInfo());
 	});
 	events.listen<Events::SecuritySystemRecorder>([this](const ServerEvent<Events::SecuritySystemRecorder>& ev) {
+		this->SendCustomEvent("SecuritySystemRecorder"sv, ImbuedPlayerInfo({
+			{"Camera", ev.Value.camera},
+			{"Event", ev.Value.event},
+			{"Recorder", ev.Value.recorder},
+		}, true));
 		switch (ev.Value.event) {
 			case SecuritySystemRecorderEvent::Spotted:
 				if (State::current.isCamsDestroyed) return;
@@ -1467,6 +1481,12 @@ auto CroupierPlugin::SetupEvents() -> void {
 				State::current.isCaughtOnCams = false;
 				break;
 		}
+	});
+	events.listen<Events::OpportunityEvents>([this](const ServerEvent<Events::OpportunityEvents>& ev) {
+		this->SendCustomEvent("OpportunityEvents"sv, ImbuedPlayerInfo({
+			{"RepositoryId", ev.Value.RepositoryId},
+			{"Event", ev.Value.Event},
+		}));
 	});
 }
 
@@ -2335,16 +2355,32 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 				: SendCustomEvent("Explosion"sv, ImbuedPlayerInfo({}, true));
 			break;
 		}
+		case ZHMPin::OnBroken: {
+			auto type = entity->GetType();
+			if (!type) break;
+			auto spatial = entity.QueryInterface<ZSpatialEntity>();
+			if (!spatial) {
+				LogDebug("Broken with no spatial {}", entity->GetType()->m_nEntityId);
+				break;
+			}
+			const auto& trans = spatial->GetWorldMatrix().Trans;
+			SendCustomEvent("OnBroken", ImbuedPositionInfo({ trans.x, trans.y, trans.z }, "", ImbuedPlayerInfo({
+				{"EntityID", entity->GetType()->m_nEntityId}
+			}, true)));
+			break;
+		}
 		case ZHMPin::OnDestroyed: {
 			auto type = entity->GetType();
 			if (!type) break;
-			LogDebug("Destroyed! {}", entity->GetType()->m_nEntityId);
 			auto spatial = entity.QueryInterface<ZSpatialEntity>();
-			if (!spatial) break;
+			if (!spatial) {
+				LogDebug("Destroyed with no spatial {}", entity->GetType()->m_nEntityId);
+				break;
+			}
 			const auto& trans = spatial->GetWorldMatrix().Trans;
-			SendCustomEvent("OnDestroyed", ImbuedPositionInfo({trans.x, trans.y, trans.z}, "", {
+			SendCustomEvent("OnDestroyed", ImbuedPositionInfo({ trans.x, trans.y, trans.z }, "", ImbuedPlayerInfo({
 				{"EntityID", entity->GetType()->m_nEntityId}
-			}));
+			}, true)));
 			break;
 		}
 		case ZHMPin::OnInitialFracture: {
@@ -2353,9 +2389,9 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 			auto spatial = entity.QueryInterface<ZSpatialEntity>();
 			if (!spatial) break;
 			const auto& trans = spatial->GetWorldMatrix().Trans;
-			SendCustomEvent("OnInitialFracture", ImbuedPositionInfo({trans.x, trans.y, trans.z}, "", {
-				{"EntityID", type->m_nEntityId}
-			}));
+			SendCustomEvent("OnInitialFracture", ImbuedPositionInfo({trans.x, trans.y, trans.z}, "", ImbuedPlayerInfo({
+				{"EntityID", entity->GetType()->m_nEntityId}
+			}, true)));
 			break;
 		}
 		case static_cast<ZHMPin>(4101414679): { //ZEntity > ZCompositeEntity > ZCompositeEntity - fired on e.g. fusebox destroyed
