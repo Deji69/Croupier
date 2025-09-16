@@ -39,11 +39,11 @@
 					<DataTemplate DataType="{x:Type local:EditTile}">
 						<Grid Margin="4,1">
 							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="0" />
-								<ColumnDefinition Width="3*" />
+								<ColumnDefinition Width="1*" />
+								<ColumnDefinition Width="45" />
 							</Grid.ColumnDefinitions>
 							<ComboBox
-								Grid.Column="1"
+								Grid.Column="0"
 								Style="{StaticResource ComboBoxFlatStyle}"
 								ItemsSource="{Binding AvailableTiles}"
 								ItemTemplate="{StaticResource TileSelectTemplate}"
@@ -70,7 +70,20 @@
 									</Style>
 								</ComboBox.ItemContainerStyle>
 							</ComboBox>
-						</Grid>
+                            <TextBox
+                                FontSize="14"
+                                Margin="5,2"
+								Grid.Column="1"
+                                TextAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                MaxLength="2"
+                                Text="{Binding Count, Mode=TwoWay}"
+                                IsEnabled="{Binding HasCount}"
+                                Foreground="{StaticResource NormalFGBrush}"
+                                Background="{StaticResource NormalBGBrush}"
+                                BorderBrush="{StaticResource NormalBorderBrush}"
+                                />
+                        </Grid>
 					</DataTemplate>
 				</ItemsControl.ItemTemplate>
 			</ItemsControl>

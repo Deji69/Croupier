@@ -912,7 +912,10 @@ namespace Croupier
 
 			ContextMenuHistory.Visibility = IsRouletteMode ? Visibility.Visible : Visibility.Collapsed;
 			ContextMenuCopySpin.Visibility = IsRouletteMode ? Visibility.Visible : Visibility.Collapsed;
+			ContextMenuCopyCard.Visibility = IsBingoMode ? Visibility.Visible : Visibility.Collapsed;
 			ContextMenuPasteSpin.Visibility = IsRouletteMode ? Visibility.Visible : Visibility.Collapsed;
+			ContextMenuPasteCard.Visibility = IsBingoMode ? Visibility.Visible : Visibility.Collapsed;
+			ContextMenuCopySpinLink.Visibility = IsRouletteMode ? Visibility.Visible : Visibility.Collapsed;
 			ContextMenuBookmarks.Visibility = IsRouletteMode ? Visibility.Visible : Visibility.Collapsed;
 			ContextMenuTargetNameFormat.Visibility = IsRouletteMode ? Visibility.Visible : Visibility.Collapsed;
 			ContextMenuRouletteKillConfirmations.Visibility = IsRouletteMode ? Visibility.Visible : Visibility.Collapsed;
@@ -1872,9 +1875,18 @@ namespace Croupier
 		}
 
 		private void CopySpinCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
-			if (GameController.Main.Roulette.Spin == null) return;
+			string? text = null;
 
-			var text = GameController.Main.Roulette.Spin.ToString();
+			if (IsRouletteMode) {
+				if (GameController.Main.Roulette.Spin != null)
+					text = GameController.Main.Roulette.Spin.ToString();
+			}
+			else if (IsBingoMode)
+				if (GameController.Main.Bingo.Card != null)
+					text = GameController.Main.Bingo.Card.ToString();
+
+
+			if (text == null) return;
 
 			// Have a few attempts at accessing the clipboard. In Windows this is usually a data race vs. other processes.
 			for (var i = 0; i < 10; ++i) {
@@ -1919,18 +1931,34 @@ namespace Croupier
 
 		private void PasteSpinCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
 			var text = Clipboard.GetText();
-			if (SpinParser.TryParse(text, out var spin) && spin is not null) {
-				var roulette = GameController.Main.Roulette;
-				var curSpin = roulette.Spin;
-				if (curSpin == null || curSpin.ToString() == spin.ToString())
-					return;
+			if (GameController.Main.IsPlayingRoulette) {
+				if (SpinParser.TryParse(text, out var spin) && spin is not null) {
+					var roulette = GameController.Main.Roulette;
+					var curSpin = roulette.Spin;
+					if (curSpin == null || curSpin.ToString() == spin.ToString())
+						return;
 
-				roulette.SetSpin(spin);
-				PushCurrentSpinToHistory();
+					GameController.Main.Mode = GameMode.Roulette;
+					roulette.SetSpin(spin);
+					PushCurrentSpinToHistory();
 
-				spinHistoryIndex = 1;
-				ResetTimer();
-				TrackNewSpin();
+					spinHistoryIndex = 1;
+					ResetTimer();
+					TrackNewSpin();
+				}
+			}
+			if (GameController.Main.IsPlayingBingo) {
+				if (BingoParser.TryParse(text, out var card) && card is not null) {
+					var bingo = GameController.Main.Bingo;
+					var curCard = bingo.Card;
+					if (curCard == null || curCard.ToString() == card.ToString())
+						return;
+
+					GameController.Main.Mode = GameMode.Bingo;
+					bingo.SetCard(card);
+					ResetTimer();
+					TrackNewBingo();
+				}
 			}
 		}
 
@@ -2257,7 +2285,9 @@ namespace Croupier
 		}
 
 		private void PasteSpinCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e) {
-			e.CanExecute = SpinParser.TryParse(Clipboard.GetText(), out _);
+			var text = Clipboard.GetText();
+			e.CanExecute = SpinParser.TryParse(text, out _)
+				|| BingoParser.TryParse(text, out _);
 		}
 
 		private void CheckUpdateCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {

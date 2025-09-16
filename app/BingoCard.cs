@@ -21,16 +21,28 @@ namespace Croupier {
 	}
 
 	public class BingoCard : INotifyPropertyChanged {
-		public BingoTileType Mode = BingoTileType.Objective;
 		public MissionID Mission = MissionID.NONE;
 		public BingoCardSize Size => size;
+		public BingoTileType Mode {
+			get {
+				var haveObjectives = false;
+				var haveComplications = false;
+				foreach (var tile in Tiles) {
+					if (tile == null) continue;
+					haveObjectives = haveObjectives || tile.Type == BingoTileType.Objective;
+					haveComplications = haveComplications || tile.Type == BingoTileType.Complication;
+				}
+				if (haveObjectives && haveComplications)
+					return BingoTileType.Mixed;
+				return haveObjectives ? BingoTileType.Objective : BingoTileType.Complication;
+			}
+		}
 		public ReadOnlyObservableCollection<BingoTile?> Tiles => new(tiles);
 
 		private readonly ObservableCollection<BingoTile?> tiles = [];
 		private BingoCardSize size = new(0, 0, false);
 
-		public BingoCard(BingoTileType mode, MissionID mission = MissionID.NONE) {
-			Mode = mode;
+		public BingoCard(MissionID mission = MissionID.NONE) {
 			Mission = mission;
 			tiles.CollectionChanged += (sender, e) => {
 				OnPropertyChanged(nameof(Tiles));
@@ -38,8 +50,8 @@ namespace Croupier {
 			};
 		}
 
-		public void Add(BingoTile tile) {
-			var liveTile = (BingoTile)tile.Clone();
+		public void Add(BingoTile tile, int? count = null) {
+			var liveTile = (BingoTile)tile.Clone(count);
 			liveTile.Reset();
 			liveTile.PropertyChanged += LiveTile_PropertyChanged;
 			tiles.Add(liveTile);
@@ -54,7 +66,7 @@ namespace Croupier {
 			if (index < 0 || index >= tiles.Count) throw new ArgumentOutOfRangeException($"Invalid index: {index}");
 			if (tile == null) tiles[index] = null;
 			else {
-				var liveTile = (BingoTile)tile.Clone();
+				var liveTile = (BingoTile)tile.Clone(tile.Count);
 				liveTile.Reset();
 				tiles[index] = liveTile;
 			}
