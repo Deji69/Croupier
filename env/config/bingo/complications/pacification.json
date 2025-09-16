@@ -1,5 +1,6 @@
 [
 	{
+		"Key": "MaxKOs",
 		"Name": "Max KOs {2}/{0}",
 		"Type": "Complication",
 		"Tip": "You may only pacify up to {0} NPCs in total.",
@@ -10,6 +11,7 @@
 		}
 	},
 	{
+		"Key": "MaxGuardKOs",
 		"Name": "Max Guard KOs {2}/{0}",
 		"Type": "Complication",
 		"Tip": "You may only pacify up to {0} guard NPCs in total.",
@@ -21,6 +23,7 @@
 		}
 	},
 	{
+		"Key": "NoCivilianKOs",
 		"Name": "No Civilian KOs",
 		"Type": "Complication",
 		"Tip": "Do not pacify any civilian NPCs.",
@@ -32,6 +35,7 @@
 		}
 	},
 	{
+		"Key": "NoFemaleKOs",
 		"Name": "No Female KOs",
 		"Type": "Complication",
 		"Tip": "Do not pacify any female NPCs.",
@@ -42,6 +46,7 @@
 		}
 	},
 	{
+		"Key": "NoGuardKOs",
 		"Name": "No Guard KOs",
 		"Type": "Complication",
 		"Tip": "Do not pacify any guard NPCs.",
@@ -53,6 +58,7 @@
 	},
 	{
 		"Disabled": true,
+		"Key": "NoKOInDisguise",
 		"Name": "No KO In Disguise",
 		"Type": "Complication",
 		"Tip": "Do not pacify anyone while you are wearing a disguise.",
@@ -63,6 +69,7 @@
 		}
 	},
 	{
+		"Key": "NoNonTargetKOs",
 		"Name": "No Non-Target KOs",
 		"Type": "Complication",
 		"Tip": "Do not pacify any non-target NPCs.",
@@ -73,6 +80,7 @@
 		}
 	},
 	{
+		"Key": "NoMaleKOs",
 		"Name": "No Male KOs",
 		"Type": "Complication",
 		"Tip": "Do not pacify any male NPCs.",
@@ -83,6 +91,7 @@
 		}
 	},
 	{
+		"Key": "NoMeleeKOs",
 		"Name": "No Melee KOs",
 		"Type": "Complication",
 		"Tip": "Do not pacify using a melee prompt.",
@@ -93,6 +102,7 @@
 		}
 	},
 	{
+		"Key": "NoTargetKOs",
 		"Name": "No Target KOs",
 		"Type": "Complication",
 		"Tip": "Do not pacify any of the targets.",
@@ -103,6 +113,7 @@
 		}
 	},
 	{
+		"Key": "NoSameDisguiseKOs",
 		"Name": "No Same Disguise KOs",
 		"Type": "Complication",
 		"Tip": "Do not pacify any NPC wearing the same disguise as you.",
@@ -113,6 +124,7 @@
 		}
 	},
 	{
+		"Key": "NoSedativeKOs",
 		"Name": "No Sedative KOs",
 		"Type": "Complication",
 		"Tip": "Do not pacify anyone using sedatives or tranquilizers.",
@@ -123,6 +135,7 @@
 		}
 	},
 	{
+		"Key": "NoThrowKOs",
 		"Name": "No Throw KOs",
 		"Type": "Complication",
 		"Tip": "Do not use thrown objects to pacify anyone.",
@@ -133,6 +146,7 @@
 		}
 	},
 	{
+		"Key": "NoUniqueDisguiseKOs",
 		"Name": "No Unique Disguise KOs",
 		"Type": "Complication",
 		"Tip": "Do not pacify any NPC wearing a unique disguise.",
@@ -143,6 +157,7 @@
 		}
 	},
 	{
+		"Key": "OnlySameDisguiseKOs",
 		"Name": "Only Same Disguise KOs",
 		"Type": "Complication",
 		"Tip": "You may only pacify NPCs whose disguise you are wearing.",
@@ -153,6 +168,7 @@
 		}
 	},
 	{
+		"Key": "OnlySedativeAndAccidentKOs",
 		"Name": "Only Sedative and Accident KOs",
 		"Type": "Complication",
 		"Tip": "Do not pacify anyone unless using a sedative, tranquilizer dart or accident KO.",

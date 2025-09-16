@@ -4,6 +4,7 @@
 	"Tiles": [
 		// Collect Objectives
 		{
+			"Key": "CollectBust",
 			"Name": "{1}x Bust",
 			"Group": "Collect",
 			"Missions": ["World of Tomorrow"],
@@ -13,6 +14,17 @@
 			}
 		},
 		{
+			"Key": "CollectCannabisJoint",
+			"Name": "{1}x Cannabis Joint",
+			"Group": "Collect",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Items": ["ac1f44ac-0542-4e3e-9805-81ceeb499804"]
+			}
+		},
+		{
+			"Key": "CollectCannonball",
 			"Name": "{1}x Cannonball",
 			"Group": "Collect",
 			"Missions": ["World of Tomorrow"],
@@ -23,6 +35,17 @@
 			}
 		},
 		{
+			"Key": "CollectCombatKnife",
+			"Name": "{1}x Combat Knife",
+			"Group": "Collect",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Items": ["2c037ef5-a01b-4532-8216-1d535193a837"]
+			}
+		},
+		{
+			"Key": "CollectExpiredSpaghettiSauce",
 			"Name": "{1}x Expired Spaghetti Sauce",
 			"NameSingular": "{1}x Expired Spaghetti Sauce",
 			"Group": "Collect",
@@ -34,6 +57,7 @@
 			}
 		},
 		{
+			"Key": "CollectFlowerBoquet",
 			"Name": "{1}x Flower Boquet",
 			"Group": "Collect",
 			"Missions": ["World of Tomorrow"],
@@ -44,6 +68,7 @@
 			}
 		},
 		{
+			"Key": "CollectFoldingKnife",
 			"Name": "{1}x Folding Knife",
 			"Group": "Collect",
 			"Missions": ["World of Tomorrow"],
@@ -53,6 +78,7 @@
 			}
 		},
 		{
+			"Key": "CollectApartmentKey",
 			"Name": "Apartment Key",
 			"Group": "Collect",
 			"Missions": ["World of Tomorrow"],
@@ -62,6 +88,7 @@
 			}
 		},
 		{
+			"Key": "CollectChurchKey",
 			"Name": "Church Key",
 			"Group": "Collect",
 			"Missions": ["World of Tomorrow"],
@@ -71,6 +98,7 @@
 			}
 		},
 		{
+			"Key": "CollectMedicalJournal",
 			"Name": "Medical Journal",
 			"Group": "Collect",
 			"Missions": ["World of Tomorrow"],
@@ -80,6 +108,7 @@
 			}
 		},
 		{
+			"Key": "CollectMansionMasterKey",
 			"Name": "Mansion Master Key",
 			"Group": "Collect",
 			"Missions": ["World of Tomorrow"],
@@ -89,6 +118,7 @@
 			}
 		},
 		{
+			"Key": "CollectSewerKey",
 			"Name": "Sewer Key",
 			"Group": "Collect",
 			"Missions": ["World of Tomorrow"],
@@ -98,6 +128,7 @@
 			}
 		},
 		{
+			"Key": "CollectVirusPrototype",
 			"Name": "Virus Prototype",
 			"Group": "Collect",
 			"Missions": ["World of Tomorrow"],
@@ -111,6 +142,7 @@
 	
 		// Pacify Objectives
 		{
+			"Key": "PacifyPriest",
 			"Name": "Priest",
 			"Tip": "Pacify the Priest.",
 			"Group": "Pacify",
@@ -121,6 +153,7 @@
 			}
 		},
 		{
+			"Key": "PacifyStreetPerformer",
 			"Name": "Street Performer",
 			"Tip": "Pacify Umberto Megazzini AKA the Street Performer.",
 			"Group": "Pacify",
@@ -131,6 +164,7 @@
 			}
 		},
 		{
+			"Key": "PacifyTorresPiombo",
 			"Name": "Torres Piombo",
 			"Tip": "Pacify Torres Piombo AKA the Bohemian.",
 			"Group": "Pacify",
@@ -141,6 +175,7 @@
 			}
 		},
 		{
+			"Key": "PacifyWithBaseballBat",
 			"Name": "With Baseball Bat",
 			"Tip": "Pacify any NPC using a baseball bat.",
 			"Group": "Pacify",
@@ -151,6 +186,7 @@
 			}
 		},
 		{
+			"Key": "PacifyWithGolfClub",
 			"Name": "With Golf Club",
 			"Tip": "Pacify any NPC using a golf club.",
 			"Group": "Pacify",
@@ -161,6 +197,7 @@
 			}
 		},
 		{
+			"Key": "PacifyWithPoliceBaton",
 			"Name": "With Police Baton",
 			"Tip": "Pacify any NPC using a police baton.",
 			"Group": "Pacify",
@@ -171,6 +208,7 @@
 			}
 		},
 		{
+			"Key": "PacifyWithShovel",
 			"Name": "With Shovel",
 			"Tip": "Pacify any NPC using a shovel.",
 			"Group": "Pacify",
@@ -183,6 +221,7 @@
 		
 		// Interact Objectives
 		{
+			"Key": "ActivateVirusVentilation",
 			"Name": "Activate Virus Ventilation",
 			"Tip": "Cause the air purification system in the virus chamber to turn on for safe entry without a hazmat suit.",
 			"Group": "Interact",
@@ -196,6 +235,7 @@
 			}
 		},
 		{
+			"Key": "BuyASoda",
 			"Name": "Buy a Soda",
 			"Tip": "Purchase a can of soda from a vending machine.",
 			"Group": "Interact",
@@ -206,6 +246,7 @@
 			}
 		},
 		{
+			"Key": "CookTheSauce",
 			"Name": "Cook the Sauce",
 			"Tip": "Stir the pot as a kitchen assistant.",
 			"Group": "Interact",
@@ -216,6 +257,7 @@
 			}
 		},
 		{
+			"Key": "LieOnFuneralBed",
 			"Name": "Lie on Funeral Bed",
 			"Tip": "Play dead.",
 			"Group": "Interact",
@@ -226,6 +268,7 @@
 			}
 		},
 		{
+			"Key": "OpenTelescope",
 			"Name": "Open Telescope",
 			"Tip": "Open Caruso's observatory telescope.",
 			"Group": "Interact",
@@ -236,6 +279,7 @@
 			}
 		},
 		{
+			"Key": "OpenTheSafe",
 			"Name": "Open the Safe",
 			"Tip": "Open Silvio's safe in the attic.",
 			"Group": "Interact",
@@ -246,6 +290,7 @@
 			}
 		},
 		{
+			"Key": "PlaceFlowersOnGrave",
 			"Name": "Place Flowers on Grave",
 			"Tip": "Place a flower boquet on Mother Caruso's grave.",
 			"Group": "Interact",
@@ -256,6 +301,7 @@
 			}
 		},
 		{
+			"Key": "PlayTheVHSTape",
 			"Name": "Play the VHS Tape",
 			"Tip": "Play the VHS Tape on the projector in the observatory.",
 			"Group": "Interact",
@@ -266,6 +312,7 @@
 			}
 		},
 		{
+			"Key": "PoisonDrLafayettesCoffee",
 			"Name": "Poison Dr. Lafayette's Coffee",
 			"Tip": "Poison Dr. Oscar Lafayette's coffee glass.",
 			"Group": "Interact",
@@ -278,6 +325,7 @@
 			}
 		},
 		{
+			"Key": "RingDinnerBell",
 			"Name": "Ring Dinner Bell",
 			"Tip": "Ring the dinner bell.",
 			"Group": "Interact",
@@ -288,6 +336,7 @@
 			}
 		},
 		{
+			"Key": "RingServiceBell",
 			"Name": "Ring Service Bell",
 			"Tip": "Ring Mother Caruso's service bell.",
 			"Group": "Interact",
@@ -298,6 +347,7 @@
 			}
 		},
 		{
+			"Key": "TalkToButler",
 			"Name": "Talk to Butler",
 			"Tip": "Talk to the villa's butler in a suitable disguise.",
 			"Group": "Interact",
@@ -308,6 +358,7 @@
 			}
 		},
 		{
+			"Key": "ThrowCoinsIntoTheFountain",
 			"Name": "Throw {1} Coins into the Fountain",
 			"NameSingular": "Throw {1} Coin into the Fountain",
 			"Tip": "Throw {0} coins into the fountain in the main square.",
@@ -320,6 +371,7 @@
 			}
 		},
 		{
+			"Key": "TurnOnStairLift",
 			"Name": "Turn On Stair Lift",
 			"Tip": "Activate the stair lift in the villa entrance hall.",
 			"Group": "Interact",
@@ -330,6 +382,7 @@
 			}
 		},
 		{
+			"Key": "ToggleTransistorRadio",
 			"Name": "Toggle Transistor Radio",
 			"Tip": "Turn a transistor radio on or off.",
 			"Group": "Interact",
@@ -351,6 +404,7 @@
 			]
 		},
 		{
+			"Key": "ToggleTV",
 			"Name": "Toggle TV",
 			"Tip": "Turn a TV on or off.",
 			"Group": "Interact",
@@ -372,6 +426,7 @@
 			]
 		},
 		{
+			"Key": "TurnOnAVacuum",
 			"Name": "Turn On a Vacuum",
 			"Tip": "Turn on a vacuum cleaner.",
 			"Group": "Interact",
@@ -382,6 +437,7 @@
 			}
 		},
 		{
+			"Key": "TurnOn2OutdoorFaucets",
 			"Name": "Turn On 2 Outdoor Faucets",
 			"Tip": "Turn on 2 outdoor hose water faucets.",
 			"Group": "Interact",
@@ -394,6 +450,7 @@
 			}
 		},
 		{
+			"Key": "TurnOffAStove",
 			"Name": "Turn Off a Stove",
 			"Tip": "Turn off a cooker stove.",
 			"Group": "Interact",
@@ -404,6 +461,7 @@
 			}
 		},
 		{
+			"Key": "WakeTheDetective",
 			"Name": "Wake the Detective",
 			"Tip": "Activate the stair lift in the villa entrance hall.",
 			"Group": "Interact",
@@ -416,6 +474,7 @@
 		
 		// Sabotage Objectives
 		{
+			"Key": "BreakBiolabWall",
 			"Name": "Break Biolab Wall",
 			"Tip": "Break the brick wall leading into the biolab.",
 			"Group": "Sabotage",
@@ -426,6 +485,7 @@
 			}
 		},
 		{
+			"Key": "DropChandeliers",
 			"Name": "Drop {1} Chandeliers",
 			"NameSingular": "Drop {1} Chandelier",
 			"Tip": "Cause {0} chandeliers to fall.",
@@ -440,6 +500,7 @@
 			}
 		},
 		{
+			"Key": "DropChurchBell",
 			"Name": "Drop Church Bell",
 			"Tip": "Make the church bell fall.",
 			"Group": "Sabotage",
@@ -450,6 +511,7 @@
 			}
 		},
 		{
+			"Key": "DropAStalactite",
 			"Name": "Drop a Stalactite",
 			"Tip": "Make a stalactite fall.",
 			"Group": "Sabotage",
@@ -468,6 +530,18 @@
 			}
 		},
 		{
+			"Key": "DropSolarSystem",
+			"Name": "Drop Solar System",
+			"Tip": "Make the solar system display in the observatory fall.",
+			"Group": "Sabotage",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Sabotage"],
+			"OnBroken": {
+				"EntityID": 978427184719728457
+			}
+		},
+		{
+			"Key": "ExplodeALawnmower",
 			"Name": "Explode a Lawnmower",
 			"Tip": "Cause a lawnmower to explode.",
 			"Group": "Sabotage",
@@ -478,6 +552,7 @@
 			}
 		},
 		{
+			"Key": "PopCrocodiles",
 			"Name": "Pop {1} Crocodiles",
 			"NameSingular": "Pop {1} Crocodile",
 			"Tip": "Cause {0} inflatable crocodiles to burst.",
@@ -491,6 +566,7 @@
 	
 		// Action Complications
 		{
+			"Key": "NoExplosionsIndoors",
 			"Name": "No Explosions Indoors",
 			"Tip": "Do not cause unnecessary explosions inside any building.",
 			"Type": "Complication",
@@ -502,6 +578,7 @@
 			}
 		},
 		{
+			"Key": "NoExplosionsOutside",
 			"Name": "No Explosions Outside",
 			"Tip": "Do not cause unnecessary explosions outdoors (includes balconies).",
 			"Type": "Complication",
@@ -512,6 +589,7 @@
 			}
 		},
 		{
+			"Key": "NoKeycards",
 			"Name": "No Keycards",
 			"Type": "Complication",
 			"Tip": "Do not take any keycards from the map.",
@@ -519,13 +597,14 @@
 			"Difficulty": "Medium",
 			"Missions": ["World of Tomorrow"],
 			"OnPickup": {
-				"RepositoryItem": [
+				"ItemRepositoryId": [
 					"c8a504a7-c018-4ea6-8625-09d2124ea47c",
 					"e3640fa0-96cf-4b96-8a6d-6cfdd06b2781"
 				]
 			}
 		},
 		{
+			"Key": "NoShootingIndoors",
 			"Name": "No Shooting Indoors",
 			"Type": "Complication",
 			"Tip": "Do not fire any shots while inside any building.",
@@ -539,6 +618,7 @@
 			}
 		},
 		{
+			"Key": "NoShootingOutside",
 			"Name": "No Shooting Outside",
 			"Type": "Complication",
 			"Tip": "Do not fire any shots while outdoors (balconies count as outdoors).",
@@ -566,6 +646,7 @@
 		
 		// Opportunity Complications
 		{
+			"Key": "DontOpenTelescope",
 			"Name": "Don't Open Telescope",
 			"Type": "Complication",
 			"Tip": "Do not activate the observatory telescope.",
@@ -579,6 +660,7 @@
 		
 		// Target Complications
 		{
+			"Key": "FrancescaNoEmetic",
 			"Name": "Francesca: No Emetic",
 			"Type": "Complication",
 			"Tip": "Do not make Francesca De Santis sick.",
@@ -590,6 +672,7 @@
 			}
 		},
 		{
+			"Key": "FrancescaNoLockdown",
 			"Name": "Francesca: No Lockdown",
 			"Type": "Complication",
 			"Tip": "Do not cause Francesca De Santis to enter Target Lockdown.",
@@ -601,6 +684,7 @@
 			}
 		},
 		{
+			"Key": "SilvioNoEmetic",
 			"Name": "Silvio: No Emetic",
 			"Type": "Complication",
 			"Tip": "Do not make Silvio Caruso sick.",
@@ -612,6 +696,7 @@
 			}
 		},
 		{
+			"Key": "SilvioNoLockdown",
 			"Name": "Silvio: No Lockdown",
 			"Type": "Complication",
 			"Tip": "Do not cause Silvio Caruso to enter Target Lockdown.",
@@ -625,6 +710,7 @@
 		
 		// Location Complications
 		{
+			"Key": "NoEntryFrancescasOffice",
 			"Name": "No Entry: Francesca's Office",
 			"Type": "Complication",
 			"Tip": "Avoid entering Francesca De Santis' office.",
@@ -636,6 +722,7 @@
 			}
 		},
 		{
+			"Key": "NoEntryObservatory",
 			"Name": "No Entry: Observatory",
 			"Type": "Complication",
 			"Tip": "Avoid entering the Caruso observatory.",
@@ -647,6 +734,7 @@
 			}
 		},
 		{
+			"Key": "NoEntryBathrooms",
 			"Name": "No Entry: Bathrooms",
 			"Type": "Complication",
 			"Tip": "Do not enter any bathroom, toilet room or restroom.",
@@ -659,6 +747,7 @@
 		},
 		{
 			"Disabled": true,
+			"Key": "NoReloadVillaAndBiolab",
 			"Name": "No Reload: Villa & Biolab",
 			"Type": "Complication",
 			"Tip": "Avoid leaving clips at the scene - do not reload anywhere inside the villa or biolab (excludes outdoor areas).",
@@ -678,6 +767,7 @@
 			}
 		},
 		{
+			"Key": "NoShotsBiolab",
 			"Name": "No Shots: Biolab",
 			"Type": "Complication",
 			"Tip": "Do not fire any shots while within the biolab cave.",
@@ -689,6 +779,7 @@
 			}
 		},
 		{
+			"Key": "NoTrespassVillaTopFloors",
 			"Name": "No Trespass: Villa Top Floors",
 			"Type": "Complication",
 			"Tip": "Do not trespass anywhere on the top floor or attic (Level 5+) of the villa.",

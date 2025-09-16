@@ -1,5 +1,6 @@
 [
 	{
+		"Key": "EraseSecurityRecorder",
 		"Name": "Erase Security Recorder",
 		"Tip": "Destroy or hack the camera recorder.",
 		"Group": "Sabotage",
@@ -10,6 +11,7 @@
 		}
 	},
 	{
+		"Key": "DestroyCameras",
 		"Name": "Destroy {1} Cameras",
 		"NameSingular": "Destroy {1} Camera",
 		"Tip": "Destroy {0} cameras by any means necessary.",
@@ -22,6 +24,7 @@
 		}
 	},
 	{
+		"Key": "IgniteOilDrum",
 		"Name": "Ignite Oil Drum",
 		"Tip": "Leak and ignite an oil barrel like a pyromaniac.",
 		"Group": "Sabotage",
@@ -33,6 +36,7 @@
 		}
 	},
 	{
+		"Key": "ExplodeAVehicle",
 		"Name": "Explode a Vehicle",
 		"Tip": "Cause a vehicle to explode and make someone walk home.",
 		"Group": "Sabotage",
@@ -45,6 +49,7 @@
 		"CarExploded": {}
 	},
 	{
+		"Key": "ExplodeGasHeaterLamps",
 		"Name": "Explode {1} Gas Heater Lamps",
 		"NameSingular": "Explode {1} Gas Heater Lamp",
 		"Tip": "Cause {0} gas heater lamps to explode.",
@@ -58,6 +63,7 @@
 		}
 	},
 	{
+		"Key": "BreakMuseumVase",
 		"Name": "Break Museum Vase",
 		"Tip": "Assassinate the antique vase.",
 		"Group": "Sabotage",
@@ -68,6 +74,7 @@
 		}
 	},
 	{
+		"Key": "ExplodeFireExtinguisher",
 		"Name": "Explode Fire Extinguisher",
 		"Tip": "Cause a fire extinguisher to explode. Remember to cover your ears.",
 		"Group": "Sabotage",
@@ -81,6 +88,7 @@
 		}
 	},
 	{
+		"Key": "ExplodePropaneFlask",
 		"Name": "Explode Propane Flask",
 		"Tip": "Blow up a propane flask.",
 		"Group": "Sabotage",
@@ -92,6 +100,7 @@
 		}
 	},
 	{
+		"Key": "ExplodeGasCanister",
 		"Name": "Explode Gas Canister",
 		"Tip": "Blow up a gas canister. The large red ones.",
 		"Group": "Sabotage",

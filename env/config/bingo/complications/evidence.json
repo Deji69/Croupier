@@ -1,5 +1,6 @@
 [
 	{
+		"Key": "DoorsStayLocked",
 		"Name": "Doors Stay Locked",
 		"Tip": "Do not unlock any locked door using a key, crowbar or lockpick.",
 		"Type": "Complication",
@@ -8,6 +9,7 @@
 	},
 	{
 		"Disabled": true,
+		"Key": "NoBodiesBagged",
 		"Name": "No Bodies Bagged",
 		"Tip": "Do not let any bodies be put in a body bag.",
 		"Type": "Complication",
@@ -15,6 +17,7 @@
 		"BodyBagged": {}
 	},
 	{
+		"Key": "NoBodiesFound",
 		"Name": "No Bodies Found",
 		"Tip": "Do not let any bodies be found, even if they are 'unsuspicious'.",
 		"Type": "Complication",
@@ -22,6 +25,7 @@
 		"BodyFound": {}
 	},
 	{
+		"Key": "NoBrokenDoors",
 		"Name": "No Broken Doors",
 		"Tip": "Do not force entry by breaking any doors.",
 		"Type": "Complication",
@@ -29,6 +33,7 @@
 		"DoorBroken": {}
 	},
 	{
+		"Key": "NoCamerasDestroyed",
 		"Name": "No Cameras Destroyed",
 		"Tip": "Leave all surveillance cameras intact.",
 		"Type": "Complication",
@@ -38,6 +43,7 @@
 		}
 	},
 	{
+		"Key": "NoExplosions",
 		"Name": "No Explosions",
 		"Tip": "Do not cause any explosions on the scene.",
 		"Type": "Complication",
@@ -45,6 +51,7 @@
 		"Explosion": {}
 	},
 	{
+		"Key": "NoWeaponsConfiscated",
 		"Name": "No Weapons Confiscated",
 		"Tip": "Do not let any guard put a weapon in a weapon crate (briefcases are okay).",
 		"Type": "Complication",

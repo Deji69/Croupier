@@ -1,5 +1,6 @@
 [
 	{
+		"Key": "MaxAgilityActions",
 		"Name": "Max Agility Actions {2}/{0}",
 		"Type": "Complication",
 		"Tip": "Do not perform more than {0} agility actions in total.",
@@ -12,6 +13,7 @@
 		}
 	},
 	{
+		"Key": "MaxShotsFired",
 		"Name": "Max Shots Fired {2}/{0}",
 		"Type": "Complication",
 		"Tip": "Do not fire more than {0} shots from any kind of gun.",
@@ -24,6 +26,7 @@
 		}
 	},
 	{
+		"Key": "NoAgilityInDisguise",
 		"Name": "No Agility In Disguise",
 		"Type": "Complication",
 		"Tip": "Do not perform any agility action while wearing a disguise.",
@@ -34,6 +37,7 @@
 		}
 	},
 	{
+		"Key": "NoAgilityInSuit",
 		"Name": "No Agility In Suit",
 		"Type": "Complication",
 		"Tip": "Do not perform any agility action while wearing your suit.",
@@ -45,6 +49,7 @@
 	},
 	{
 		"Disabled": true,
+		"Key": "NoAssaultRifleShots",
 		"Name": "No Assault Rifle Shots",
 		"Type": "Complication",
 		"Tip": "Do not fire any shots using an assault rifle.",
@@ -55,6 +60,7 @@
 		}
 	},
 	{
+		"Key": "NoBodyDragging",
 		"Name": "No Body Dragging",
 		"Type": "Complication",
 		"Tip": "Do not drag any NPC bodies. You may grab and box them, provided you do not move while holding onto them.",
@@ -63,6 +69,7 @@
 		"DragBodyMove": {}
 	},
 	{
+		"Key": "NoBodyShots",
 		"Name": "No Body Shots",
 		"Type": "Complication",
 		"Tip": "Do not shoot any NPC unless it is a headshot.",
@@ -71,6 +78,7 @@
 		"ProjectileBodyShot": {}
 	},
 	{
+		"Key": "NoClimbingDrainPipes",
 		"Name": "No Climbing Drain Pipes",
 		"Type": "Complication",
 		"Tip": "Don't climb any drain pipe. This includes vines - anything you can slide down like a pipe. Ladders are okay.",
@@ -79,6 +87,7 @@
 		"DrainPipeClimbed": {}
 	},
 	{
+		"Key": "NoCrouchRunning",
 		"Name": "No Crouch Running",
 		"Type": "Complication",
 		"Tip": "Avoid running while crouched.",
@@ -90,6 +99,7 @@
 		}
 	},
 	{
+		"Key": "NoCrouchMovement",
 		"Name": "No Crouch Movement",
 		"Type": "Complication",
 		"Tip": "If you crouch, you must stay still.",
@@ -109,6 +119,7 @@
 	},
 	{
 		"Disabled": true,
+		"Key": "NoCrouchMoveInTrespassing",
 		"Name": "No Crouch Move in Trespassing",
 		"Type": "Complication",
 		"Tip": "If you crouch while in trespassing, you must stay still.",
@@ -128,6 +139,7 @@
 		}
 	},
 	{
+		"Key": "NoCrowdBlending",
 		"Name": "No Crowd Blending",
 		"Type": "Complication",
 		"Tip": "Avoid becoming concealed in crowded areas.",
@@ -140,6 +152,7 @@
 		"OnIsFullyInCrowd": {}
 	},
 	{
+		"Key": "NoDamage",
 		"Name": "No Damage",
 		"Type": "Complication",
 		"Tip": "Do not take damage, not even friendly fire.",
@@ -148,6 +161,7 @@
 		"OnTakeDamage": {}
 	},
 	{
+		"Key": "NoDoubleDoorsOpened",
 		"Name": "No Double Doors Opened",
 		"Type": "Complication",
 		"Tip": "Do not open any double doors by hand.",
@@ -158,6 +172,7 @@
 		}
 	},
 	{
+		"Key": "NoDroppingItems",
 		"Name": "No Dropping Items",
 		"Type": "Complication",
 		"Tip": "Do not drop any item from your hands or inventory. Placing them is fine.",
@@ -166,6 +181,7 @@
 		"ItemDropped": {}
 	},
 	{
+		"Key": "NoInstinct",
 		"Name": "No Instinct",
 		"Type": "Complication",
 		"Tip": "Go against your instincts and avoid using instinct.",
@@ -175,6 +191,7 @@
 	},
 	{
 		"Disabled": true,
+		"Key": "NoPistolShots",
 		"Name": "No Pistol Shots",
 		"Type": "Complication",
 		"Tip": "Do not fire any shots using a pistol.",
@@ -186,6 +203,7 @@
 	},
 	{
 		"Disabled": true,
+		"Key": "NoSMGShots",
 		"Name": "No SMG Shots",
 		"Type": "Complication",
 		"Tip": "Do not fire any shots using an SMG.",
@@ -204,6 +222,7 @@
 	},
 	{
 		"Disabled": true,
+		"Key": "NoShotgunShots",
 		"Name": "No Shotgun Shots",
 		"Type": "Complication",
 		"Tip": "Do not fire any shots using a shotgun.",
@@ -222,6 +241,7 @@
 	},
 	{
 		"Disabled": true,
+		"Key": "NoSniperShots",
 		"Name": "No Sniper Shots",
 		"Type": "Complication",
 		"Tip": "Do not fire any shots using an SMG.",
@@ -232,6 +252,7 @@
 		}
 	},
 	{
+		"Key": "NoReloading",
 		"Name": "No Reloading",
 		"Type": "Complication",
 		"Tip": "Do not reload any weapon. Avoid leaving clips around the place as evidence.",
@@ -239,6 +260,7 @@
 		"OnWeaponReload": {}
 	},
 	{
+		"Key": "NoShotsFired",
 		"Name": "No Shots Fired",
 		"Type": "Complication",
 		"Tip": "Do not fire any shots.",
@@ -247,6 +269,7 @@
 		"PlayerShot": {}
 	},
 	{
+		"Key": "NoSuppressedShots",
 		"Name": "No Suppressed Shots",
 		"Type": "Complication",
 		"Tip": "Do not fire any shots using a silenced or subsonic firearm.",
@@ -257,6 +280,7 @@
 		}
 	},
 	{
+		"Key": "NoThrowing",
 		"Name": "No Throwing",
 		"Type": "Complication",
 		"Tip": "Do not throw any item.",
@@ -265,6 +289,7 @@
 		"ItemThrown": {}
 	},
 	{
+		"Key": "NoVegetationConcealing",
 		"Name": "No Vegetation Concealing",
 		"Type": "Complication",
 		"Tip": "Avoid concealing yourself in foliage.",
@@ -274,6 +299,7 @@
 	},
 	{
 		"Disabled": true,
+		"Key": "OnlyRunCrouched",
 		"Name": "Only Run Crouched",
 		"Type": "Complication",
 		"Tip": "Do not run while standing upright, only run while crouching.",
