@@ -119,8 +119,6 @@ namespace Croupier
 					}
 				}
 			}
-			catch (System.IO.IOException) {
-			}
 			catch (System.IO.IOException) { }
 
 			Logging.Info("[SOCKET] Client disconnected.");
