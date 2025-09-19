@@ -15,6 +15,7 @@ namespace Croupier
 		public WindowPlace WindowPlace { get; } = new WindowPlace("app.config");
 
 		public App() : base() {
+			Logging.Clear();
 			Config.Load();
 			CroupierSocketServer.Start();
 			//CroupierPipeServer.Start();
