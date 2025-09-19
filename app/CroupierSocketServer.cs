@@ -103,6 +103,7 @@ namespace Croupier
 		private static async Task HandleClientReceiveAsync(TcpClient client, CancellationToken ct) {
 			var stream = client.GetStream();
 			var buffer = new byte[8192];
+			var partial = "";
 
 			try {
 				while (!ct.IsCancellationRequested && client.Connected) {
@@ -111,8 +112,17 @@ namespace Croupier
 					if (bytesRead <= 0)
 						break;
 
-					var data = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-					foreach (var msg in data.Split("\0", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)) {
+					var data = partial + Encoding.UTF8.GetString(buffer, 0, bytesRead);
+					var isPartial = data.Last() != '\0';
+					var splitData = data.Split('\0', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+					partial = "";
+
+					for (var i = 0; i < splitData.Length; i++) {
+						var msg = splitData[i];
+						if (i == splitData.Length - 1 && isPartial) {
+							partial += msg;
+							break;
+						}
 						Logging.Info("Received from client: " + msg);
 						ProcessReceivedMessage(msg);
 					}
