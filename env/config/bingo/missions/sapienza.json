@@ -437,9 +437,9 @@
 			}
 		},
 		{
-			"Key": "TurnOn2OutdoorFaucets",
-			"Name": "Turn On 2 Outdoor Faucets",
-			"Tip": "Turn on 2 outdoor hose water faucets.",
+			"Key": "TurnOnOutdoorFaucets",
+			"Name": "Turn On {1} Outdoor Faucets",
+			"Tip": "Turn on {1} outdoor hose water faucets.",
 			"Group": "Interact",
 			"Missions": ["World of Tomorrow"],
 			"Tags": ["Action", "Interact"],
