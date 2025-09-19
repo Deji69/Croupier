@@ -52,7 +52,7 @@ namespace Croupier
 				var ipAddress = IPAddress.Parse("127.0.0.1");
 				using var serverSocket = new TcpListener(ipAddress, PORT);
 
-				System.Diagnostics.Debug.WriteLine("[SOCKET] Server started.");
+				Logging.Info("[SOCKET] Server started.");
 
 				App.Current.Exit += OnExit;
 
@@ -61,8 +61,9 @@ namespace Croupier
 					while (!CancelConnection.IsCancellationRequested) {
 						try {
 							System.Diagnostics.Debug.WriteLine("[SOCKET] Waiting for connection...");
-							using var client = await serverSocket.AcceptTcpClientAsync();
+							Logging.Info("[SOCKET] Waiting for connection...");
 							System.Diagnostics.Debug.WriteLine("[SOCKET] Client connected.");
+							Logging.Info("[SOCKET] Client connected.");
 
 							App.Current.Dispatcher.Invoke(new Action(() => Connected?.Invoke(null, 0)));
 
@@ -70,10 +71,11 @@ namespace Croupier
 							var send = HandleClientSendAsync(client, CancelConnection.Token);
 							recv.Wait();
 							send.Wait();
+							Logging.Info($"[SOCKET] Client disconnected.");
 						} catch (SocketException e) {
-							System.Diagnostics.Debug.WriteLine($"[SOCKET] Exception: {e.Message}.");
+							Logging.Info($"[SOCKET] Exception: {e.Message}.");
 						} catch (Exception e) {
-							System.Diagnostics.Debug.WriteLine($"[SOCKET] Handler exception: {e.Message}.");
+							Logging.Info($"[SOCKET] Handler exception: {e.Message}.");
 						}
 					}
 				});
@@ -95,7 +97,7 @@ namespace Croupier
 			Send("Event:" + JsonSerializer.Serialize(obj));
 		}
 
-		private static void OnExit(object sender, System.Windows.ExitEventArgs e) {
+		private static void OnExit(object sender, ExitEventArgs e) {
 			CancelConnection.Cancel();
 		}
 
@@ -112,15 +114,16 @@ namespace Croupier
 
 					var data = Encoding.UTF8.GetString(buffer, 0, bytesRead);
 					foreach (var msg in data.Split("\0", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)) {
-						System.Diagnostics.Debug.WriteLine("Received from client: " + msg);
+						Logging.Info("Received from client: " + msg);
 						ProcessReceivedMessage(msg);
 					}
 				}
 			}
 			catch (System.IO.IOException) {
 			}
+			catch (System.IO.IOException) { }
 
-			System.Diagnostics.Debug.WriteLine("[SOCKET] Client disconnected.");
+			Logging.Info("[SOCKET] Client disconnected.");
 		}
 
 		private static async Task HandleClientSendAsync(TcpClient client, CancellationToken ct) {
@@ -140,7 +143,7 @@ namespace Croupier
 				}
 			} catch (System.IO.IOException) { }
 
-			System.Diagnostics.Debug.WriteLine("[SOCKET] Client disconnected.");
+			Logging.Info("[SOCKET] Client disconnected.");
 		}
 
 		public static void SpoofMessage(string msg) {
