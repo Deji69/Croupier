@@ -770,13 +770,12 @@ auto CroupierPlugin::ImbueItemEvent(const ItemEventValue& ev, EActionType action
 		if (!item->m_pItemConfigDescriptor) continue;
 		if (item->m_pItemConfigDescriptor->m_RepositoryId != ZRepositoryID(ev.RepositoryId))
 			continue;
-		auto const instanceId = reinterpret_cast<uintptr_t>(item);
-		if (State::current.collectedItemInstances.contains(instanceId))
-			continue;
-		State::current.collectedItemInstances.insert(instanceId);
+		//if (State::current.collectedItemInstances.contains(instanceId))
+		//	continue;
+		//State::current.collectedItemInstances.insert(instanceId);
 		return ImbuedPlayerInfo({
-			{"RepositoryId", ev.RepositoryId},
-			{"InstanceId", std::format("{}", instanceId)},
+			{"ItemRepositoryId", ev.RepositoryId},
+			{"ItemInstanceId", item->GetType()->m_nEntityId},
 			{"ItemType", ev.ItemType},
 			{"ItemName", ev.ItemName},
 		});
@@ -1112,8 +1111,8 @@ auto CroupierPlugin::SetupEvents() -> void {
 		//if (imbued) this->SendImbuedEvent(ev, *imbued);
 		lastThrownItem = ev.Value.RepositoryId;
 		this->SendCustomEvent("ItemThrown"sv, ImbuedPlayerInfo({
-			{"RepositoryId", ev.Value.RepositoryId},
-			{"InstanceId", ev.Value.InstanceId},
+			{"ItemRepositoryId", ev.Value.RepositoryId},
+			{"ItemInstanceId", ev.Value.InstanceId},
 			{"ItemType", ev.Value.ItemType},
 			{"ItemName", ev.Value.ItemName},
 		}));
@@ -2506,7 +2505,7 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 		//case ZHMPin::OnThrown: // ZHM5Item, ZEntity
 		//	break;
 		case ZHMPin::OnAttachToHitman: { // ZHM5Item, ZHM5ItemCCWeapon, ZEntity // accomodates coins etc.
-			SendCustomEvent("OnAttachToHitman"sv, ImbuedPlayerInfo(ImbuedItemInfo(entity)));
+			SendCustomEvent("OnAttachToHitman"sv, ImbuedPlayerInfo(ImbuedItemInfo(entity), true));
 			break;
 		}
 		case ZHMPin::DoorBroken:
