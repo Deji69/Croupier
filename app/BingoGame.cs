@@ -247,6 +247,7 @@ namespace Croupier {
 					"Kill" => ImbuePacifyEvent(json.Deserialize<KillEventValue>(jsonGameEventSerializerOptions)),
 					"Level_Setup_Events" => json.Deserialize<LevelSetupEventValue>(jsonGameEventSerializerOptions),
 					"Movement" => MovementEventValue.Load(json),
+					"OnAttachToHitman" => OnAttachToHitmanEventValue.Load(json),
 					"OnBroken" => OnBrokenEventValue.Load(json),
 					"OnDestroy" => OnDestroyEventValue.Load(json),
 					"OnDestroyed" => OnDestroyedEventValue.Load(json),
