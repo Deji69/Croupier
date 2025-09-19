@@ -237,7 +237,7 @@ namespace Croupier.GameEvents {
 		}
 	}
 
-	public class ItemInfoImbuedEventValue : EventValue {
+	public class ItemEventValue : EventValue {
 		public string? ItemName { get; set; }
 		public string? ItemType { get; set; }
 		public UInt64? ItemInstanceId { get; set; }
@@ -254,7 +254,7 @@ namespace Croupier.GameEvents {
 		public string? RepositoryItemSize { get; set; }
 		public List<string>? RepositoryPerks { get; set; }
 
-		public static ItemInfoImbuedEventValue Load(JsonElement json) {
+		public static ItemEventValue Load(JsonElement json) {
 			return new() {
 				ItemName = TryLoadString(json, nameof(ItemName)),
 				ItemType = TryLoadString(json, nameof(ItemType)),
@@ -527,8 +527,8 @@ namespace Croupier.GameEvents {
 		public string? RepositoryId { get; set; }
 	}
 
-	public abstract class ItemEventValue : EventValue {
-		public required ItemInfoImbuedEventValue Item;
+	public abstract class BaseItemEventValue : EventValue {
+		public required ItemEventValue Item;
 		public required PlayerEventValue Player;
 		public required LocationEventValue Location;
 		public string? RepositoryId;
@@ -537,53 +537,53 @@ namespace Croupier.GameEvents {
 		//public string? ItemName { get; set; }
 	}
 
-	public class ItemDestroyedEventValue : ItemEventValue {
+	public class ItemDestroyedEventValue : BaseItemEventValue {
 		public static ItemDestroyedEventValue Load(JsonElement json) {
 			return new() {
-				Item = ItemInfoImbuedEventValue.Load(json),
+				Item = ItemEventValue.Load(json),
 				Player = PlayerEventValue.Load(json),
 				Location = LocationEventValue.Load(json),
-				RepositoryId = TryLoadString(json, nameof(RepositoryId)),
+				RepositoryId = TryLoadString(json, "ItemRepositoryId"),
 			};
 		}
 	}
-	public class ItemDroppedEventValue : ItemEventValue {
+	public class ItemDroppedEventValue : BaseItemEventValue {
 		public static ItemDroppedEventValue Load(JsonElement json) {
 			return new() {
-				Item = ItemInfoImbuedEventValue.Load(json),
+				Item = ItemEventValue.Load(json),
 				Player = PlayerEventValue.Load(json),
 				Location = LocationEventValue.Load(json),
-				RepositoryId = TryLoadString(json, nameof(RepositoryId)),
+				RepositoryId = TryLoadString(json, "ItemRepositoryId"),
 			};
 		}
 	}
-	public class ItemPickedUpEventValue : ItemEventValue {
+	public class ItemPickedUpEventValue : BaseItemEventValue {
 		public static ItemPickedUpEventValue Load(JsonElement json) {
 			return new() {
-				Item = ItemInfoImbuedEventValue.Load(json),
+				Item = ItemEventValue.Load(json),
 				Player = PlayerEventValue.Load(json),
 				Location = LocationEventValue.Load(json),
-				RepositoryId = TryLoadString(json, nameof(RepositoryId)),
+				RepositoryId = TryLoadString(json, "ItemRepositoryId"),
 			};
 		}
 	}
-	public class ItemRemovedFromInventoryEventValue : ItemEventValue {
+	public class ItemRemovedFromInventoryEventValue : BaseItemEventValue {
 		public static ItemRemovedFromInventoryEventValue Load(JsonElement json) {
 			return new() {
-				Item = ItemInfoImbuedEventValue.Load(json),
+				Item = ItemEventValue.Load(json),
 				Player = PlayerEventValue.Load(json),
 				Location = LocationEventValue.Load(json),
-				RepositoryId = TryLoadString(json, nameof(RepositoryId)),
+				RepositoryId = TryLoadString(json, "ItemRepositoryId"),
 			};
 		}
 	}
-	public class ItemThrownEventValue : ItemEventValue {
+	public class ItemThrownEventValue : BaseItemEventValue {
 		public static ItemThrownEventValue Load(JsonElement json) {
 			return new() {
-				Item = ItemInfoImbuedEventValue.Load(json),
+				Item = ItemEventValue.Load(json),
 				Player = PlayerEventValue.Load(json),
 				Location = LocationEventValue.Load(json),
-				RepositoryId = TryLoadString(json, nameof(RepositoryId)),
+				RepositoryId = TryLoadString(json, "ItemRepositoryId"),
 			};
 		}
 	}
@@ -650,13 +650,13 @@ namespace Croupier.GameEvents {
 	}
 
 	public class PlayerShotEventValue : EventValue {
-		public required ItemInfoImbuedEventValue Weapon;
+		public required ItemEventValue Weapon;
 		public required LocationEventValue Location;
 		public required PlayerEventValue Player;
 
 		public static PlayerShotEventValue Load(JsonElement json) {
 			return new() {
-				Weapon = ItemInfoImbuedEventValue.Load(json),
+				Weapon = ItemEventValue.Load(json),
 				Location = LocationEventValue.Load(json),
 				Player = PlayerEventValue.Load(json),
 			};
@@ -782,6 +782,22 @@ namespace Croupier.GameEvents {
 		}
 	}
 
+	public class OnAttachToHitmanEventValue : EventValue {
+		public required ItemEventValue Item;
+		public required LocationEventValue Location;
+		public required PlayerEventValue Player;
+		public string? RepositoryId;
+
+		public static OnAttachToHitmanEventValue Load(JsonElement json) {
+			return new() {
+				Item = ItemEventValue.Load(json),
+				Location = LocationEventValue.Load(json),
+				Player = PlayerEventValue.Load(json),
+				RepositoryId = TryLoadString(json, "ItemRepositoryId"),
+			};
+		}
+	}
+
 	public class OnBrokenEventValue : EventValue {
 		public required LocationEventValue Location;
 		public required PlayerEventValue Player;
@@ -866,26 +882,28 @@ namespace Croupier.GameEvents {
 
 	public class OnPickupEventValue : EventValue {
 		public required LocationEventValue Location { get; set; }
-		public required ItemInfoImbuedEventValue Item { get; set; }
+		public required ItemEventValue Item { get; set; }
 		public required PlayerEventValue Player { get; set; }
+		public string? RepositoryId;
 
 		public static OnPickupEventValue? Load(JsonElement json) {
 			return new() {
-				Item = ItemInfoImbuedEventValue.Load(json),
+				Item = ItemEventValue.Load(json),
 				Player = PlayerEventValue.Load(json),
 				Location = LocationEventValue.Load(json),
+				RepositoryId = TryLoadString(json, "ItemRepositoryId"),
 			};
 		}
 	}
 
 	public class OnPutInContainerEventValue : EventValue {
 		public required LocationEventValue Location { get; set; }
-		public required ItemInfoImbuedEventValue Item { get; set; }
+		public required ItemEventValue Item { get; set; }
 		public required PlayerEventValue Player { get; set; }
 
 		public static OnPutInContainerEventValue? Load(JsonElement json) {
 			return new() {
-				Item = ItemInfoImbuedEventValue.Load(json),
+				Item = ItemEventValue.Load(json),
 				Player = PlayerEventValue.Load(json),
 				Location = LocationEventValue.Load(json),
 			};
@@ -935,12 +953,12 @@ namespace Croupier.GameEvents {
 
 	public class OnWeaponReloadEventValue : EventValue {
 		public required LocationEventValue Location;
-		public required ItemInfoImbuedEventValue Item;
+		public required ItemEventValue Item;
 		public required PlayerEventValue Player;
 
 		public static OnWeaponReloadEventValue Load(JsonElement json) {
 			return new() {
-				Item = ItemInfoImbuedEventValue.Load(json),
+				Item = ItemEventValue.Load(json),
 				Player = PlayerEventValue.Load(json),
 				Location = LocationEventValue.Load(json),
 			};

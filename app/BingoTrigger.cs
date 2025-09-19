@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Numerics;
 using System.Text.Json;
 using System.Windows;
 
@@ -665,7 +666,7 @@ namespace Croupier {
 		}
 
 		public bool Test(EventValue ev, BingoTileState state) {
-			return ev is ItemInfoImbuedEventValue v
+			return ev is ItemEventValue v
 				&& ItemName.Test(v.ItemName, state)
 				&& ItemType.Test(v.ItemType, state)
 				&& ItemInstanceId.Test(v.ItemInstanceId, state)
@@ -1431,18 +1432,34 @@ namespace Croupier {
 	}
 
 	public class BingoTriggerCollect : BingoTrigger {
+		readonly BingoTriggerPlayer player;
+		readonly BingoTriggerLocation location;
+		readonly BingoTriggerItemInfoImbued item;
 		readonly BingoTriggerCIString Items = new();
 		readonly BingoTriggerUnique Unique = new();
 
 		public BingoTriggerCollect(JsonElement json) : base(json) {
-			Items.Load(json, "Items");
-			Unique.SetPropName("InstanceId");
+			player = new(json);
+			item = new(json);
+			location = new(json);
+			Items.Load(json, nameof(Items));
+			Unique.SetPropName("ItemInstanceId");
 		}
 
 		public override bool Test(EventValue ev, BingoTileState state) {
-			return ev is ItemPickedUpEventValue v
+			if (ev is OnPickupEventValue u) {
+				return base.Test(ev, state)
+					&& item.Test(u.Item, state)
+					&& player.Test(u.Player, state)
+					&& location.Test(u.Location, state)
+					&& Items.Test(u.RepositoryId, state)
+					&& Unique.Test(u.Item, state);
+			}
+			return ev is OnAttachToHitmanEventValue v
 				&& base.Test(ev, state)
-				&& v.Item.ItemInstanceId != null
+				&& item.Test(v.Item, state)
+				&& player.Test(v.Player, state)
+				&& location.Test(v.Location, state)
 				&& Items.Test(v.RepositoryId, state)
 				&& Unique.Test(v.Item, state);
 		}
