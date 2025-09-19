@@ -534,6 +534,7 @@ namespace Croupier {
 				"Kill" => jh => new BingoTriggerKill(jh.json),
 				"LevelSetupEvent" => jh => new BingoTriggerLevelSetupEvent(jh.json),
 				"Movement" => jh => new BingoTriggerMovement(jh.json),
+				"OnAttachToHitman" => jh => new BingoTriggerOnAttachToHitman(jh.json),
 				"OnBroken" => jh => new BingoTriggerOnBroken(jh.json),
 				"OnDestroy" => jh => new BingoTriggerOnDestroy(jh.json),
 				"OnDestroyed" => jh => new BingoTriggerOnDestroyed(jh.json),
@@ -1618,6 +1619,20 @@ namespace Croupier {
 				&& base.Test(v, state)
 				&& location.Test(v.Location, state)
 				&& player.Test(v.Player, state);
+		}
+	}
+
+	public class OnAttachToHitman(JsonElement json) : BingoTrigger {
+		readonly BingoTriggerLocation location = new(json);
+		readonly BingoTriggerPlayer player = new(json);
+		readonly BingoTriggerItemInfoImbued item = new(json);
+
+		public override bool Test(EventValue ev, BingoTileState state) {
+			return ev is OnAttachToHitmanEventValue v
+				&& base.Test(v, state)
+				&& location.Test(v.Location, state)
+				&& player.Test(v.Player, state)
+				&& item.Test(v.Item, state);
 		}
 	}
 
