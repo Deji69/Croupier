@@ -57,20 +57,19 @@ namespace Croupier
 				App.Current.Exit += OnExit;
 
 				Task.Run(async () => {
-					serverSocket.Start();
 					while (!CancelConnection.IsCancellationRequested) {
 						try {
-							System.Diagnostics.Debug.WriteLine("[SOCKET] Waiting for connection...");
+							serverSocket.Start();
 							Logging.Info("[SOCKET] Waiting for connection...");
-							System.Diagnostics.Debug.WriteLine("[SOCKET] Client connected.");
+							var client = await serverSocket.AcceptTcpClientAsync();
 							Logging.Info("[SOCKET] Client connected.");
 
 							App.Current.Dispatcher.Invoke(new Action(() => Connected?.Invoke(null, 0)));
 
 							var recv = HandleClientReceiveAsync(client, CancelConnection.Token);
 							var send = HandleClientSendAsync(client, CancelConnection.Token);
-							recv.Wait();
-							send.Wait();
+							recv.Wait(CancelConnection.Token);
+							send.Wait(CancelConnection.Token);
 							Logging.Info($"[SOCKET] Client disconnected.");
 						} catch (SocketException e) {
 							Logging.Info($"[SOCKET] Exception: {e.Message}.");
