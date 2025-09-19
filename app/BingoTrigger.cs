@@ -1622,7 +1622,7 @@ namespace Croupier {
 		}
 	}
 
-	public class OnAttachToHitman(JsonElement json) : BingoTrigger {
+	public class BingoTriggerOnAttachToHitman(JsonElement json) : BingoTrigger {
 		readonly BingoTriggerLocation location = new(json);
 		readonly BingoTriggerPlayer player = new(json);
 		readonly BingoTriggerItemInfoImbued item = new(json);
