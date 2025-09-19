@@ -94,7 +94,7 @@ namespace Croupier {
 			const auto s_Loggers = GetLoggers();
 
 			for (size_t i = 0; i < s_Loggers.Count; ++i)
-				s_Loggers.Loggers[i]->debug(fmt::runtime(p_Format), p_Args...);
+				s_Loggers.Loggers[i]->info(fmt::runtime(p_Format), p_Args...);
 		}
 
 		DECLARE_PLUGIN_DETOUR(CroupierPlugin, void*, OnZLevelManagerStateCondition, void* th, __int64 a2);

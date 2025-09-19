@@ -744,6 +744,12 @@ struct Event<Events::OpportunityEvents> {
 	struct EventValue {
 		std::string RepositoryId;
 		std::string Event;
+
+		EventValue(const nlohmann::json& json) :
+			RepositoryId(json.value("RepositoryId", "")),
+			Event(json.value("Event", ""))
+		{
+		}
 	};
 };
 
