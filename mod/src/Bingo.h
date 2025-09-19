@@ -49,7 +49,7 @@ namespace Croupier {
 	struct BingoTile {
 		std::string text;
 		std::string group;
-		ImU32 groupColour;
+		ImU32 groupColour = 0;
 		bool achieved = false;
 		bool failed = false;
 	};
