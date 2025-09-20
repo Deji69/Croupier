@@ -58,6 +58,8 @@ namespace Croupier {
 				if (value < 0 || value >= AvailableTiles.Count) return;
 				selectedIndex = value;
 				OnPropertyChanged(nameof(SelectedIndex));
+				OnPropertyChanged(nameof(Count));
+				OnPropertyChanged(nameof(HasCount));
 			}
 		}
 
@@ -94,6 +96,7 @@ namespace Croupier {
 				viewModel.Tiles.Add(editTile);
 				var idx = i;
 				editTile.PropertyChanged += (sender, e) => {
+					if (e.PropertyName == "SelectedIndex") return;
 					if (editTile.Selected == null) return;
 					game.Card?.SetTile(idx, editTile.Selected.Tile);
 				};
