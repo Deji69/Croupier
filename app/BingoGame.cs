@@ -222,11 +222,11 @@ namespace Croupier {
 				return name switch {
 					"Actorsick" =>  ActorSickEventValue.Load(json),
 					"AgilityStart" => AgilityStartEventValue.Load(json),
-					"BodyBagged" => EventValue.Load<BodyBaggedEventValue>(json),
-					"BodyFound" => json.Deserialize<BodyFoundEventValue>(jsonGameEventSerializerOptions),
-					"BodyHidden" => json.Deserialize<BodyHiddenEventValue>(jsonGameEventSerializerOptions),
+					"BodyBagged" => BodyBaggedEventValue.Load(json),
+					"BodyFound" => BodyFoundEventValue.Load(json),
+					"BodyHidden" => BodyHiddenEventValue.Load(json),
 					"CarExploded" => CarExplodedEventValue.Load(json),
-					"Crocodile" => json.Deserialize<CrocodileEventValue>(jsonGameEventSerializerOptions),
+					"Crocodile" => CrocodileEventValue.Load(json),
 					"DartHit" => DartHitEventValue.Load(json),
 					"Disguise" => ImbueDisguiseEvent(DisguiseEventValue.Load(json)),
 					"DoorBroken" => DoorBrokenEventValue.Load(json),
@@ -238,14 +238,15 @@ namespace Croupier {
 					"Explosion" => ExplosionEventValue.Load(json),
 					"FriskedSuccess" => FriskedSuccessEventValue.Load(json),
 					"InstinctActive" => InstinctActiveEventValue.Load(json),
-					"Investigate_Curious" => json.Deserialize<InvestigateCuriousEventValue>(jsonGameEventSerializerOptions),
+					"Investigate_Curious" => InvestigateCuriousEventValue.Load(json),
 					"ItemDestroyed" => ItemDestroyedEventValue.Load(json),
 					"ItemDropped" => ItemDroppedEventValue.Load(json),
 					"ItemPickedUp" => ItemPickedUpEventValue.Load(json),
 					"ItemRemovedFromInventory" => ItemRemovedFromInventoryEventValue.Load(json),
+					"ItemStashed" => ItemStashedEventValue.Load(json),
 					"ItemThrown" => ItemThrownEventValue.Load(json),
 					"Kill" => ImbuePacifyEvent(json.Deserialize<KillEventValue>(jsonGameEventSerializerOptions)),
-					"Level_Setup_Events" => json.Deserialize<LevelSetupEventValue>(jsonGameEventSerializerOptions),
+					"Level_Setup_Events" => LevelSetupEventValue.Load(json),
 					"Movement" => MovementEventValue.Load(json),
 					"OnAttachToHitman" => OnAttachToHitmanEventValue.Load(json),
 					"OnBroken" => OnBrokenEventValue.Load(json),
@@ -261,7 +262,7 @@ namespace Croupier {
 					"OnTurnOff" => OnTurnOffEventValue.Load(json),
 					"OnWeaponReload" => OnWeaponReloadEventValue.Load(json),
 					"OpenDoor" => OpenDoorEventValue.Load(json),
-					"OpportunityEvents" => json.Deserialize<OpportunityEventValue>(jsonGameEventSerializerOptions),
+					"OpportunityEvents" => OpportunityEventValue.Load(json),
 					"Pacify" => ImbuePacifyEvent(json.Deserialize<PacifyEventValue>(jsonGameEventSerializerOptions)),
 					"PlayerShot" => PlayerShotEventValue.Load(json),
 					"ProjectileBodyShot" => ProjectileBodyShotEventValue.Load(json),
@@ -274,7 +275,6 @@ namespace Croupier {
 				};
 			}
 			return name switch {
-				"ItemStashed" => new ItemStashedEventValue(),
 				_ => null,
 			};
 		}
