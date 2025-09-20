@@ -286,23 +286,22 @@
 			"OnTurnOff": {
 				"Count": 2,
 				"EntityID": [
-					11152010954144089842,
-					10124024587741267219,
-					8059933745724105448
+					10074254826010978567
 				],
-				"Unique": "EntityID"
+				"Unique": "Location.Position"
 			}
 		},
 		{
-			"Key": "TurnOffAFusebox",
-			"Name": "Turn Off a Fusebox",
-			"Tip": "Turn off a fusebox.",
+			"Key": "TurnOffFuseboxes",
+			"Name": "Turn Off {1} Fuseboxes",
+			"NameSingular": "Turn Off {1} Fusebox",
+			"Tip": "Turn off {1} fusebox.",
 			"Group": "Interact",
 			"Missions": ["The Showstopper", "Holiday Hoarders"],
 			"OnTurnOff": {
+				"Count": 1,
 				"EntityID": [
-					3495762687448480204,
-					8048086997255927765
+					17017568610383883356
 				]
 			}
 		},
