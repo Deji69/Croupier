@@ -1428,14 +1428,14 @@ auto CroupierPlugin::SetupEvents() -> void {
 		if (validationUpdated) SendKillValidationUpdate();
 	});
 	events.listen<Events::setpieces>([this](const ServerEvent<Events::setpieces>& ev) {
-		this->SendCustomEvent("setpieces"sv, ImbuedPlayerInfo({
+		this->SendCustomEvent("setpieces"sv, ImbuedPositionInfo(ev.Value.Position, "", ImbuedPlayerInfo({
 			{"RepositoryId", ev.Value.RepositoryId},
 			{"Name", ev.Value.name_metricvalue},
 			{"Helper", ev.Value.setpieceHelper_metricvalue},
 			{"Type", ev.Value.setpieceType_metricvalue},
 			{"ToolUsed", ev.Value.toolUsed_metricvalue},
 			{"ItemTriggered", ev.Value.Item_triggered_metricvalue},
-		}, true));
+		}, true)));
 
 		if (State::current.spinCompleted) return;
 
@@ -1921,7 +1921,7 @@ static auto ZDynamicObjectToString(ZDynamicObject& obj) -> ZString {
 
 	if (obj.Is<SVector3>()) {
 		auto res = obj.As<SVector3>();
-		return (std::ostringstream() << std::quoted(std::to_string(res->x) + "," + std::to_string(res->y) + "," + std::to_string(res->z))).str();
+		return (std::ostringstream() << "[" << res->x << "," << res->y << "," << res->z << "]").str();
 	}
 
 	// Use the game method for anything we don't need to handle.

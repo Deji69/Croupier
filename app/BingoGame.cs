@@ -265,7 +265,7 @@ namespace Croupier {
 					"Pacify" => ImbuePacifyEvent(json.Deserialize<PacifyEventValue>(jsonGameEventSerializerOptions)),
 					"PlayerShot" => PlayerShotEventValue.Load(json),
 					"ProjectileBodyShot" => ProjectileBodyShotEventValue.Load(json),
-					"setpieces" => json.Deserialize<SetpiecesEventValue>(jsonGameEventSerializerOptions),
+					"setpieces" => SetpiecesEventValue.Load(json),
 					"SecuritySystemRecorder" => SecuritySystemRecorderEventValue.Load(json),
 					"StartingSuit" => ImbueDisguiseEvent(EventValue.Load<StartingSuitEventValue>(json)),
 					"Trespassing" => TrespassingEventValue.Load(json),
