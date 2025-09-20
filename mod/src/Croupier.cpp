@@ -1094,7 +1094,7 @@ auto CroupierPlugin::SetupEvents() -> void {
 			{"IsTarget", ev.Value.IsTarget},
 			{"ItemRepositoryId", ev.Value.item_R_ID},
 			{"SetpieceRepositoryId", ev.Value.setpiece_R_ID},
-		})));
+		}, true)));
 	});
 	events.listen<Events::Dart_Hit>([this](const ServerEvent<Events::Dart_Hit>& ev) {
 		this->SendCustomEvent("DartHit"sv, ImbuedPlayerInfo({
@@ -1104,7 +1104,7 @@ auto CroupierPlugin::SetupEvents() -> void {
 			{"Sedative", ev.Value.Sedative},
 			{"Sick", ev.Value.Sick},
 			{"IsTarget", ev.Value.IsTarget},
-		}));
+		}, true));
 	});
 	events.listen<Events::ItemThrown>([this](const ServerEvent<Events::ItemThrown>& ev) {
 		//auto imbued = this->ImbueItemEvent(ev.Value, EActionType::AT_ITEM_INTERACTION);
@@ -1115,7 +1115,16 @@ auto CroupierPlugin::SetupEvents() -> void {
 			{"ItemInstanceId", ev.Value.InstanceId},
 			{"ItemType", ev.Value.ItemType},
 			{"ItemName", ev.Value.ItemName},
-		}));
+		}, true));
+	});
+	events.listen<Events::ItemStashed>([this](const ServerEvent<Events::ItemStashed>& ev) {
+		this->SendCustomEvent("ItemStashed"sv, ImbuedPlayerInfo({
+			{"ActorId", ev.Value.ActorId},
+			{"ActorName", ev.Value.ActorName},
+			{"ItemId", ev.Value.ItemId},
+			{"ItemTypeId", ev.Value.ItemTypeId},
+			{"RepositoryId", ev.Value.RepositoryId},
+		}, true));
 	});
 	events.listen<Events::ItemPickedUp>([this](const ServerEvent<Events::ItemPickedUp>& ev) {
 		auto imbued = this->ImbueItemEvent(ev.Value, EActionType::AT_PICKUP);
@@ -1328,9 +1337,14 @@ auto CroupierPlugin::SetupEvents() -> void {
 		if (validationUpdated) SendKillValidationUpdate();
 	});
 	events.listen<Events::Level_Setup_Events>([this](const ServerEvent<Events::Level_Setup_Events>& ev) {
+		this->SendCustomEvent("Level_Setup_Events"sv, ImbuedPlayerInfo({
+			{"Contract_Name_metricvalue", ev.Value.Contract_Name_metricvalue},
+			{"Event_metricvalue", ev.Value.Event_metricvalue},
+			{"Location_MetricValue", ev.Value.Location_MetricValue},
+		}, true));
+
 		auto const& conditions = State::current.spin.getConditions();
 		auto mission = State::current.spin.getMission();
-
 
 		if (State::current.spinCompleted) return;
 

@@ -466,7 +466,7 @@ namespace Croupier.GameEvents {
 		public string? RepositoryId;
 		public string? Event;
 
-		public static OpportunityEventValue? Load(JsonElement json) {
+		public static OpportunityEventValue Load(JsonElement json) {
 			return new() {
 				Location = LocationEventValue.Load(json),
 				Player = PlayerEventValue.Load(json),
@@ -477,12 +477,16 @@ namespace Croupier.GameEvents {
 	}
 
 	public class LevelSetupEventValue : EventValue {
+		public required LocationEventValue Location;
+		public required PlayerEventValue Player;
 		public string? Contract_Name_metricvalue;
 		public string? Location_MetricValue;
 		public string? Event_metricvalue;
 
-		public static LevelSetupEventValue? Load(JsonElement json) {
+		public static LevelSetupEventValue Load(JsonElement json) {
 			return new() {
+				Player = PlayerEventValue.Load(json),
+				Location = LocationEventValue.Load(json),
 				Contract_Name_metricvalue = TryLoadString(json, nameof(Contract_Name_metricvalue)),
 				Location_MetricValue = TryLoadString(json, nameof(Location_MetricValue)),
 				Event_metricvalue = TryLoadString(json, nameof(Event_metricvalue)),
@@ -494,7 +498,7 @@ namespace Croupier.GameEvents {
 		public string? RepositoryId;
 		public string? ActorName;
 
-		public static BodyHiddenEventValue? Load(JsonElement json) {
+		public static BodyHiddenEventValue Load(JsonElement json) {
 			return new() {
 				RepositoryId = TryLoadString(json, nameof(RepositoryId)),
 				ActorName = TryLoadString(json, nameof(ActorName)),
@@ -530,6 +534,7 @@ namespace Croupier.GameEvents {
 
 	public class CarExplodedEventValue : EventValue {
 		public required PlayerEventValue Player;
+		public required LocationEventValue Location;
 
 		public Int64? CarSize;
 		public SVector3? CarPosition;
@@ -538,6 +543,7 @@ namespace Croupier.GameEvents {
 		public static CarExplodedEventValue? Load(JsonElement json) {
 			return new() {
 				Player = PlayerEventValue.Load(json),
+				Location = LocationEventValue.Load(json),
 				CarSize = TryLoadInt64(json, nameof(CarSize)),
 				CarPosition = TryLoadSVector3(json, nameof(CarPosition)),
 				CarArea = TryLoadString(json, nameof(CarArea)),
@@ -573,7 +579,7 @@ namespace Croupier.GameEvents {
 				Item = ItemEventValue.Load(json),
 				Player = PlayerEventValue.Load(json),
 				Location = LocationEventValue.Load(json),
-				RepositoryId = TryLoadString(json, "ItemRepositoryId"),
+				RepositoryId = TryLoadString(json, "RepositoryId") ?? TryLoadString(json, "ItemRepositoryId"),
 			};
 		}
 	}
@@ -583,7 +589,7 @@ namespace Croupier.GameEvents {
 				Item = ItemEventValue.Load(json),
 				Player = PlayerEventValue.Load(json),
 				Location = LocationEventValue.Load(json),
-				RepositoryId = TryLoadString(json, "ItemRepositoryId"),
+				RepositoryId = TryLoadString(json, "RepositoryId") ?? TryLoadString(json, "ItemRepositoryId"),
 			};
 		}
 	}
@@ -593,7 +599,7 @@ namespace Croupier.GameEvents {
 				Item = ItemEventValue.Load(json),
 				Player = PlayerEventValue.Load(json),
 				Location = LocationEventValue.Load(json),
-				RepositoryId = TryLoadString(json, "ItemRepositoryId"),
+				RepositoryId = TryLoadString(json, "RepositoryId") ?? TryLoadString(json, "ItemRepositoryId"),
 			};
 		}
 	}
@@ -603,7 +609,7 @@ namespace Croupier.GameEvents {
 				Item = ItemEventValue.Load(json),
 				Player = PlayerEventValue.Load(json),
 				Location = LocationEventValue.Load(json),
-				RepositoryId = TryLoadString(json, "ItemRepositoryId"),
+				RepositoryId = TryLoadString(json, "RepositoryId") ?? TryLoadString(json, "ItemRepositoryId"),
 			};
 		}
 	}
@@ -613,7 +619,7 @@ namespace Croupier.GameEvents {
 				Item = ItemEventValue.Load(json),
 				Player = PlayerEventValue.Load(json),
 				Location = LocationEventValue.Load(json),
-				RepositoryId = TryLoadString(json, "ItemRepositoryId"),
+				RepositoryId = TryLoadString(json, "RepositoryId") ?? TryLoadString(json, "ItemRepositoryId"),
 			};
 		}
 	}
@@ -765,7 +771,7 @@ namespace Croupier.GameEvents {
 	public class SecuritySystemRecorderEventValue : EventValue {
 		public required LocationEventValue Location;
 		public required PlayerEventValue Player;
-		public string? Event;
+		public SecuritySystemRecorderEvent? Event;
 		public double? Camera;
 		public double? Recorder;
 
@@ -773,7 +779,7 @@ namespace Croupier.GameEvents {
 			return new() {
 				Location = LocationEventValue.Load(json),
 				Player = PlayerEventValue.Load(json),
-				Event = TryLoadString(json, nameof(Event)),
+				Event = TryLoad<SecuritySystemRecorderEvent>(json, nameof(Event)),
 				Camera = TryLoadDouble(json, nameof(Camera)),
 				Recorder = TryLoadDouble(json, nameof(Recorder)),
 			};
@@ -1032,9 +1038,24 @@ namespace Croupier.GameEvents {
 	}
 
 	public class ItemStashedEventValue : EventValue {
+		public required LocationEventValue Location;
+		public required PlayerEventValue Player;
+		public UInt64? ActorId;
+		public string? ActorName;
+		public string? ItemId;
+		public string? ItemTypeId;
+		public string? RepositoryId;
 
 		public static ItemStashedEventValue Load(JsonElement json) {
-			return new() { };
+			return new() {
+				Location = LocationEventValue.Load(json),
+				Player = PlayerEventValue.Load(json),
+				ActorId = TryLoadUInt64(json, nameof(ActorId)),
+				ActorName = TryLoadString(json, nameof(ActorName)),
+				ItemId = TryLoadString(json, nameof(ItemId)),
+				ItemTypeId = TryLoadString(json, nameof(ItemTypeId)),
+				RepositoryId = TryLoadString(json, nameof(RepositoryId)),
+			};
 		}
 	}
 
