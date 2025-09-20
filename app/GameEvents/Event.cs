@@ -597,7 +597,7 @@ namespace Croupier.GameEvents {
 		public string? Type;
 		public string? ToolUsed;
 		public string? ItemTriggered;
-		public string? Position;
+		public SVector3? Position;
 
 		public static SetpiecesEventValue? Load(JsonElement json) {
 			return new() {
@@ -609,7 +609,7 @@ namespace Croupier.GameEvents {
 				Type = TryLoadString(json, nameof(Type)),
 				ToolUsed = TryLoadString(json, nameof(ToolUsed)),
 				ItemTriggered = TryLoadString(json, nameof(ItemTriggered)),
-				Position = TryLoadString(json, nameof(Position)),
+				Position = TryLoadSVector3(json, nameof(Position)),
 			};
 		}
 	}

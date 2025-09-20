@@ -345,9 +345,15 @@ struct Event<Events::setpieces> {
 			setpieceHelper_metricvalue(json.value("setpieceHelper_metricvalue", "")),
 			setpieceType_metricvalue(json.value("setpieceType_metricvalue", "")),
 			toolUsed_metricvalue(json.value("toolUsed_metricvalue", "")),
-			Item_triggered_metricvalue(json.value("Item_triggered_metricvalue", "")),
-			Position(json.value("x", 0.0), json.value("y", 0.0), json.value("z", 0.0))
-		{ }
+			Item_triggered_metricvalue(json.value("Item_triggered_metricvalue", ""))
+		{
+			auto it = json.find("Position");
+			if (it != json.end() && it->is_array() && it->size() == 3) {
+				Position.x = (*it)[0];
+				Position.y = (*it)[1];
+				Position.z = (*it)[2];
+			}
+		}
 	};
 };
 
