@@ -4,9 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Numerics;
 using System.Text.Json;
-using System.Windows;
 
 namespace Croupier {
 	public abstract class BingoTriggerExpression {
@@ -23,13 +21,41 @@ namespace Croupier {
 			if (history == null) return false;
 			if (value == null) return false;
 
-			var prop = value.GetType().GetProperty(propName);
-			if (prop == null) return false;
-			var propVal = prop.GetValue(value);
-			var exists = history.Contains(propVal);
-			if (exists) return false;
+			object? propVal = null;
+
+			var propNames = propName.Split('.');
+			for (var i = 0; i < propNames.Length; ++i) {
+				var last = i == propNames.Length - 1;
+				var prop = value.GetType().GetProperty(propNames[i]);
+				if (prop == null) {
+					var field = value.GetType().GetField(propNames[i]);
+					if (field == null) return false;
+					propVal = field.GetValue(value);
+				}
+				else propVal = prop.GetValue(value);
+				if (!last) {
+					value = propVal;
+					if (value == null) return false;
+				}
+			}
+
+			if (CheckHistoryForValue(propVal, history))
+				return false;
 			history.Add(propVal);
 			return true;
+		}
+
+		private bool CheckHistoryForValue(object? value, List<object?> history) {
+			if (value is SVector3 vec) {
+				foreach (var item in history) {
+					if (item is not SVector3 historyVec) continue;
+					if (Math.Abs(historyVec.X - vec.X) > 0.001) continue;
+					if (Math.Abs(historyVec.Y - vec.Y) > 0.001) continue;
+					if (Math.Abs(historyVec.Z - vec.Z) > 0.001) continue;
+					return true;
+				}
+			}
+			return history.Contains(value);
 		}
 
 		public void SetPropName(string name) {
