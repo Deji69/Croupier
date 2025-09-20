@@ -113,7 +113,7 @@ namespace Croupier
 						break;
 
 					var data = partial + Encoding.UTF8.GetString(buffer, 0, bytesRead);
-					var isPartial = data.Last() != '\0';
+					var isPartial = buffer[bytesRead - 1] != '\0';
 					var splitData = data.Split('\0', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 					partial = "";
 
@@ -124,7 +124,12 @@ namespace Croupier
 							break;
 						}
 						Logging.Info("Received from client: " + msg);
-						ProcessReceivedMessage(msg);
+						try {
+							ProcessReceivedMessage(msg);
+						}
+						catch (JsonException e) {
+							Logging.Info($"JSON exception: {e.Path}");
+						}
 					}
 				}
 			}
