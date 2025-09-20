@@ -428,34 +428,43 @@ namespace Croupier.GameEvents {
 	public class KillEventValue : PacifyEventValue {
 	}
 
-	public class TakedownCleannessEventValue : EventValue {
-		public string? RepositoryId { get; set; }
-		public bool IsTarget { get; set; } = false;
-	}
+	public class BodyBaggedEventValue : EventValue {
+		public double? ActorId;
+		public string? RepositoryId;
+		public bool? IsCrowdActor;
 
-	public class ActorIdentityEventValue : EventValue {
-		public double? ActorId { get; set; }
-		public string? RepositoryId { get; set; }
-		public bool? IsCrowdActor { get; set; }
-	}
-
-	public class BodyBaggedEventValue : ActorIdentityEventValue {
-
+		public static BodyBaggedEventValue Load(JsonElement json) {
+			return new() {
+				ActorId = TryLoadDouble(json, nameof(ActorId)),
+				RepositoryId = TryLoadString(json, nameof(RepositoryId)),
+				IsCrowdActor = TryLoadBool(json, nameof(IsCrowdActor)),
+			};
+		}
 	}
 
 	public class InvestigateCuriousEventValue : EventValue {
-		public double? ActorId { get; set; }
-		public string? RepositoryId { get; set; }
-		public string? SituationType { get; set; }
-		public string? EventType { get; set; }
-		public double? InvestigationType { get; set; }
+		public double? ActorId;
+		public string? RepositoryId;
+		public string? SituationType;
+		public string? EventType;
+		public double? InvestigationType;
+
+		public static InvestigateCuriousEventValue Load(JsonElement json) {
+			return new() {
+				ActorId = TryLoadDouble(json, nameof(ActorId)),
+				RepositoryId = TryLoadString(json, nameof(RepositoryId)),
+				SituationType = TryLoadString(json, nameof(SituationType)),
+				EventType = TryLoadString(json, nameof(EventType)),
+				InvestigationType = TryLoadDouble(json, nameof(InvestigationType)),
+			};
+		}
 	}
 
 	public class OpportunityEventValue : EventValue {
 		public required LocationEventValue Location;
 		public required PlayerEventValue Player;
-		public string? RepositoryId { get; set; }
-		public string? Event { get; set; }
+		public string? RepositoryId;
+		public string? Event;
 
 		public static OpportunityEventValue? Load(JsonElement json) {
 			return new() {
@@ -468,28 +477,43 @@ namespace Croupier.GameEvents {
 	}
 
 	public class LevelSetupEventValue : EventValue {
-		public string? Contract_Name_metricvalue { get; set; }
-		public string? Location_MetricValue { get; set; }
-		public string? Event_metricvalue { get; set; }
+		public string? Contract_Name_metricvalue;
+		public string? Location_MetricValue;
+		public string? Event_metricvalue;
+
+		public static LevelSetupEventValue? Load(JsonElement json) {
+			return new() {
+				Contract_Name_metricvalue = TryLoadString(json, nameof(Contract_Name_metricvalue)),
+				Location_MetricValue = TryLoadString(json, nameof(Location_MetricValue)),
+				Event_metricvalue = TryLoadString(json, nameof(Event_metricvalue)),
+			};
+		}
 	}
 
 	public class BodyHiddenEventValue : EventValue {
-		public string? RepositoryId { get; set; }
-		public string? ActorName { get; set; }
+		public string? RepositoryId;
+		public string? ActorName;
+
+		public static BodyHiddenEventValue? Load(JsonElement json) {
+			return new() {
+				RepositoryId = TryLoadString(json, nameof(RepositoryId)),
+				ActorName = TryLoadString(json, nameof(ActorName)),
+			};
+		}
 	}
 
-	public class BodyEventValue : EventValue {
-		public required string RepositoryId { get; set; }
-		public bool? IsCrowdActor { get; set; }
-	}
-
-	public class BodyKillInfoEventValue : EventValue {
+	public class BodyFoundEventValue : EventValue {
 		public string? RepositoryId { get; set; }
 		public EDeathContext? DeathContext { get; set; }
 		public EDeathType? DeathType { get; set; }
-	}
 
-	public class BodyFoundEventValue : BodyKillInfoEventValue {
+		public static BodyFoundEventValue? Load(JsonElement json) {
+			return new() {
+				RepositoryId = TryLoadString(json, nameof(RepositoryId)),
+				DeathContext = TryLoad<EDeathContext>(json, nameof(DeathContext)),
+				DeathType = TryLoad<EDeathType>(json, nameof(DeathType)),
+			};
+		}
 	}
 
 	public class ExplosionEventValue : EventValue {
@@ -507,9 +531,9 @@ namespace Croupier.GameEvents {
 	public class CarExplodedEventValue : EventValue {
 		public required PlayerEventValue Player;
 
-		public Int64? CarSize { get; set; }
-		public SVector3? CarPosition { get; set; }
-		public string? CarArea { get; set; }
+		public Int64? CarSize;
+		public SVector3? CarPosition;
+		public string? CarArea;
 
 		public static CarExplodedEventValue? Load(JsonElement json) {
 			return new() {
@@ -525,6 +549,12 @@ namespace Croupier.GameEvents {
 	public class CrocodileEventValue : EventValue {
 		// We even get a repository ID for the exact crocodile, so cool!
 		public string? RepositoryId { get; set; }
+
+		public static CrocodileEventValue? Load(JsonElement json) {
+			return new() {
+				RepositoryId = TryLoadString(json, nameof(RepositoryId)),
+			};
+		}
 	}
 
 	public abstract class BaseItemEventValue : EventValue {
@@ -1002,6 +1032,10 @@ namespace Croupier.GameEvents {
 	}
 
 	public class ItemStashedEventValue : EventValue {
+
+		public static ItemStashedEventValue Load(JsonElement json) {
+			return new() { };
+		}
 	}
 
 	public class EnterRoomEventValue : EventValue {
