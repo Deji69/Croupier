@@ -59,6 +59,7 @@ enum class Events {
 	ItemPickedUp,
 	ItemRemovedFromInventory,
 	ItemThrown,
+	ItemStashed,
 	Kill,
 	Level_Setup_Events,
 	MurderedBodySeen,

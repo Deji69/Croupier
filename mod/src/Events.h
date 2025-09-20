@@ -394,6 +394,27 @@ struct Event<Events::ItemDropped> {
 };
 
 template<>
+struct Event<Events::ItemStashed> {
+	static auto constexpr Name = "ItemStashed";
+
+	struct EventValue {
+		uint64 ActorId;
+		std::string RepositoryId;
+		std::string ActorName;
+		std::string ItemId;
+		std::string ItemTypeId;
+
+		EventValue(const nlohmann::json& json) :
+			ActorId(json.value("ActorId", 0.0)),
+			RepositoryId(json.value("RepositoryId", "")),
+			ActorName(json.value("ActorName", "")),
+			ItemId(json.value("ItemId", "")),
+			ItemTypeId(json.value("ItemTypeId", ""))
+		{ }
+	};
+};
+
+template<>
 struct Event<Events::ItemThrown> {
 	static auto constexpr Name = "ItemThrown";
 	using EventValue = ItemEventValue;
