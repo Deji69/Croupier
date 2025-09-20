@@ -1784,12 +1784,14 @@ namespace Croupier {
 		readonly BingoTriggerPlayer player;
 		readonly BingoTriggerCIString RepositoryId = new();
 		readonly BingoTriggerUInt EntityID = new();
+		readonly BingoTriggerUnique Unique = new();
 
 		public BingoTriggerOnTurnOn(JsonElement json) : base(json) {
 			location = new(json);
 			player = new(json);
 			EntityID.Load(json, nameof(EntityID));
 			RepositoryId.Load(json, nameof(RepositoryId));
+			Unique.Load(json, nameof(Unique));
 		}
 
 		public override bool Test(EventValue ev, BingoTileState state) {
@@ -1798,7 +1800,8 @@ namespace Croupier {
 				&& location.Test(v.Location, state)
 				&& player.Test(v.Player, state)
 				&& EntityID.Test(v.EntityID, state)
-				&& RepositoryId.Test(v.RepositoryId, state);
+				&& RepositoryId.Test(v.RepositoryId, state)
+				&& Unique.Test(v, state);
 		}
 	}
 
@@ -1807,21 +1810,24 @@ namespace Croupier {
 		readonly BingoTriggerPlayer player;
 		readonly BingoTriggerCIString RepositoryId = new();
 		readonly BingoTriggerUInt EntityID = new();
+		readonly BingoTriggerUnique Unique = new();
 
 		public BingoTriggerOnTurnOff(JsonElement json) : base(json) {
 			location = new(json);
 			player = new(json);
 			EntityID.Load(json, nameof(EntityID));
 			RepositoryId.Load(json, nameof(RepositoryId));
+			Unique.Load(json, nameof(Unique));
 		}
 
 		public override bool Test(EventValue ev, BingoTileState state) {
 			return ev is OnTurnOffEventValue v
 				&& base.Test(ev, state)
-				&& player.Test(v, state)
-				&& location.Test(v, state)
+				&& player.Test(v.Player, state)
+				&& location.Test(v.Location, state)
 				&& EntityID.Test(v.EntityID, state)
-				&& RepositoryId.Test(v.RepositoryId, state);
+				&& RepositoryId.Test(v.RepositoryId, state)
+				&& Unique.Test(v, state);
 		}
 	}
 
