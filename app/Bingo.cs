@@ -145,7 +145,7 @@ namespace Croupier {
 
 		public void LoadConfiguration(bool reload = false) {
 			if (loaded && !reload) return;
-			
+
 			Areas.Clear();
 			Groups.Clear();
 			Tiles.Clear();
@@ -164,7 +164,7 @@ namespace Croupier {
 					var json = JsonDocument.Parse(text, options) ?? throw new BingoConfigException("Failed to parse JSON.");
 					jsonDocuments.Add(json);
 					if (json.RootElement.ValueKind == JsonValueKind.Array)
-						sections.tiles.Add(new(){ Filename = file, Element = json.RootElement });
+						sections.tiles.Add(new() { Filename = file, Element = json.RootElement });
 					else if (json.RootElement.ValueKind == JsonValueKind.Object) {
 						var subSections = LoadJsonObject(json.RootElement, file);
 						sections.areas.AddRange(subSections.areas);
@@ -175,17 +175,39 @@ namespace Croupier {
 						throw new BingoConfigException("Expected array or object as JSON root node.");
 				}
 				catch (Exception e) {
+					Logging.Info($"File: {file}\nException: {e.Message}");
 					MessageBox.Show($"File: {file}\nException: {e.Message}", "Config Error - Croupier", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 				}
 			}
 
 			// Load the config sections in a specific order.
-			foreach (var cfg in sections.areas)
-				LoadAreasFromJson(cfg.Element);
-			foreach (var cfg in sections.groups)
-				LoadGroupsFromJson(cfg.Element);
-			foreach (var cfg in sections.tiles)
-				LoadTilesFromJson(cfg.Element);
+			foreach (var cfg in sections.areas) {
+				try {
+					LoadAreasFromJson(cfg.Element);
+				}
+				catch (Exception e) {
+					Logging.Info($"File: {cfg.Filename}\nException: {e.Message}");
+					MessageBox.Show($"File: {cfg.Filename}\nException: {e.Message}", "Areas Config Error - Croupier", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+				}
+			}
+			foreach (var cfg in sections.groups) {
+				try {
+					LoadGroupsFromJson(cfg.Element);
+				}
+				catch (Exception e) {
+					Logging.Info($"File: {cfg.Filename}\nException: {e.Message}");
+					MessageBox.Show($"File: {cfg.Filename}\nException: {e.Message}", "Groups Config Error - Croupier", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+				}
+			}
+			foreach (var cfg in sections.tiles) {
+				try {
+					LoadTilesFromJson(cfg.Element);
+				}
+				catch (Exception e) {
+					Logging.Info($"File: {cfg.Filename}\nException: {e.Message}");
+					MessageBox.Show($"File: {cfg.Filename}\nException: {e.Message}", "Tiles Config Error - Croupier", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+				}
+			}
 
 			foreach (var doc in jsonDocuments)
 				doc.Dispose();
