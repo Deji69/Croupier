@@ -176,9 +176,9 @@ namespace Croupier {
 			return true;
 		}
 
-		public bool TestReverseDiagonal() {
+		public bool  TestReverseDiagonal() {
 			if (!IsCardSquare()) return false;
-			for (int col = Size.Columns - 1, row = Size.Rows - 1; row >= 0 && col >= 0; --col, --row) {
+			for (int col = 0, row = Size.Rows - 1; row >= 0 && col < Size.Columns; ++col, --row) {
 				if (!TestPosition(col, row)) return false;
 			}
 			return true;
@@ -215,7 +215,7 @@ namespace Croupier {
 		public List<int> GetDiagonalIndexes() {
 			if (!IsCardSquare()) return [];
 			List<int> indexes = [];
-			for (int col = 0, row = 0; col * row < Tiles.Count; ++row, ++col)
+			for (int col = 0, row = Size.Rows - 1; row >= 0 && row < Size.Columns; ++col, --row)
 				indexes.Add(PositionToIndex(col, row));
 			return indexes;
 		}
