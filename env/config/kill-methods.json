@@ -563,6 +563,15 @@
 		]
 	},
 	{
+		"Name": "Poison the IV Drip",
+		"Image": "vitamin_overdose.jpg",
+		"Category": "Unique",
+		"Target": "Sierra Knox",
+		"Keywords": [
+			"poisontheivdrip", "poisonthedrip", "poisonivdrip", "ivdrip", "iv"
+		]
+	},
+	{
 		"Name": "Feed to Hippo",
 		"Image": "hippo_c_exp_hippo_fed.jpg",
 		"Category": "Unique",
@@ -583,12 +592,22 @@
 		"Tags": ["Unique"]
 	},
 	{
-		"Name": "Impale on Sculpture",
+		"Name": "Overpressurize the Steam Pool",
+		"Image": "pool_kill_mongoose.jpg",
+		"Category": "Unique",
+		"Target": "Vanya Shah",
+		"Keywords": [
+			"overpressurizethesteampool", "overpressurizesteampool", "steampool", "overpressurize", "steam", "pool"
+		],
+		"Tags": ["Unique"]
+	},
+	{
+		"Name": "Hammer & Sickle Sculpture",
 		"Image": "skunk_memorabilia_kill.jpg",
 		"Category": "Unique",
 		"Target": "Janus",
 		"Keywords": [
-			"impaleonsculpture", "sculpture", "impale", "statue", "hammersickle", "hammerandsickle"
+			"impaleonsculpture", "sculpture", "impale", "statue", "hammersickle", "hammerandsickle", "hammersicklesculpture", "hammerandsicklesculpture"
 		],
 		"Tags": ["Unique"]
 	},
