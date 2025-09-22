@@ -556,6 +556,11 @@ std::vector<Keyword> Keyword::keywords = {
 	{ "ShootCar", eMapKillMethod::Sierra_ShootCar, "ShootTheCar" },
 	{ "BombTheCar", eMapKillMethod::Sierra_BombCar },
 	{ "BombCar", eMapKillMethod::Sierra_BombCar, "BombTheCar" },
+	{ "PoisonTheIVDrip", eMapKillMethod::Sierra_PoisonIVDrip },
+	{ "PoisonIVDrip", eMapKillMethod::Sierra_PoisonIVDrip, "PoisonTheIVDrip"},
+	{ "PoisonDrip", eMapKillMethod::Sierra_PoisonIVDrip, "PoisonTheIVDrip" },
+	{ "IVDrip", eMapKillMethod::Sierra_PoisonIVDrip, "PoisonTheIVDrip" },
+	{ "IV", eMapKillMethod::Sierra_PoisonIVDrip, "PoisonTheIVDrip" },
 	// Map Kill Method - Rico Delgado
 	{ "FeedToHippo", eMapKillMethod::Rico_FeedToHippo },
 	{ "Feed", eMapKillMethod::Rico_FeedToHippo, "FeedToHippo" },
@@ -574,6 +579,12 @@ std::vector<Keyword> Keyword::keywords = {
 	{ "Machine", eMapKillMethod::Jorge_CocaineMachine, "CocaineMachine" },
 	{ "Shred", eMapKillMethod::Jorge_CocaineMachine, "CocaineMachine" },
 	{ "Shredder", eMapKillMethod::Jorge_CocaineMachine, "CocaineMachine" },
+	// Map Kill Method - Vanya Shah
+	{ "SteamPool", eMapKillMethod::Vanya_SteamPool },
+	{ "Steam", eMapKillMethod::Vanya_SteamPool, "SteamPool" },
+	{ "Overpressurize", eMapKillMethod::Vanya_SteamPool, "SteamPool" },
+	{ "OverpressurizeSteamPool", eMapKillMethod::Vanya_SteamPool, "SteamPool"},
+	{ "OverpressurizeTheSteamPool", eMapKillMethod::Vanya_SteamPool, "SteamPool" },
 	// Map Kill Method - Janus
 	{ "ImpaleOnSculpture", eMapKillMethod::Janus_Sculpture },
 	{ "Sculpture", eMapKillMethod::Janus_Sculpture, "ImpaleOnSculpture" },
@@ -740,8 +751,10 @@ auto isSpecificKillMethodMelee(eMapKillMethod method) -> bool {
 		case eMapKillMethod::Yuki_Sauna:
 		case eMapKillMethod::Sierra_BombCar:
 		case eMapKillMethod::Sierra_ShootCar:
+		case eMapKillMethod::Sierra_PoisonIVDrip:
 		case eMapKillMethod::Rico_FeedToHippo:
 		case eMapKillMethod::Jorge_CocaineMachine:
+		case eMapKillMethod::Vanya_SteamPool:
 		case eMapKillMethod::Janus_Sculpture:
 		case eMapKillMethod::Athena_Award:
 		case eMapKillMethod::Steven_BombWaterScooter:
@@ -902,8 +915,10 @@ auto getSpecificKillMethodNameAndImage(eMapKillMethod method) -> std::pair<std::
 	case eMapKillMethod::Yuki_Sauna: return { "Lock in Sauna", "snowcrane_exp_yamazaki_sauna.jpg" };
 	case eMapKillMethod::Sierra_BombCar: return {"Bomb the Car", "story_pitstop_flamingo.jpg"};
 	case eMapKillMethod::Sierra_ShootCar: return {"Shoot the Car", "helping_hand.jpg"};
+	case eMapKillMethod::Sierra_PoisonIVDrip: return { "Poison IV Drip", "vitamin_overdose.jpg" };
 	case eMapKillMethod::Rico_FeedToHippo: return { "Feed to Hippo", "hippo_c_exp_hippo_fed.jpg" };
 	case eMapKillMethod::Jorge_CocaineMachine: return { "Cocaine Machine", "hippo_c_sign_franco_machine.jpg" };
+	case eMapKillMethod::Vanya_SteamPool: return { "Overpressurize the Steam Pool", "pool_kill_mongoose.jpg" };
 	case eMapKillMethod::Janus_Sculpture: return { "Impale on Sculpture", "skunk_memorabilia_kill.jpg" };
 	case eMapKillMethod::Sgail_AztecNecklace: return { "Aztec Necklace", "magpie_c_sign_necklace.jpg" };
 	case eMapKillMethod::Athena_Award: return { "Athena Savalas' Award", "athena_award.jpg" };
