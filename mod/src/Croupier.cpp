@@ -1783,8 +1783,6 @@ auto Croupier::SetupEvents() -> void {
 			}
 
 			validationUpdated = true;
-
-			Logger::Debug("Killed '{}'", ev.Value.ActorName);
 		}
 
 		if (validationUpdated) this->SendKillValidationUpdate();
@@ -2193,7 +2191,16 @@ auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Ki
 		auto const haveDamageEvents = !ev.Value.DamageEvents.empty();
 		auto const killContext = ev.Value.KillContext;
 		auto const& killClass = ev.Value.KillClass;
+		auto const& killMethodStrict = ev.Value.KillMethodStrict;
 		auto const isKillClassUnknown = killClass == "unknown";
+		// If expecting injected poison, determine whether the proxy medic opportunity was used
+		if (method == eMapKillMethod::Sierra_PoisonIVDrip) {
+			return killContext == EDeathContext::eDC_ACCIDENT
+				&& killClass == "poison"
+				&& killMethodStrict == ""
+				? eKillValidationType::Valid
+				: eKillValidationType::Invalid;
+		}
 		// true for car kill
 		// EKillType_ItemTakeOutFront (4)
 		// KillClass == "unknown"
@@ -2232,6 +2239,13 @@ auto Croupier::ValidateKillMethod(eTargetID target, const ServerEvent<Events::Ki
 		//		? eKillValidationType::Valid
 		//		: eKillValidationType::Invalid;
 		//}
+	}
+	if (target == eTargetID::VanyaShah) {
+		if (method == eMapKillMethod::Vanya_SteamPool) {
+			return ev.Value.SetPieceId == "36744d6c-77e9-429a-98d6-8cfc1b93454f"
+				? eKillValidationType::Valid
+				: eKillValidationType::Invalid;
+		}
 	}
 	if (target == eTargetID::AndreaMartinez) {
 		//if (method == eMapKillMethod::PiranhaFood) {
