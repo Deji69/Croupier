@@ -122,13 +122,13 @@ enum class eMapKillMethod {
 	//Noel_BridgeTrap,
 };
 
-inline static const std::set<std::string, InsensitiveCompareLexicographic> nonLoudExplosives = {
+static const std::set<std::string, InsensitiveCompareLexicographic> nonLoudExplosives = {
 	"fc715a9a-3bf1-4768-bd67-0def61b92551", // Remote Breaching Charge
 	"9d5daae3-10c8-4f03-a85d-9bd92861a672", // Breaching Charge Mk II
 	"293af6cc-dd8d-4641-b650-14cdfd00f1de" // Breaching Charge Mk III
 };
 
-inline static const std::set<std::string, InsensitiveCompareLexicographic> impactExplosives = {
+static const std::set<std::string, InsensitiveCompareLexicographic> impactExplosives = {
 	"8b7c3ec6-c072-4a21-a323-0f8751028052", // Explosive Baseball
 	"485f8902-b7e3-4916-8b90-ea7cebb305de", // Explosive Golf Ball 1
 	"c95c55aa-34e5-42bd-bf27-32be3978b269", // Explosive Golf Ball 2
@@ -138,7 +138,7 @@ inline static const std::set<std::string, InsensitiveCompareLexicographic> impac
 	"af8a7b6c-692c-4a76-b9bc-2b91ce32bcbc", // Nitroglycerin
 };
 
-inline static std::set<std::string, InsensitiveCompareLexicographic> incineratorSetpieces = {
+static std::set<std::string, InsensitiveCompareLexicographic> incineratorSetpieces = {
 	"93767116-a765-4e97-b51c-c45879457e71", // default ID (Hokkaido Morgue)
 	"2c4efdd7-8554-46e7-a713-e57eec068f92", // Berlin incinerator
 	"57d69808-1233-4aa6-9bda-c38fe0122c80", // Whittleton Creek Incinerator
@@ -166,7 +166,7 @@ inline static auto checkExplosiveKillType(std::string repoId, eKillType kt) -> b
 	return false;
 }
 
-inline static const std::unordered_map<std::string, eMapKillMethod> specificKillMethodsByRepoId = {
+static const std::unordered_map<std::string, eMapKillMethod> specificKillMethodsByRepoId = {
 	{"62c2ac2e-329e-4648-822a-e45a29a93cd0", eMapKillMethod::AmputationKnife},
 	{"5c211971-235a-4856-9eea-fe890940f63a", eMapKillMethod::AntiqueCurvedKnife},
 	{"92d68841-8552-40b1-b8a5-c36c6efdb6b1", eMapKillMethod::Sgail_AztecNecklace},
