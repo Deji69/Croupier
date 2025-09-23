@@ -182,7 +182,7 @@
 			"Missions": ["World of Tomorrow"],
 			"Tags": ["Action", "Pacify"],
 			"Pacify": {
-				"RepositoryId": "c21f558b-2935-41e5-88ff-642eb1761ccc"
+				"KillItemRepositoryId": "c21f558b-2935-41e5-88ff-642eb1761ccc"
 			}
 		},
 		{
@@ -193,7 +193,7 @@
 			"Missions": ["World of Tomorrow"],
 			"Tags": ["Action", "Pacify"],
 			"Pacify": {
-				"RepositoryId": "17615866-32e7-4e1e-951d-7ef2ada796e9"
+				"KillItemRepositoryId": "17615866-32e7-4e1e-951d-7ef2ada796e9"
 			}
 		},
 		{
@@ -204,7 +204,7 @@
 			"Missions": ["World of Tomorrow"],
 			"Tags": ["Action", "Pacify"],
 			"Pacify": {
-				"RepositoryId": "510c62c2-1f40-4a4d-9e42-da677bd116e7"
+				"KillItemRepositoryId": "510c62c2-1f40-4a4d-9e42-da677bd116e7"
 			}
 		},
 		{
@@ -215,7 +215,7 @@
 			"Missions": ["World of Tomorrow"],
 			"Tags": ["Action", "Pacify"],
 			"Pacify": {
-				"RepositoryId": "1066917f-2e04-4c54-b8cb-55cb1dcc2f26"
+				"KillItemRepositoryId": "1066917f-2e04-4c54-b8cb-55cb1dcc2f26"
 			}
 		},
 		
@@ -382,7 +382,7 @@
 			"Missions": ["World of Tomorrow"],
 			"Tags": ["Action", "Interact"],
 			"Setpiece": {
-				"RepositoryId": "a3ac4703-1a46-4a76-9985-d973c7b750d3"
+				"RepositoryId": "ce58c815-7280-47f8-ab7c-55b2dd863b86"
 			}
 		},
 		{
@@ -395,13 +395,13 @@
 			"OR": [
 				{
 					"OnTurnOn": {
-						"Unique": "Position",
+						"Unique": "Location.Position",
 						"EntityID": 5662769136074243596
 					}
 				},
 				{
 					"OnTurnOff": {
-						"Unique": "Position",
+						"Unique": "Location.Position",
 						"EntityID": 5662769136074243596
 					}
 				}
@@ -417,7 +417,7 @@
 			"OR": [
 				{
 					"OnTurnOn": {
-						"Unique": "Position",
+						"Unique": "Location.Position",
 						"EntityID": [
 							5990328253300068920,
 							11933069740663559438
@@ -426,7 +426,7 @@
 				},
 				{
 					"OnTurnOff": {
-						"Unique": "Position",
+						"Unique": "Location.Position",
 						"EntityID": [
 							5990328253300068920,
 							11933069740663559438
@@ -442,7 +442,8 @@
 			"Group": "Interact",
 			"Missions": ["World of Tomorrow"],
 			"Tags": ["Action", "Interact"],
-			"OnTurnOff": {
+			"OnTurnOn": {
+				"Unique": "Location.Position",
 				"EntityID": 15011639366053764836
 			}
 		},
@@ -455,7 +456,7 @@
 			"Tags": ["Action", "Interact"],
 			"OnTurnOn": {
 				"Count": 2,
-				"Unique": "Position",
+				"Unique": "Location.Position",
 				"EntityID": 172567886276553540
 			}
 		},
@@ -467,6 +468,7 @@
 			"Missions": ["World of Tomorrow"],
 			"Tags": ["Action", "Interact"],
 			"OnTurnOff": {
+				"Unique": "Location.Position",
 				"RepositoryId": "b73a4e67-2b66-4759-8fc9-823228744921"
 			}
 		},
