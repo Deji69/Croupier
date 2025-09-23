@@ -459,6 +459,19 @@ struct Event<Events::Actorsick> {
 };
 
 template<>
+struct Event<Events::Crocodile> {
+	static auto constexpr Name = "Crocodile";
+
+	struct EventValue {
+		std::string RepositoryId;
+
+		EventValue(const nlohmann::json& json) :
+			RepositoryId(json.value("RepositoryId", ""))
+		{ }
+	};
+};
+
+template<>
 struct Event<Events::C_Hungry_Hippo> {
 	static auto constexpr Name = "C_Hungry_Hippo";
 	using EventValue = VoidEventValue;
