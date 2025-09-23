@@ -203,23 +203,25 @@ namespace Croupier.GameEvents {
 		};
 	}
 
-	public class ActorInfoImbuedEventValue : EventValue {
-		public string? ActorName { get; set; }
-		public string? ActorRepositoryId { get; set; }
-		public string? ActorOutfitRepositoryId { get; set; }
-		public EActorType? ActorType { get; set; }
-		public Int64? ActorWeaponIndex { get; set; }
-		public bool? ActorHasDisguise { get; set; }
-		public bool? ActorIsAuthorityFigure { get; set; }
-		public bool? ActorIsDead { get; set; }
-		public bool? ActorIsFemale { get; set; }
-		public bool? ActorIsPacified { get; set; }
-		public bool? ActorIsTarget { get; set; }
-		public bool? ActorOutfitAllowsWeapons { get; set; }
-		public bool? ActorWeaponUnholstered { get; set; }
+	public class ActorEventValue : EventValue {
+		public UInt64? ActorId;
+		public string? ActorName;
+		public string? ActorRepositoryId;
+		public string? ActorOutfitRepositoryId;
+		public EActorType? ActorType;
+		public Int64? ActorWeaponIndex;
+		public bool? ActorHasDisguise;
+		public bool? ActorIsAuthorityFigure;
+		public bool? ActorIsDead;
+		public bool? ActorIsFemale;
+		public bool? ActorIsPacified;
+		public bool? ActorIsTarget;
+		public bool? ActorOutfitAllowsWeapons;
+		public bool? ActorWeaponUnholstered;
 
-		public static ActorInfoImbuedEventValue Load(JsonElement json) {
+		public static ActorEventValue Load(JsonElement json) {
 			return new() {
+				ActorId = TryLoadUInt64(json, nameof(ActorId)),
 				ActorName = TryLoadString(json, nameof(ActorName)),
 				ActorRepositoryId = TryLoadString(json, nameof(ActorRepositoryId)),
 				ActorOutfitRepositoryId = TryLoadString(json, nameof(ActorOutfitRepositoryId)),
@@ -495,24 +497,36 @@ namespace Croupier.GameEvents {
 	}
 
 	public class BodyHiddenEventValue : EventValue {
+		public required ActorEventValue Actor;
+		public required LocationEventValue Location;
+		public required PlayerEventValue Player;
 		public string? RepositoryId;
-		public string? ActorName;
 
 		public static BodyHiddenEventValue Load(JsonElement json) {
 			return new() {
+				Actor = ActorEventValue.Load(json),
+				Location = LocationEventValue.Load(json),
+				Player = PlayerEventValue.Load(json),
 				RepositoryId = TryLoadString(json, nameof(RepositoryId)),
-				ActorName = TryLoadString(json, nameof(ActorName)),
 			};
 		}
 	}
 
 	public class BodyFoundEventValue : EventValue {
-		public string? RepositoryId { get; set; }
-		public EDeathContext? DeathContext { get; set; }
-		public EDeathType? DeathType { get; set; }
+		public required ActorEventValue Actor;
+		public required LocationEventValue Location;
+		public required PlayerEventValue Player;
+		public UInt64? ActorId;
+		public string? RepositoryId;
+		public EDeathContext? DeathContext;
+		public EDeathType? DeathType;
 
 		public static BodyFoundEventValue? Load(JsonElement json) {
 			return new() {
+				Location = LocationEventValue.Load(json),
+				Player = PlayerEventValue.Load(json),
+				Actor = ActorEventValue.Load(json),
+				ActorId = TryLoadUInt64(json, nameof(ActorId)),
 				RepositoryId = TryLoadString(json, nameof(RepositoryId)),
 				DeathContext = TryLoad<EDeathContext>(json, nameof(DeathContext)),
 				DeathType = TryLoad<EDeathType>(json, nameof(DeathType)),
@@ -653,7 +667,7 @@ namespace Croupier.GameEvents {
 	public class ActorSickEventValue : EventValue {
 		public required LocationEventValue Location;
 		public required PlayerEventValue Player;
-		public required ActorInfoImbuedEventValue Actor;
+		public required ActorEventValue Actor;
 
 		public UInt64? ActorID;
 		public bool? IsTarget;
@@ -662,7 +676,7 @@ namespace Croupier.GameEvents {
 
 		public static ActorSickEventValue? Load(JsonElement json) {
 			return new() {
-				Actor = ActorInfoImbuedEventValue.Load(json),
+				Actor = ActorEventValue.Load(json),
 				Player = PlayerEventValue.Load(json),
 				Location = LocationEventValue.Load(json),
 				ActorID = TryLoadUInt64(json, nameof(ActorID)),
@@ -880,13 +894,13 @@ namespace Croupier.GameEvents {
 
 	public class OnEvacuationStartedEventValue : EventValue {
 		public required LocationEventValue Location;
-		public required ActorInfoImbuedEventValue Actor;
+		public required ActorEventValue Actor;
 		public required PlayerEventValue Player;
 
 		public static OnEvacuationStartedEventValue Load(JsonElement json) {
 			return new() {
 				Location = LocationEventValue.Load(json),
-				Actor = ActorInfoImbuedEventValue.Load(json),
+				Actor = ActorEventValue.Load(json),
 				Player = PlayerEventValue.Load(json),
 			};
 		}
@@ -1109,13 +1123,13 @@ namespace Croupier.GameEvents {
 	}
 
 	public class DragBodyMoveEventValue : EventValue {
-		public required ActorInfoImbuedEventValue Actor { get; set; }
+		public required ActorEventValue Actor { get; set; }
 		public required PlayerEventValue Player { get; set; }
 		public required LocationEventValue Location { get; set; }
 
 		public static DragBodyMoveEventValue Load(JsonElement json) {
 			return new() {
-				Actor = ActorInfoImbuedEventValue.Load(json),
+				Actor = ActorEventValue.Load(json),
 				Player = PlayerEventValue.Load(json),
 				Location = LocationEventValue.Load(json),
 			};

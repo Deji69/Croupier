@@ -624,7 +624,8 @@ namespace Croupier {
 		}
 	}
 
-	public class BingoTriggerActorInfoImbued : IBingoTrigger {
+	public class BingoTriggerActor : IBingoTrigger {
+		readonly BingoTriggerUInt ActorId = new();
 		readonly BingoTriggerString ActorName = new();
 		readonly BingoTriggerCIString ActorRepositoryId = new();
 		readonly BingoTriggerCIString ActorOutfitRepositoryId = new();
@@ -640,8 +641,9 @@ namespace Croupier {
 		readonly BingoTriggerBool ActorWeaponUnholstered = new();
 		//readonly BingoTriggerString ActorOutfitType = new();
 
-		public BingoTriggerActorInfoImbued(JsonElement json) : base() {
+		public BingoTriggerActor(JsonElement json) : base() {
 			if (json.ValueKind != JsonValueKind.Object) return;
+			ActorId.Load(json, nameof(ActorId));
 			ActorName.Load(json, nameof(ActorName));
 			ActorRepositoryId.Load(json, nameof(ActorRepositoryId));
 			ActorOutfitRepositoryId.Load(json, nameof(ActorOutfitRepositoryId));
@@ -662,7 +664,8 @@ namespace Croupier {
 		}
 
 		public bool Test(EventValue ev, BingoTileState state) {
-			return ev is ActorInfoImbuedEventValue v
+			return ev is ActorEventValue v
+				&& ActorId.Test(v.ActorId, state)
 				&& ActorName.Test(v.ActorName, state)
 				&& ActorRepositoryId.Test(v.ActorRepositoryId, state)
 				&& ActorOutfitRepositoryId.Test(v.ActorOutfitRepositoryId, state)
@@ -1092,7 +1095,7 @@ namespace Croupier {
 	}
 
 	public class BingoTriggerActorSick : BingoTrigger {
-		readonly BingoTriggerActorInfoImbued actor;
+		readonly BingoTriggerActor actor;
 		readonly BingoTriggerPlayer player;
 		readonly BingoTriggerLocation location;
 		readonly BingoTriggerUInt ActorID = new();
@@ -1469,20 +1472,26 @@ namespace Croupier {
 	}
 
 	public class BingoTriggerBodyHidden : BingoTrigger {
-		readonly BingoTriggerString ActorName = new();
+		readonly BingoTriggerActor Actor;
+		readonly BingoTriggerLocation Location;
+		readonly BingoTriggerPlayer Player;
 		readonly BingoTriggerCIString RepositoryId = new();
 		readonly BingoTriggerUnique Unique = new();
 
 		public BingoTriggerBodyHidden(JsonElement obj) : base(obj) {
-			ActorName.Load(obj, "ActorName");
-			RepositoryId.Load(obj, "RepositoryId");
-			Unique.Load(obj, "Load");
+			Actor = new(obj);
+			Location = new(obj);
+			Player = new(obj);
+			RepositoryId.Load(obj, nameof(RepositoryId));
+			Unique.Load(obj, nameof(Unique));
 		}
 
 		public override bool Test(EventValue ev, BingoTileState state) {
 			return ev is BodyHiddenEventValue v
 				&& base.Test(v, state)
-				&& ActorName.Test(v.ActorName, state)
+				&& Actor.Test(v.Actor, state)
+				&& Location.Test(v.Location, state)
+				&& Player.Test(v.Player, state)
 				&& RepositoryId.Test(v.RepositoryId, state)
 				&& Unique.Test(v, state);
 		}
@@ -1559,6 +1568,14 @@ namespace Croupier {
 					&& location.Test(u.Location, state)
 					&& Items.Test(u.RepositoryId, state)
 					&& Unique.Test(u.Item, state);
+			}
+			if (ev is ItemPickedUpEventValue w) {
+				return base.Test(ev, state)
+					&& item.Test(w.Item, state)
+					&& player.Test(w.Player, state)
+					&& location.Test(w.Location, state)
+					&& Items.Test(w.RepositoryId, state)
+					&& Unique.Test(w.Item, state);
 			}
 			return ev is OnAttachToHitmanEventValue v
 				&& base.Test(ev, state)
@@ -1807,7 +1824,7 @@ namespace Croupier {
 	public class BingoTriggerOnEvacuationStarted(JsonElement json) : BingoTrigger {
 		readonly BingoTriggerLocation location = new(json);
 		readonly BingoTriggerPlayer player = new(json);
-		readonly BingoTriggerActorInfoImbued actor = new(json);
+		readonly BingoTriggerActor actor = new(json);
 
 		public override bool Test(EventValue ev, BingoTileState state) {
 			return ev is OnEvacuationStartedEventValue v
@@ -2025,7 +2042,7 @@ namespace Croupier {
 
 	public class BingoTriggerDragBodyMove(JsonElement json) : BingoTrigger(json) {
 		readonly BingoTriggerLocation location = new(json);
-		readonly BingoTriggerActorInfoImbued actorInfoTrigger = new(json);
+		readonly BingoTriggerActor actorInfoTrigger = new(json);
 
 		public override bool Test(EventValue ev, BingoTileState state) {
 			return ev is DragBodyMoveEventValue v
