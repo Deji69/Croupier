@@ -837,7 +837,7 @@ namespace Croupier
 			}
 
 			var activeRuleset = rulesets.FirstOrDefault(r => r.Name == Config.Default.Ruleset)
-				?? rulesets.FirstOrDefault(r => r.Name == "RR17")
+				?? rulesets.FirstOrDefault(r => r.Name == "RRWC 2025")
 				?? rulesets.FirstOrDefault();
 
 			if (activeRuleset != null) {
