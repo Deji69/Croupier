@@ -1135,12 +1135,19 @@ auto CroupierPlugin::SetupEvents() -> void {
 		this->SendCustomEvent("Trespassing"sv, ImbuedPlayerInfo());
 	});
 	events.listen<Events::BodyFound>([this](const ServerEvent<Events::BodyFound>& ev) {
-		this->SendCustomEvent("BodyFound"sv, json{
+		this->SendCustomEvent("BodyFound"sv, ImbuedPlayerInfo({
 			{"RepositoryId", ev.Value.DeadBody.RepositoryId},
 			{"DeathContext", ev.Value.DeadBody.DeathContext},
 			{"DeathType", ev.Value.DeadBody.DeathType},
 			{"IsCrowdActor", ev.Value.DeadBody.IsCrowdActor},
-		});
+		}, true));
+	});
+	events.listen<Events::BodyHidden>([this](const ServerEvent<Events::BodyHidden>& ev) {
+		this->SendCustomEvent("BodyHidden"sv, ImbuedActorInfo({ev.Value.RepositoryId}, ImbuedPlayerInfo({
+			{"ActorId", ev.Value.ActorId},
+			{"ActorName", ev.Value.ActorName},
+			{"RepositoryId", ev.Value.RepositoryId},
+		}, true), true));
 	});
 	events.listen<Events::Door_Unlocked>([this](const ServerEvent<Events::Door_Unlocked>& ev) {
 		this->SendCustomEvent("DoorUnlocked"sv, ImbuedPlayerInfo());
@@ -1440,6 +1447,11 @@ auto CroupierPlugin::SetupEvents() -> void {
 		}
 
 		if (validationUpdated) SendKillValidationUpdate();
+	});
+	events.listen<Events::Crocodile>([this](const ServerEvent<Events::Crocodile>& ev) {
+		this->SendCustomEvent("Crocodile"sv, ImbuedPlayerInfo({
+			{"RepositoryId", ev.Value.RepositoryId},
+		}, true));
 	});
 	events.listen<Events::setpieces>([this](const ServerEvent<Events::setpieces>& ev) {
 		this->SendCustomEvent("setpieces"sv, ImbuedPositionInfo(ev.Value.Position, "", ImbuedPlayerInfo({
@@ -2095,161 +2107,6 @@ static std::set<std::string> eventsNotToPrint = {
 	"StartCpd",
 };
 
-static std::set<std::string> eventsNotToSend = {
-	"ContractStart",
-	"ContractLoad",
-	"ContractFailed",
-	"ContractEnd",
-	// Map-specific Perma Shortcut Events
-	"Bulldog_Ladder_A_Open",
-	"Bulldog_Ladder_B_Open",
-	"Dugong_Ladder_A_Down",
-	"Dugong_Ladder_B_Down",
-	"Edgy_Ladder_A_Down",
-	"Gecko_Ladder_A_Down",
-	"Gecko_Ladder_B_Down",
-	"Gecko_Ladder_C_Down",
-	"Rat_Ladder_A_Open",
-	// Freelancer Objectives
-	"Activate_BlindGuard",
-	"Activate_BlindTarget",
-	"Activate_Camera_Caught",
-	"Activate_Camera_DestroyRecorder",
-	"Activate_DartGun_Target",
-	"Activate_DisguiseBlown",
-	"Activate_Distract_Target",
-	"Activate_DontTakeDamage",
-	"Activate_EliminationPayout",
-	"Activate_HideTargetBodies",
-	"Activate_KillGuard_Sniper",
-	"Activate_KillGuard_SubMachineGun",
-	"Activate_KillMethod_Poison",
-	"Activate_KillMethod_Sniper",
-	"Activate_KillMethod_UnSilenced_Pistol",
-	"Activate_LimitedDisguise",
-	"Activate_No_Firearms",
-	"Activate_No_Witnesses",
-	"Activate_NoCombat",
-	"Activate_NoMissedShots",
-	"Activate_NoBodyFound",
-	"Activate_NotSpotted",
-	"Activate_PacifyGuard_Explosive",
-	"Activate_PoisonGuard_Any",
-	"Activate_PoisonGuard_Syringe",
-	"Activate_PoisonTarget_Emetic",
-	"Activate_PoisonTarget_Sedative",
-	"Activate_SA",
-	"Activate_SASO",
-	"Activate_SilentTakedown_3",
-	"Activate_Timed_SilientTakedown",
-	"DrActivate_EliminationPayout",
-	// Misc. Freelancer Events
-	"AddAssassin_Event",
-	"AddLookout_Event",
-	"AddSuspectGlow",
-	"CompleteEvergreenPrimaryObj",
-	"Evergreen_EvaluateChallenge",
-	"Evergreen_Mastery_Level",
-	"Evergreen_Merces_Data",
-	"Evergreen_MissionCompleted_Hot",
-	"Evergreen_MissionPayout",
-	"Evergreen_Payout_Data",
-	"Evergreen_Safehouse_Stash_ItemChosen",
-	"Evergreen_SecurityCameraDestroyed",
-	"Evergreen_Stash_ItemChosen",
-	"Evergreen_Suspect_Looks",
-	"EvergreenExitTriggered",
-	"EvergreenExitTriggeredOrWounded",
-	"EvergreenMissionEnd",
-	"GearSlotsTotal",
-	"GearSlotsTutorialised",
-	"GearSlotsUsed",
-	"MildMissionCompleted_Africa_Event",
-	"MildMissionCompleted_Asia_Event",
-	"MildMissionCompleted_Event",
-	"MissionCompleted_Event",
-	"NoTargetsLeft",
-	"NumberOfTargets",
-	"PayoutObjective_Completed",
-	"ScoringScreenEndState_CampaignCompletedBonusXP_Professional",
-	"ScoringScreenEndState_CampaignCompletedBonusXP_Hard",
-	"ScoringScreenEndState_MildCompleted",
-	"SetPayout",
-	"Setup_TargetName",
-	"TravelDestination",
-	"Leader_In_Meeting",
-	"LeaderDeadEscaping_Event",
-	"LeaderEscaping",
-	"LeaderPacifiedEscaping_Event",
-	"RemoveSuspectGlow",
-	"SupplierVisited",
-	"TargetPickedConfirm",
-	// Freelancer Challenge Events
-	"CollectorUpdate",
-	"GunmasterComplete",
-	"GunslingerUpdate",
-	"LetsGoHuntingUpdate",
-	"OneShotOneKillUpdate",
-	"SprayAndPrayUpdate",
-	"ThisIsMyRifleUpdate",
-	"UpCloseAndPersonalUpdate",
-	"ShotsHit",
-	// Misc. Events
-	"ChallengeCompleted",
-	"ContractSessionMarker",
-	"CpdSet",
-	"Hero_Health",
-	"LeaderboardUpdated",
-	"Progression_XPGain",
-	"SegmentClosing",
-	"StartCpd",
-
-	// Gameplay Events
-	"AccidentBodyFound",
-	//"Agility_Start",
-	"AllBodiesHidden",
-	"AmbientChanged",
-	"DeadBodySeen",
-	"ExitInventory",
-	"FirstMissedShot",
-	"FirstNonHeadshot",
-	"HeroSpawn_Location",
-	"HoldingIllegalWeapon", // ?
-	"ItemPickedUp",
-	//"ItemRemovedFromInventory",
-	"MurderedBodySeen",
-	"Noticed_Pacified",
-	"ObjectiveCompleted",
-	"PlayingPianoChanged",
-	"SituationContained",
-	"Unnoticed_Pacified",
-	"Unnoticed_Kill",
-	"VirusDestroyed",
-	"Witnesses",
-
-	"OpportunityStageEvent",
-	"IntroCutEnd",
-	"OpportunityEvents",
-	"Spotted",
-	"DisguiseBlown",
-	"47_FoundTrespassing",
-	"ShotsFired",
-
-	// Imbued
-	"Actorsick",
-	"BodyFound",
-	"Dart_Hit",
-	"Disguise",
-	"Door_Unlocked",
-	"Drain_Pipe_Climbed",
-	"FriskedSuccess",
-	"ItemThrown",
-	"Kill",
-	"Pacify",
-	"StartingSuit",
-	"Trespassing",
-};
-
 DEFINE_PLUGIN_DETOUR(CroupierPlugin, void, OnEventSent, ZAchievementManagerSimple* th, uint32_t eventIndex, const ZDynamicObject& ev) {
 	ZString eventData = ZDynamicObjectToString(const_cast<ZDynamicObject&>(ev));
 
@@ -2285,10 +2142,6 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 	// OnItemDestroyed???
 
 	switch (static_cast<ZHMPin>(pinId)) {
-#if _DEBUG
-		default:
-			break;
-#endif
 		case ZHMPin::HitmanInVision:
 			// "Never seen by targets", "Never seen by guards" etc?
 			break;
