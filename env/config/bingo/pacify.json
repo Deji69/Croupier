@@ -75,7 +75,7 @@
 		],
 		"Tags": ["Action", "Pacify"],
 		"Pacify": {
-			"SetPieceId": "db6a820c-22ea-496e-a0f2-6823b32a911d"
+			"SetPieceType": "bc27ff79-de1c-4b2e-8b52-398b25de6e4d"
 		}
 	},
 	{

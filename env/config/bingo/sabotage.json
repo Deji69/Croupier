@@ -7,7 +7,7 @@
 		"Missions": [],
 		"Tags": ["Action", "Sabotage"],
 		"SecuritySystemRecorder": {
-			"Event": ["erased", "destroyed"]
+			"Event": ["Erased", "Destroyed"]
 		}
 	},
 	{
