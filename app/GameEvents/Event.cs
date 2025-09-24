@@ -320,17 +320,20 @@ namespace Croupier.GameEvents {
 	}
 
 	public class PlayerEventValue : EventValue {
-		public string? HeroOutfit { get; set; }
-		public bool? HeroOutfitIsHitmanSuit { get; set; }
-		public string? Outfit { get; set; }
-		public bool? OutfitIsHitmanSuit { get; set; }
+		public string? HeroOutfit;
+		public bool? HeroOutfitIsHitmanSuit;
+		public string? Outfit;
+		public bool? OutfitIsHitmanSuit;
 
 		public static PlayerEventValue Load(JsonElement json) {
+			var outfit = TryLoadString(json, nameof(Outfit));
+			var heroOutfit = TryLoadString(json, nameof(HeroOutfit));
+
 			return new() {
-				HeroOutfit = TryLoadString(json, nameof(HeroOutfit)),
-				Outfit = TryLoadString(json, nameof(Outfit)),
-				HeroOutfitIsHitmanSuit = TryLoadBool(json, nameof(HeroOutfitIsHitmanSuit)),
-				OutfitIsHitmanSuit = TryLoadBool(json, nameof(OutfitIsHitmanSuit)),
+				HeroOutfit = heroOutfit,
+				HeroOutfitIsHitmanSuit = heroOutfit != null ? Roulette.Main.GetDisguiseByRepoId(heroOutfit)?.Suit : null,
+				Outfit = outfit,
+				OutfitIsHitmanSuit = outfit != null ? Roulette.Main.GetDisguiseByRepoId(outfit)?.Suit : null,
 			};
 		}
 	}
