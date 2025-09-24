@@ -302,7 +302,8 @@
 				"Count": 1,
 				"EntityID": [
 					17017568610383883356
-				]
+				],
+				"Unique": "Location.Position"
 			}
 		},
 	
