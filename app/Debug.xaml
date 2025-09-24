@@ -64,8 +64,16 @@
 					Margin="0,0,5,0"
 					Click="StopLoad_Click"
 					/>
-			</StackPanel>
-			<TextBlock Text="{Binding Path=LegalSpinText}" Foreground="White" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="5,5">
+                <Button
+					Content="Copy Bingo Debug Texts"
+					Width="140"
+					Margin="0,0,5,0"
+					Click="CopyBingoTexts_Click"
+					/>
+            </StackPanel>
+            <TextBlock Text="{Binding Path=LegalSpinText}" Foreground="White" />
 			<TextBlock Text="Bingo" Margin="0,5" FontWeight="Bold" Foreground="White" />
 			<StackPanel Orientation="Horizontal">
 				<TextBlock Text="Total Tiles: " Foreground="White" />

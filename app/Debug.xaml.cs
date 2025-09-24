@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Croupier {
 	public class DebugWindowViewModel : ViewModel {
@@ -108,6 +109,32 @@ namespace Croupier {
 
 		private void RIPSpin_Click(object sender, RoutedEventArgs e) {
 			CroupierSocketServer.SpoofMessage("MissionFailed:1");
+		}
+
+		private void CopyBingoTexts_Click(object sender, RoutedEventArgs e) {
+			var tiles = Bingo.Main.GetTilesForMission(GameController.Main.Bingo.Mission);
+			var str = "";
+			foreach (var tile in tiles) {
+				if (str.Length > 0) str += ", ";
+				str += tile.ToString();
+			}
+			for (var i = 0; i < 10; ++i) {
+				try {
+					Clipboard.SetText($"{Mission.Get(GameController.Main.Bingo.Mission).Name}: {str}");
+					MessageBox.Show(
+						"Tile texts copied!",
+						"Copy Bingo Debug Texts"
+					);
+					return;
+				}
+				catch {
+				}
+				System.Threading.Thread.Sleep(10);
+			}
+			MessageBox.Show(
+				"Clipboard access failed. Another process may have attempted to access the clipboard at the same time. Please try again.",
+				"Copy Bingo Debug Texts Failed"
+			);
 		}
 
 		private void ValidKills_Click(object sender, RoutedEventArgs e) {
