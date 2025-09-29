@@ -20,9 +20,9 @@ namespace Croupier
 
 		private void Application_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
 		{
-			MessageBox.Show("An unhandled exception just occurred: " + e.Exception.Message, "Exception", MessageBoxButton.OK, MessageBoxImage.Error);
-			//e.Handled = true;
-		}
+            MessageBox.Show("An unhandled exception just occurred: " + (e.Exception.InnerException ?? e.Exception).Message, "Exception", MessageBoxButton.OK, MessageBoxImage.Error);
+            //e.Handled = true;
+        }
 
 		protected override void OnExit(ExitEventArgs e)
 		{
