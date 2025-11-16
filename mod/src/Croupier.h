@@ -116,11 +116,7 @@ namespace Croupier {
 		bool loadRemovalActive = false;
 		bool isLoadingScreenCheckHasBeenTrue = false;
 		bool loadingScreenActivated = false;
-		bool respinKeybindWasPressed = false;
-		bool shuffleKeybindWasPressed = false;
 		TResourcePtr<ZTemplateEntityFactory> repositoryResource;
-		ZInputAction respinAction;
-		ZInputAction shuffleAction;
 		Config config;
 		Croupier::UI ui;
 	};
