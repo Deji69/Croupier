@@ -2,7 +2,6 @@
 #include "CroupierClient.h"
 #include "Events.h"
 #include "EventSystem.h"
-#include "InputUtil.h"
 #include "KillConfirmation.h"
 #include "Roulette.h"
 #include <IPluginInterface.h>
@@ -23,13 +22,6 @@ enum class DockMode {
 	TopRight,
 	BottomLeft,
 	BottomRight,
-};
-
-struct KeyBindAssign {
-	KeyBind key1;
-	KeyBind key2;
-	bool assigning1 = false;
-	bool assigning2 = false;
 };
 
 struct KillSetpieceEvent {
@@ -242,7 +234,6 @@ public:
 	auto DrawEditSpinUI(bool focused) -> void;
 	auto DrawCustomRulesetUI(bool focused) -> void;
 	auto DrawEditMissionPoolUI(bool focused) -> void;
-	auto DrawEditHotkeysUI(bool focused) -> void;
 	auto DrawSpinUI(bool focused) -> void;
 	auto Random() -> void;
 	auto Respin(bool isAuto = true) -> void;
@@ -284,7 +275,6 @@ private:
 
 	auto LogSpin() -> void;
 	auto SetupEvents() -> void;
-	auto ProcessHotkeys() -> void;
 	auto ProcessMissionsMessage(const ClientMessage& message) -> void;
 	auto ProcessSpinDataMessage(const ClientMessage& message) -> void;
 	auto ProcessLoadRemoval() -> void;
@@ -315,7 +305,6 @@ private:
 	bool showManualModeUI = false;
 	bool showEditMissionPoolUI = false;
 	bool showCustomRulesetUI = false;
-	bool showEditHotkeysUI = false;
 	bool spinCompleted = false;
 	bool spinLocked = false;
 	bool appTimerEnable = false;
@@ -323,10 +312,6 @@ private:
 	bool loadRemovalActive = false;
 	bool isLoadingScreenCheckHasBeenTrue = false;
 	bool loadingScreenActivated = false;
-	bool respinKeybindWasPressed = false;
-	bool shuffleKeybindWasPressed = false;
-	KeyBindAssign respinKeyBind;
-	KeyBindAssign shuffleKeyBind;
 	ZInputAction respinAction;
 	ZInputAction shuffleAction;
 	Configuration config;

@@ -12,7 +12,6 @@
 #include <variant>
 #include <winhttp.h>
 #include "Events.h"
-#include "InputUtil.h"
 #include "KillConfirmation.h"
 #include "KillMethod.h"
 #include "SpinParser.h"
@@ -49,20 +48,6 @@ Croupier::~Croupier() {
 }
 
 auto Croupier::LoadConfiguration() -> void {
-	/*auto binds = std::format("CroupierInput={"
-			"Respin=tap("
-		"};");
-	auto respinKey1 = GetSetting("general", "respin_hotkey1", "");
-	auto respinKey2 = GetSetting("general", "respin_hotkey2", "");
-	auto shuffleKey1 = GetSetting("general", "shuffle_hotkey1", "");
-	auto shuffleKey2 = GetSetting("general", "shuffle_hotkey2", "");
-	respinKeyBind.key1 = respinKey1.size() ? KeyBind(respinKey1.c_str()) : KeyBind();
-	respinKeyBind.key2 = respinKey2.size() ? KeyBind(respinKey2.c_str()) : KeyBind();
-	shuffleKeyBind.key1 = shuffleKey1.size() ? KeyBind(shuffleKey1.c_str()) : KeyBind();
-	shuffleKeyBind.key2 = shuffleKey2.size() ? KeyBind(shuffleKey2.c_str()) : KeyBind();
-	if (!ZInputActionManager::AddBindings(binds.c_str()))
-		Logger::Error("Failed to add input bindings for Croupier.");*/
-
 	if (this->file.is_open()) return;
 
 	const auto filepath = this->modulePath / "mods" / "Croupier" / "croupier.txt";
@@ -373,31 +358,6 @@ auto Croupier::OnFrameUpdate(const SGameUpdateEvent& ev) -> void {
 	this->ProcessSpinState();
 	this->ProcessClientMessages();
 	this->ProcessLoadRemoval();
-	this->ProcessHotkeys();
-}
-
-auto Croupier::ProcessHotkeys() -> void {
-	/*if (Functions::ZInputAction_Digital->Call(&respinAction, -1))
-		Respin(false);
-	if (Functions::ZInputAction_Digital->Call(&shuffleAction, -1))
-		Random();
-
-	auto respinKey1Pressed = !respinKeyBind.key1.isSet() || respinKeyBind.key1.isDown();
-	auto respinKey2Pressed = !respinKeyBind.key2.isSet() || respinKeyBind.key2.isDown();
-	auto shuffleKey1Pressed = !shuffleKeyBind.key1.isSet() || shuffleKeyBind.key1.isDown();
-	auto shuffleKey2Pressed = !shuffleKeyBind.key2.isSet() || shuffleKeyBind.key2.isDown();
-	auto respinKeybindIsPressed = (respinKeyBind.key1.isSet() || respinKeyBind.key2.isSet()) && respinKey1Pressed && respinKey2Pressed;
-	auto shuffleKeybindIsPressed = (shuffleKeyBind.key1.isSet() || shuffleKeyBind.key2.isSet())
-		&& (!shuffleKeyBind.key1.isSet() || shuffleKeyBind.key1.isDown())
-		&& (!shuffleKeyBind.key2.isSet() || shuffleKeyBind.key2.isDown());
-
-	if (respinKeybindIsPressed && !respinKeybindWasPressed)
-		Respin();
-	else if (shuffleKeybindIsPressed && !shuffleKeybindWasPressed)
-		Random();
-
-	respinKeybindWasPressed = respinKeybindIsPressed;
-	shuffleKeybindWasPressed = shuffleKeybindIsPressed;*/
 }
 
 auto Croupier::ProcessSpinState() -> void {
@@ -697,52 +657,6 @@ auto Croupier::OnDrawMenu() -> void {
 		this->showUI = !this->showUI;
 }
 
-static bool ImGuiHotkey(const char* label, KeyBindAssign& bind, float samelineOffset = 0.0f, const ImVec2& size = { 100.0f, 0.0f }) noexcept {
-	ImGui::TextUnformatted(label);
-	ImGui::SameLine(samelineOffset);
-
-	if (bind.assigning1) {
-		ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetColorU32(ImGuiCol_ButtonActive));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImGui::GetColorU32(ImGuiCol_ButtonActive));
-		ImGui::Button("...", size);
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-
-		if (!ImGui::IsItemHovered() && ImGui::GetIO().MouseClicked[0]) {
-			bind.assigning1 = false;
-			return false;
-		}
-		if (bind.key1.setToPressedKey()) {
-			bind.assigning1 = false;
-			return true;
-		}
-	}
-	else if (ImGui::Button(bind.key1.toString(), size) && !bind.assigning2)
-		bind.assigning1 = true;
-
-	ImGui::SameLine();
-
-	if (bind.assigning2) {
-		ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetColorU32(ImGuiCol_ButtonActive));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImGui::GetColorU32(ImGuiCol_ButtonActive));
-		ImGui::Button("...", size);
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-
-		if (!ImGui::IsItemHovered() && ImGui::GetIO().MouseClicked[0]) {
-			bind.assigning2 = false;
-			return false;
-		}
-		if (bind.key2.setToPressedKey()) {
-			bind.assigning2 = false;
-			return true;
-		}
-	}
-	else if (ImGui::Button(bind.key2.toString(), size) && !bind.assigning1)
-		bind.assigning2 = true;
-	return false;
-}
-
 auto Croupier::OnDrawUI(bool focused) -> void {
 	this->DrawSpinUI(focused);
 
@@ -751,7 +665,6 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 	this->DrawEditSpinUI(focused);
 	this->DrawCustomRulesetUI(focused);
 	this->DrawEditMissionPoolUI(focused);
-	this->DrawEditHotkeysUI(focused);
 
 	if (!this->showUI) return;
 
@@ -880,13 +793,6 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 			}
 		}
 
-		/*if (connected) {
-			ImGui::SameLine();
-			ImGui::SetCursorPosX(165.0);
-			if (ImGui::Button("Hotkeys"))
-				this->showEditHotkeysUI = !this->showEditHotkeysUI;
-		}*/
-
 		if (!connected) {
 			// Ruleset select
 			auto const rulesetName = getRulesetName(this->ruleset);
@@ -981,30 +887,6 @@ auto Croupier::OnDrawUI(bool focused) -> void {
 		}
 
 		ImGui::SetWindowFontScale(1.0);
-		ImGui::PopFont();
-	}
-
-	ImGui::End();
-	ImGui::PopFont();
-}
-
-auto Croupier::DrawEditHotkeysUI(bool focused) -> void {
-	if (!showEditHotkeysUI) return;
-
-	ImGui::PushFont(SDK()->GetImGuiBlackFont());
-
-	if (ImGui::Begin(ICON_MD_CASINO " CROUPIER - HOTKEYS", &showEditHotkeysUI, ImGuiWindowFlags_AlwaysAutoResize)) {
-		ImGui::PushFont(SDK()->GetImGuiBoldFont());
-
-		if (ImGuiHotkey("Respin Hotkey", respinKeyBind)) {
-			//SetSetting("general", "respin_hotkey1", respinKeyBind.key1.toString());
-			//SetSetting("general", "respin_hotkey2", respinKeyBind.key2.toString());
-		}
-		if (ImGuiHotkey("Shuffle Hotkey", shuffleKeyBind)) {
-			//SetSetting("general", "shuffle_hotkey1", shuffleKeyBind.key1.toString());
-			//SetSetting("general", "shuffle_hotkey2", shuffleKeyBind.key2.toString());
-		}
-
 		ImGui::PopFont();
 	}
 
