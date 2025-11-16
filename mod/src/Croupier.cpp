@@ -997,12 +997,12 @@ auto Croupier::DrawEditHotkeysUI(bool focused) -> void {
 		ImGui::PushFont(SDK()->GetImGuiBoldFont());
 
 		if (ImGuiHotkey("Respin Hotkey", respinKeyBind)) {
-			SetSetting("general", "respin_hotkey1", respinKeyBind.key1.toString());
-			SetSetting("general", "respin_hotkey2", respinKeyBind.key2.toString());
+			//SetSetting("general", "respin_hotkey1", respinKeyBind.key1.toString());
+			//SetSetting("general", "respin_hotkey2", respinKeyBind.key2.toString());
 		}
 		if (ImGuiHotkey("Shuffle Hotkey", shuffleKeyBind)) {
-			SetSetting("general", "shuffle_hotkey1", shuffleKeyBind.key1.toString());
-			SetSetting("general", "shuffle_hotkey2", shuffleKeyBind.key2.toString());
+			//SetSetting("general", "shuffle_hotkey1", shuffleKeyBind.key1.toString());
+			//SetSetting("general", "shuffle_hotkey2", shuffleKeyBind.key2.toString());
 		}
 
 		ImGui::PopFont();

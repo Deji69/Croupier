@@ -1,6 +1,6 @@
 # If ZHMMODSDK_DIR is set, use that. Otherwise, download the SDK from GitHub.
 if (DEFINED ZHMMODSDK_DIR)
-    include("${ZHMMODSDK_DIR}/cmake/sdk-local.cmake")
+    include("${ZHMMODSDK_DIR}/cmake/zhm-mod.cmake")
 else()
     include(FetchContent)
     cmake_policy(SET CMP0135 NEW)
@@ -11,6 +11,5 @@ else()
 
     FetchContent_MakeAvailable(ZHMModSDK)
     set(ZHMMODSDK_DIR "${zhmmodsdk_SOURCE_DIR}")
+    include("${ZHMMODSDK_DIR}/cmake/zhm-mod.cmake")
 endif()
-
-include("${ZHMMODSDK_DIR}/cmake/zhm-mod.cmake")

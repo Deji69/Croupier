@@ -209,7 +209,7 @@ bool KeyBind::setToPressedKey() noexcept
 		}
 	}
 
-	for (int i = 0; i < IM_ARRAYSIZE(ImGui::GetIO().KeysDown); ++i) {
+	/*for (int i = 0; i < IM_ARRAYSIZE(ImGui::GetIO().KeysDown); ++i) {
 		if (!ImGui::IsKeyPressed(static_cast<ImGuiKey>(i)))
 			continue;
 
@@ -220,7 +220,7 @@ bool KeyBind::setToPressedKey() noexcept
 				keyCode = VK_RMENU;
 			return true;
 		}
-	}
+	}*/
 	return false;
 }
 
