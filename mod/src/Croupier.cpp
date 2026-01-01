@@ -790,7 +790,7 @@ auto CroupierPlugin::ImbueItemRepositoryInfo(json& j, ZRepositoryID repoId) -> v
 	std::vector<std::string> perks;
 	std::vector<std::string> onlineTraits;
 
-	if (repositoryResource.m_nResourceIndex == -1) {
+	if (repositoryResource.m_nResourceIndex.val == -1) {
 		const auto s_ID = ResId<"[assembly:/repository/pro.repo].pc_repo">;
 		Globals::ResourceManager->GetResourcePtr(repositoryResource, s_ID, 0);
 	}

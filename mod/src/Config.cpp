@@ -40,7 +40,7 @@ auto Config::LoadConfig() -> void {
 	this->streak = SDK()->GetPluginSettingBool(plugin, "general", "streak", this->streak);
 	this->streakCurrent = SDK()->GetPluginSettingInt(plugin, "general", "streak_current", this->streakCurrent);
 	this->spinOverlay = SDK()->GetPluginSettingBool(plugin, "general", "spin_overlay", this->spinOverlay);
-	this->overlayDockMode = parseDockMode(SDK()->GetPluginSetting(plugin, "general", "spin_overlay_dock", dockModeToString(this->overlayDockMode)));
+	this->overlayDockMode = parseDockMode(SDK()->GetPluginSetting(plugin, "general", "spin_overlay_dock", std::string_view{dockModeToString(this->overlayDockMode)}));
 	this->overlayKillConfirmations = SDK()->GetPluginSettingBool(plugin, "general", "spin_overlay_confirmations", this->overlayKillConfirmations);
 	this->ruleset = getRulesetByName(SDK()->GetPluginSetting(plugin, "general", "ruleset", "")).value_or(this->ruleset);
 	this->customRules.enableMedium = SDK()->GetPluginSettingBool(plugin, "general", "ruleset_medium", this->customRules.enableMedium);
@@ -106,7 +106,7 @@ auto Config::SaveConfig() -> void {
 	SDK()->SetPluginSettingBool(plugin, "general", "streak", this->streak);
 	SDK()->SetPluginSettingInt(plugin, "general", "streak_current", this->streakCurrent);
 	SDK()->SetPluginSettingBool(plugin, "general", "spin_overlay", this->spinOverlay);
-	SDK()->SetPluginSetting(plugin, "general", "spin_overlay_dock", dockModeToString(this->overlayDockMode));
+	SDK()->SetPluginSetting(plugin, "general", "spin_overlay_dock", std::string_view{dockModeToString(this->overlayDockMode)});
 	SDK()->SetPluginSettingBool(plugin, "general", "spin_overlay_confirmations", this->overlayKillConfirmations);
 	SDK()->SetPluginSetting(plugin, "general", "ruleset", getRulesetName(this->ruleset).value_or(""));
 	SDK()->SetPluginSettingBool(plugin, "general", "ruleset_medium", this->customRules.enableMedium);
