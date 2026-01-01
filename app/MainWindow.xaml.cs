@@ -926,8 +926,8 @@ namespace Croupier
 			DisplayOptionUseNoKOBanner.Visibility = IsRouletteMode ? Visibility.Visible : Visibility.Collapsed;
 			DisplayOptionRTL.Visibility = IsRouletteMode ? Visibility.Visible : Visibility.Collapsed;
 			DisplayOptionVertical.Visibility = IsRouletteMode ? Visibility.Visible : Visibility.Collapsed;
-			DisplayOptionStatic.Visibility = IsRouletteMode ? Visibility.Visible : Visibility.Collapsed;
-			DisplayOptionStaticAlign.Visibility = IsRouletteMode ? Visibility.Visible : Visibility.Collapsed;
+			DisplayOptionStatic.Visibility = Visibility.Visible;
+			DisplayOptionStaticAlign.Visibility = Visibility.Visible;
 			DisplayOptionGroupTileColors.Visibility = IsBingoMode ? Visibility.Visible : Visibility.Collapsed;
 
 			SyncMissionSelect(GameController.Main.MissionID);
