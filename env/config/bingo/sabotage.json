@@ -11,24 +11,13 @@
 		}
 	},
 	{
-		"Key": "DestroyCameras",
-		"Name": "Destroy {1} Cameras",
-		"NameSingular": "Destroy {1} Camera",
-		"Tip": "Destroy {0} cameras by any means necessary.",
-		"Group": "Sabotage",
-		"Missions": [],
-		"Tags": ["Action", "Sabotage"],
-		"SecuritySystemRecorder": {
-			"Count": 3,
-			"Event": "CameraDestroyed"
-		}
-	},
-	{
 		"Key": "IgniteOilDrum",
 		"Name": "Ignite Oil Drum",
 		"Tip": "Leak and ignite an oil barrel like a pyromaniac.",
 		"Group": "Sabotage",
-		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Missions": [
+			"The Showstopper", "Holiday Hoarders"
+		],
 		"Tags": ["Action", "Sabotage"],
 		"Setpiece": {
 			"Name": "Explosive_OilDrum",

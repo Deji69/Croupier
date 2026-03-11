@@ -5,18 +5,9 @@
 		"Type": "Complication",
 		"Tip": "Do not start in or take any civilian disguise.",
 		"Difficulty": "Medium",
-		"OR": [
-			{
-				"Disguise": {
-					"ActorType": "Civilian"
-				}
-			},
-			{
-				"StartingSuit": {
-					"ActorType": "Civilian"
-				}
-			}
-		]
+		"Disguise": {
+			"ActorType": "Civilian"
+		}
 	},
 	{
 		"Key": "NoDisguiseChanges",
@@ -24,7 +15,7 @@
 		"Type": "Complication",
 		"Tip": "Do not change disguise after starting the mission.",
 		"Difficulty": "High",
-		"Disguise": []
+		"ChangeDisguise": []
 	},
 	{
 		"Key": "NoFreeDisguises",
@@ -32,7 +23,7 @@
 		"Type": "Complication",
 		"Tip": "Do not take any disguise bundles, only use disguises stolen from an NPC's body.",
 		"Difficulty": "High",
-		"Disguise": {
+		"ChangeDisguise": {
 			"IsBundle": true
 		}
 	},
@@ -42,18 +33,9 @@
 		"Type": "Complication",
 		"Tip": "Do not start in or take any guard disguise.",
 		"Difficulty": "Medium",
-		"OR": [
-			{
-				"Disguise": {
-					"ActorType": "Guard"
-				}
-			},
-			{
-				"StartingSuit": {
-					"ActorType": "Guard"
-				}
-			}
-		]
+		"Disguise": {
+			"ActorType": "Guard"
+		}
 	},
 	{
 		"Key": "NoUniqueDisguises",
@@ -61,18 +43,9 @@
 		"Type": "Complication",
 		"Tip": "Do not start in or take any unique disguise (a disguise worn by only one or zero NPCs).",
 		"Difficulty": "Medium",
-		"OR": [
-			{
-				"Disguise": {
-					"IsUnique": true
-				}
-			},
-			{
-				"StartingSuit": {
-					"IsUnique": true
-				}
-			}
-		]
+		"Disguise": {
+			"IsUnique": true
+		}
 	},
 	{
 		// OutfitType = Waiter doesn't seem to be used in Paris at least.
@@ -82,18 +55,9 @@
 		"Type": "Complication",
 		"Tip": "Do not start in or take any waiter disguise (disguises allowed to openly poison food/drink).",
 		"Difficulty": "Medium",
-		"OR": [
-			{
-				"Disguise": {
-					"OutfitType": "Waiter"
-				}
-			},
-			{
-				"StartingSuit": {
-					"OutfitType": "Waiter"
-				}
-			}
-		]
+		"Disguise": {
+			"OutfitType": "Waiter"
+		}
 	},
 	{
 		"Key": "NoNudity",
@@ -101,7 +65,7 @@
 		"Type": "Complication",
 		"Tip": "Do not steal a disguise from an NPC's body.",
 		"Difficulty": "High",
-		"Disguise": {
+		"ChangeDisguise": {
 			"IsBundle": false
 		}
 	}

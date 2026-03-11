@@ -37,7 +37,9 @@
 		"Key": "CollectCleaver",
 		"Name": "Cleaver",
 		"Group": "Collect",
-		"Missions": ["The Showstopper"],
+		"Missions": [
+			"The Showstopper", "Holiday Hoarders", "World of Tomorrow"
+		],
 		"Tags": ["Collect"],
 		"Collect": {
 			"Items": ["1bbf0ed5-0515-4599-a4c9-454ce59cff44"]
@@ -47,7 +49,9 @@
 		"Key": "CollectCrowbar",
 		"Name": "{1}x Crowbar",
 		"Group": "Collect",
-		"Missions": ["The Showstopper", "Holiday Hoarders"],
+		"Missions": [
+			"The Showstopper", "Holiday Hoarders", "World of Tomorrow"
+		],
 		"Tags": ["Collect"],
 		"Collect": {
 			"Count": 2,
@@ -78,7 +82,9 @@
 		"Key": "CollectHammer",
 		"Name": "{1}x Hammer",
 		"Group": "Collect",
-		"Missions": ["The Showstopper"],
+		"Missions": [
+			"The Showstopper", "Holiday Hoarders", "World of Tomorrow"
+		],
 		"Tags": ["Collect"],
 		"Collect": {
 			"Count": 2,
@@ -121,28 +127,6 @@
 		}
 	},
 	{
-		"Key": "CollectLetterOpener",
-		"Name": "{1}x Letter Opener",
-		"Group": "Collect",
-		"Missions": ["The Showstopper"],
-		"Tags": ["Collect"],
-		"Collect": {
-			"Count": 2,
-			"Max": 5,
-			"Items": ["f1f89faf-a441-4492-b442-9a923b5ecfd1"]
-		}
-	},
-	{
-		"Key": "CollectMasterKey",
-		"Name": "Palace Master Key",
-		"Group": "Collect",
-		"Missions": ["The Showstopper"],
-		"Tags": ["Collect"],
-		"Collect": {
-			"Items": ["2ad76caf-8af3-44b1-904b-fd99b23550f1"]
-		}
-	},
-	{
 		"Key": "CollectPoliceBaton",
 		"Name": "Police Baton",
 		"Group": "Collect",
@@ -150,18 +134,6 @@
 		"Tags": ["Collect"],
 		"Collect": {
 			"Items": ["510c62c2-1f40-4a4d-9e42-da677bd116e7"]
-		}
-	},
-	{
-		"Key": "CollectRatPoison",
-		"Name": "{1}x Rat Poison",
-		"Group": "Collect",
-		"Missions": ["The Showstopper"],
-		"Tags": ["Collect"],
-		"Collect": {
-			"Count": 3,
-			"Max": 6,
-			"Items": ["8b37a3a8-8a20-4262-81c5-0fcd15f4bba9"]
 		}
 	},
 	{
@@ -190,7 +162,9 @@
 		"Key": "CollectScrewdriver",
 		"Name": "{1}x Screwdriver",
 		"Group": "Collect",
-		"Missions": ["The Showstopper"],
+		"Missions": [
+			"The Showstopper", "World of Tomorrow"
+		],
 		"Tags": ["Collect"],
 		"Collect": {
 			"Count": 3,

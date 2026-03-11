@@ -38,9 +38,10 @@
 		"Key": "FloodSinks",
 		"Name": "Flood {1} Sinks",
 		"NameSingular": "Flood {1} Sink",
-		"Tip": "Turn on {0} sinks.",
+		"Tip": "Turn On {0} sinks.",
 		"Group": "Interact",
 		"Tags": ["Action", "Interact"],
+		"Missions": ["The Showstopper", "World of Tomorrow"],
 		"Setpiece": {
 			"RepositoryId": "95e7e530-dbd0-4e1a-95f6-8d5c165a7991",
 			"Type": "DefaultActivators",
@@ -58,17 +59,5 @@
 		"BodyHidden": {
 			"Count": 3
 		}
-	},
-	{
-		"Key": "PassAFrisk",
-		"Name": "Pass a Frisk",
-		"Tip": "Pass a frisk entrance checkpoint.",
-		"Group": "Interact",
-		"Missions": [
-			"The Showstopper", "Holiday Hoarders",
-			"World of Tomorrow"
-		],
-		"Tags": ["Action", "Interact"],
-		"FriskedSuccess": {}
 	}
 ]

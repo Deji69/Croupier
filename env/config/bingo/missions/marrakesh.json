@@ -1,0 +1,895 @@
+/**
+ * Outdoors: 142 (consulate / protest area) & 143 (everywhere else)
+ * No Crowd Blending
+ */
+{
+	"Tiles": [
+		// Collect Objectives
+		/*{
+			"Key": "CollectArmyTruckKey",
+			"Name": "Army Truck Key",
+			"Group": "Collect",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Items": ["09badac0-685a-4bc1-ba57-2a88b9e02187"]
+			}
+		},
+		*/
+		{
+			"Key": "CollectBrick",
+			"Name": "{1}x Brick",
+			"Group": "Collect",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Count": 4,
+				"Max": 16,
+				"Items": ["5cc4d1ea-b4fa-4667-ba3a-b6e859f03059"]
+			}
+		},
+		{
+			"Key": "CollectCleaver",
+			"Name": "Cleaver",
+			"Group": "Collect",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Items": ["1bbf0ed5-0515-4599-a4c9-454ce59cff44"],
+				"Count": 2,
+				"Max": 4
+			}
+		},
+		{
+			"Key": "CollectConsulateKeycard",
+			"Name": "Consulate Keycard",
+			"Group": "Collect",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Items": ["07e878f8-d245-4cad-a3c2-34bbbd9aecb8"]
+			}
+		},
+		{
+			"Key": "CollectConsulateStaffCarKey",
+			"Name": "Consulate Staff Car Key",
+			"Group": "Collect",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Items": ["ef12566c-80ff-41ac-b9e8-19cd43e7d420"]
+			}
+		},
+		{
+			"Key": "CollectCrowbar",
+			"Name": "{1}x Crowbar",
+			"Group": "Collect",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Count": 3,
+				"Max": 5,
+				"Items": ["01ed6d15-e26e-4362-b1a6-363684a7d0fd"]
+			}
+		},
+		{
+			"Key": "CollectHammer",
+			"Name": "{1}x Hammer",
+			"Group": "Collect",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Count": 2,
+				"Max": 3,
+				"Items": ["3c24c96a-557c-472a-9d71-1a235d7383a7"]
+			}
+		},
+		{
+			"Key": "CollectHeadmasterKey",
+			"Name": "Headmaster Key",
+			"Group": "Collect",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Items": ["2092f606-e9e5-4525-be09-9b4d6b597f2c"]
+			}
+		},
+		{
+			"Key": "CollectKitchenKnife",
+			"Name": "{1}x Kitchen Knife",
+			"Group": "Collect",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Count": 3,
+				"Max": 7,
+				"Items": ["e17172cc-bf70-4df6-9828-d9856b1a24fd"]
+			}
+		},
+		{
+			"Key": "CollectLethalPoisonPillJar",
+			"Name": "Lethal Poison Pill Jar",
+			"Group": "Collect",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Items": ["a1f89118-d345-4367-9423-620c3ef5dfba"]
+			}
+		},
+		{
+			"Key": "CollectLetterOpener",
+			"Name": "{1}x Letter Opener",
+			"Group": "Collect",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Count": 1,
+				"Max": 1,
+				"Items": ["f1f89faf-a441-4492-b442-9a923b5ecfd1"]
+			}
+		},
+		{
+			"Key": "CollectPoolBall",
+			"Name": "Pool Ball",
+			"Group": "Collect",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Items": ["95d1c5bd-72de-4236-97c0-b96fc5d92fa8"]
+			}
+		},
+		{
+			"Key": "CollectRatPoison",
+			"Name": "{1}x Rat Poison",
+			"Group": "Collect",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Count": 2,
+				"Max": 4,
+				"Items": ["8b37a3a8-8a20-4262-81c5-0fcd15f4bba9"]
+			}
+		},
+		{
+			"Key": "CollectRemoteExplosive",
+			"Name": "Remote Explosive",
+			"Group": "Collect",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Count": 3,
+				"Max": 9,
+				"Items": ["7c691c03-7c6b-4eb4-9a68-898efe5eedaa"]
+			}
+		},
+		{
+			"Key": "CollectCourtyardClubMembershipCard",
+			"Name": "Courtyard Club Membership Card",
+			"Group": "Collect",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Items": ["21651516-90A3-4A02-BC8B-600BEB153684"]
+			}
+		},
+		{
+			"Key": "CollectScissors",
+			"Name": "{1}x Scissors",
+			"Group": "Collect",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Count": 3,
+				"Max": 6,
+				"Items": ["6ecf1f15-453c-4783-9c70-8777c83934d7"]
+			}
+		},
+		{
+			"Key": "CollectScrewdriver",
+			"Name": "{1}x Screwdriver",
+			"Group": "Collect",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Count": 3,
+				"Max": 9,
+				"Items": ["12cb6b51-a6dd-4bf5-9653-0ab727820cac"]
+			}
+		},
+		{
+			"Key": "CollectShishaCafeKey",
+			"Name": "{1}x Shisha Cafe Key",
+			"Group": "Collect",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Items": ["7597e4c5-aeed-40da-9641-987e39089157"]
+			}
+		},
+		/*{
+			"Key": "CollectStaffCarKey",
+			"Name": "Consulate Staff Car Key",
+			"Group": "Collect",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Items": ["ef12566c-80ff-41ac-b9e8-19cd43e7d420"]
+			}
+		},*/
+		{
+			"Key": "CollectToyTank",
+			"Name": "{1}x Toy Tank",
+			"Group": "Collect",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Count": 2,
+				"Max": 6,
+				"Items": ["ce8e7099-e60d-47e8-bfd6-4918777f2c8b"]
+			}
+		},
+		{
+			"Key": "CollectVehicleKey",
+			"Name": "Vehicle Key",
+			"Tip": "Collect any of the exit vehicle keys (Army Truck Key, Consulate Staff Car Key).",
+			"Group": "Collect",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Items": [
+					"09badac0-685a-4bc1-ba57-2a88b9e02187",
+					"ef12566c-80ff-41ac-b9e8-19cd43e7d420"
+				]
+			}
+		},
+		{
+			"Key": "CollectWrench",
+			"Name": "{1}x Wrench",
+			"Group": "Collect",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Count": 3,
+				"Max": 10,
+				"Items": ["6adddf7e-6879-4d51-a7e2-6a25ffdca6ae"]
+			}
+		},
+		// Interact Objectives
+		{
+			"Key": "BuyASoda",
+			"Name": "Buy a Soda",
+			"Tip": "Purchase a can of soda from a vending machine.",
+			"Group": "Interact",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Interact"],
+			"Setpiece": {
+				"RepositoryId": "a01c8763-b596-4639-9836-90eb8a0969e5"
+			}
+		},
+		{
+			"Key": "BlendIn",
+			"Name": "Blend in {1} Spots",
+			"NameSingular": "Blend in {1} Spot",
+			"Tip": "Use {0} different blending spots.",
+			"Group": "Interact",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Interact"],
+			"OnEntered": {
+				"Count": 2,
+				"Unique": "EntityID"
+			}
+		},
+		{
+			"Key": "DestroyCameras",
+			"Name": "Destroy {1} Cameras",
+			"NameSingular": "Destroy {1} Camera",
+			"Tip": "Destroy {0} cameras by any means necessary.",
+			"Group": "Sabotage",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Sabotage"],
+			"SecuritySystemRecorder": {
+				"Count": {
+					"Random": [1, 2]
+				},
+				"Event": "CameraDestroyed"
+			}
+		},
+		{
+			"Key": "DropTheShishaCafeSign",
+			"Name": "Drop the Shisha Cafe Sign",
+			"Tip": "Cause the shisha café sign to fall.",
+			"Group": "Sabotage",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Sabotage"],
+			"Setpiece": {
+				"RepositoryId": "2d7a91b9-1b3a-4db3-a8bf-6249db70c339"
+			}
+		},
+		{
+			"Key": "ExplodeFireExtinguisher",
+			"Name": "Explode Fire Extinguisher",
+			"Tip": "Cause a fire extinguisher to explode. Remember to cover your ears.",
+			"Group": "Sabotage",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Sabotage"],
+			"ItemDestroyed": {
+				"RepositoryId": "d64eb5f2-1e9b-402d-855b-c714cfde50db"
+			}
+		},
+		{
+			"Key": "ExplodeGasCanister",
+			"Name": "Explode {1} Gas Canisters",
+			"NameSingular": "Explode {1} Gas Canister",
+			"Tip": "Blow up {0} gas canister. The large red ones.",
+			"Group": "Sabotage",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Sabotage"],
+			"Setpiece": {
+				"Count": 2,
+				"Name": "GasCanister_Large_A",
+				"ToolUsed": "Exploded"
+			}
+		},
+		{
+			"Key": "ExplodePropaneFlask",
+			"Name": "Explode Propane Flask",
+			"Tip": "Blow up a propane flask.",
+			"Group": "Sabotage",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Sabotage"],
+			"Setpiece": {
+				"Name": "PropaneFlask",
+				"ToolUsed": "Exploded"
+			}
+		},
+		{
+			"Key": "ExplodeVehicle",
+			"Name": "Explode {1} Vehicles",
+			"NameSingular": "Explode a Vehicle",
+			"Tip": "Blow up {0} of kind of vehicle.",
+			"Group": "Sabotage",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Sabotage"],
+			"CarExploded": {
+				"Count": {
+					"Random": [1, 2, 3]
+				}
+			}
+		},
+		{
+			"Key": "IgniteOilDrum",
+			"Name": "Ignite Oil Drum",
+			"Tip": "Leak and ignite an oil barrel like a pyromaniac.",
+			"Group": "Sabotage",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Sabotage"],
+			"Setpiece": {
+				"Name": "Explosive_OilDrum",
+				"ToolUsed": "Exploded"
+			}
+		},
+		{
+			"Key": "OpenClausSafe",
+			"Name": "Open Claus' Safe",
+			"Tip": "Open the safe in the consulate.",
+			"Group": "Interact",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Interact"],
+			"Setpiece": {
+				"RepositoryId": "e8d557c8-82c9-44c7-8b10-22d713ae5b24"
+			}
+		},
+		{
+			"Key": "OpenRezaSafe",
+			"Name": "Open Reza's Safe",
+			"Tip": "Open the safe in the school.",
+			"Group": "Interact",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Interact"],
+			"Setpiece": {
+				"RepositoryId": "3b04dd5d-56a3-42f6-863a-9a726e91d632"
+			}
+		},
+		{
+			"Key": "DismissSoldiers",
+			"Name": "Dismiss {1} Soldiers",
+			"NameSingular": "Dismiss {1} Soldier",
+			"Tip": "Dismiss {0} Elite Soldiers as one of their superior officers.",
+			"Group": "Interact",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Interact"],
+			"Setpiece": {
+				"Count": 3,
+				"RepositoryId": [
+					"873b040b-f39f-4778-92b1-6227fd3510e1",
+					"0231f563-15b2-4064-8324-20e0626a8763",
+					"2f3ce705-ae21-41c5-8fa1-00e13630640f",
+					"90956ccb-9236-4ab8-bcdd-53d64d6d4af1",
+					"c96659d3-87f1-4683-9a90-596b0720259f",
+					"95e3b651-f5c4-40c5-8272-872bcb4776d7",
+					"be0b201c-ee27-4056-a23c-0e0f79f606bc",
+					"4e807c7e-c019-426d-95f3-2d54d040229f",
+					"b0976180-5eb0-4cac-ae96-a56ce1c3a7dc"
+				]
+			}
+		},
+		{
+			"Key": "PeepThroughPeepHoles",
+			"Name": "Peep Through {1} Peep Holes",
+			"NameSingular": "Peep Through {1} Peep Hole",
+			"Tip": "Peep through {0} peep holes in the school walls.",
+			"Group": "Interact",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Interact"],
+			"Setpiece": {
+				"Count": 2,
+				"Unique": "Setpiece",
+				"Name": "Peeping"
+			}
+		},
+		{
+			"Key": "DropTheToilet",
+			"Name": "Drop the Toilet",
+			"Tip": "Make the toilet in the school fall.",
+			"Group": "Interact",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Interact"],
+			"Setpiece": {
+				"Name": "ToiletDrop  "
+			}
+		},
+		{
+			"Key": "FloodSinks",
+			"Name": "Flood {1} Sinks",
+			"NameSingular": "Flood {1} Sink",
+			"Tip": "Turn on {0} sinks.",
+			"Group": "Interact",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Interact"],
+			"Setpiece": {
+				"RepositoryId": "95e7e530-dbd0-4e1a-95f6-8d5c165a7991",
+				"Type": "DefaultActivators",
+				"Unique": "Position",
+				"Count": 2
+			}
+		},
+		{
+			"Key": "GiveCoinsToTheFortuneTeller",
+			"Name": "Give {1} Coins to the Fortune Teller",
+			"NameSingular": "Give a Coin to the Fortune Teller",
+			"Tip": "Give {0} coins of your fortune to an unfortunate fortune teller.",
+			"Group": "Interact",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Interact"],
+			"OnOut": {
+				"Count": 1,
+				"Output": 1,
+				"EntityID": 3745812959335979805
+			}
+		},
+		{
+			"Key": "PassAFrisk",
+			"Name": "Pass a Frisk",
+			"Tip": "Pass a frisk entrance checkpoint.",
+			"Group": "Interact",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Interact"],
+			"FriskedSuccess": {}
+		},
+		{
+			"Key": "ReleaseTheMoose",
+			"Name": "Release the Moose",
+			"Tip": "Make the moose in the consulate fall. RIP moose rain easter egg.",
+			"Group": "Sabotage",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Sabotage"],
+			"Setpiece": {
+				"RepositoryId": "2d7a91b9-1b3a-4db3-a8bf-6249db70c339"
+			}
+		},
+		{
+			"Key": "PlaceRemoteExplosiveInTheCamera",
+			"Name": "Place a Remote Explosive in the Camera",
+			"Tip": "Conceal a remote explosive in the camera in the consulate.",
+			"Group": "Interact",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Interact"],
+			"OnInteractionItemUsed": {
+				"EntityID": 16878060961300282667
+			}
+		},
+		{
+			"Key": "PoisonAShishaPipe",
+			"Name": "Poison a Shisha Pipe",
+			"Tip": "Poison any of the shisha pipes on the map.",
+			"Group": "Interact",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Interact"],
+			"Setpiece": {
+				"Helper": "PosionSource_Logic",
+				"Name": "Poison_CoffeeMachine_100cm"
+			}
+		},
+		{
+			"Key": "PoisonRezasPlateOfFood",
+			"Name": "Poison Reza's Plate of Food",
+			"Tip": "Poison the plate of Lamb Tfaya intended for Reza Zaydan.",
+			"Group": "Interact",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Interact"],
+			"Setpiece": {
+				"Helper": "PosionSource_Logic",
+				"RepositoryId": "9d316f01-7701-41b8-a9bb-153908768168",
+				"Room": 44
+			}
+		},
+		{
+			"Key": "PoisonARedWineGlass",
+			"Name": "Poison a Red Wine Glass",
+			"Tip": "Poison one of Claus Strandberg's Red Wine glasses.",
+			"Group": "Interact",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Interact"],
+			"Setpiece": {
+				"RepositoryId": "9d316f01-7701-41b8-a9bb-153908768168",
+				"Room": [32, 106]
+			}
+		},
+		{
+			"Key": "SabotagePhoneBooth",
+			"Name": "Sabotage a Phonebooth",
+			"Tip": "Sabotage a phonebooth and hope it doesn't kill anyone unexpectedly.",
+			"Group": "Sabotage",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Sabotage"],
+			"OR": [
+				{
+					"OnSabotageSetpiece": {
+						"RepositoryId": [
+							"0534A0AE-C0E4-4B45-B344-FFB2D9B87B0E",
+							"2100A3FB-9886-44EF-9D86-A09394CBB65B",
+							"4724C645-15B6-4900-9AA0-5D8736710F89",
+							"555E0C87-46C5-432E-8709-B864847257A1",
+							"8277D20A-023C-48D8-9219-B68F372BF933",
+							"86E6C5D6-1876-4F93-B022-09E91A1AE8E9",
+							"A8A307DF-FB9C-44C2-860F-A7FC58906D8E",
+							"AD0E1B37-493E-4C28-8D5F-869CB15EE48A",
+							"B9C5603A-C6CC-49E1-B665-D43176D49997",
+							"E0F94364-7AE9-424C-9DDE-10B9012D0E3A",
+							"EA3B3CCE-E96C-4D18-8F51-C2F46BA2D0E5",
+							"E7B538C4-F3CE-4D7D-B2B0-B40F960DBAB1",
+							"F8D34001-D17F-4A77-9C67-967B0BFD7ECD"
+						]
+					}
+				},
+				{
+					"OnShot": {
+						"RepositoryId": [
+							"0534A0AE-C0E4-4B45-B344-FFB2D9B87B0E",
+							"2100A3FB-9886-44EF-9D86-A09394CBB65B",
+							"4724C645-15B6-4900-9AA0-5D8736710F89",
+							"555E0C87-46C5-432E-8709-B864847257A1",
+							"8277D20A-023C-48D8-9219-B68F372BF933",
+							"86E6C5D6-1876-4F93-B022-09E91A1AE8E9",
+							"A8A307DF-FB9C-44C2-860F-A7FC58906D8E",
+							"AD0E1B37-493E-4C28-8D5F-869CB15EE48A",
+							"B9C5603A-C6CC-49E1-B665-D43176D49997",
+							"E0F94364-7AE9-424C-9DDE-10B9012D0E3A",
+							"EA3B3CCE-E96C-4D18-8F51-C2F46BA2D0E5",
+							"E7B538C4-F3CE-4D7D-B2B0-B40F960DBAB1",
+							"F8D34001-D17F-4A77-9C67-967B0BFD7ECD"
+						]
+					}
+				}
+			]
+		},
+		{
+			"Key": "SabotageStageLamp",
+			"Name": "Sabotage the Stage Lamp",
+			"Tip": "Sabotage the consulate Stage Lamp.",
+			"Group": "Sabotage",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Sabotage"],
+			"OR": [
+				{
+					"OnSabotageSetpiece": {
+						"RepositoryId": "B10A4DE0-CD26-4F35-8D63-97F255D5F637"
+					}
+				},
+				{
+					"OnShot": {
+						"RepositoryId": "B10A4DE0-CD26-4F35-8D63-97F255D5F637"
+					}
+				}
+			]
+		},
+		{
+			"Key": "SabotagePhoneBoothManually",
+			"Name": "Sabotage a Phonebooth Manually",
+			"Tip": "Sabotage a phonebooth with a screwdriver and hope it doesn't kill anyone unexpectedly.",
+			"Group": "Sabotage",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Sabotage"],
+			"OnSabotageSetpiece": {
+				"RepositoryId": [
+					"0534A0AE-C0E4-4B45-B344-FFB2D9B87B0E",
+					"2100A3FB-9886-44EF-9D86-A09394CBB65B",
+					"4724C645-15B6-4900-9AA0-5D8736710F89",
+					"555E0C87-46C5-432E-8709-B864847257A1",
+					"8277D20A-023C-48D8-9219-B68F372BF933",
+					"86E6C5D6-1876-4F93-B022-09E91A1AE8E9",
+					"A8A307DF-FB9C-44C2-860F-A7FC58906D8E",
+					"AD0E1B37-493E-4C28-8D5F-869CB15EE48A",
+					"B9C5603A-C6CC-49E1-B665-D43176D49997",
+					"E0F94364-7AE9-424C-9DDE-10B9012D0E3A",
+					"EA3B3CCE-E96C-4D18-8F51-C2F46BA2D0E5",
+					"E7B538C4-F3CE-4D7D-B2B0-B40F960DBAB1",
+					"F8D34001-D17F-4A77-9C67-967B0BFD7ECD"
+				]
+			}
+		},
+		{
+			"Key": "SabotageStageLampManually",
+			"Name": "Sabotage the Stage Lamp Manually",
+			"Tip": "Sabotage the consulate Stage Lamp with a screwdriver.",
+			"Group": "Sabotage",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Sabotage"],
+			"OnSabotageSetpiece": {
+				"RepositoryId": "B10A4DE0-CD26-4F35-8D63-97F255D5F637"
+			}
+		},
+		{
+			"Key": "StashFirearmInConsulateBriefcase",
+			"Name": "Conceal a Firearm in the Briefcase",
+			"Tip": "Stash a firearm in the Leather Briefcasse found in the consulate.",
+			"Group": "Interact",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Interact"],
+			"OnInteractionItemUsed": {
+				"Item": {
+					"IsFirearm": true
+				},
+				"Object": {
+					"RepositoryId": "97152C6C-4410-45AB-9E27-50150CE05F9B"
+				}
+			}
+		},
+		{
+			"Key": "StashBattleAxeInGarbageCan",
+			"Name": "Conceal a Battle Axe in a Garbage Can",
+			"Tip": "Put one of the Battle Axes into any trashcan.",
+			"Group": "Interact",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Interact"],
+			"OnInteractionItemUsed": {
+				"EntityID": 15623277128499282025,
+				"Item": {
+					"ItemRepositoryId": "58DCEB1C-D7DB-41DC-9750-55E3AB87FDF0"
+				}
+			}
+		},
+		{
+			"Key": "ThrowPoolBallThroughBasketballHoop",
+			"Name": "Throw a Pool Ball Through the Basketball Hoop",
+			"Tip": "Score a basket with a pool ball at the school.",
+			"Group": "Interact",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Interact"],
+			"LevelSetupEvent": {
+				"Event": "PoolBasket_Score"
+			}
+		},
+		{
+			"Key": "TurnOffAStove",
+			"Name": "Turn Off a Stove",
+			"Tip": "Turn off one of the cooker stoves in the consulate.",
+			"Group": "Interact",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Interact"],
+			"OnTurnOff": {
+				"Unique": "Location.Position",
+				"RepositoryId": "b73a4e67-2b66-4759-8fc9-823228744921"
+			}
+		},
+		{
+			"Key": "TurnOffGenerators",
+			"Name": "Turn Off {1} Generators",
+			"NameSingular": "Turn Off {1} Generator",
+			"Tip": "Turn off {0} power generators.",
+			"Group": "Interact",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Interact"],
+			"OnTurnOn": {
+				"Count": 2,
+				"Unique": "Location.Position",
+				"EntityID": 10074254826010978567
+			}
+		},
+		{
+			"Key": "TurnOffTheOilLamp",
+			"Name": "Turn Off the Oil Lamp",
+			"Tip": "Turn off the oil lamp in Reza's office.",
+			"Group": "Interact",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Interact"],
+			"Setpiece": {
+				"RepositoryId": "0F0BB2C7-1CB3-4211-87AD-555DF894026A"
+			}
+		},
+		{
+			"Key": "TurnOffTheSoundSystem",
+			"Name": "Turn Off the Sound System",
+			"Tip": "Turn off the sound system in the shisha café.",
+			"Group": "Interact",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Interact"],
+			"OnTurnOff": {
+				"EntityID": 13465682185357592948
+			}
+		},
+		{
+			"Key": "TurnOffTheSchoolFusebox",
+			"Name": "Turn Off the School Fusebox",
+			"Tip": "Turn off the fusebox controlling the fan in the school.",
+			"Group": "Interact",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Interact"],
+			"OnTurnOff": {
+				"EntityID": 6836857431071554506
+			}
+		},
+		{
+			"Key": "TurnOffTheShishaCafeFan",
+			"Name": "Turn Off the Shisha Café Fan",
+			"Tip": "Turn off the fusebox controlling the fan in the shisha café.",
+			"Group": "Interact",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Interact"],
+			"OnTurnOff": {
+				"EntityID": 17017568610383883356
+			}
+		},
+		{
+			"Key": "TurnOnTheSchoolIntercom",
+			"Name": "Turn On the School Intercom",
+			"Tip": "Turn on the intercom in the school.",
+			"Group": "Interact",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Interact"],
+			"Setpiece": {
+				"RepositoryId": "35289cec-2f75-45fa-9f40-f3117bf0d8f7"
+			}
+		},
+		{
+			"Key": "TurnOnTheStageLamp",
+			"Name": "Turn On the Stage Lamp",
+			"Tip": "Turn on the stage lamp in the consulate.",
+			"Group": "Interact",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Interact"],
+			"Setpiece": {
+				"RepositoryId": "ec527b38-fd67-459a-974d-a0671887b4c4"
+			}
+		},
+		{
+			"Key": "TurnOnTheTV",
+			"Name": "Turn On the TV",
+			"Tip": "Turn on the TV in the consulate.",
+			"Group": "Interact",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Interact"],
+			"OnTurnOn": {
+				"EntityID": 11933069740663559438
+			}
+		},
+		{
+			"Key": "TurnOnIceMachine",
+			"Name": "Turn On the Ice Machine",
+			"Tip": "Turn On the shisha café Ice Machine.",
+			"Group": "Interact",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Interact"],
+			"OnTurnOn": {
+				"EntityID": 2848811318692389285
+			}
+		},
+		{
+			"Key": "TurnOnOutdoorFaucet",
+			"Name": "Turn On the Outdoor Faucet",
+			"Tip": "Turn on the outdoor hose water faucet.",
+			"Group": "Interact",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Interact"],
+			"OnTurnOn": {
+				"RepositoryId": "E29D8CE5-64D6-4207-A55D-EBE5E84B16B3"
+			}
+		},
+		{
+			"Key": "TurnOnVacuumCleaner",
+			"Name": "Turn {1} Vacuum Cleaner",
+			"Tip": "Turn on the shisha café Ice Machine.",
+			"Group": "Interact",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Interact"],
+			"OnTurnOn": {
+				"Count": 1,
+				"EntityID": 2848811318692389285
+			}
+		},
+		{
+			"Key": "TurnOnPhotocopiers",
+			"Name": "Turn On {1} Photocopiers",
+			"NameSingular": "Turn On {1} Photocopier",
+			"Tip": "Turn on photocopier distractions.",
+			"Group": "Interact",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Interact"],
+			"OnTurnOn": {
+				"Count": 2,
+				"Unique": "Location.Position",
+				"EntityID": 13584389813396647539
+			}
+		},
+		{
+			"Key": "WakeUpTheWaiter",
+			"Name": "Wake Up the Waiter",
+			"Tip": "Cause the waiter who is supposed to deliver Reza's Lamb Tfaya to wake up.",
+			"Group": "Interact",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Interact"],
+			"OnInterrupted": {
+				"EntityID": 9606117098799096143
+			}
+			//"OnTurnOn": {
+			//	"RepositoryId": "E29D8CE5-64D6-4207-A55D-EBE5E84B16B3"
+			//}
+		},
+		// Pacify Objectives
+		{
+			"Key": "PacifyMilitaryOfficer",
+			"Name": "{1} Military Officers",
+			"NameSingular": "{1} Military Officer",
+			"Tip": "Pacify {0} Military Officer NPCs by any means.",
+			"Group": "Pacify",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Pacify"],
+			"Pacify": {
+				"ActorOutfitRepositoryId": "65d860f4-998e-4f92-a1d7-9f40c04a2474",
+				"Count": {
+					"Random": [1, 2]
+				}
+			}
+		},
+		{
+			"Key": "PacifyHandyman",
+			"Name": "{1} Handymen",
+			"NameSingular": "{1} Handyman",
+			"Tip": "Pacify {0} Handyman NPCs by any means.",
+			"Group": "Pacify",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Pacify"],
+			"Pacify": {
+				"ActorOutfitRepositoryId": "eb48ed16-195a-4de1-bae6-d7e7ec92046c",
+				"Count": {
+					"Random": [1, 2]
+				}
+			} 
+		},
+		{
+			"Key": "PacifyConsulateSecurityGuard",
+			"Name": "{1} Consulate Security Guards",
+			"NameSingular": "{1} Consulate Security Guard",
+			"Tip": "Pacify {0} military officer(s) by any means.",
+			"Group": "Pacify",
+			"Missions": ["A Gilded Cage"],
+			"Tags": ["Action", "Pacify"],
+			"Pacify": {
+				"ActorOutfitRepositoryId": "e0fc86fc-a852-4652-bb5c-b591f7bfeb29",
+				"Count": {
+					"Random": [1, 2]
+				}
+			}
+		}
+	]
+}

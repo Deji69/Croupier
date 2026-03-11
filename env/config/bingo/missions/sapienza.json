@@ -78,6 +78,30 @@
 			}
 		},
 		{
+			"Key": "CollectLetterOpener",
+			"Name": "{1}x Letter Opener",
+			"Group": "Collect",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Count": 1,
+				"Max": 1,
+				"Items": ["f1f89faf-a441-4492-b442-9a923b5ecfd1"]
+			}
+		},
+		{
+			"Key": "CollectRatPoison",
+			"Name": "{1}x Rat Poison",
+			"Group": "Collect",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Count": 3,
+				"Max": 8,
+				"Items": ["8b37a3a8-8a20-4262-81c5-0fcd15f4bba9"]
+			}
+		},
+		{
 			"Key": "CollectApartmentKey",
 			"Name": "Apartment Key",
 			"Group": "Collect",
@@ -290,6 +314,15 @@
 			}
 		},
 		{
+			"Key": "PassAFrisk",
+			"Name": "Pass a Frisk",
+			"Tip": "Pass a frisk entrance checkpoint.",
+			"Group": "Interact",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Interact"],
+			"FriskedSuccess": {}
+		},
+		{
 			"Key": "PlaceFlowersOnGrave",
 			"Name": "Place Flowers on Grave",
 			"Tip": "Place a flower boquet on Mother Caruso's grave.",
@@ -383,6 +416,17 @@
 			"Tags": ["Action", "Interact"],
 			"Setpiece": {
 				"RepositoryId": "ce58c815-7280-47f8-ab7c-55b2dd863b86"
+			}
+		},
+		{
+			"Key": "TurnOnGramophone",
+			"Name": "Turn On the Gramophone",
+			"Tip": "Turn on the gramophone in the villa.",
+			"Group": "Interact",
+			"Missions": ["World of Tomorrow"],
+			"Tags": ["Action", "Interact"],
+			"OnTurnOn": {
+				"EntityID": 16498616066459270448
 			}
 		},
 		{
@@ -583,6 +627,7 @@
 			"Tip": "Do not cause unnecessary explosions inside any building.",
 			"Type": "Complication",
 			"Difficulty": "High",
+			"Missions": ["World of Tomorrow"],
 			"Explosion": {
 				"NOT": {
 					"Room": 182

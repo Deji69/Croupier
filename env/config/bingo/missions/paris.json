@@ -16,6 +16,29 @@
 		}
 	],
 	"Tiles": [
+		// Collect Objectives
+		{
+			"Key": "CollectLetterOpener",
+			"Name": "{1}x Letter Opener",
+			"Group": "Collect",
+			"Missions": ["The Showstopper"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Count": 2,
+				"Max": 5,
+				"Items": ["f1f89faf-a441-4492-b442-9a923b5ecfd1"]
+			}
+		},
+		{
+			"Key": "CollectMasterKey",
+			"Name": "Palace Master Key",
+			"Group": "Collect",
+			"Missions": ["The Showstopper"],
+			"Tags": ["Collect"],
+			"Collect": {
+				"Items": ["2ad76caf-8af3-44b1-904b-fd99b23550f1"]
+			}
+		},
 		// Disguise Objectives
 		{
 			"Name": "Auction Staff",
@@ -184,6 +207,15 @@
 				// Spaces are intentional - ask IOI
 				"Name": "Paris_Firework_Schedule      "
 			}
+		},
+		{
+			"Key": "PassAFrisk",
+			"Name": "Pass a Frisk",
+			"Tip": "Pass a frisk entrance checkpoint.",
+			"Group": "Interact",
+			"Missions": ["The Showstopper", "Holiday Hoarders"],
+			"Tags": ["Action", "Interact"],
+			"FriskedSuccess": {}
 		},
 		{
 			"Key": "PoisonASushiPlate",

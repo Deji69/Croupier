@@ -26,15 +26,64 @@
 		}
 	},
 	{
+		"Key": "NoClimbThroughAgility",
+		"Name": "No 'Climb Through' Agility",
+		"Type": "Complication",
+		"Tip": "Do not perform any agility with the 'Climb Through' prompt (e.g. on windows). Be warned that the game can be inconsistent and sometimes uses 'Vault' for windows, some windows may have both 'Vault' and 'Climb Through' prompts depending on approach.",
+		"Group": "Action",
+		"Difficulty": "Medium",
+		"OR": [
+			{
+				"AgilityStart": {
+					"Type": "Window"
+				}
+			},
+			{
+				"AgilityEnter": {
+					"Type": "Window"
+				}
+			}
+		]
+	},
+	{
+		"Key": "NoLedgeAgility",
+		"Name": "No Ledge Agility",
+		"Type": "Complication",
+		"Tip": "Do not perform any agility on ledges.",
+		"Group": "Action",
+		"Difficulty": "High",
+		"OR": [
+			{
+				"AgilityStart": {
+					"Type": "Ledge"
+				}
+			},
+			{
+				"AgilityEnter": {
+					"Type": "Ledge"
+				}
+			}
+		]
+	},
+	{
 		"Key": "NoAgilityInDisguise",
 		"Name": "No Agility In Disguise",
 		"Type": "Complication",
 		"Tip": "Do not perform any agility action while wearing a disguise.",
 		"Group": "Action",
 		"Difficulty": "High",
-		"AgilityStart": {
-			"OutfitIsHitmanSuit": false
-		}
+		"OR": [
+			{
+				"AgilityStart": {
+					"OutfitIsHitmanSuit": false
+				}
+			},
+			{
+				"AgilityEnter": {
+					"OutfitIsHitmanSuit": false
+				}
+			}
+		]
 	},
 	{
 		"Key": "NoAgilityInSuit",
@@ -43,9 +92,18 @@
 		"Tip": "Do not perform any agility action while wearing your suit.",
 		"Group": "Action",
 		"Difficulty": "Medium",
-		"AgilityStart": {
-			"OutfitIsHitmanSuit": true
-		}
+		"OR": [
+			{
+				"AgilityStart": {
+					"OutfitIsHitmanSuit": true
+				}
+			},
+			{
+				"AgilityEnter": {
+					"OutfitIsHitmanSuit": true
+				}
+			}
+		]
 	},
 	{
 		"Disabled": true,
@@ -85,6 +143,26 @@
 		"Group": "Action",
 		"Difficulty": "Medium",
 		"DrainPipeClimbed": {}
+	},
+	{
+		"Key": "NoClimbingLadders",
+		"Name": "No Climbing Ladders",
+		"Type": "Complication",
+		"Tip": "Don't climb any ladder.",
+		"Group": "Action",
+		"Difficulty": "Medium",
+		"OR": [
+			{
+				"AgilityEnter": {
+					"Type": "Ladder"
+				}
+			},
+			{
+				"AgilityStart": {
+					"Type": "Ladder"
+				}
+			}
+		]
 	},
 	{
 		"Key": "NoCrouchRunning",
