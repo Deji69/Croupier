@@ -45,8 +45,8 @@ namespace Croupier {
 		public string Text {
 			get {
 				var args = Trigger.GetFormatArgs(state);
-				var useSingular = (Trigger.Count ?? 1) - (state.Complete ? 0 : state.Counter) == 1;
-				var res = string.Format(useSingular ? NameSingular ?? Name : Name, args);
+				var useSingular = ((Trigger.Count ?? 1) - (state.Complete ? 0 : state.Counter)) == 1;
+				var res = string.Format(useSingular ? (NameSingular ?? Name) : Name, args);
 				return res;
 			}
 		}
@@ -165,7 +165,7 @@ namespace Croupier {
 		}
 
 		public static BingoTile FromJson(JsonElement json) {
-			if (!json.TryGetProperty("Name", out var nameProp))
+			if (!json.TryGetProperty(nameof(Name), out var nameProp))
 				throw new BingoTileConfigException("Missing required property 'Name' for bingo tile.");
 			if (nameProp.ValueKind != JsonValueKind.String)
 				throw new BingoTileConfigException($"Invalid property 'Name' for bingo tile, expected string but got {nameProp.ValueKind}.");
@@ -176,18 +176,18 @@ namespace Croupier {
 			try {
 				key = json.TryGetProperty(nameof(Key), out var keyProp) ? keyProp.GetString() : null;
 
-				var nameSingular = json.TryGetProperty("Name", out var nameSingularProp) ? nameSingularProp.GetString() : null;
-				var disabled = json.TryGetProperty("Disabled", out var disabledProp) ? disabledProp.GetBoolean() : false;
-				var tip = json.TryGetProperty("Tip", out var tipProp) ? tipProp.GetString() : null;
-				var groupName = json.TryGetProperty("Group", out var groupProp) ? groupProp.GetString() : null;
-				var typeName = json.TryGetProperty("Type", out var typeProp) ? typeProp.GetString() : null;
+				var nameSingular = json.TryGetProperty(nameof(NameSingular), out var nameSingularProp) ? nameSingularProp.GetString() : null;
+				var disabled = json.TryGetProperty(nameof(Disabled), out var disabledProp) ? disabledProp.GetBoolean() : false;
+				var tip = json.TryGetProperty(nameof(Tip), out var tipProp) ? tipProp.GetString() : null;
+				var groupName = json.TryGetProperty(nameof(Group), out var groupProp) ? groupProp.GetString() : null;
+				var typeName = json.TryGetProperty(nameof(Type), out var typeProp) ? typeProp.GetString() : null;
 			
 				var type = typeName != null ? Enum.Parse<BingoTileType>(typeName) : BingoTileType.Objective;
 				var group = Bingo.Main.Groups.Find(g => g.Name == groupName && (g.Type == BingoTileType.Mixed || g.Type == type));
 
 				var tags = (StringCollection)[];
 
-				if (json.TryGetProperty("Tags", out var tagsProp)) {
+				if (json.TryGetProperty(nameof(Tags), out var tagsProp)) {
 					if (tagsProp.ValueKind != JsonValueKind.Array)
 						throw new BingoTileConfigException($"Invalid property 'Tags', expected array but got {tagsProp.ValueKind}.");
 					foreach (var node in tagsProp.EnumerateArray()) {

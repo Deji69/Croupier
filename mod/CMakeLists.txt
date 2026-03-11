@@ -6,7 +6,7 @@ project(Croupier CXX C)
 # Set ZHMMODSDK_DIR variable to a local directory to use a local copy of the ZHMModSDK.
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH};${PROJECT_SOURCE_DIR}/deps)
-set(ZHMMODSDK_VER "v4.0.0-rc.2")
+set(ZHMMODSDK_VER "v4.0.0-rc.3")
 include(cmake/setup-zhmmodsdk.cmake)
 
 # Set C++ standard to C++23.
@@ -54,6 +54,7 @@ target_link_libraries(Croupier PRIVATE
 	${ICONV_LIB_PATH}
 	Microsoft::DirectX-Guids
 	Microsoft::DirectX-Headers
+	implot
 )
 
 install(TARGETS Croupier

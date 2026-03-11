@@ -69,6 +69,7 @@ namespace Croupier {
 				var liveTile = (BingoTile)tile.Clone(tile.Count);
 				liveTile.Reset();
 				tiles[index] = liveTile;
+				liveTile.PropertyChanged += LiveTile_PropertyChanged;
 			}
 			OnPropertyChanged(nameof(Tiles));
 		}

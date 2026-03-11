@@ -14,16 +14,16 @@ namespace Croupier.GameEvents {
 
 	public enum EActorType {
 		eAT_Civilian = 0,
-		eAT_Guard    = 1,
-		eAT_Hitman   = 2,
-		eAT_Last     = 3,
+		eAT_Guard = 1,
+		eAT_Hitman = 2,
+		eAT_Last = 3,
 	}
 	public enum EOutfitType {
-		eOT_None      = 0,
-		eOT_Suit      = 1,
-		eOT_Guard     = 2,
-		eOT_Worker    = 3,
-		eOT_Waiter    = 4,
+		eOT_None = 0,
+		eOT_Suit = 1,
+		eOT_Guard = 2,
+		eOT_Worker = 3,
+		eOT_Waiter = 4,
 		eOT_LucasGrey = 5,
 	}
 	public enum EKillType {
@@ -42,16 +42,16 @@ namespace Croupier.GameEvents {
 
 	public enum EDeathContext {
 		eDC_UNDEFINED = 0,
-		eDC_NOT_HERO  = 1,
-		eDC_HIDDEN    = 2,
-		eDC_ACCIDENT  = 3,
-		eDC_MURDER    = 4,
+		eDC_NOT_HERO = 1,
+		eDC_HIDDEN = 2,
+		eDC_ACCIDENT = 3,
+		eDC_MURDER = 4,
 	}
 
 	public enum EDeathType {
-		eDT_UNDEFINED   = 0,
-		eDT_PACIFY      = 1,
-		eDT_KILL        = 2,
+		eDT_UNDEFINED = 0,
+		eDT_PACIFY = 1,
+		eDT_KILL = 2,
 		eDT_BLOODY_KILL = 3,
 	}
 
@@ -68,15 +68,15 @@ namespace Croupier.GameEvents {
 	};
 
 	public enum EWeaponType {
-		WT_HANDGUN      = 0,
-		WT_SLOWGUN      = 1,
+		WT_HANDGUN = 0,
+		WT_SLOWGUN = 1,
 		WT_ASSAULTRIFLE = 2,
-		WT_SMG          = 3,
-		WT_SNIPER       = 4,
-		WT_RPG          = 5,
-		WT_KNIFE        = 6,
-		WT_SHOTGUN      = 7,
-		WT_SPOTTER      = 8,
+		WT_SMG = 3,
+		WT_SNIPER = 4,
+		WT_RPG = 5,
+		WT_KNIFE = 6,
+		WT_SHOTGUN = 7,
+		WT_SPOTTER = 8,
 	};
 
 	public enum SecuritySystemRecorderEvent {
@@ -160,7 +160,8 @@ namespace Croupier.GameEvents {
 			try {
 				var res = json.Deserialize<T>(jsonSerializerOptions);
 				return res;
-			} catch (Exception) {}
+			}
+			catch (Exception) { }
 			return default;
 		}
 
@@ -170,7 +171,8 @@ namespace Croupier.GameEvents {
 					var res = prop.Deserialize<T>(jsonSerializerOptions);
 					return res;
 				}
-			} catch (Exception) {}
+			}
+			catch (Exception) { }
 			return default;
 		}
 
@@ -690,11 +692,28 @@ namespace Croupier.GameEvents {
 		}
 	}
 
+	public class AgilityEnterEventValue : EventValue {
+		public required LocationEventValue Location;
+		public required PlayerEventValue Player;
+		public string? Type;
+
+		public static AgilityEnterEventValue Load(JsonElement json) {
+			var typeProp = json.GetProperty(nameof(Type));
+			return new() {
+				Type = typeProp.GetString(),
+				Player = PlayerEventValue.Load(json),
+				Location = LocationEventValue.Load(json),
+			};
+		}
+	}
+
 	public class AgilityStartEventValue : EventValue {
 		public required LocationEventValue Location;
 		public required PlayerEventValue Player;
+		public string? Type;
 
 		public static AgilityStartEventValue Load(JsonElement json) {
+			var typeProp = json.GetProperty(nameof(Type));
 			return new() {
 				Player = PlayerEventValue.Load(json),
 				Location = LocationEventValue.Load(json),
@@ -783,6 +802,18 @@ namespace Croupier.GameEvents {
 	}
 
 	public class StartingSuitEventValue : DisguiseEventValue {
+		public static new StartingSuitEventValue Load(JsonElement json) {
+			return new() {
+				Player = PlayerEventValue.Load(json),
+				Location = LocationEventValue.Load(json),
+				RepositoryId = TryLoadString(json, nameof(RepositoryId)),
+				Title = TryLoadString(json, nameof(Title)),
+				ActorType = TryLoad<EActorType>(json, nameof(ActorType)),
+				IsSuit = TryLoadBool(json, nameof(IsSuit)),
+				OutfitType = TryLoad<EOutfitType>(json, nameof(OutfitType)),
+				IsBundle = TryLoadBool(json, nameof(IsBundle)),
+			};
+		}
 	}
 
 	public class SecuritySystemRecorderEventValue : EventValue {
@@ -909,6 +940,22 @@ namespace Croupier.GameEvents {
 		}
 	}
 
+	public class OnHitByImpulseEventValue : EventValue {
+		public required LocationEventValue Location { get; set; }
+		public required PlayerEventValue Player { get; set; }
+		public UInt64? EntityID { get; set; }
+		public string? RepositoryId;
+
+		public static OnHitByImpulseEventValue? Load(JsonElement json) {
+			return new() {
+				Player = PlayerEventValue.Load(json),
+				Location = LocationEventValue.Load(json),
+				EntityID = TryLoadUInt64(json, nameof(EntityID)),
+				RepositoryId = TryLoadString(json, "RepositoryId"),
+			};
+		}
+	}
+
 	public class OnIsFullyInCrowdEventValue : EventValue {
 		public required LocationEventValue Location { get; set; }
 		public required PlayerEventValue Player { get; set; }
@@ -945,6 +992,38 @@ namespace Croupier.GameEvents {
 				Player = PlayerEventValue.Load(json),
 				Location = LocationEventValue.Load(json),
 				RepositoryId = TryLoadString(json, "ItemRepositoryId"),
+			};
+		}
+	}
+
+	public class OnSabotageSetpieceEventValue : EventValue {
+		public required LocationEventValue Location { get; set; }
+		public required PlayerEventValue Player { get; set; }
+		public UInt64? EntityID;
+		public string? RepositoryId;
+
+		public static OnShotEventValue? Load(JsonElement json) {
+			return new() {
+				Player = PlayerEventValue.Load(json),
+				Location = LocationEventValue.Load(json),
+				EntityID = TryLoadUInt64(json, nameof(EntityID)),
+				RepositoryId = TryLoadString(json, nameof(RepositoryId)),
+			};
+		}
+	}
+
+	public class OnShotEventValue : EventValue {
+		public required LocationEventValue Location { get; set; }
+		public required PlayerEventValue Player { get; set; }
+		public UInt64? EntityID { get; set; }
+		public string? RepositoryId;
+
+		public static OnShotEventValue? Load(JsonElement json) {
+			return new() {
+				Player = PlayerEventValue.Load(json),
+				Location = LocationEventValue.Load(json),
+				EntityID = TryLoadUInt64(json, nameof(EntityID)),
+				RepositoryId = TryLoadString(json, nameof(RepositoryId)),
 			};
 		}
 	}
@@ -1014,6 +1093,86 @@ namespace Croupier.GameEvents {
 				Item = ItemEventValue.Load(json),
 				Player = PlayerEventValue.Load(json),
 				Location = LocationEventValue.Load(json),
+			};
+		}
+	}
+
+	public class OnInterruptedEventValue : EventValue {
+		public required PlayerEventValue Player;
+		public required LocationEventValue Location;
+		public required UInt64? EntityID;
+
+		public static OnInterruptedEventValue Load(JsonElement json) {
+			return new() {
+				Player = PlayerEventValue.Load(json),
+				Location = LocationEventValue.Load(json),
+				EntityID = TryLoadUInt64(json, nameof(EntityID)),
+			};
+		}
+	}
+
+	public class OnInteractionItemUsedEventValue : EventValue {
+		public required LocationEventValue Location;
+		public required ItemEventValue? Item;
+		public required ItemEventValue? Object;
+		public required PlayerEventValue Player;
+		public required Int64? ActionType;
+		public required UInt64? InputAction;
+		public required UInt64? EntityID;
+
+		public static OnInteractionItemUsedEventValue Load(JsonElement json) {
+			return new() {
+				Player = PlayerEventValue.Load(json),
+				Location = LocationEventValue.Load(json),
+				Item = json.TryGetProperty(nameof(Item), out var itemJson) ? ItemEventValue.Load(itemJson) : null,
+				Object = json.TryGetProperty(nameof(Object), out var objectJson) ? ItemEventValue.Load(objectJson) : null,
+				ActionType = TryLoadInt64(json, nameof(ActionType)),
+				InputAction = TryLoadUInt64(json, nameof(InputAction)),
+				EntityID = TryLoadUInt64(json, nameof(EntityID)),
+			};
+		}
+	}
+
+	public class OnOutEventValue : EventValue {
+		public UInt64? Output;
+		public UInt64? EntityID { get; set; }
+
+		public static OnOutEventValue Load(JsonElement json) {
+			return new() {
+				EntityID = TryLoadUInt64(json, nameof(EntityID)),
+				Output = TryLoadUInt64(json, nameof(Output)),
+			};
+		}
+	}
+
+	public class OnEnteredEventValue : EventValue {
+		public required LocationEventValue Location;
+		public required PlayerEventValue Player;
+		public UInt64? EntityID { get; set; }
+		public string? RepositoryId;
+
+		public static OnEnteredEventValue Load(JsonElement json) {
+			return new() {
+				Player = PlayerEventValue.Load(json),
+				Location = LocationEventValue.Load(json),
+				EntityID = TryLoadUInt64(json, nameof(EntityID)),
+				RepositoryId = TryLoadString(json, nameof(RepositoryId)),
+			};
+		}
+	}
+
+	public class OnLeavingEventValue : EventValue {
+		public required LocationEventValue Location;
+		public required PlayerEventValue Player;
+		public UInt64? EntityID { get; set; }
+		public string? RepositoryId;
+
+		public static OnLeavingEventValue Load(JsonElement json) {
+			return new() {
+				Player = PlayerEventValue.Load(json),
+				Location = LocationEventValue.Load(json),
+				EntityID = TryLoadUInt64(json, nameof(EntityID)),
+				RepositoryId = TryLoadString(json, nameof(RepositoryId)),
 			};
 		}
 	}

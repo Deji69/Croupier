@@ -145,6 +145,7 @@ namespace Croupier
 		bool playerShooting = false;
 		bool playerShootingSinceFrame = false;
 		bool isTrespassing = false;
+		bool playerOnStairs = false;
 		const Area* area = nullptr;
 		int16_t roomId = -1;
 

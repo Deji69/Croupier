@@ -18,6 +18,7 @@ namespace Croupier {
 	public class BingoTileEventValue {
 		public required string Text { get; set; }
 		public string Group { get; set; } = "";
+		public string Tip { get; set; } = "";
 		public UInt32? GroupColour { get; set; } = null;
 		public bool Achieved { get; set; } = false;
 		public bool Failed { get; set; } = false;
@@ -165,6 +166,7 @@ namespace Croupier {
 				tiles.Add(new() {
 					Text = tile.Text,
 					Group = tile.GroupTextVisibilityBool ? tile.GroupText : "",
+					Tip = tile.Tip ?? "",
 					GroupColour = (a << 24) | (b << 16) | (g << 8) | r,
 					Achieved = tile.Achieved,
 					Failed = tile.Failed,
@@ -221,6 +223,7 @@ namespace Croupier {
 			if (jsonEl is JsonElement json) {
 				return name switch {
 					"Actorsick" =>  ActorSickEventValue.Load(json),
+					"AgilityEnter" => AgilityEnterEventValue.Load(json),
 					"AgilityStart" => AgilityStartEventValue.Load(json),
 					"BodyBagged" => BodyBaggedEventValue.Load(json),
 					"BodyFound" => BodyFoundEventValue.Load(json),
@@ -252,14 +255,22 @@ namespace Croupier {
 					"OnBroken" => OnBrokenEventValue.Load(json),
 					"OnDestroy" => OnDestroyEventValue.Load(json),
 					"OnDestroyed" => OnDestroyedEventValue.Load(json),
+					"OnEntered" => OnEnteredEventValue.Load(json),
 					"OnEvacuationStarted" => OnEvacuationStartedEventValue.Load(json),
+					"OnHitByImpulse" => OnHitByImpulseEventValue.Load(json),
 					"OnInitialFracture" => OnInitialFractureEventValue.Load(json),
+					"OnInteractionItemUsed" => OnInteractionItemUsedEventValue.Load(json),
+					"OnInterrupted" => OnInterruptedEventValue.Load(json),
 					"OnIsFullyInCrowd" => OnIsFullyInCrowdEventValue.Load(json),
 					"OnIsFullyInVegetation" => OnIsFullyInVegetationEventValue.Load(json),
+					"OnLeaving" => OnLeavingEventValue.Load(json),
 					"OnPickup" => OnPickupEventValue.Load(json),
+					"OnSabotageSetpiece" => OnSabotageSetpieceEventValue.Load(json),
+					"OnShot" => OnShotEventValue.Load(json),
 					"OnTakeDamage" => OnTakeDamageEventValue.Load(json),
 					"OnTurnOn" => OnTurnOnEventValue.Load(json),
 					"OnTurnOff" => OnTurnOffEventValue.Load(json),
+					"OnOut" => OnOutEventValue.Load(json),
 					"OnWeaponReload" => OnWeaponReloadEventValue.Load(json),
 					"OpenDoor" => OpenDoorEventValue.Load(json),
 					"OpportunityEvents" => OpportunityEventValue.Load(json),
@@ -268,7 +279,7 @@ namespace Croupier {
 					"ProjectileBodyShot" => ProjectileBodyShotEventValue.Load(json),
 					"setpieces" => SetpiecesEventValue.Load(json),
 					"SecuritySystemRecorder" => SecuritySystemRecorderEventValue.Load(json),
-					"StartingSuit" => ImbueDisguiseEvent(EventValue.Load<StartingSuitEventValue>(json)),
+					"StartingSuit" => ImbueDisguiseEvent(StartingSuitEventValue.Load(json)),
 					"Trespassing" => TrespassingEventValue.Load(json),
 					null => null,
 					_ => DeserializeEventValue(name),

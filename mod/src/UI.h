@@ -15,6 +15,7 @@ namespace Croupier
 		GameMode gameMode = GameMode::Hybrid;
 		SVector3 playerPos;
 		int16_t playerRoomId = 0;
+		bool playerOnStairs = false;
 		bool isClientConnected = false;
 		bool debugUI = false;
 		bool spinLocked = false;
@@ -38,6 +39,7 @@ namespace Croupier
 			mission = state.generator.getMission();
 			playerPos = state.playerMatrix.Trans;
 			playerRoomId = state.roomId;
+			playerOnStairs = state.playerOnStairs;
 			isClientConnected = state.client.isConnected();
 			haveSpinHistory = !state.spinHistory.empty();
 			spinLocked = state.spinLocked;

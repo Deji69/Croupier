@@ -1,12 +1,31 @@
-#include "UI.h"
 #include "App.h"
+#include "Bingo.h"
 #include "Config.h"
+#include "Disguise.h"
+#include "KillConfirmation.h"
+#include "KillMethod.h"
+#include "Roulette.h"
+#include "RouletteMission.h"
+#include "RouletteRuleset.h"
 #include "State.h"
-#include <Globals.h>
-#include <IconsMaterialDesign.h>
-#include <IPluginInterface.h>
+#include "Target.h"
+#include "UI.h"
+#include "util.h"
+#include <algorithm>
+#include <chrono>
 #include <format>
+#include <IconsMaterialDesign.h>
 #include <imgui.h>
+#include <IModSDK.h>
+#include <Glacier/ZInputActionManager.h>
+#include <Glacier/ZAction.h>
+#include <iterator>
+#include <Logging.h>
+#include <memory>
+#include <string>
+#include <string_view>
+#include <vector>
+#include <Globals.h>
 
 using namespace Croupier;
 using namespace std::string_literals;
@@ -121,7 +140,7 @@ auto UI::Draw(bool focused) -> void {
 	if (!this->showUI) return;
 
 	ImGui::PushFont(SDK()->GetImGuiBlackFont());
-	ImGui::SetNextWindowContentSize(ImVec2(400, 0));
+	ImGui::SetNextWindowContentSize(ImVec2(450, 0));
 
 	if (ImGui::Begin(ICON_MD_SETTINGS " CROUPIER", &this->showUI, ImGuiWindowFlags_AlwaysAutoResize)) {
 		ImGui::PushStyleColor(ImGuiCol_Text, state.isClientConnected ? IM_COL32(0, 255, 0, 255) : IM_COL32(255, 0, 0, 255));
@@ -457,6 +476,7 @@ auto UI::DrawBingoUI(bool focused) -> void {
 				ImGui::PushStyleColor(ImGuiCol_ChildBg, ImColor{57, 19, 19}.Value);
 			else
 				ImGui::PushStyleColor(ImGuiCol_ChildBg, ImColor{23, 28, 32}.Value);
+
 			ImGui::BeginChild(str.c_str(), {120, 90}, ImGuiChildFlags_Border, ImGuiWindowFlags_NoScrollbar);
 			if (!tile.group.empty()) {
 				ImGui::SetWindowFontScale(.8);
@@ -465,8 +485,12 @@ auto UI::DrawBingoUI(bool focused) -> void {
 				ImGui::PopStyleColor();
 				ImGui::SetWindowFontScale(1);
 			}
+			if (!tile.tip.empty() && ImGui::IsWindowHovered() && focused)
+				ImGui::SetTooltip("%s", tile.tip.c_str());
+
 			TextCentered(trim(tile.text), { 7, tile.group.empty() ? 2.0f : 20.0f }, { 110, tile.group.empty() ? 90.0f : 70.0f });
 			ImGui::EndChild();
+
 			ImGui::PopStyleColor();
 		}
 	}
@@ -550,10 +574,21 @@ auto UI::DrawBingoDebugUI(bool focused) -> void {
 
 		ImGui::PushFont(SDK()->GetImGuiBoldFont());
 
-		static std::string roomText, coordText;
+		static std::string onStairsText, roomText, coordText, actionsCountText;
+
+		onStairsText.clear();
+		std::format_to(std::back_inserter(onStairsText), "On Stairs: {}", state.playerOnStairs ? "Yes" : "No");
+		ImGui::Text(onStairsText.c_str());
+
 		roomText.clear();
 		std::format_to(std::back_inserter(roomText), "Room: {}", state.playerRoomId);
 		ImGui::Text(roomText.c_str());
+
+		if (Globals::HM5ActionManager) {
+			actionsCountText.clear();
+			std::format_to(std::back_inserter(actionsCountText), "Actions: {}", Globals::HM5ActionManager->m_Actions.size());
+			ImGui::Text(actionsCountText.c_str());
+		}
 
 		coordText.clear();
 		std::format_to(std::back_inserter(coordText), "{}, {}, {}", state.playerPos.x, state.playerPos.y, state.playerPos.z);
