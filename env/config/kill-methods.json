@@ -624,5 +624,12 @@
 		"Category": "Unique",
 		"Target": "Steven Bradley",
 		"Keywords": ["bombthejetski", "bombthewaterscooter", "explosiveonjetski", "explosiveonwaterscooter", "jetski", "waterscooter", "explodejetski", "explodewaterscooter", "jetskiexplosion", "waterscooterexplosion"]
+	},
+	{
+		"Name": "Smother with Pillow",
+		"Image": "pillow_smother.jpg",
+		"Category": "Unique",
+		"Target": "Alexa Carlisle",
+		"Keywords": ["smotherinpillow", "smotherwithpillow", "pillowsmother", "smotherpillow", "smother", "pillow"]
 	}
 ]

@@ -1,8 +1,8 @@
 #pragma once
 #include "util.h"
-#include <map>
 #include <set>
 #include <string>
+#include <unordered_map>
 
 enum class eMethodType {
 	Map,
@@ -121,6 +121,7 @@ enum class eMapKillMethod {
 	Sgail_AztecNecklace,
 	Athena_Award,
 	Steven_BombWaterScooter,
+	Alexa_PillowSmother,
 	//Noel_BridgeTrap,
 };
 

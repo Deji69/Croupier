@@ -1,10 +1,14 @@
+#include "KillMethod.h"
 #include "Roulette.h"
 #include "Target.h"
-#include "util.h"
+#include <iterator>
 #include <string>
 #include <string_view>
-#include <variant>
 #include <unordered_map>
+#include <vector>
+#include <map>
+#include <Glacier/ZPrimitives.h>
+#include "RouletteMission.h"
 
 using namespace std::literals::string_literals;
 
@@ -526,7 +530,7 @@ std::vector<Keyword> Keyword::keywords = {
 	// Map Kill Method - Jordan Cross
 	{ "CakeSmother", eMapKillMethod::Jordan_CakeSmother },
 	{ "Cake", eMapKillMethod::Jordan_CakeSmother, "CakeSmother"},
-	{ "Smother", eMapKillMethod::Jordan_CakeSmother, "CakeSmother" },
+	//{ "Smother", eMapKillMethod::Jordan_CakeSmother, "CakeSmother" },
 	{ "SmotherCake", eMapKillMethod::Jordan_CakeSmother, "CakeSmother" },
 	{ "SmotherInCake", eMapKillMethod::Jordan_CakeSmother, "CakeSmother" },
 	// Map Kill Method - Sean Rose
@@ -615,6 +619,14 @@ std::vector<Keyword> Keyword::keywords = {
 	{ "ExplosiveOnTheJetski", eMapKillMethod::Steven_BombWaterScooter, "BombWaterScooter" },
 	{ "ExplosiveOnTheScooter", eMapKillMethod::Steven_BombWaterScooter, "BombWaterScooter" },
 	{ "ExplosiveOnTheWater", eMapKillMethod::Steven_BombWaterScooter, "BombWaterScooter" },
+	// Map Kill Method - Alexa Carlisle
+	{ "AlexaPillowSmother", eMapKillMethod::Alexa_PillowSmother},
+	{ "PillowSmother", eMapKillMethod::Alexa_PillowSmother, "AlexaPillowSmother" },
+	{ "SmotherPillow", eMapKillMethod::Alexa_PillowSmother, "AlexaPillowSmother" },
+	{ "SmotherWithPillow", eMapKillMethod::Alexa_PillowSmother, "AlexaPillowSmother" },
+	{ "SmotherInPillow", eMapKillMethod::Alexa_PillowSmother, "AlexaPillowSmother" },
+	//{ "Smother", eMapKillMethod::Alexa_PillowSmother, "AlexaPillowSmother" },
+	{ "Pillow", eMapKillMethod::Alexa_PillowSmother, "AlexaPillowSmother" },
 };
 
 const std::vector<eKillMethod> RouletteSpinGenerator::standardKillMethods = {
@@ -923,6 +935,7 @@ auto getSpecificKillMethodNameAndImage(eMapKillMethod method) -> std::pair<std::
 	case eMapKillMethod::Sgail_AztecNecklace: return { "Aztec Necklace", "magpie_c_sign_necklace.jpg" };
 	case eMapKillMethod::Athena_Award: return { "Athena Savalas' Award", "athena_award.jpg" };
 	case eMapKillMethod::Steven_BombWaterScooter: return { "Bomb Water Scooter", "stingray_opp_jetski.jpg" };
+	case eMapKillMethod::Alexa_PillowSmother: return { "Smother with Pillow", "pillow_smother.jpg" };
 	}
 	return {"", ""};
 }

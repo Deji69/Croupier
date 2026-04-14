@@ -2025,6 +2025,13 @@ auto CroupierPlugin::ValidateKillMethod(eTargetID target, const ServerEvent<Even
 				: eKillValidationType::Invalid;
 		}
 	}
+	if (target == eTargetID::AlexaCarlisle) {
+		if (method == eMapKillMethod::Alexa_PillowSmother) {
+			return ev.Value.SetPieceId == "4b67e04a-c4b8-49b3-9ef1-e6ee070e2393"
+				? eKillValidationType::Valid
+				: eKillValidationType::Invalid;
+		}
+	}
 
 	if (!ev.Value.KillItemRepositoryId.empty()) {
 		if (type == eKillType::Thrown && ev.Value.KillMethodBroad != "throw") {
