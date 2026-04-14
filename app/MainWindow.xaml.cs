@@ -554,7 +554,7 @@ namespace Croupier
 		public ObservableCollection<GameModeEntry> GameModeEntries = [
 			new(GameMode.Roulette, "Roulette"),
 			new(GameMode.Bingo, "Bingo"),
-			new(GameMode.Hybrid, "Hybrid"),
+			//new(GameMode.Hybrid, "Hybrid"),
 		];
 		public ObservableCollection<ContextSubmenuEntry> HistoryEntries = [];
 		public ObservableCollection<ContextSubmenuEntry> BookmarkEntries = [
