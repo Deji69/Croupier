@@ -1909,6 +1909,11 @@ auto CroupierPlugin::ValidateKillMethod(eTargetID target, const ServerEvent<Even
 				? eKillValidationType::Valid
 				: eKillValidationType::Invalid;
 		}
+		if (method == eMapKillMethod::Sean_OverpoweredNitro) {
+			return ev.Value.SetPieceId == "f22c3477-996d-4cfd-88cd-50301bdcb3fb"
+				? eKillValidationType::Valid
+				: eKillValidationType::Invalid;
+		}
 	}
 	if (target == eTargetID::YukiYamazaki) {
 		if (method == eMapKillMethod::Yuki_Sauna) {

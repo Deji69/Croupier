@@ -122,6 +122,7 @@ enum class eMapKillMethod {
 	Athena_Award,
 	Steven_BombWaterScooter,
 	Alexa_PillowSmother,
+	Sean_OverpoweredNitro,
 	//Noel_BridgeTrap,
 };
 

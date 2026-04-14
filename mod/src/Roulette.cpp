@@ -539,6 +539,11 @@ std::vector<Keyword> Keyword::keywords = {
 	{ "WatchBattery", eMapKillMethod::Sean_ExplosiveWatchBattery, "ExplosiveWatchBattery" },
 	{ "ExplosiveBattery", eMapKillMethod::Sean_ExplosiveWatchBattery, "ExplosiveWatchBattery" },
 	{ "Battery", eMapKillMethod::Sean_ExplosiveWatchBattery, "ExplosiveWatchBattery" },
+	{ "OverpoweredNitroCharge", eMapKillMethod::Sean_OverpoweredNitro },
+	{ "OverpoweredNitro", eMapKillMethod::Sean_OverpoweredNitro, "OverpoweredNitroCharge" },
+	{ "NitroCharge", eMapKillMethod::Sean_OverpoweredNitro, "OverpoweredNitroCharge" },
+	{ "Nitro", eMapKillMethod::Sean_OverpoweredNitro, "OverpoweredNitroCharge" },
+	{ "NitroGlycerin", eMapKillMethod::Sean_OverpoweredNitro, "OverpoweredNitroCharge"},
 	// Map Kill Method - Yuki Yamazaki
 	{ "Sauna", eMapKillMethod::Yuki_Sauna },
 	{ "LockInSauna", eMapKillMethod::Yuki_Sauna, "Sauna" },
@@ -770,6 +775,8 @@ auto isSpecificKillMethodMelee(eMapKillMethod method) -> bool {
 		case eMapKillMethod::Janus_Sculpture:
 		case eMapKillMethod::Athena_Award:
 		case eMapKillMethod::Steven_BombWaterScooter:
+		case eMapKillMethod::Alexa_PillowSmother:
+		case eMapKillMethod::Sean_OverpoweredNitro:
 		//case eMapKillMethod::Noel_BridgeTrap:
 			return false;
 	}
@@ -936,6 +943,7 @@ auto getSpecificKillMethodNameAndImage(eMapKillMethod method) -> std::pair<std::
 	case eMapKillMethod::Athena_Award: return { "Athena Savalas' Award", "athena_award.jpg" };
 	case eMapKillMethod::Steven_BombWaterScooter: return { "Bomb Water Scooter", "stingray_opp_jetski.jpg" };
 	case eMapKillMethod::Alexa_PillowSmother: return { "Smother with Pillow", "pillow_smother.jpg" };
+	case eMapKillMethod::Sean_OverpoweredNitro: return { "Overpowered Nitro Charge", "bull_sign_rose_blowup.jpg" };
 	}
 	return {"", ""};
 }

@@ -487,6 +487,13 @@
 		"Keywords": ["explosivewatch", "watchbattery", "explosivewatchbattery", "battery"]
 	},
 	{
+		"Name": "Overpowered Nitro Charge",
+		"Image": "bull_sign_rose_blowup.jpg",
+		"Category": "Unique",
+		"Target": "Sean Rose",
+		"Keywords": ["overpowerednitrocharge", "overpowerednitro", "nitro", "nitrocharge", "nitroglycerin"]
+	},
+	{
 		"Name": "Electrocution",
 		"Image": "snowcrane_sign_soders_electrocute.jpg",
 		"Category": "Unique",
