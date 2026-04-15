@@ -414,7 +414,13 @@
 		},
 		/** Alexa Carlisle **/
 		"AC": {
-			"Banned": ["Fire"],
+			"Banned": [
+				"Fire",
+				{
+					"Method": "Smother with Pillow",
+					"Disguises": ["Undertaker"]
+				}
+			],
 			"Impossible": ["Fire"]
 		},
 		/** Hush **/
