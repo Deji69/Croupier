@@ -354,7 +354,7 @@
 			<Grid.RowDefinitions>
 				<RowDefinition Height="40" />
 				<RowDefinition Height="1*" />
-				<RowDefinition Height="25" />
+				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 			<Grid Name="HeaderGrid" Height="40" Grid.Row="0" Background="{DynamicResource BackgroundBrush}" UseLayoutRounding="True">
 				<Grid.ColumnDefinitions>

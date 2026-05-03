@@ -465,7 +465,7 @@ namespace Croupier
 		public bool StatusAlignLeft => (StaticSize ? StaticSizeLHS : !RightToLeft);
 		public static double BingoContentRows => GameController.Main.Bingo.Card?.Size.Rows ?? 5;
 		public static double BingoContentCols => GameController.Main.Bingo.Card?.Size.Columns ?? 5;
-		public double ContentHeight => Height - HeaderGrid.Height - (ShowStatusBar ? StatusGrid.Height : 0);
+		public double ContentHeight => Height - HeaderGrid.Height - (ShowStatusBar ? StatusGrid.Height : 0) + 53;
 		public static double BingoBorderMarginFix => BingoContentRows switch {
 			4 => 3.5,
 			5 => 2.8,
@@ -476,7 +476,7 @@ namespace Croupier
 			? (!StaticSize ? double.NaN : (VerticalDisplay ? Width : Width / 2) - 6)
 			: Width / BingoContentCols;
 		public double SpinGridHeight => IsRouletteMode
-			? !StaticSize ? double.NaN : SpinGridWidth * 0.33
+			? (!StaticSize ? double.NaN : SpinGridWidth * 0.33)
 			: (ContentHeight / BingoContentRows) - BingoBorderMarginFix;
 		public double GridTileWidth => IsHybridMode ? (Width / BingoContentCols) * .47
 			: Width / BingoContentCols;
@@ -1802,7 +1802,9 @@ namespace Croupier
 			OnPropertyChanged(nameof(BingoFontSize));
 
 			if (StaticSize) {
-				var h = SpinGridHeight * GetNumRowsForRoulette() + 53 + (ShowStatusBar ? StatusGrid.ActualHeight : 0);
+				var h = ShowStatusBar
+					? SpinGridHeight * GetNumRowsForRoulette() + 52 + (ShowStatusBar ? StatusGrid.ActualHeight : 0)
+					: SpinGridHeight * GetNumRowsForRoulette() + 52;
 				SizeToContent = SizeToContent.Manual;
 				MinHeight = h;
 				MaxHeight = h;
