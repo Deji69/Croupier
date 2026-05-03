@@ -567,7 +567,6 @@ namespace Croupier
 			new(TargetNameFormat.Short, "Short Name"),
 		];
 
-		private readonly List<MissionID> missionPool = [];
 		private Entrance? usedEntrance = null;
 		private string[] loadout = [];
 		private bool disableClientUpdate = false;
@@ -801,9 +800,9 @@ namespace Croupier
 					StopTimer();
 			};
 			CroupierSocketServer.Missions += (sender, missions) => {
-				missionPool.Clear();
-				missionPool.AddRange(missions);
-				EditMapPoolWindowInst?.UpdateMissionPool(missionPool);
+				GameController.Main.MissionPool.Clear();
+				GameController.Main.MissionPool.AddRange(missions);
+				EditMapPoolWindowInst?.UpdateMissionPool(GameController.Main.MissionPool);
 			};
 			CroupierSocketServer.Prev += (sender, _) => {
 				disableClientUpdate = true;
@@ -1015,7 +1014,7 @@ namespace Croupier
 			Config.Default.CustomMissionPool ??= [];
 			Config.Default.CustomMissionPool.Clear();
 
-			foreach (var missionID in missionPool) {
+			foreach (var missionID in GameController.Main.MissionPool) {
 				var mission = Mission.TryGet(missionID);
 				if (mission == null)
 					continue;
@@ -1976,7 +1975,7 @@ namespace Croupier
 			EditMapPoolWindowInst.Closed += (sender, e) => {
 				EditMapPoolWindowInst = null;
 			};
-			EditMapPoolWindowInst.UpdateMissionPool(missionPool);
+			EditMapPoolWindowInst.UpdateMissionPool(GameController.Main.MissionPool);
 			EditMapPoolWindowInst.Show();
 		}
 
@@ -2216,12 +2215,12 @@ namespace Croupier
 			var nextMission = MissionID.NONE;
 			var nextMissionGroupOrderDiff = -1;
 			var current = spin.Mission.GetGroupOrder();
-			for (var i = 0; i < missionPool.Count; ++i) {
-				var diff = missionPool[i].GetGroupOrder() - current;
+			for (var i = 0; i < GameController.Main.MissionPool.Count; ++i) {
+				var diff = GameController.Main.MissionPool[i].GetGroupOrder() - current;
 				if (diff <= 0) continue;
 				if (nextMission != MissionID.NONE && nextMissionGroupOrderDiff < diff)
 					continue;
-				nextMission = missionPool[i];
+				nextMission = GameController.Main.MissionPool[i];
 				nextMissionGroupOrderDiff = diff;
 			}
 
@@ -2236,13 +2235,13 @@ namespace Croupier
 			var nextMission = MissionID.NONE;
 			var nextMissionGroupOrderDiff = -1;
 			var current = spin.Mission.GetGroupOrder();
-			for (var i = 0; i < missionPool.Count; ++i) {
-				var diff = missionPool[i].GetGroupOrder() - current;
+			for (var i = 0; i < GameController.Main.MissionPool.Count; ++i) {
+				var diff = GameController.Main.MissionPool[i].GetGroupOrder() - current;
 				if (diff >= 0)
 					continue;
 				if (nextMission != MissionID.NONE && nextMissionGroupOrderDiff > diff)
 					continue;
-				nextMission = missionPool[i];
+				nextMission = GameController.Main.MissionPool[i];
 				nextMissionGroupOrderDiff = diff;
 			}
 
