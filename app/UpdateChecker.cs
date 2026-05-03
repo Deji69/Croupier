@@ -21,7 +21,11 @@ namespace Croupier {
 			var release = await client.Repository.Release.GetLatest("Deji69", "Croupier");
 			if (!release.TagName.StartsWith('v') || release.TagName.Length < 2)
 				return null;
-			var releaseVer = Version.Parse(release.TagName[1..]);
+			var verNum = release.TagName[1..];
+			var dashIdx = verNum.IndexOf('-');
+			if (dashIdx != -1)
+				verNum = verNum[..dashIdx];
+			var releaseVer = Version.Parse(verNum);
 			if (!release.Prerelease && !release.Draft && releaseVer > currentVer)
 				return new NewVersionInfo(release.TagName, release.HtmlUrl);
 			return null;
