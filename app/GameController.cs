@@ -59,7 +59,7 @@ namespace Croupier {
 		}
 		public bool IsFinished {
 			get => playState == PlayState.Finished;
-			set => SetProperty(ref playState, PlayState.Finished);
+			set => SetProperty(ref playState, PlayState.Playing);
 		}
 		public MissionID MissionID {
 			get => missionID;
@@ -95,7 +95,7 @@ namespace Croupier {
 					MissionID = spin.Mission;
 			};
 			CroupierSocketServer.MissionStart += (sender, arg) => {
-				IsFinished = false;
+				playState = PlayState.Playing;
 			};
 			CroupierSocketServer.MissionComplete += (sender, arg) => {
 				if (IsFinished) return;
