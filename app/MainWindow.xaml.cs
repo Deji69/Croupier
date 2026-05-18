@@ -1110,7 +1110,9 @@ namespace Croupier
 
 			SetSpinHistory(spinHistoryIndex + 1);
 			GameController.Main.ResetProgress();
-			ResetTimer();
+
+			if (!Config.Default.TimerMultiSpin)
+				ResetTimer();
 		}
 
 		public void Next() {
@@ -1123,7 +1125,9 @@ namespace Croupier
 
 			SetSpinHistory(spinHistoryIndex - 1);
 			GameController.Main.ResetProgress();
-			ResetTimer();
+
+			if (!Config.Default.TimerMultiSpin)
+				ResetTimer();
 		}
 
 		public void SetSpinHistory(int idx) {
