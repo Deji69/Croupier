@@ -81,7 +81,11 @@ namespace Croupier {
 		public async Task<bool> Send(string command) {
 			if (!connected || socket == null || !socket.Connected)
 				return false;
-			await socket.SendAsync(Encoding.ASCII.GetBytes($"{command}\r\n"));
+			try {
+				await socket.SendAsync(Encoding.ASCII.GetBytes($"{command}\r\n"));
+			} catch (SocketException) {
+				return false;
+			}
 			return true;
 		}
 
