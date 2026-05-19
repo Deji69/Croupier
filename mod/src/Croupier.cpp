@@ -1755,9 +1755,11 @@ auto CroupierPlugin::ValidateKillMethod(eTargetID target, const ServerEvent<Even
 	case eKillMethod::FiberWire:
 		return killMethodBroad == "fiberwire" ? eKillValidationType::Valid : eKillValidationType::Invalid;
 	case eKillMethod::InjectedPoison:
-		// Validate ambiguous poisons that aren't "consumed" - includes medic proxy injected opportunity for Sierra Knox
-		if (killClass == "poison"
-			&& killMethodStrict == "")
+		// Validate medic proxy injected opportunity for Sierra Knox
+		if (ev.Value.SetPieceId == "4337d53a-5966-493f-9caa-ca6ec01cb101")
+			return eKillValidationType::Valid;
+		// Validate ambiguous poisons that aren't "consumed"
+		if (killClass == "poison" && killMethodStrict == "")
 			// EKillType_ItemTakeOutFront (4)
 			return eKillValidationType::Valid;
 		return killMethodStrict == "injected_poison" ? eKillValidationType::Valid : eKillValidationType::Invalid;
@@ -1941,9 +1943,7 @@ auto CroupierPlugin::ValidateKillMethod(eTargetID target, const ServerEvent<Even
 		auto const isKillClassUnknown = killClass == "unknown";
 		// If expecting injected poison, determine whether the proxy medic opportunity was used
 		if (method == eMapKillMethod::Sierra_PoisonIVDrip) {
-			return killContext == EDeathContext::eDC_ACCIDENT
-				&& killClass == "poison"
-				&& killMethodStrict == ""
+			return ev.Value.SetPieceId == "4337d53a-5966-493f-9caa-ca6ec01cb101"
 				? eKillValidationType::Valid
 				: eKillValidationType::Invalid;
 		}
