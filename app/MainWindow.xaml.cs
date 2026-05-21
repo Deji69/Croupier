@@ -1948,7 +1948,8 @@ namespace Croupier
 					PushCurrentSpinToHistory();
 
 					spinHistoryIndex = 1;
-					ResetTimer();
+					if (!Config.Default.TimerMultiSpin)
+						ResetTimer();
 					TrackNewSpin();
 				}
 			}
@@ -1961,7 +1962,8 @@ namespace Croupier
 
 					GameController.Main.Mode = GameMode.Bingo;
 					bingo.SetCard(card);
-					ResetTimer();
+					if (!Config.Default.TimerMultiSpin)
+						ResetTimer();
 					TrackNewBingo();
 				}
 			}
@@ -2066,7 +2068,8 @@ namespace Croupier
 				GameController.Main.Roulette.SetSpin(spin);
 				spinHistoryIndex = 1;
 				PushCurrentSpinToHistory();
-				ResetTimer();
+				if (!Config.Default.TimerMultiSpin)
+					ResetTimer();
 				TrackNewSpin();
 			}
 		}
@@ -2077,7 +2080,8 @@ namespace Croupier
 				GameController.Main.Roulette.SetSpin(spin);
 				spinHistoryIndex = 1;
 				PushCurrentSpinToHistory();
-				ResetTimer();
+				if (!Config.Default.TimerMultiSpin)
+					ResetTimer();
 				TrackNewSpin();
 			}
 		}
@@ -2088,7 +2092,8 @@ namespace Croupier
 				GameController.Main.Roulette.SetSpin(spin);
 				spinHistoryIndex = 1;
 				PushCurrentSpinToHistory();
-				ResetTimer();
+				if (!Config.Default.TimerMultiSpin)
+					ResetTimer();
 				TrackNewSpin();
 			}
 		}
