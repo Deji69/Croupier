@@ -8,6 +8,12 @@
 #include <Logging.h>
 #include "CroupierClient.h"
 #include "util.h"
+#include <algorithm>
+#include <initializer_list>
+#include <thread>
+#include <vector>
+#include <string_view>
+#include <utility>
 
 #pragma comment(lib, "Ws2_32.lib")
 
@@ -215,8 +221,11 @@ auto CroupierClient::start() -> bool {
 			// Read message from socket
 			auto read = recv_msg(this->sock, buffer, sizeof(buffer));
 			if (read == SOCKET_ERROR) {
-				if (WSAGetLastError() != WSAETIMEDOUT)
+				auto error = WSAGetLastError();
+				Logger::Error("Socket error during read: {}", error);
+				if (error != WSAETIMEDOUT) {
 					this->connected = false;
+				}
 				continue;
 			}
 			if (read == 0)
@@ -296,7 +305,9 @@ auto CroupierClient::writeMessage(const ClientMessage& msg) -> bool {
 		bytes_sent += sent;
 	}
 	if (bytes_sent == SOCKET_ERROR) {
-		if (WSAGetLastError() != WSAETIMEDOUT)
+		auto error = WSAGetLastError();
+		Logger::Error("Socket error during write: {}", error);
+		if (error != WSAETIMEDOUT)
 			this->connected = false;
 		return false;
 	}

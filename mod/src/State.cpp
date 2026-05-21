@@ -1,4 +1,9 @@
 #include "State.h"
+#include "RouletteRuleset.h"
+#include <Logging.h>
+#include "Exception.h"
+#include <functional>
+#include "RouletteMission.h"
 
 using namespace Croupier;
 
@@ -20,6 +25,8 @@ auto State::OnRulesetSelect(eRouletteRuleset ruleset) -> void {
 }
 
 auto State::OnMissionSelect(eMission mission, bool isAuto) -> void {
+	Logger::Info("Mission selected: {}", static_cast<int>(mission));
+
 	State::current.playerSelectMission();
 	auto currentMission = State::current.generator.getMission();
 	if (currentMission && mission == currentMission->getMission() && !State::current.spinCompleted) return;

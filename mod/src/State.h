@@ -9,6 +9,7 @@
 #include <Glacier/ZActor.h>
 #include <Glacier/ZMath.h>
 #include <Glacier/ZPrimitives.h>
+#include <array>
 #include <chrono>
 #include <functional>
 #include <map>
@@ -20,6 +21,7 @@
 #include <string_view>
 #include <vector>
 #include "json.hpp"
+#include "RouletteMission.h"
 
 namespace Croupier
 {

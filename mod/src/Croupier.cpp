@@ -597,12 +597,16 @@ auto CroupierPlugin::Random() -> void {
 }
 
 auto CroupierPlugin::Respin(bool isAuto) -> void {
+	LogDebug("Respin()");
 	if (!State::current.generator.getMission()) return;
 
+	auto mission = State::current.generator.getMission()->getMission();
+	LogDebug("Issuing respin for mission {}", static_cast<int>(mission));
+
 	if (isAuto)
-		SendAutoSpin(State::current.generator.getMission()->getMission());
+		SendAutoSpin(mission);
 	else
-		SendRespin(State::current.generator.getMission()->getMission());
+		SendRespin(mission);
 
 	State::current.generator.setRuleset(&State::current.rules);
 
@@ -2927,14 +2931,16 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, void, OnWinHttpCallback, void* dwContext, v
 		auto url = narrow(wstr);
 		std::string_view sv = url;
 
+		Logger::Info("WinHttpQueryOption result: {}", sv);
+
 		auto isHttps = sv.starts_with("https://");
 		if (isHttps || sv.starts_with("http://")) {
 			auto urlNoProto = sv.substr((isHttps ? sizeof("https://") : sizeof("http://")) - 1);
-
 			auto isLocal = urlNoProto.starts_with("127.0.0.1/") || urlNoProto.starts_with("localhost/");
 
 			if (isLocal || urlNoProto.starts_with("hm3-service.hitman.io/")) {
-				auto urlPath = isLocal ? urlNoProto.substr(sizeof("localhost/" /* == sizeof("127.0.0.1/") */) - 1) : urlNoProto.substr(sizeof("hm3-service.hitman.io/") - 1);
+				auto urlPath = isLocal ? urlNoProto.substr(sizeof("localhost/") - 1) : urlNoProto.substr(sizeof("hm3-service.hitman.io/") - 1);
+
 
 				if (urlPath.starts_with("profiles/page/Planning?contractid=")) {
 					auto rest = urlPath.substr(sizeof("profiles/page/Planning?contractid="));
@@ -2950,6 +2956,7 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, void, OnWinHttpCallback, void* dwContext, v
 			}
 		}
 	}
+	//else Logger::Info("WinHttpQueryOption failed.");
 	return HookAction::Continue();
 }
 

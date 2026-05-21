@@ -6,6 +6,7 @@
 #include <format>
 #include <string>
 #include <string_view>
+#include "RouletteMission.h"
 
 using namespace Croupier;
 using namespace std::string_literals;
