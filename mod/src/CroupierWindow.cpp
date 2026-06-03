@@ -1,4 +1,3 @@
-#include <Windows.h>
 #include <wincodec.h>
 #include <commdlg.h>
 #include <d2d1.h>
@@ -14,9 +13,9 @@
 #include <tuple>
 #include <vector>
 
+#include "FixMinMax.h"
 #include "CroupierWindow.h"
 #include "Logging.h"
-#include "FixMinMax.h"
 #include "util.h"
 
 #define IDT_TIMER1 1001

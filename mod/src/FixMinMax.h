@@ -1,4 +1,6 @@
 // Min/Max being defined in Windows minmax.h file and not listening to NOMINMAX. Work around this.
+#define NOMINMAX
+#include <Windows.h>
 
 #ifdef max
 #undef max

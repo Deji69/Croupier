@@ -1,15 +1,13 @@
 #pragma once
 #include <atomic>
 #include <deque>
-#include <mutex>
+#include <initializer_list>
 #include <shared_mutex>
 #include <string>
 #include <thread>
-#include <vector>
-#include <Windows.h>
-#include <winsock.h>
-#include "Events.h"
-#include "RouletteMission.h"
+#include <WinSock2.h>
+#include <string_view>
+#include "FixMinMax.h"
 
 enum class eClientMessage {
 	Spin,

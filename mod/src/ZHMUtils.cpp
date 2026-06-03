@@ -7,7 +7,7 @@
 #include <Glacier/ZPrimitives.h>
 #include <Logging.h>
 #include <memory>
-#include <Windows.h>
+#include "FixMinMax.h"
 
 template <class T>
 class PatternEngineFunction;

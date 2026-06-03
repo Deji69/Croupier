@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Windows.h>
+#include "FixMinMax.h"
 #include <tuple>
 #include <string>
 #include <cstdint>

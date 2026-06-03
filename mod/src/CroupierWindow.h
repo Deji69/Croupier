@@ -4,7 +4,7 @@
 #include <shared_mutex>
 #include <string>
 #include <thread>
-#include <Windows.h>
+#include "FixMinMax.h"
 #include <d2d1.h>
 #include <dwrite.h>
 #include <wincodec.h>

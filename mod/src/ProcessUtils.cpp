@@ -1,7 +1,7 @@
 #include "ProcessUtils.h"
 
 #include <TlHelp32.h>
-#include <Windows.h>
+#include "FixMinMax.h"
 #include <unordered_set>
 #include <Logging.h>
 

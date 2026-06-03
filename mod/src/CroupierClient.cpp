@@ -1,3 +1,9 @@
+#include <algorithm>
+#include <initializer_list>
+#include <thread>
+#include <vector>
+#include <string_view>
+#include <utility>
 #include <WinSock2.h>
 #include <chrono>
 #include <format>
@@ -8,12 +14,6 @@
 #include <Logging.h>
 #include "CroupierClient.h"
 #include "util.h"
-#include <algorithm>
-#include <initializer_list>
-#include <thread>
-#include <vector>
-#include <string_view>
-#include <utility>
 
 #pragma comment(lib, "Ws2_32.lib")
 

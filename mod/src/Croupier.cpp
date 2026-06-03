@@ -70,7 +70,7 @@
 #include <system_error>
 #include <utility>
 #include <vector>
-#include <Windows.h>
+#include "FixMinMax.h"
 #include <winhttp.h>
 #include <Glacier/EntityFactory.h>
 #include <memory>

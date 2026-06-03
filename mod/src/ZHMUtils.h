@@ -3,9 +3,15 @@
 #include <Common.h>
 #include <cstdarg>
 #include <cstdint>
+#include <memory>
+#include <string_view>
+#include <type_traits>
+#include <utility>
+#include <vector>
 #include <EngineFunction.h>
 #include <fmt/format.h>
 #include <functional>
+#include "FixMinMax.h"
 #include <Glacier/Enums.h>
 #include <Glacier/IComponentInterface.h>
 #include <Glacier/Reflection.h>
@@ -14,22 +20,14 @@
 #include <Glacier/ZEntity.h>
 #include <Glacier/ZHitman5.h>
 #include <Glacier/ZHM5BaseCharacter.h>
-#include <Glacier/ZHM5GridManager.h>
 #include <Glacier/ZItem.h>
 #include <GLacier/ZMath.h>
 #include <Glacier/ZPrimitives.h>
 #include <Glacier/ZResource.h>
-#include <Glacier/ZResourceID.h>
 #include <Glacier/ZSpatialEntity.h>
 #include <Glacier/ZString.h>
 #include <Globals.h>
 #include <Logging.h>
-#include <memory>
-#include <string_view>
-#include <type_traits>
-#include <utility>
-#include <vector>
-#include <Windows.h>
 #include <Glacier/ZAction.h>
 
 inline auto GetPropertyIDs(ZEntityRef s_Entity) -> std::vector<std::pair<uint32, std::string_view>> {
