@@ -189,6 +189,7 @@ auto CroupierPlugin::ProcessPlayerState() const -> void {
 
 	auto player = SDK()->GetLocalPlayer();
 	if (!player) return;
+	if (State::current.gameMode == GameMode::Roulette) return;
 
 	const auto spatial = player.m_entityRef.QueryInterface<ZSpatialEntity>();
 	State::current.playerMatrix = spatial->m_mTransform;
@@ -1666,6 +1667,7 @@ auto CroupierPlugin::SetupEvents() -> void {
 		}
 	});
 	events.listen<Events::OpportunityEvents>([this](const ServerEvent<Events::OpportunityEvents>& ev) {
+		if (State::current.gameMode == GameMode::Roulette) return;
 		this->SendCustomEvent("OpportunityEvents"sv, ImbuedPlayerInfo({
 			{"RepositoryId", ev.Value.RepositoryId},
 			{"Event", ev.Value.Event},
@@ -2306,40 +2308,6 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, void, OnEventSent, ZAchievementManagerSimpl
 	return HookAction::Continue();
 }
 
-static void Traverse(ZEntityRef s_RootEntity, ZTemplateEntityBlueprintFactory* s_CurrentFactory, std::unordered_set<ZEntityType**>& s_Visited)
-{
-	if (!s_RootEntity.GetEntity())
-	{
-		return;
-	}
-	
-	if (!s_Visited.insert(s_RootEntity.m_pObj).second)
-	{
-		return;
-	}
-
-	const auto s_SubEntityCount = s_CurrentFactory->GetSubEntitiesCount();
-
-	for (int i = 0; i < s_SubEntityCount; ++i)
-	{
-		const ZEntityRef s_SubEntity = s_CurrentFactory->GetSubEntity(s_RootEntity.m_pObj, i);
-		const auto s_SubEntityFactory = s_CurrentFactory->GetSubEntityBlueprint(i);
-		const bool s_IsTemplateFactory = s_SubEntityFactory->IsTemplateEntityBlueprintFactory();
-
-		if (!s_SubEntity.GetEntity() || !s_SubEntity->GetType())
-		{
-			continue;
-		}
-
-		if (s_IsTemplateFactory)
-		{
-			const auto s_TemplateBpFactory = reinterpret_cast<ZTemplateEntityBlueprintFactory*>(s_SubEntityFactory);
-
-			Traverse(s_SubEntity, s_TemplateBpFactory, s_Visited);
-		}
-	}
-}
-
 // Entity IDs that fire generic pins too frequently to healthily process and send as events
 std::unordered_set<uint64_t> spamEntityIDs = {
 	0x62B5D8255EF6D149, // Access_Helper_DoorLogic > SignalBranch
@@ -2837,11 +2805,13 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, bool, OnPinOutput, ZEntityRef entity, uint3
 	// ZHMPin::PlayerAllShots - On Player Fire (Twice)
 
 	// Try: DoorBroken, NormalShot
-	
-	auto pin = static_cast<ZHMPin>(pinId);
-	auto listeners = GetPinListeners(pin);
-	if (listeners)
-		listeners->handle(entity, data, pin);
+
+	if (State::current.gameMode != GameMode::Roulette) {
+		auto pin = static_cast<ZHMPin>(pinId);
+		auto listeners = GetPinListeners(pin);
+		if (listeners)
+			listeners->handle(entity, data, pin);
+	}
 
 	/*switch (pin) {
 		case ZHMPin::HitmanInVision:
