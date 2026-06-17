@@ -2931,7 +2931,7 @@ DEFINE_PLUGIN_DETOUR(CroupierPlugin, void, OnWinHttpCallback, void* dwContext, v
 		auto url = narrow(wstr);
 		std::string_view sv = url;
 
-		Logger::Info("WinHttpQueryOption result: {}", sv);
+		//Logger::Info("WinHttpQueryOption result: {}", sv);
 
 		auto isHttps = sv.starts_with("https://");
 		if (isHttps || sv.starts_with("http://")) {
