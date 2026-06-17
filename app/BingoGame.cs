@@ -71,13 +71,13 @@ namespace Croupier {
 
 		public BingoGame(GameController controller) {
 			this.controller = controller;
-			CroupierSocketServer.MissionStart += (sender, start) => {
+			CroupierPipeServer.MissionStart += (sender, start) => {
 				card?.Reset();
 				SendAreasToClient();
 			};
-			CroupierSocketServer.MissionComplete += (sender, arg) => card?.Finish();
-			CroupierSocketServer.Event += OnEvent;
-			CroupierSocketServer.Connected += (sender, arg) => {
+			CroupierPipeServer.MissionComplete += (sender, arg) => card?.Finish();
+			CroupierPipeServer.Event += OnEvent;
+			CroupierPipeServer.Connected += (sender, arg) => {
 				enableSocketOperations = true;
 				SendAreasToClient();
 			};
@@ -151,7 +151,7 @@ namespace Croupier {
 			}
 
 			obj.Data = areas.ToArray();
-			CroupierSocketServer.Send(obj);
+			CroupierPipeServer.Send(obj);
 		}
 
 		public void SendBingoDataToClient() {
@@ -173,7 +173,7 @@ namespace Croupier {
 				});
 			}
 
-			CroupierSocketServer.Send("BingoData:" + JsonSerializer.Serialize(new BingoEvent() {
+			CroupierPipeServer.Send("BingoData:" + JsonSerializer.Serialize(new BingoEvent() {
 				Mission = GameController.Main.MissionID,
 				Tiles = tiles,
 			}));

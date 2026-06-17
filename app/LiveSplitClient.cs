@@ -1,8 +1,10 @@
-﻿using System.Net.Sockets;
-using System.Threading.Tasks;
-using System;
-using System.Text;
+﻿using System;
+using System.IO.Pipes;
 using System.Linq;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Croupier {
 	public class LiveSplitClient {
@@ -12,6 +14,8 @@ namespace Croupier {
 		private bool connected = false;
 		private bool needToStop = false;
 		private Socket? socket = null;
+		private NamedPipeClientStream? pipe = null;
+		private static CancellationTokenSource CancelConnection = new();
 
 		public string CurrentStatus => status;
 
@@ -21,56 +25,53 @@ namespace Croupier {
 			if (started)
 				await Stop();
 
+			CancelConnection = new();
 			started = true;
 			connected = false;
 
-			socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
+			//socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
+			pipe = new NamedPipeClientStream("LiveSplit");
 
 			Status("Connecting...");
 
-			while (!needToStop) {
+			while (!CancelConnection.IsCancellationRequested) {
 				try {
-					await socket.ConnectAsync(Config.Default.LiveSplitIP, Config.Default.LiveSplitPort).WaitAsync(TimeSpan.FromSeconds(5));
+					await pipe.ConnectAsync(5000, CancelConnection.Token);
 				} catch (SocketException e) {
-					if (needToStop) break;
+					if (CancelConnection.IsCancellationRequested) break;
 					Status($"{e.Message}\nCheck LiveSplit Server is running (Control > Start Server) and that the IP and Port are correct.");
 					System.Diagnostics.Debug.WriteLine("[LIVESPLIT] " + e.Message);
 					await Task.Delay(5000);
 				}
 
-				if (!socket.Connected)
+				if (!pipe.IsConnected)
 					continue;
 
-				Status("Connected.");
+				Status("[LIVESPLIT] Connected.");
 				connected = true;
 
-				try {
-					while (socket.Connected && !needToStop) {
-						await Task.Delay(2000);
-					}
-				} catch (SocketException e) {
-					Status($"Disconnected: {e.Message}");
-					socket.Disconnect(true);
-					await Task.Delay(5000);
+				while (pipe.IsConnected && !CancelConnection.IsCancellationRequested) {
+					await Task.Delay(2000);
 				}
 
-				if (needToStop)
+				if (CancelConnection.IsCancellationRequested)
 					break;
 
+				Status($"[LIVESPLIT] Disconnected.");
 				connected = false;
 			}
 
 			if (connected)
-				socket.Disconnect(true);
+				pipe.Dispose();
 
 			connected = false;
 			started = false;
 			
 			Status("Stopped.");
-			needToStop = false;
 		}
 
 		public Task Stop() {
+			CancelConnection.Cancel();
 			return Task.Run(() => {
 				if (!started) return;
 				needToStop = true;
@@ -79,25 +80,25 @@ namespace Croupier {
 		}
 
 		public async Task<bool> Send(string command) {
-			if (!connected || socket == null || !socket.Connected)
+			if (!connected || pipe == null || !pipe.IsConnected)
 				return false;
 			try {
-				await socket.SendAsync(Encoding.ASCII.GetBytes($"{command}\r\n"));
-			} catch (SocketException) {
+				await pipe.WriteAsync(Encoding.ASCII.GetBytes($"{command}\r\n"), CancelConnection.Token);
+			} catch {
 				return false;
 			}
 			return true;
 		}
 
 		public async Task<string?> Receive(string command) {
-			if (!connected || socket == null || !socket.Connected)
+			if (!connected || pipe == null || !pipe.IsConnected)
 				return null;
 			var buffer = new byte[1024];
 
 			if (!await this.Send(command))
 				return null;
 
-			var size = await socket.ReceiveAsync(buffer);
+			var size = await pipe.ReadAsync(buffer);
 			if (size == 0)
 				return null;
 			var response = Encoding.ASCII.GetString(buffer, 0, size);

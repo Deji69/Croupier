@@ -33,7 +33,7 @@ add_library(Croupier SHARED
 	"src/App.h"
 	"src/App.cpp"
 	"src/State.cpp"
- "src/Bingo.h")
+ "src/Bingo.h" "src/CroupierPipe.h" "src/CroupierPipe.cpp")
 
 add_library(unac STATIC)
 target_sources(unac PRIVATE "src/unac.h" "src/unac.c")

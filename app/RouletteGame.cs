@@ -17,7 +17,7 @@ namespace Croupier {
 		public RouletteGame(GameController controller) {
 			this.controller = controller;
 
-			CroupierSocketServer.KillValidation += (sender, data) => {
+			CroupierPipeServer.KillValidation += (sender, data) => {
 				if (spin == null) return;
 				if (data.Length == 0) return;
 

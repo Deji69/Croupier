@@ -94,10 +94,10 @@ namespace Croupier {
 				if (spin.Mission != MissionID)
 					MissionID = spin.Mission;
 			};
-			CroupierSocketServer.MissionStart += (sender, arg) => {
+			CroupierPipeServer.MissionStart += (sender, arg) => {
 				playState = PlayState.Playing;
 			};
-			CroupierSocketServer.MissionComplete += (sender, arg) => {
+			CroupierPipeServer.MissionComplete += (sender, arg) => {
 				if (IsFinished) return;
 				IsFinished = true;
 
@@ -118,7 +118,7 @@ namespace Croupier {
 
 				MissionCompleted?.Invoke(this, arg);
 			};
-			CroupierSocketServer.MissionFailed += (sender, _) => {
+			CroupierPipeServer.MissionFailed += (sender, _) => {
 				if (IsFinished) return;
 
 				if (HasRestarted || RoundTimeElapsed.TotalSeconds > Config.Default.StreakReplanWindow)

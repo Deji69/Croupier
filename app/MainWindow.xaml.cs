@@ -754,7 +754,7 @@ namespace Croupier
 		}
 
 		private void SetupSocketServerEvents() {
-			CroupierSocketServer.Connected += (sender, _) => {
+			CroupierPipeServer.Connected += (sender, _) => {
 				SendMissionsToClient();
 				SendSpinToClient();
 				SendSpinLockToClient();
@@ -762,62 +762,62 @@ namespace Croupier
 				SendStreakToClient();
 				SendTimerToClient();
 			};
-			CroupierSocketServer.Respin += (sender, id) => Spin(id);
-			CroupierSocketServer.AutoSpin += (sender, id) => {
+			CroupierPipeServer.Respin += (sender, id) => Spin(id);
+			CroupierPipeServer.AutoSpin += (sender, id) => {
 				if (SpinLock) return;
 				if (Config.Default.AutoSpinCountdown > 0)
 					ScheduleAutoSpin(TimeSpan.FromSeconds(Config.Default.AutoSpinCountdown), id);
 				else
 					AutoSpin(id);
 			};
-			CroupierSocketServer.Random += (sender, _) => GameController.Main.Shuffle();
-			CroupierSocketServer.ToggleSpinLock += (sender, _) => {
+			CroupierPipeServer.Random += (sender, _) => GameController.Main.Shuffle();
+			CroupierPipeServer.ToggleSpinLock += (sender, _) => {
 				disableClientUpdate = true;
 				SpinLock = !SpinLock;
 				disableClientUpdate = false;
 			};
-			CroupierSocketServer.ToggleTimer += (sender, enable) => {
+			CroupierPipeServer.ToggleTimer += (sender, enable) => {
 				ShowTimer = enable;
 			};
-			CroupierSocketServer.PauseTimer += (sender, pause) => {
+			CroupierPipeServer.PauseTimer += (sender, pause) => {
 				if (pause) StopTimer();
 				else ResumeTimer();
 				isLoadRemoving = false;
 				timerManuallyStopped = pause;
 			};
-			CroupierSocketServer.ResetTimer += (sender, _) => {
+			CroupierPipeServer.ResetTimer += (sender, _) => {
 				StopTimer();
 				ResetTimer();
 			};
-			CroupierSocketServer.SplitTimer += (sender, _) => {
+			CroupierPipeServer.SplitTimer += (sender, _) => {
 				SplitTimer();
 			};
-			CroupierSocketServer.ResetStreak += (sender, _) => GameController.Main.Streak = 0;
-			CroupierSocketServer.MissionStart += (sender, start) => {
+			CroupierPipeServer.ResetStreak += (sender, _) => GameController.Main.Streak = 0;
+			CroupierPipeServer.MissionStart += (sender, start) => {
 				TrackGameMissionAttempt(start);
 			};
-			CroupierSocketServer.MissionOutroBegin += (sender, _) => {
+			CroupierPipeServer.MissionOutroBegin += (sender, _) => {
 				if (Config.Default.TimerPauseDuringOutro)
 					StopTimer();
 			};
-			CroupierSocketServer.Missions += (sender, missions) => {
+			CroupierPipeServer.Missions += (sender, missions) => {
 				GameController.Main.MissionPool.Clear();
 				GameController.Main.MissionPool.AddRange(missions);
 				EditMapPoolWindowInst?.UpdateMissionPool(GameController.Main.MissionPool);
 			};
-			CroupierSocketServer.Prev += (sender, _) => {
+			CroupierPipeServer.Prev += (sender, _) => {
 				disableClientUpdate = true;
 				Previous();
 				disableClientUpdate = false;
 				SendSpinToClient();
 			};
-			CroupierSocketServer.Next += (sender, _) => {
+			CroupierPipeServer.Next += (sender, _) => {
 				disableClientUpdate = true;
 				Next();
 				disableClientUpdate = false;
 				SendSpinToClient();
 			};
-			CroupierSocketServer.SpinData += (sender, data) => {
+			CroupierPipeServer.SpinData += (sender, data) => {
 				if (SpinParser.TryParse(data, out var spin)) {
 					disableClientUpdate = true;
 					GameController.Main.Roulette.SetSpin(spin);
@@ -825,10 +825,10 @@ namespace Croupier
 					disableClientUpdate = false;
 				}
 			};
-			CroupierSocketServer.LoadStarted += (sender, _) => {
+			CroupierPipeServer.LoadStarted += (sender, _) => {
 				HandleTimingOnLoadStart();
 			};
-			CroupierSocketServer.LoadFinished += (sender, _) => {
+			CroupierPipeServer.LoadFinished += (sender, _) => {
 				HandleTimingOnLoadFinish();
 			};
 			HitmapsSpinLink.ReceiveNewSpinData += (sender, data) => {
@@ -1147,7 +1147,7 @@ namespace Croupier
 			var fwdIndex = spinHistory.Count - spinHistoryIndex;
 
 			if (!dontClearSpinHistory)
-			Config.Default.SpinHistory.Clear();
+				Config.Default.SpinHistory.Clear();
 
 			for (var i = 0; i < spinHistory.Count && i < HistoryEntries.Count; ++i) {
 				var absIdx = spinHistory.Count - i - 1;
@@ -1463,18 +1463,18 @@ namespace Croupier
 
 		public void SendGameModeToClient() {
 			if (disableClientUpdate) return;
-			CroupierSocketServer.Send($"GameMode:{(int)GameController.Main.Mode}");
+			CroupierPipeServer.Send($"GameMode:{(int)GameController.Main.Mode}");
 		}
 
 		public void SendSpinLockToClient() {
 			if (disableClientUpdate) return;
-			CroupierSocketServer.Send("SpinLock:" + (SpinLock ? "1" : "0"));
+			CroupierPipeServer.Send("SpinLock:" + (SpinLock ? "1" : "0"));
 		}
 
 		public void SendTimerToClient() {
 			if (disableClientUpdate) return;
 			double elapsed = (timeElapsed ?? DateTime.Now - timerStart).TotalMilliseconds;
-			CroupierSocketServer.Send($"Timer:{(timerStopped ? 0 : 1)}," + elapsed);
+			CroupierPipeServer.Send($"Timer:{(timerStopped ? 0 : 1)}," + elapsed);
 		}
 
 		public void SendSpinToClient() {
@@ -1485,7 +1485,7 @@ namespace Croupier
 					if (spinData.Length > 0) spinData += ", ";
 					spinData += $"{condition.ToString(TargetNameFormat.Initials)}";
 				});
-				CroupierSocketServer.Send("SpinData:" + spinData);
+				CroupierPipeServer.Send("SpinData:" + spinData);
 			}
 			if (GameController.Main.Bingo.Card != null && GameController.Main.Bingo.Card.Tiles.Count > 0) {
 				GameController.Main.Bingo.SendBingoDataToClient();
@@ -1500,12 +1500,12 @@ namespace Croupier
 				if (miss == null) return;
 				missions += missions.Length > 0 ? $",{miss.Codename}" : miss.Codename;
 			});
-			CroupierSocketServer.Send("Missions:" + missions);
+			CroupierPipeServer.Send("Missions:" + missions);
 		}
 
 		public void SendStreakToClient() {
 			if (disableClientUpdate) return;
-			CroupierSocketServer.Send($"Streak:{GameController.Main.Streak}");
+			CroupierPipeServer.Send($"Streak:{GameController.Main.Streak}");
 		}
 
 		private void OnMouseDown(object? sender, MouseButtonEventArgs e) {

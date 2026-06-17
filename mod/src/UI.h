@@ -5,6 +5,15 @@
 #include <imgui.h>
 #include <Glacier/ZMath.h>
 #include <Glacier/ZPrimitives.h>
+#include <mutex>
+#include <shared_mutex>
+#include <chrono>
+#include <utility>
+#include <cstdint>
+#include "Roulette.h"
+#include "Bingo.h"
+#include "RouletteMission.h"
+#include "RouletteRuleset.h"
 
 namespace Croupier
 {

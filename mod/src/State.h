@@ -22,6 +22,7 @@
 #include <vector>
 #include "json.hpp"
 #include "RouletteMission.h"
+#include "CroupierPipe.h"
 
 namespace Croupier
 {
@@ -107,7 +108,8 @@ namespace Croupier
 		RouletteSpin spin;
 		BingoCard card;
 		RouletteSpinGenerator generator;
-		CroupierClient client;
+		//CroupierClient client;
+		BiDirectionalPipeClient client;
 		RouletteRuleset rules;
 
 		std::stack<RouletteSpin> spinHistory;
@@ -154,7 +156,7 @@ namespace Croupier
 		bool spinCompleted = false;
 		bool spinLocked = false;
 
-		State() : timeElapsed(0) {
+		State() : timeElapsed(0), client("CroupierIPC") {
 			timeStarted = std::chrono::steady_clock().now();
 			this->resetKillValidations();
 		}

@@ -92,23 +92,23 @@ namespace Croupier {
 		}
 
 		private void StartLoad_Click(object sender, RoutedEventArgs e) {
-			CroupierSocketServer.SpoofMessage("LoadStarted:0");
+			CroupierPipeServer.SpoofMessage("LoadStarted:0");
 		}
 
 		private void StopLoad_Click(object sender, RoutedEventArgs e) {
-			CroupierSocketServer.SpoofMessage("LoadFinished:0");
+			CroupierPipeServer.SpoofMessage("LoadFinished:0");
 		}
 
 		private void Attempt_Click(object sender, RoutedEventArgs e) {
-			CroupierSocketServer.SpoofMessage($"MissionStart:bc531204-8e82-4550-b2a7-829b047dc6cc\t[]");
+			CroupierPipeServer.SpoofMessage($"MissionStart:bc531204-8e82-4550-b2a7-829b047dc6cc\t[]");
 		}
 
 		private void WinSpin_Click(object sender, RoutedEventArgs e) {
-			CroupierSocketServer.SpoofMessage($"MissionComplete:1\t{(double)(Random.Shared.Next(50 * 10, 400 * 10)) / 10.0}");
+			CroupierPipeServer.SpoofMessage($"MissionComplete:1\t{(double)(Random.Shared.Next(50 * 10, 400 * 10)) / 10.0}");
 		}
 
 		private void RIPSpin_Click(object sender, RoutedEventArgs e) {
-			CroupierSocketServer.SpoofMessage("MissionFailed:1");
+			CroupierPipeServer.SpoofMessage("MissionFailed:1");
 		}
 
 		private void CopyBingoTexts_Click(object sender, RoutedEventArgs e) {
@@ -144,13 +144,13 @@ namespace Croupier {
 				msg += $"{cond.Target.Initials}:2:1:{cond.Target.Initials}";
 			}
 
-			CroupierSocketServer.SpoofMessage($"KillValidation:{msg}");
+			CroupierPipeServer.SpoofMessage($"KillValidation:{msg}");
 		}
 
 		private void AutoSpin_Click(object sender, RoutedEventArgs e) {
 			var mission = Mission.Get(Mission.GetRandomMajorMissionID());
 			if (mission != null)
-				CroupierSocketServer.SpoofMessage($"AutoSpin:{mission.Codename}");
+				CroupierPipeServer.SpoofMessage($"AutoSpin:{mission.Codename}");
 		}
 	}
 }

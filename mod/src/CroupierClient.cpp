@@ -7,6 +7,7 @@
 #include <WinSock2.h>
 #include <chrono>
 #include <format>
+#include <iterator>
 #include <map>
 #include <shared_mutex>
 #include <span>
@@ -14,6 +15,8 @@
 #include <Logging.h>
 #include "CroupierClient.h"
 #include "util.h"
+#include <mutex>
+#include <string>
 
 #pragma comment(lib, "Ws2_32.lib")
 
