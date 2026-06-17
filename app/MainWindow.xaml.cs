@@ -202,6 +202,7 @@ namespace Croupier
 		private bool _showTimer = false;
 		private bool _timerMultiSpin = false;
 		private bool _timerFractions = true;
+		private bool dontClearSpinHistory = false;
 
 		public bool IsBingoMode => GameController.Main.Mode == GameMode.Bingo || GameController.Main.Mode == GameMode.Hybrid;
 		public bool IsRouletteMode => GameController.Main.Mode == GameMode.Roulette || GameController.Main.Mode == GameMode.Hybrid;
@@ -845,6 +846,7 @@ namespace Croupier
 			DataContext = this;
 			MainContextMenu.DataContext = this;
 			SizeToContent = SizeToContent.Height;
+			dontClearSpinHistory = true;
 
 			PropertyChanged += MainWindow_PropertyChanged;
 
@@ -864,6 +866,8 @@ namespace Croupier
 
 			SendMissionsToClient();
 			SendSpinToClient();
+
+			dontClearSpinHistory = false;
 		}
 
 		private void SyncMissionSelect(MissionID mission) {
@@ -1142,6 +1146,7 @@ namespace Croupier
 
 			var fwdIndex = spinHistory.Count - spinHistoryIndex;
 
+			if (!dontClearSpinHistory)
 			Config.Default.SpinHistory.Clear();
 
 			for (var i = 0; i < spinHistory.Count && i < HistoryEntries.Count; ++i) {
