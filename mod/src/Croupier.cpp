@@ -1135,7 +1135,6 @@ auto CroupierPlugin::SendCustomEvent(std::string_view name, json eventValue) con
 		{"Value", eventValue},
 	};
 	auto dump = js.dump();
-	LogDebug("<--- {}", dump);
 	State::current.client.sendRaw(dump);
 }
 
