@@ -5,8 +5,8 @@
 #include <shared_mutex>
 #include <string>
 #include <thread>
-#include <WinSock2.h>
 #include <string_view>
+#include <WinSock2.h>
 #include "FixMinMax.h"
 
 enum class eClientMessage {
