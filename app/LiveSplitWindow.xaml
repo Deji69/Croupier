@@ -23,7 +23,7 @@
 				Foreground="White"
 				Margin="5,2"
 				/>
-			<TextBlock
+			<!--<TextBlock
 				Text="To use the socket server, edit the layout in LiveSplit and add 'LiveSplit Server', then right-click the main window and select Control > Start Server."
 				Foreground="White"
 				TextWrapping="WrapWithOverflow"
@@ -34,7 +34,7 @@
 				Foreground="White"
 				TextWrapping="WrapWithOverflow"
 				Margin="5,2"
-				/>
+				/>-->
 			<Grid Margin="5,10" HorizontalAlignment="Stretch">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="140" />
@@ -62,7 +62,7 @@
 					VerticalAlignment="Center"
 					IsChecked="{Binding Enabled}"
 					/>
-                <TextBlock
+                <!--<TextBlock
 					Grid.Row="2"
 					Text="Use Socket Server"
 					Foreground="White"
@@ -103,15 +103,15 @@
 					Width="100"
 					HorizontalAlignment="Left"
 					Text="{Binding Port}"
-					/>
+					/>-->
 				<TextBlock
-					Grid.Row="8"
+					Grid.Row="4"
 					Text="Status"
 					Foreground="White"
 					Margin="5,0"
 					/>
 				<TextBlock
-					Grid.Row="8"
+					Grid.Row="4"
 					Grid.Column="1"
 					MinWidth="100"
 					Text="{Binding StatusText}"
