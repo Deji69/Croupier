@@ -24,8 +24,21 @@ namespace Croupier {
 			}
 		}
 
+		public static void Error(string message) {
+			System.Diagnostics.Debug.WriteLine($"Error: {message}");
+			try {
+				path = GetLogPath();
+				if (path.Length == 0) return;
+				using StreamWriter w = File.AppendText(path);
+				Write($"Error - {message}", w);
+				w.Flush();
+			}
+			catch (Exception) {
+			}
+		}
+
 		private static void Write(string message, TextWriter writer) {
-			writer.Write($"{DateTime.Now.ToShortTimeString()}: {message}\r\n");
+			writer.Write($"{DateTime.Now:t}: {message}\r\n");
 		}
 
 		private static string GetLogPath() {
