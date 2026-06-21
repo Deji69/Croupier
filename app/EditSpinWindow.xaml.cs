@@ -195,10 +195,11 @@ namespace Croupier
 				viewModel.Conditions.Add(condition);
 				condition.PropertyChanged += (object? sender, PropertyChangedEventArgs e) => {
 					if (e.PropertyName != nameof(EditSpinCondition.IsEditLegal)
-						&& e.PropertyName != nameof(EditSpinCondition.LegalityText))
+						&& e.PropertyName != nameof(EditSpinCondition.LegalityText)) {
 						condition.IsEditLegal = condition.IsLegal();
 
-					game.SetSpinCondition(condition);
+						game.SetSpinCondition(condition);
+					}
 				};
 			}
 
