@@ -6,8 +6,6 @@
 #include <thread>
 #include <queue>
 #include <string_view>
-#include <Windows.h>
-#include "FixMinMax.h"
 #include "CroupierClient.h"
 #include <mutex>
 #include <stop_token>
@@ -17,6 +15,9 @@
 #include <chrono>
 #include <vector>
 #include <algorithm>
+#include <WinSock2.h>
+#include "FixMinMax.h"
+#include <cstdint>
 
 constexpr const DWORD PIPE_BUFFER_SIZE = 8192;
 
@@ -91,16 +92,16 @@ private:
 	std::atomic_bool m_connected;
 
 	auto runEngine(std::stop_token stopToken) -> void {
-		while (!stopToken.stop_requested()) {
-			Logger::Info("Connecting to pipe: {}...", m_pipeName);
+		Logger::Info("Connecting to pipe: {}...", m_pipeName);
 
+		while (!stopToken.stop_requested()) {
 			HANDLE hPipe = CreateFileA(
 				m_pipeName.c_str(),
 				GENERIC_READ | GENERIC_WRITE,
 				0,
 				NULL,
 				OPEN_EXISTING,
-				FILE_FLAG_WRITE_THROUGH,
+				0,
 				NULL
 			);
 
@@ -113,7 +114,7 @@ private:
 				} else {
 					std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 				}
-				continue; // Retry loop
+				continue;
 			}
 
 			DWORD dwMode = PIPE_READMODE_BYTE | PIPE_NOWAIT;
@@ -122,87 +123,146 @@ private:
 			Logger::Info("Connected to pipe server.", m_pipeName);
 			m_connected = true;
 
-			// Start up the dedicated writing loop thread assigned to this file handle
-			m_writeThread = std::jthread([this, hPipe](std::stop_token sToken) {
-				writeLoop(hPipe, sToken);
+			std::stop_source connectionStopSource;
+
+			m_writeThread = std::jthread([this, hPipe, connectionStopSource](std::stop_token sToken) {
+				writeLoop(hPipe, sToken, connectionStopSource);
 			});
 
-			// Execute the read sequence blocking block on the main execution worker
-			readLoop(hPipe, stopToken);
+			readLoop(hPipe, stopToken, connectionStopSource);
 
-			// If the read loop collapses (disconnection), violently shut down the write thread
 			m_connected = false;
 			m_writeThread.request_stop();
-			m_sendQueue.notify_all(); // Wake write loop condition variable
+			m_sendQueue.notify_all();
 			if (m_writeThread.joinable()) {
 				m_writeThread.join();
 			}
 
 			CloseHandle(hPipe);
-			Logger::Info("Connection dropped. Re-initializing loop context...");
+			Logger::Info("Connection dropped. Restarting...");
 		}
 	}
 
-	void readLoop(HANDLE hPipe, std::stop_token stopToken) {
+	void readLoop(HANDLE hPipe, std::stop_token stopToken, std::stop_source connectionStopSource) {
 		std::vector<char> buffer(512);
 		std::string accumulator;
+		DWORD err = 0;
 
-		while (!stopToken.stop_requested()) {
+		while (!stopToken.stop_requested() && !connectionStopSource.stop_requested() && (err == 0 || err == ERROR_NO_DATA || err == ERROR_MORE_DATA)) {
 			DWORD bytesRead = 0;
-			
-			// Blocking read statement execution
-			BOOL success = ReadFile(hPipe, buffer.data(), static_cast<DWORD>(buffer.size()), &bytesRead, NULL);
 
-			// If ReadFile fails or returns 0 bytes, the server disconnected
+			BOOL success = ReadFile(hPipe, buffer.data(), 2, &bytesRead, NULL);
+
 			if (!success) {
-				DWORD err = GetLastError();
-				// ERROR_NO_DATA means there is nothing to read right now (non-blocking status)
-				if (err == ERROR_NO_DATA) {
+				err = GetLastError();
+				if (err == ERROR_NO_DATA)
 					std::this_thread::sleep_for(std::chrono::milliseconds(10)); // Yield CPU slightly
-					continue;
-				}
-				break; // A real error occurred, disconnect
+				continue;
 			}
 
 			if (bytesRead == 0) {
-				break; 
+				break;
 			}
 
-			// Stream processing matching structural split design logic
-			for (DWORD i = 0; i < bytesRead; ++i) {
-				if (buffer[i] == '\0') {
-					if (!accumulator.empty()) {
-						handleReceivedMessage(accumulator);
-						accumulator.clear();
-					}
-				} else {
-					accumulator.push_back(buffer[i]);
-				}
+			if (bytesRead != 2) {
+				Logger::Warn("Expected 2 bytes for pipe message header but {} received.", bytesRead);
+				continue;
 			}
+
+			uint16_t targetSize = static_cast<unsigned char>(buffer[0]) + static_cast<unsigned char>(buffer[1]) * 256;
+			size_t triesUntilReset = 500;
+			
+			// This sus attempts counting is because the data may not arrive right away but it should do after some cycles, unless there's a disconnect or something weird happened, so...
+			for (; accumulator.size() < targetSize && triesUntilReset > 0; --triesUntilReset) {
+				success = ReadFile(hPipe, buffer.data(), static_cast<DWORD>(buffer.size()), &bytesRead, NULL);
+
+				if (!success) {
+					err = GetLastError();
+					if (err == ERROR_NO_DATA)
+						std::this_thread::sleep_for(std::chrono::milliseconds(10));
+					else if (err != ERROR_MORE_DATA)
+						break;
+				}
+
+				accumulator.append(buffer.data(), bytesRead);
+			}
+
+			if (!accumulator.empty() && triesUntilReset != 0) {
+				handleReceivedMessage(accumulator);
+			}
+
+			accumulator.clear();
 		}
+
+		connectionStopSource.request_stop();
 	}
 
-	void writeLoop(HANDLE hPipe, std::stop_token stopToken) {
+	void writeLoop(HANDLE hPipe, std::stop_token stopToken, std::stop_source connectionStopSource) {
 		std::string message;
-
-		while (!stopToken.stop_requested()) {
-			if (!m_sendQueue.dequeue(message, stopToken)) {
-				break; // Stop token raised, safely drop out
-			}
-
-			// Append the matching structural null character terminator
-			message.push_back('\0');
+		char size[2] = {};
+		DWORD err = 0;
+		
+		while (!stopToken.stop_requested() && !connectionStopSource.stop_requested()) {
+			if (!m_sendQueue.dequeue(message, stopToken))
+				break;
 
 			DWORD bytesWritten = 0;
-			BOOL success = WriteFile(hPipe, message.data(), static_cast<DWORD>(message.size()), &bytesWritten, NULL);
+			auto intSize = static_cast<uint16_t>(message.size());
+			uint8_t header[2] {};
+			header[0] = intSize & 0xFF;
+			header[1] = (intSize >> 8) & 0xFF;
 
-			if (!success) {
-				Logger::Info("[Write Error]: Failed writing down stream pipe.");
-				break; // Fall back and break loop out to force re-connection
+			for (auto i = 0; i < 2; i += bytesWritten) {
+				BOOL result = WriteFile(hPipe, header + i, 2, &bytesWritten, NULL);
+
+				if (!result) {
+					err = GetLastError();
+					Logger::Error("Pipe message header write failed (error: {}).", err);
+					break;
+				}
+
+				// Buffer full? Sleep and retry.
+				if (bytesWritten == 0) {
+					std::this_thread::sleep_for(std::chrono::milliseconds(10));
+					continue;
+				}
 			}
 
-			FlushFileBuffers(hPipe);
+			if (err != 0) break;
+
+			DWORD chunkWritten = 0;
+			for (DWORD written = 0; written < message.size(); written += chunkWritten) {
+				BOOL result = WriteFile(
+					hPipe,
+					message.data() + written,
+					static_cast<DWORD>(message.size() - written),
+					&chunkWritten,
+					NULL
+				);
+
+				if (!result) {
+					err = GetLastError();
+					Logger::Error("Pipe write failed (error: {}).", err);
+					connectionStopSource.request_stop();
+					break;
+				}
+
+				// Buffer full? Sleep and retry.
+				if (chunkWritten == 0) {
+					std::this_thread::sleep_for(std::chrono::milliseconds(10));
+					continue;
+				}
+
+				written += chunkWritten;
+			}
+
+			if (err != 0) break;
+
+			if (!FlushFileBuffers(hPipe))
+				Logger::Error("Pipe flush failed.");
 		}
+
+		connectionStopSource.request_stop();
 	}
 
 public:
@@ -212,21 +272,18 @@ public:
 		stop();
 	}
 
-	// Start background threading processing asynchronously
 	auto start() -> void {
 		m_workerThread = std::jthread([this](std::stop_token stopToken) {
 			runEngine(stopToken);
 		});
 	}
 
-	// Forceful clean closure
 	auto stop() -> void {
 		m_workerThread.request_stop();
 		m_writeThread.request_stop();
 		m_sendQueue.notify_all();
 	}
 
-	// Add string content safely to outbound buffer system from main thread 
 	auto enqueueMessage(const std::string& message) -> void {
 		m_sendQueue.enqueue(message);
 	}
