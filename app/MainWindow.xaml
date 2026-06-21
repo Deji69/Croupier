@@ -137,7 +137,7 @@
 					<ColumnDefinition Width="2*" />
 				</Grid.ColumnDefinitions>
 				<Image
-					Source="{Binding TargetImagePath, UpdateSourceTrigger=PropertyChanged}"
+					Source="{Binding TargetImagePath, UpdateSourceTrigger=PropertyChanged, TargetNullValue={x:Null}}"
 					Margin="0 0 0 0"
 					VerticalAlignment="Center"
 					HorizontalAlignment="Center"
@@ -150,7 +150,7 @@
 					</Grid.ColumnDefinitions>
 					<Image
 						Grid.Column="0"
-						Source="{Binding KillStatusImagePath, UpdateSourceTrigger=PropertyChanged}"
+						Source="{Binding KillStatusImagePath, UpdateSourceTrigger=PropertyChanged, TargetNullValue={x:Null}}"
 						Stretch="Uniform"
 						VerticalAlignment="Bottom"
 						HorizontalAlignment="Stretch"
@@ -168,7 +168,7 @@
 						<ColumnDefinition Width="2*" />
 					</Grid.ColumnDefinitions>
 					<Image
-						Source="{Binding MethodImagePath}"
+						Source="{Binding MethodImagePath, TargetNullValue={x:Null}}"
 						HorizontalAlignment="Center"
 						VerticalAlignment="Center"
 						Stretch="UniformToFill" />
@@ -179,7 +179,7 @@
 						</Grid.ColumnDefinitions>
 						<Image
 							Grid.Column="0"
-							Source="{Binding MethodKillStatusImagePath, UpdateSourceTrigger=PropertyChanged}"
+							Source="{Binding MethodKillStatusImagePath, UpdateSourceTrigger=PropertyChanged, TargetNullValue={x:Null}}"
 							Stretch="Uniform"
 							VerticalAlignment="Bottom"
 							HorizontalAlignment="Stretch"
@@ -217,7 +217,7 @@
 					</Grid>
 					<Image
 						Grid.Row="1"
-						Source="{Binding DisguiseImagePath}"
+						Source="{Binding DisguiseImagePath, TargetNullValue={x:Null}}"
 						HorizontalAlignment="Center"
 						VerticalAlignment="Center"
 						Stretch="UniformToFill" />
@@ -228,7 +228,7 @@
 						</Grid.ColumnDefinitions>
 						<Image
 							Grid.Column="0"
-							Source="{Binding DisguiseKillStatusImagePath, UpdateSourceTrigger=PropertyChanged}"
+							Source="{Binding DisguiseKillStatusImagePath, UpdateSourceTrigger=PropertyChanged, TargetNullValue={x:Null}}"
 							Stretch="Uniform"
 							VerticalAlignment="Bottom"
 							HorizontalAlignment="Stretch"
