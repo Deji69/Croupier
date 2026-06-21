@@ -1,6 +1,5 @@
 #pragma once
 #include "Bingo.h"
-#include "CroupierClient.h"
 #include "Events.h"
 #include "KillConfirmation.h"
 #include "Roulette.h"
