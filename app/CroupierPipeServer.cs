@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Pipes;
 using System.Linq;
-using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -13,8 +12,36 @@ using System.Threading.Tasks;
 using System.Windows;
 
 namespace Croupier {
+	public class StreamString(Stream ioStream) {
+		private readonly Stream ioStream = ioStream;
+		private readonly UTF8Encoding streamEncoding = new();
+
+		public async Task<string> ReadStringAsync(CancellationToken ct) {
+			if (!ioStream.CanRead) throw new Exception("Pipe read operations not supported.");
+			var buffer = new byte[2];
+			var bytesRead = await ioStream.ReadAsync(buffer.AsMemory(0, 2), ct);
+			if (bytesRead == -1)
+				throw new Exception("Pipe connection closed.");
+			int len = buffer[0] + buffer[1] * 256;
+			byte[] inBuffer = new byte[len];
+			await ioStream.ReadExactlyAsync(inBuffer, 0, len, ct);
+
+			return streamEncoding.GetString(inBuffer);
+		}
+
+		public async Task WriteStringAsync(string outString, CancellationToken ct) {
+			if (!ioStream.CanWrite) throw new Exception("Pipe write operations not supported.");
+			byte[] outBuffer = streamEncoding.GetBytes(outString);
+			UInt16 len = (ushort)outBuffer.Length;
+			if (len > UInt16.MaxValue)
+				len = (int)UInt16.MaxValue;
+			byte[] bytes = BitConverter.GetBytes(len);
+			await ioStream.WriteAsync(bytes.AsMemory(0, 2), ct);
+			await ioStream.WriteAsync(outBuffer.AsMemory(0, len), ct);
+		}
+	}
+
 	public class BiDirectionalPipeServer(string pipeName) {
-		private readonly string _pipeName = pipeName;
 		private readonly ConcurrentQueue<string> _sendQueue = new();
 		private readonly SemaphoreSlim _queueSemaphore = new(0);
 		public event EventHandler<string>? MessageReceived;
@@ -26,44 +53,45 @@ namespace Croupier {
 		}
 
 		private void HandleReceivedMessage(string message) {
-			MessageReceived?.Invoke(this, message);
 			Logging.Info($"[Received]: {message}");
+			try {
+				MessageReceived?.Invoke(this, message);
+			} catch { }
 		}
 
 		public async Task RunServerAsync(CancellationToken cancellationToken) {
-			Logging.Info($"Server started. Monitoring pipe: \\\\.\\pipe\\{_pipeName}");
+			Logging.Info($"Server started. Monitoring pipe: \\\\.\\pipe\\{pipeName}");
 
 			while (!cancellationToken.IsCancellationRequested) {
 				try {
-					// Create a bi-directional, asynchronous pipe instance
-					using var pipeServer = new NamedPipeServerStream(_pipeName, PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
+					using var pipeServer = new NamedPipeServerStream(pipeName, PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
 
 					Logging.Info("Waiting for client connection...");
+
 					await pipeServer.WaitForConnectionAsync(cancellationToken);
 					Logging.Info("Client connected successfully.");
 					Connected?.Invoke(this, 0);
 
-					// Linked token ensures worker loops drop immediately if connection drops or token cancels
 					using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
-					// Run Reading and Writing loops concurrently over the single connection
+					var aliveTask = Task.Run(async () => {
+						while (!cts.IsCancellationRequested && pipeServer.IsConnected)
+							await Task.Delay(3000);
+					}, cts.Token);
 					var readTask = ReadFromPipeAsync(pipeServer, cts.Token);
 					var writeTask = WriteToPipeAsync(pipeServer, cts.Token);
 
-					// Wait until either loop breaks (e.g., disconnection or crash)
-					await Task.WhenAny(readTask, writeTask);
+					await Task.WhenAny(aliveTask, readTask, writeTask);
 
-					// Cancel the remaining loop active on this stream instance
 					cts.Cancel();
 
-					// Ensure exceptions/completions are properly propagated and resources cleanly unwound
 					await Task.WhenAll(readTask, writeTask);
 				}
 				catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) {
 					break;
 				}
 				catch (Exception ex) {
-					Logging.Info($"Connection lost or error encountered: {ex.Message}");
+					Logging.Error($"Connection lost or error encountered: {ex.Message}");
 				}
 
 				Logging.Info("Re-initializing pipe for next connection instance...");
@@ -73,48 +101,30 @@ namespace Croupier {
 		}
 
 		private async Task ReadFromPipeAsync(NamedPipeServerStream pipe, CancellationToken ct) {
-			var buffer = new byte[8192];
-			var incompleteMessage = new MemoryStream();
+			var stream = new StreamString(pipe);
 
 			try {
 				while (!ct.IsCancellationRequested) {
-					int bytesRead = await pipe.ReadAsync(buffer, ct);
-					if (bytesRead == 0) break; // Client disconnected gracefully
+					var str = await stream.ReadStringAsync(ct);
 
-					for (int i = 0; i < bytesRead; i++) {
-						if (buffer[i] == 0x00) // Null byte terminator reached
-						{
-							if (incompleteMessage.Length > 0) {
-								string rawMessage = Encoding.UTF8.GetString(incompleteMessage.ToArray());
-								HandleReceivedMessage(rawMessage);
-								incompleteMessage.SetLength(0); // Reset local chunk buffer
-							}
-						}
-						else {
-							incompleteMessage.WriteByte(buffer[i]);
-						}
+					if (str.Length > 0) {
+						HandleReceivedMessage(str);
 					}
 				}
 			}
 			finally {
-				await incompleteMessage.DisposeAsync();
 			}
 		}
 
 		private async Task WriteToPipeAsync(NamedPipeServerStream pipe, CancellationToken ct) {
+			var stream = new StreamString(pipe);
 			while (!ct.IsCancellationRequested) {
 				// Non-blocking asynchronous wait for elements in the concurrent queue
 				await _queueSemaphore.WaitAsync(ct);
 
 				if (_sendQueue.TryDequeue(out var message)) {
-					// Format message trailing payload with a null character string delimiter
-					byte[] messageBytes = Encoding.UTF8.GetBytes(message);
-					byte[] terminatedBytes = new byte[messageBytes.Length + 1];
-					Buffer.BlockCopy(messageBytes, 0, terminatedBytes, 0, messageBytes.Length);
-					terminatedBytes[^1] = 0x00; // Inject structural end block
-
-					await pipe.WriteAsync(terminatedBytes, ct);
-					await pipe.FlushAsync(ct); // Force outbound flushing down the Windows subsystem
+					await stream.WriteStringAsync(message, ct);
+					await pipe.FlushAsync(ct);
 				}
 			}
 		}
@@ -146,12 +156,16 @@ namespace Croupier {
 		public static event EventHandler<int>? Connected;
 		private static readonly CancellationTokenSource CancelConnection = new();
 		private static Task? serverTask = null;
+		private static Thread? serverThread = null;
 		private static BiDirectionalPipeServer? pipe = null;
 
 		public static void Start() {
 			App.Current.Exit += OnExit;
 			pipe = new BiDirectionalPipeServer("CroupierIPC");
-			serverTask = pipe.RunServerAsync(CancelConnection.Token);
+			serverThread = new Thread(() => {
+				serverTask = pipe.RunServerAsync(CancelConnection.Token);
+			});
+			serverThread.Start();
 			pipe.MessageReceived += ProcessReceivedMessage;
 			pipe.Connected += OnConnected;
 		}
@@ -168,6 +182,7 @@ namespace Croupier {
 		private static async void OnExit(object sender, ExitEventArgs e) {
 			CancelConnection.Cancel();
 			if (serverTask != null) await serverTask;
+			if (serverThread != null) serverThread.Join();
 		}
 
 		public static void SpoofMessage(string msg) {
@@ -267,9 +282,12 @@ namespace Croupier {
 					return;
 			}
 
-			var json = JsonDocument.Parse(msg);
-			var ev = json.Deserialize<Event>(jsonGameEventSerializerOptions);
-			App.Current.Dispatcher.Invoke(new Action(() => Event?.Invoke(null, msg)));
+			try {
+				var json = JsonDocument.Parse(msg);
+				var ev = json.Deserialize<Event>(jsonGameEventSerializerOptions);
+				App.Current.Dispatcher.Invoke(new Action(() => Event?.Invoke(null, msg)));
+			}
+			catch { }
 		}
 
 		private static readonly JsonSerializerOptions jsonGameEventSerializerOptions = new() {
