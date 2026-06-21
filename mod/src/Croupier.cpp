@@ -1227,7 +1227,7 @@ auto CroupierPlugin::SetupEvents() -> void {
 	});
 	events.listen<Events::StartingSuit>([this](const ServerEvent<Events::StartingSuit>& ev) {
 		if (State::current.gameMode != GameMode::Roulette) {
-		this->SendCustomEvent("StartingSuit"sv, ImbueDisguiseEvent(ev.Value.value));
+			this->SendCustomEvent("StartingSuit"sv, ImbueDisguiseEvent(ev.Value.value));
 		}
 
 		if (State::current.spinCompleted) return;
@@ -1236,7 +1236,7 @@ auto CroupierPlugin::SetupEvents() -> void {
 	events.listen<Events::Disguise>([this](const ServerEvent<Events::Disguise>& ev) {
 		if (gameplay.disguiseChange.havePinData) {
 			if (State::current.gameMode != GameMode::Roulette) {
-			this->SendCustomEvent("Disguise"sv, ImbueDisguiseEvent(ev.Value.value));
+				this->SendCustomEvent("Disguise"sv, ImbueDisguiseEvent(ev.Value.value));
 			}
 		}
 		else {
@@ -1249,29 +1249,29 @@ auto CroupierPlugin::SetupEvents() -> void {
 	});
 	events.listen<Events::FriskedSuccess>([this](const ServerEvent<Events::FriskedSuccess>& ev) {
 		if (State::current.gameMode != GameMode::Roulette)
-		this->SendCustomEvent("FriskedSuccess"sv, ImbuedPlayerInfo());
+			this->SendCustomEvent("FriskedSuccess"sv, ImbuedPlayerInfo());
 	});
 	events.listen<Events::Actorsick>([this](const ServerEvent<Events::Actorsick>& ev) {
 		if (State::current.gameMode != GameMode::Roulette) {
-		this->SendCustomEvent("Actorsick"sv, ImbuedActorInfo(ZRepositoryID(ev.Value.actor_R_ID), ImbuedPlayerInfo({
-			{"ActorID", ev.Value.ActorId},
-			//{"actor_R_ID", ev.Value.actor_R_ID},
-			{"IsTarget", ev.Value.IsTarget},
-			{"ItemRepositoryId", ev.Value.item_R_ID},
-			{"SetpieceRepositoryId", ev.Value.setpiece_R_ID},
-		}, true)));
+			this->SendCustomEvent("Actorsick"sv, ImbuedActorInfo(ZRepositoryID(ev.Value.actor_R_ID), ImbuedPlayerInfo({
+				{"ActorID", ev.Value.ActorId},
+				//{"actor_R_ID", ev.Value.actor_R_ID},
+				{"IsTarget", ev.Value.IsTarget},
+				{"ItemRepositoryId", ev.Value.item_R_ID},
+				{"SetpieceRepositoryId", ev.Value.setpiece_R_ID},
+			}, true)));
 		}
 	});
 	events.listen<Events::Dart_Hit>([this](const ServerEvent<Events::Dart_Hit>& ev) {
 		if (State::current.gameMode != GameMode::Roulette) {
-		this->SendCustomEvent("DartHit"sv, ImbuedPlayerInfo({
-			{"RepositoryId", ev.Value.RepositoryId},
-			{"ActorType", ev.Value.ActorType},
-			{"Blind", ev.Value.Blind},
-			{"Sedative", ev.Value.Sedative},
-			{"Sick", ev.Value.Sick},
-			{"IsTarget", ev.Value.IsTarget},
-		}, true));
+			this->SendCustomEvent("DartHit"sv, ImbuedPlayerInfo({
+				{"RepositoryId", ev.Value.RepositoryId},
+				{"ActorType", ev.Value.ActorType},
+				{"Blind", ev.Value.Blind},
+				{"Sedative", ev.Value.Sedative},
+				{"Sick", ev.Value.Sick},
+				{"IsTarget", ev.Value.IsTarget},
+			}, true));
 		}
 	});
 	events.listen<Events::ItemThrown>([this](const ServerEvent<Events::ItemThrown>& ev) {
@@ -1279,23 +1279,23 @@ auto CroupierPlugin::SetupEvents() -> void {
 		//if (imbued) this->SendImbuedEvent(ev, *imbued);
 		lastThrownItem = ev.Value.RepositoryId;
 		if (State::current.gameMode != GameMode::Roulette) {
-		this->SendCustomEvent("ItemThrown"sv, ImbuedPlayerInfo({
-			{"ItemRepositoryId", ev.Value.RepositoryId},
-			{"ItemInstanceId", ev.Value.InstanceId},
-			{"ItemType", ev.Value.ItemType},
-			{"ItemName", ev.Value.ItemName},
-		}, true));
+			this->SendCustomEvent("ItemThrown"sv, ImbuedPlayerInfo({
+				{"ItemRepositoryId", ev.Value.RepositoryId},
+				{"ItemInstanceId", ev.Value.InstanceId},
+				{"ItemType", ev.Value.ItemType},
+				{"ItemName", ev.Value.ItemName},
+			}, true));
 		}
 	});
 	events.listen<Events::ItemStashed>([this](const ServerEvent<Events::ItemStashed>& ev) {
 		if (State::current.gameMode != GameMode::Roulette) {
-		this->SendCustomEvent("ItemStashed"sv, ImbuedPlayerInfo({
-			{"ActorId", ev.Value.ActorId},
-			{"ActorName", ev.Value.ActorName},
-			{"ItemId", ev.Value.ItemId},
-			{"ItemTypeId", ev.Value.ItemTypeId},
-			{"RepositoryId", ev.Value.RepositoryId},
-		}, true));
+			this->SendCustomEvent("ItemStashed"sv, ImbuedPlayerInfo({
+				{"ActorId", ev.Value.ActorId},
+				{"ActorName", ev.Value.ActorName},
+				{"ItemId", ev.Value.ItemId},
+				{"ItemTypeId", ev.Value.ItemTypeId},
+				{"RepositoryId", ev.Value.RepositoryId},
+			}, true));
 		}
 	});
 	events.listen<Events::ItemPickedUp>([this](const ServerEvent<Events::ItemPickedUp>& ev) {
@@ -1330,8 +1330,8 @@ auto CroupierPlugin::SetupEvents() -> void {
 	});
 	events.listen<Events::Pacify>([this](const ServerEvent<Events::Pacify>& ev) {
 		if (State::current.gameMode != GameMode::Roulette) {
-		auto data = this->ImbuePacifyEvent(ev.Value);
-		if (data) this->SendCustomEvent("Pacify"sv, *data);
+			auto data = this->ImbuePacifyEvent(ev.Value);
+			if (data) this->SendCustomEvent("Pacify"sv, *data);
 		}
 
 		if (!ev.Value.IsTarget) return;
@@ -1406,8 +1406,8 @@ auto CroupierPlugin::SetupEvents() -> void {
 	});
 	events.listen<Events::Kill>([this](const ServerEvent<Events::Kill>& ev) {
 		if (State::current.gameMode != GameMode::Roulette) {
-		auto data = this->ImbuePacifyEvent(ev.Value);
-		if (data) this->SendCustomEvent("Kill"sv, *data);
+			auto data = this->ImbuePacifyEvent(ev.Value);
+			if (data) this->SendCustomEvent("Kill"sv, *data);
 		}
 
 		static auto isBerlinAgent = [](eTargetID id) -> bool {
@@ -1525,11 +1525,11 @@ auto CroupierPlugin::SetupEvents() -> void {
 	});
 	events.listen<Events::Level_Setup_Events>([this](const ServerEvent<Events::Level_Setup_Events>& ev) {
 		if (State::current.gameMode != GameMode::Roulette) {
-		this->SendCustomEvent("Level_Setup_Events"sv, ImbuedPlayerInfo({
-			{"Contract_Name_metricvalue", ev.Value.Contract_Name_metricvalue},
-			{"Event_metricvalue", ev.Value.Event_metricvalue},
-			{"Location_MetricValue", ev.Value.Location_MetricValue},
-		}, true));
+			this->SendCustomEvent("Level_Setup_Events"sv, ImbuedPlayerInfo({
+				{"Contract_Name_metricvalue", ev.Value.Contract_Name_metricvalue},
+				{"Event_metricvalue", ev.Value.Event_metricvalue},
+				{"Location_MetricValue", ev.Value.Location_MetricValue},
+			}, true));
 		}
 
 		auto const& conditions = State::current.spin.getConditions();
@@ -1632,21 +1632,21 @@ auto CroupierPlugin::SetupEvents() -> void {
 	});
 	events.listen<Events::Crocodile>([this](const ServerEvent<Events::Crocodile>& ev) {
 		if (State::current.gameMode != GameMode::Roulette) {
-		this->SendCustomEvent("Crocodile"sv, ImbuedPlayerInfo({
-			{"RepositoryId", ev.Value.RepositoryId},
-		}, true));
+			this->SendCustomEvent("Crocodile"sv, ImbuedPlayerInfo({
+				{"RepositoryId", ev.Value.RepositoryId},
+			}, true));
 		}
 	});
 	events.listen<Events::setpieces>([this](const ServerEvent<Events::setpieces>& ev) {
 		if (State::current.gameMode != GameMode::Roulette) {
-		this->SendCustomEvent("setpieces"sv, ImbuedPositionInfo(ev.Value.Position, "", ImbuedPlayerInfo({
-			{"RepositoryId", ev.Value.RepositoryId},
-			{"Name", ev.Value.name_metricvalue},
-			{"Helper", ev.Value.setpieceHelper_metricvalue},
-			{"Type", ev.Value.setpieceType_metricvalue},
-			{"ToolUsed", ev.Value.toolUsed_metricvalue},
-			{"ItemTriggered", ev.Value.Item_triggered_metricvalue},
-		}, true)));
+			this->SendCustomEvent("setpieces"sv, ImbuedPositionInfo(ev.Value.Position, "", ImbuedPlayerInfo({
+				{"RepositoryId", ev.Value.RepositoryId},
+				{"Name", ev.Value.name_metricvalue},
+				{"Helper", ev.Value.setpieceHelper_metricvalue},
+				{"Type", ev.Value.setpieceType_metricvalue},
+				{"ToolUsed", ev.Value.toolUsed_metricvalue},
+				{"ItemTriggered", ev.Value.Item_triggered_metricvalue},
+			}, true)));
 		}
 
 		if (State::current.spinCompleted) return;
@@ -1672,16 +1672,16 @@ auto CroupierPlugin::SetupEvents() -> void {
 	});
 	events.listen<Events::DrainPipe_climbed>([this](const ServerEvent<Events::DrainPipe_climbed>& ev) {
 		if (State::current.gameMode != GameMode::Roulette) {
-		this->SendCustomEvent("DrainPipeClimbed"sv, ImbuedPlayerInfo());
+			this->SendCustomEvent("DrainPipeClimbed"sv, ImbuedPlayerInfo());
 		}
 	});
 	events.listen<Events::SecuritySystemRecorder>([this](const ServerEvent<Events::SecuritySystemRecorder>& ev) {
 		if (State::current.gameMode != GameMode::Roulette) {
-		this->SendCustomEvent("SecuritySystemRecorder"sv, ImbuedPlayerInfo({
-			{"Camera", ev.Value.camera},
-			{"Event", ev.Value.event},
-			{"Recorder", ev.Value.recorder},
-		}, true));
+			this->SendCustomEvent("SecuritySystemRecorder"sv, ImbuedPlayerInfo({
+				{"Camera", ev.Value.camera},
+				{"Event", ev.Value.event},
+				{"Recorder", ev.Value.recorder},
+			}, true));
 		}
 		switch (ev.Value.event) {
 			case SecuritySystemRecorderEvent::Spotted:
