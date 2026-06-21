@@ -8,6 +8,7 @@ namespace Croupier {
 		private static readonly Brush connectedBrush = new SolidColorBrush(Color.FromRgb(0, 200, 0));
 		private static readonly Brush statusBrush = new SolidColorBrush(Color.FromRgb(225, 225, 225));
 		private bool enabled = false;
+		private bool useSocketServer = false;
 		private string portInput = "16834";
 		private string ipInput = "127.0.0.1";
 		private string statusText = "";
@@ -15,6 +16,11 @@ namespace Croupier {
 		public bool Enabled {
 			get => enabled;
 			set => SetProperty(ref enabled, value);
+		}
+
+		public bool UseSocketServer {
+			get => useSocketServer;
+			set => SetProperty(ref useSocketServer, value);
 		}
 
 		public string Port {
@@ -50,6 +56,7 @@ namespace Croupier {
 
 			viewModel.StatusText = client.CurrentStatus;
 			viewModel.Enabled = Config.Default.LiveSplitEnabled;
+			viewModel.UseSocketServer = Config.Default.LiveSplitUseSocketServer;
 			viewModel.IP = Config.Default.LiveSplitIP;
 			viewModel.Port = Config.Default.LiveSplitPort.ToString();
 
@@ -78,6 +85,7 @@ namespace Croupier {
 			}
 
 			Config.Default.LiveSplitEnabled = viewModel.Enabled;
+			Config.Default.LiveSplitUseSocketServer = viewModel.UseSocketServer;
 			Config.Default.LiveSplitIP = viewModel.IP;
 			Config.Default.LiveSplitPort = port;
 			Config.Save();
@@ -90,6 +98,7 @@ namespace Croupier {
 
 		private void CancelButton_Click(object sender, RoutedEventArgs e) {
 			viewModel.Enabled = Config.Default.LiveSplitEnabled;
+			viewModel.UseSocketServer = Config.Default.LiveSplitUseSocketServer;
 			viewModel.IP = Config.Default.LiveSplitIP;
 			viewModel.Port = Config.Default.LiveSplitPort.ToString();
 		}

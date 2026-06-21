@@ -24,7 +24,7 @@
 				Margin="5,2"
 				/>
 			<TextBlock
-				Text="Edit the layout in LiveSplit and add 'LiveSplit Server', then right-click the main window and select Control > Start Server."
+				Text="To use the socket server, edit the layout in LiveSplit and add 'LiveSplit Server', then right-click the main window and select Control > Start Server."
 				Foreground="White"
 				TextWrapping="WrapWithOverflow"
 				Margin="5,2"
@@ -37,18 +37,20 @@
 				/>
 			<Grid Margin="5,10" HorizontalAlignment="Stretch">
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="100" />
+					<ColumnDefinition Width="140" />
 					<ColumnDefinition Width="*" />
 				</Grid.ColumnDefinitions>
 				<Grid.RowDefinitions>
 					<RowDefinition />
 					<RowDefinition Height="15" />
 					<RowDefinition />
-					<RowDefinition Height="15" />
+					<RowDefinition Height="5" />
 					<RowDefinition />
-					<RowDefinition Height="15" />
-					<RowDefinition />
-				</Grid.RowDefinitions>
+					<RowDefinition Height="5" />
+                    <RowDefinition />
+                    <RowDefinition Height="15" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
 				<TextBlock
 					Text="Enable"
 					Foreground="White"
@@ -60,27 +62,42 @@
 					VerticalAlignment="Center"
 					IsChecked="{Binding Enabled}"
 					/>
-				<TextBlock
+                <TextBlock
 					Grid.Row="2"
+					Text="Use Socket Server"
+					Foreground="White"
+					Margin="5,0"
+                    ToolTip="Use socket server for LiveSplit communication (by default, a named pipe connection is used)."
+					/>
+                <CheckBox
+					Grid.Row="2"
+					Grid.Column="1"
+					MinWidth="100"
+					VerticalAlignment="Center"
+                    ToolTip="Use socket server for LiveSplit communication (by default, a named pipe connection is used)."
+					IsChecked="{Binding UseSocketServer}"
+					/>
+                <TextBlock
+					Grid.Row="4"
 					Text="Host IP"
 					Foreground="White"
 					Margin="5,0"
 					/>
 				<TextBox
+					Grid.Row="4"
 					Grid.Column="1"
-					Grid.Row="2"
 					Width="100"
 					HorizontalAlignment="Left"
 					Text="{Binding IP}"
 					/>
 				<TextBlock
-					Grid.Row="4"
+					Grid.Row="6"
 					Text="Port"
 					Foreground="White"
 					Margin="5,0"
 					/>
 				<TextBox
-					Grid.Row="4"
+					Grid.Row="6"
 					Grid.Column="1"
 					MinWidth="100"
 					Width="100"
@@ -88,13 +105,13 @@
 					Text="{Binding Port}"
 					/>
 				<TextBlock
-					Grid.Row="6"
+					Grid.Row="8"
 					Text="Status"
 					Foreground="White"
 					Margin="5,0"
 					/>
 				<TextBlock
-					Grid.Row="6"
+					Grid.Row="8"
 					Grid.Column="1"
 					MinWidth="100"
 					Text="{Binding StatusText}"
