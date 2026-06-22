@@ -29,26 +29,35 @@ namespace Croupier {
 			started = true;
 			connected = false;
 
-			if (Config.Default.LiveSplitUseSocketServer)
-				socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
-			else
+			//if (Config.Default.LiveSplitUseSocketServer)
+			//	socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
+			//else
 				pipe = new NamedPipeClientStream(".", "LiveSplit", PipeDirection.InOut, PipeOptions.Asynchronous);
 
 			Status("Connecting...");
 
 			while (!CancelConnection.IsCancellationRequested) {
 				try {
-					if (pipe != null) await pipe.ConnectAsync(CancelConnection.Token);
+					if (pipe != null) await pipe.ConnectAsync(5000, CancelConnection.Token);
 					else if (socket != null) await socket.ConnectAsync(Config.Default.LiveSplitIP, Config.Default.LiveSplitPort, CancelConnection.Token);
 				} catch (SocketException e) {
 					if (CancelConnection.IsCancellationRequested) break;
 					Status($"{e.Message}\nCheck LiveSplit Server is running (Control > Start Server) and that the IP and Port are correct.");
 					System.Diagnostics.Debug.WriteLine("[LIVESPLIT] " + e.Message);
-					await Task.Delay(5000);
+				} catch (OperationCanceledException e) {
+					if (!CancelConnection.IsCancellationRequested)
+						Status($"{e.Message}\nError connecting to LiveSplit pipe. Retrying after 5 seconds...");
+				} catch (Exception e) {
+					Status($"{e.Message}\nUnknown error while connecting to LiveSplit pipe. Retrying after 5 seconds...");
 				}
 
-				if ((pipe != null && !pipe.IsConnected) || (socket != null && !socket.Connected))
+				if ((pipe != null && !pipe.IsConnected) || (socket != null && !socket.Connected)) {
+					if (!CancelConnection.IsCancellationRequested) {
+						await Task.Delay(5000);
+						Status("Re-attempting connection...");
+					}
 					continue;
+				}
 
 				Status("Connected.");
 				connected = true;
