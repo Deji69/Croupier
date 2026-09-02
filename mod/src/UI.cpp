@@ -477,7 +477,7 @@ auto UI::DrawBingoUI(bool focused) -> void {
 			else
 				ImGui::PushStyleColor(ImGuiCol_ChildBg, ImColor{23, 28, 32}.Value);
 
-			ImGui::BeginChild(str.c_str(), {120, 90}, ImGuiChildFlags_Border, ImGuiWindowFlags_NoScrollbar);
+			ImGui::BeginChild(str.c_str(), {120, 90}, ImGuiChildFlags_Borders, ImGuiWindowFlags_NoScrollbar);
 			if (!tile.group.empty()) {
 				ImGui::SetWindowFontScale(.8);
 				ImGui::PushStyleColor(ImGuiCol_Text, tile.groupColour);

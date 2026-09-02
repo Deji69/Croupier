@@ -17,7 +17,8 @@
 				"CMAKE_CXX_COMPILER": "cl.exe",
 				"VCPKG_TARGET_TRIPLET": "x64-windows-static",
 				"VCPKG_HOST_TRIPLET": "x64-windows-static",
-				"CMAKE_POLICY_DEFAULT_CMP0091": "NEW"
+				"CMAKE_POLICY_DEFAULT_CMP0091": "NEW",
+				"CMAKE_TOOLCHAIN_FILE": "C:/Users/Deji/Dev/vcpkg/scripts/buildsystems/vcpkg.cmake"
 			},
 			"toolset": {
 				"value": "host=x64",

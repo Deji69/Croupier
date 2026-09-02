@@ -82,7 +82,7 @@ inline auto GetValueProperty(ZEntityRef s_Entity, const uint32_t nPropertyID) ->
 		if (!s_Data) break;
 
 		if (s_PropertyInfo->m_Flags & EPropertyInfoFlags::E_HAS_GETTER_SETTER) {
-			s_PropertyInfo->m_PropetyGetter(reinterpret_cast<void*>(s_PropertyAddress), s_Data, s_Property->m_nPropertyOffset);
+			s_PropertyInfo->m_PropertyGetter(reinterpret_cast<void*>(s_PropertyAddress), s_Data, s_Property->m_nPropertyOffset);
 		}
 		else {
 			s_PropertyInfo->m_Type->GetTypeInfo()->m_pTypeFunctions->placementCopyConstruct(
