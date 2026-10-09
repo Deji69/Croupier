@@ -44,8 +44,9 @@
 		<CommandBinding Command="{x:Static local:MainWindow.ResetTimerCommand}" CanExecute="Command_AlwaysCanExecute" Executed="ResetTimerCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.StartTimerCommand}" CanExecute="StartTimerCommand_CanExecute" Executed="StartTimerCommand_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.StopTimerCommand}" CanExecute="StopTimerCommand_CanExecute" Executed="StopTimerCommand_Executed" />
-		<CommandBinding Command="{x:Static local:MainWindow.CheckDailySpinsCommand}" CanExecute="Command_AlwaysCanExecute" Executed="CheckDailySpinsCommand_Executed" />
-		<CommandBinding Command="{x:Static local:MainWindow.DailySpin1Command}" CanExecute="DailySpin1Command_CanExecute" Executed="DailySpin1Command_Executed" />
+        <CommandBinding Command="{x:Static local:MainWindow.CheckDailySpinsCommand}" CanExecute="Command_AlwaysCanExecute" Executed="CheckDailySpinsCommand_Executed" />
+        <CommandBinding Command="{x:Static local:MainWindow.OhShDailySpinCommand}" CanExecute="OhShDailySpinCommand_CanExecute" Executed="OhShDailySpinCommand_Executed" />
+        <CommandBinding Command="{x:Static local:MainWindow.DailySpin1Command}" CanExecute="DailySpin1Command_CanExecute" Executed="DailySpin1Command_Executed" />
 		<CommandBinding Command="{x:Static local:MainWindow.DailySpin2Command}" CanExecute="DailySpin2Command_CanExecute" Executed="DailySpin2Command_Executed" />
         <CommandBinding Command="{x:Static local:MainWindow.DailySpin3Command}" CanExecute="DailySpin3Command_CanExecute" Executed="DailySpin3Command_Executed" />
         <CommandBinding Command="{x:Static local:MainWindow.DebugWindowCommand}" CanExecute="DebugWindowCommand_CanExecute" Executed="DebugWindowCommand_Executed" />
@@ -830,8 +831,9 @@
 					<MenuItem Header="Refresh" Command="{x:Static local:MainWindow.CheckDailySpinsCommand}" ToolTip="Refresh daily spins from the web." />
 					<MenuItem Header="{Binding DailySpin1Label, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding DailySpin1Tooltip, UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding DailySpin1Completed, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Command="{x:Static local:MainWindow.DailySpin1Command}" />
 					<MenuItem Header="{Binding DailySpin2Label, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding DailySpin2Tooltip, UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding DailySpin2Completed, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Command="{x:Static local:MainWindow.DailySpin2Command}" />
-					<MenuItem Header="{Binding DailySpin3Label, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding DailySpin3Tooltip, UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding DailySpin3Completed, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Command="{x:Static local:MainWindow.DailySpin3Command}" />
-				</MenuItem>
+                    <MenuItem Header="{Binding DailySpin3Label, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding DailySpin3Tooltip, UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding DailySpin3Completed, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Command="{x:Static local:MainWindow.DailySpin3Command}" />
+                    <MenuItem Header="{Binding OhShDailySpinLabel, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding OhShDailySpinTooltip, UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding OhShDailySpinCompleted, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Command="{x:Static local:MainWindow.OhShDailySpinCommand}" />
+                </MenuItem>
 				<MenuItem Name="ContextMenuUpdateCheck" Header="Update Check" StaysOpenOnClick="True">
 					<MenuItem.ItemContainerStyle>
 						<Style TargetType="MenuItem">

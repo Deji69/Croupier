@@ -105,6 +105,7 @@ namespace Croupier
 
 		public static readonly RoutedUICommand CheckUpdateCommand = new("Check Update", "CheckUpdate", typeof(MainWindow));
 		public static readonly RoutedUICommand CheckDailySpinsCommand = new("Check Daily Spins", "CheckDailySpins", typeof(MainWindow));
+		public static readonly RoutedUICommand OhShDailySpinCommand = new("OhShitMan Daily Spin", "OhShDailySpin", typeof(MainWindow));
 		public static readonly RoutedUICommand DailySpin1Command = new("Daily Spin 1", "DailySpin1", typeof(MainWindow));
 		public static readonly RoutedUICommand DailySpin2Command = new("Daily Spin 2", "DailySpin2", typeof(MainWindow));
 		public static readonly RoutedUICommand DailySpin3Command = new("Daily Spin 3", "DailySpin3", typeof(MainWindow));
@@ -184,6 +185,7 @@ namespace Croupier
 		private HitmapsWindow? HitmapsWindowInst;
 		private LiveSplitWindow? LiveSplitWindowInst;
 		private TargetNameFormat _targetNameFormat = TargetNameFormat.Initials;
+		private OhShDailySpinData? ohshDailySpin = null;
 		private DailySpinData? dailySpin1 = null;
 		private DailySpinData? dailySpin2 = null;
 		private DailySpinData? dailySpin3 = null;
@@ -547,6 +549,29 @@ namespace Croupier
 			get {
 				if (dailySpin3 == null) return false;
 				if (!SpinParser.TryParse(dailySpin3.spin, out var spin)) return false;
+				var stats = Config.Default.Stats.GetSpinStats(spin!);
+				return stats.Completions.Count > 0;
+			}
+		}
+
+		public string OhShDailySpinLabel {
+			get {
+				if (ohshDailySpin == null) return "OhShitMan Daily Spin";
+				if (!SpinParser.TryParse(ohshDailySpin.spin_text, out var spin)) return "Spin #3";
+				var stats = Config.Default.Stats.GetSpinStats(spin!);
+				var completion = stats.GetFastestIGTCompletion();
+				var location = Mission.Get(spin!.Mission).Location;
+				if (completion == null) return $"OhShitMan Daily {ohshDailySpin.date}: {location}";
+				return $"OhShitMan Daily {ohshDailySpin.date}: {location} ({TimeFormatter.FormatSecondsTime(completion.IGT)})";
+			}
+		}
+
+		public string OhShDailySpinTooltip => ohshDailySpin != null ? ohshDailySpin.spin_text : "";
+
+		public bool OhShDailySpinCompleted {
+			get {
+				if (ohshDailySpin == null) return false;
+				if (!SpinParser.TryParse(ohshDailySpin.spin_text, out var spin)) return false;
 				var stats = Config.Default.Stats.GetSpinStats(spin!);
 				return stats.Completions.Count > 0;
 			}
@@ -1317,6 +1342,7 @@ namespace Croupier
 
 			Config.Save();
 
+
 			OnPropertyChanged(nameof(DailySpin1Completed));
 			OnPropertyChanged(nameof(DailySpin2Completed));
 			OnPropertyChanged(nameof(DailySpin3Completed));
@@ -1324,6 +1350,9 @@ namespace Croupier
 			OnPropertyChanged(nameof(DailySpin1Label));
 			OnPropertyChanged(nameof(DailySpin2Label));
 			OnPropertyChanged(nameof(DailySpin3Label));
+
+			OnPropertyChanged(nameof(OhShDailySpinCommand));
+			OnPropertyChanged(nameof(OhShDailySpinLabel));
 		}
 
 		private async void StartTimer(bool overrideManual = false) {
@@ -2103,6 +2132,18 @@ namespace Croupier
 			}
 		}
 
+		private void OhShDailySpinCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
+			if (ohshDailySpin == null) return;
+			if (SpinParser.TryParse(ohshDailySpin.spin_text, out var spin)) {
+				GameController.Main.Roulette.SetSpin(spin);
+				spinHistoryIndex = 1;
+				PushCurrentSpinToHistory();
+				if (!Config.Default.TimerMultiSpin)
+					ResetTimer();
+				TrackNewSpin();
+			}
+		}
+
 		private void DailySpin1Command_CanExecute(object? sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = dailySpin1 != null && SpinParser.TryParse(dailySpin1.spin, out _);
 		}
@@ -2113,6 +2154,10 @@ namespace Croupier
 
 		private void DailySpin3Command_CanExecute(object? sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = dailySpin3 != null && SpinParser.TryParse(dailySpin3.spin, out _);
+		}
+
+		private void OhShDailySpinCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e) {
+			e.CanExecute = ohshDailySpin != null && SpinParser.TryParse(ohshDailySpin.spin_text, out _);
 		}
 
 		private void DebugWindowCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e) {
@@ -2335,6 +2380,13 @@ namespace Croupier
 				OnPropertyChanged(nameof(DailySpin1Tooltip));
 				OnPropertyChanged(nameof(DailySpin2Tooltip));
 				OnPropertyChanged(nameof(DailySpin3Tooltip));
+
+				var ohshResult = await DailySpinChecker.CheckForOhShDailySpinAsync();
+				if (ohshResult != null) ohshDailySpin = ohshResult;
+
+				OnPropertyChanged(nameof(OhShDailySpinCompleted));
+				OnPropertyChanged(nameof(OhShDailySpinLabel));
+				OnPropertyChanged(nameof(OhShDailySpinTooltip));
 			} catch (Exception e) {
 				MessageBox.Show(
 					$"Error checking for daily spins.\n{e.Message}",
