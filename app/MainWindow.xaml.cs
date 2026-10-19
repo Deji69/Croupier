@@ -199,6 +199,7 @@ namespace Croupier
 		private bool _staticSize = false;
 		private bool _staticSizeLHS = false;
 		private bool _killValidations = false;
+		private bool _trilogyMode = false;
 		private bool _showStreak = false;
 		private bool _showStreakPB = false;
 		private bool _showTimer = false;
@@ -391,6 +392,23 @@ namespace Croupier
 				}
 			}
 		}
+		public bool TrilogyMode {
+			get => _trilogyMode;
+			set {
+				if (value == _trilogyMode) return;
+				_trilogyMode = value;
+				if (value != Config.Default.TrilogyMode)
+					Config.Default.TrilogyMode = value;
+
+				TimerMultiSpin = value;
+
+				if (value) {
+					Config.Default.MissionPool = MissionPoolPresetID.MainMissions;
+				}
+
+				OnPropertyChanged(nameof(TrilogyMode));
+			}
+		}
 		public bool ShowSpinLabels => !_editMode;
 		public bool ShowStatusBar => ShowTimer || ShowStreak;
 		public bool EditMode {
@@ -440,6 +458,8 @@ namespace Croupier
 				_timerMultiSpin = value;
 				if (value != Config.Default.TimerMultiSpin)
 					Config.Default.TimerMultiSpin = value;
+				if (!value && TrilogyMode)
+					TrilogyMode = false;
 				OnPropertyChanged(nameof(TimerMultiSpin));
 			}
 		}
@@ -748,6 +768,12 @@ namespace Croupier
 			GameController.Main.MissionCompleted += (sender, mc) => {
 				HandleTimingOnSpinComplete(mc);
 				TrackGameMissionCompletion(mc);
+				
+				if (TrilogyMode) {
+					var mission = GetNextMission();
+					/*if (mission != MissionID.NONE)*/ NextMission(mission);
+					//else StopTimer();
+				}
 			};
 			GameController.Main.MissionChanged += (sender, mission) => {
 				// Sync the mission select combo box when the mission is updated.
@@ -1028,6 +1054,7 @@ namespace Croupier
 			TimerMultiSpin = Config.Default.TimerMultiSpin;
 			TimerFractions = Config.Default.TimerFractions;
 			KillValidations = Config.Default.KillValidations;
+			TrilogyMode = Config.Default.TrilogyMode;
 			TargetNameFormat = TargetNameFormatMethods.FromString(Config.Default.TargetNameFormat);
 			GameController.Main.LoadConfig(Config.Default);
 
@@ -2269,9 +2296,20 @@ namespace Croupier
 		}
 
 		private void NextMapCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {
+			NextMission();
+		}
+
+		private void NextMission(MissionID? mission = null) {
+			var nextMission = mission ?? GetNextMission();
+
+			if (nextMission != MissionID.NONE)
+				Spin(nextMission);
+		}
+
+		private MissionID GetNextMission() {
 			var spin = GameController.Main.Roulette.Spin;
-			if (spin == null) return;
 			var nextMission = MissionID.NONE;
+			if (spin == null) return nextMission;
 			var nextMissionGroupOrderDiff = -1;
 			var current = spin.Mission.GetGroupOrder();
 			for (var i = 0; i < GameController.Main.MissionPool.Count; ++i) {
@@ -2282,9 +2320,7 @@ namespace Croupier
 				nextMission = GameController.Main.MissionPool[i];
 				nextMissionGroupOrderDiff = diff;
 			}
-
-			if (nextMission != MissionID.NONE)
-				Spin(nextMission);
+			return nextMission;
 		}
 
 		private void PrevMapCommand_Executed(object? sender, ExecutedRoutedEventArgs e) {

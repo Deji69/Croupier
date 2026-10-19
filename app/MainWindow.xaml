@@ -730,7 +730,14 @@
 					IsCheckable="True"
 					ToolTip="Croupier will try to confirm kill method and disguise validity by tracking in-game (if connected via mod).&#x0a;Some methods of killing in-game may appear ambiguous and some conditions may come down to interpretation, so false results are possible.&#x0a;Croupier aims to give you the benefit of any doubt."
 				/>
-				<Separator />
+                <MenuItem
+					Name="ContextMenuRouletteTrilogyMode"
+					Header="Trilogy Mode"
+					IsChecked="{Binding TrilogyMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					IsCheckable="True"
+					ToolTip="Enable multi-spin mode, set map pool to Main Missions, and generate the next spin prior to entering the next map."
+				/>
+                <Separator />
 				<MenuItem Name="ContextMenuTargetNameFormat" Header="Target Name Format" StaysOpenOnClick="True">
 					<MenuItem.ItemContainerStyle>
 						<Style TargetType="MenuItem">

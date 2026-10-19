@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Text.Json;
 using JsonSerializer = System.Text.Json.JsonSerializer;
@@ -35,6 +34,7 @@ namespace Croupier {
 		public bool StaticSizeLHS { get; set; } = false;
 		public bool VerticalDisplay { get; set; } = false;
 		public bool KillValidations { get; set; } = true;
+		public bool TrilogyMode { get; set; } = false;
 		public bool Timer { get; set; } = false;
 		public bool TimerMultiSpin { get; set; } = false;
 		public bool TimerFractions { get; set; } = false;
