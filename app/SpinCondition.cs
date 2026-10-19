@@ -90,7 +90,7 @@ namespace Croupier {
 
 		public Uri DisguiseImagePath => Disguise.ImageUri;
 
-		public Uri MethodImagePath => Kill.Method.ImageUri;
+		public Uri MethodImagePath => Kill.Method != null ? Kill.Method.ImageUri : new("");
 
 		public bool IsLegal() {
 			if (Target.Mission == null) throw new Exception("Target does not have associated mission.");

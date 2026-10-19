@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
-using System.Windows.Automation.Peers;
 
 namespace Croupier {
 	public class MapTokenFrequency() : IComparable<MapTokenFrequency> {

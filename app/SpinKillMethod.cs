@@ -20,7 +20,7 @@ namespace Croupier {
 
 		public bool IsKillType(KillType type) => Method.IsKillType(type);
 
-		public override string ToString() => (IsLive ? "(Live) " : "") + Method.Name;
+		public override string ToString() => Method != null ? (IsLive ? "(Live) " : "") + Method.Name : "";
 
 		public static SpinKillMethod? Parse(Roulette roulette, string input, Target? target = null) {
 			input = input.ToLower().Trim();
