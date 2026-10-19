@@ -115,6 +115,7 @@ namespace Croupier {
 				else Streak = 0;
 
 				pausedRoundTimeElapsed = TimeSpan.Zero;
+				playState = PlayState.Finished;
 
 				MissionCompleted?.Invoke(this, arg);
 			};
