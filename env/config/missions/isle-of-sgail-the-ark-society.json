@@ -23,8 +23,8 @@
 		}
 	],
 	"KillMethods": [
-		"Battle Axe", "Broadsword", "Circumcision Knife", "Cleaver", "Fire Axe", "Hatchet", "Kitchen Knife", "Letter Opener",
-		"Old Axe", "Saber",
+		"Aztec Necklace", "Battle Axe", "Broadsword", "Circumcision Knife", "Cleaver", "Fire Axe", "Hatchet",
+		"Kitchen Knife", "Letter Opener", "Old Axe", "Saber",
 		{
 			"Name": "Sacrificial Knife",
 			"Tags": ["EasterEgg"]
